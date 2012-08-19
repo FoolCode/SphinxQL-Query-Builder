@@ -1,0 +1,14 @@
+.*
+._*
+.DS_Store
+.svn
+!.gitignore
+Desktop.ini
+Thumbs.db
+
+.fuelphp-phpstorm
+.idea
+nbproject
+
+fuel/app/logs/*/*/*
+fuel/app/cache/*/*

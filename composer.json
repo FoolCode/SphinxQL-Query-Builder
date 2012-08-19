@@ -1,5 +1,5 @@
 {
-    "name": "foolz/sphinxql",
+    "name": "foolz/fuel-sphinxql",
     "type": "library",
     "description": "A query builder for SphinxQL. Uses MySQLi to connect to the Sphinx server.",
     "keywords": ["sphinxql", "sphinx", "search", "SQL", "query builder"],

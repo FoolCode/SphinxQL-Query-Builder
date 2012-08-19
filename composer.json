@@ -1,5 +1,6 @@
 {
     "name": "foolz/fuel-sphinxql",
+    "replace": {"foolz/sphinxql": "self.version"},
     "type": "library",
     "description": "A query builder for SphinxQL. Uses MySQLi to connect to the Sphinx server.",
     "keywords": ["database", "sphinxql", "sphinx", "search", "SQL", "query builder"],

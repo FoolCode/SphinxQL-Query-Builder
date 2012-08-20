@@ -14,6 +14,55 @@ class SphinxqlConnection
 	 */
 	protected $conn;
 	
+	/**
+	 * Static connection to use with static functions
+	 * 
+	 * @var type 
+	 */
+	protected static $default_conn = null;
+	
+	/**
+	 * Connection defaults, should be good for all servers with local Sphinx
+	 * 
+	 * @var type 
+	 */
+	protected static $default = array(
+		'host' => 'localhost',
+		'port' => 9306,
+		'charset' => 'utf8'
+	);
+	
+	
+	/**
+	 * Change the default connection data for static use
+	 * 
+	 * @param type $array
+	 */
+	public static function setDefault($array)
+	{
+		static::$default = array_merge(static::$default, $array);
+	}
+	
+	
+	/**
+	 * Connects through the default data, or reuses the open connection
+	 * 
+	 * @return \Foolz\Sphinxql\Sphinxql
+	 */
+	public static function forgeFromDefault()
+	{
+		if (static::$default_conn instanceof \MySQLi)
+		{
+			return static::forgeWithConnection(static::$default_conn);
+		}
+		else
+		{
+			$new = static::forge(static::$default['host'], static::$default['port'], static::$default['charset']);
+			static::$default_conn = $new->getConnection();
+			return $new;
+		}
+	}
+	
 	
 	/**
 	 * Connects to SphinxQL
@@ -70,6 +119,11 @@ class SphinxqlConnection
 		$this->conn->set_charset($charset);
 	
 		return $this;
+	}
+	
+	public function getConnection()
+	{
+		return $this->conn;
 	}
 	
 	
@@ -130,7 +184,7 @@ class SphinxqlConnection
 		{
 			return $value;
 		}
-		
+
 		$pieces = explode('.', $value);
 		
 		foreach ($pieces as $key => $piece)

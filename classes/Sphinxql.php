@@ -30,7 +30,7 @@ class Sphinxql extends SphinxqlConnection
 	 *
 	 * @var string 
 	 */
-	protected $type = 'select';
+	protected $type = null;
 
 	/**
 	 * Array of select elements that will be comma separated
@@ -117,6 +117,13 @@ class Sphinxql extends SphinxqlConnection
 	protected $values = array();
 	
 	/**
+	 * Array arrays containing column and value for SET in UPDATE
+	 * 
+	 * @var array 
+	 */
+	protected $set = array();
+	
+	/**
 	 * Array of OPTION specific to SphinxQL
 	 * 
 	 * @var array 
@@ -124,14 +131,22 @@ class Sphinxql extends SphinxqlConnection
 	protected $options = array();
 
 	/**
-	 * The last compiled query
-	 * 
-	 * @var string 
+	 * Ready for use queries
+	 *
+	 * @var type 
 	 */
-	protected $last_compiled = array();
-
+	protected static $show_queries = array(
+		'meta' => 'SHOW META',
+		'warnings' => 'SHOW WARNINGS',
+		'status' => 'SHOW STATUS',
+		'tables' => 'SHOW TABLES',
+		'variables' => 'SHOW VARIABLES',
+		'variables_session' => 'SHOW SESSION VARIABLES',
+		'variables_global' => 'SHOW GLOBAL VARIABLES',
+	);
 
 	/**
+	 * Catches non-static select, insert, replace, update, delete
 	 * Used for the SHOW queries
 	 * 
 	 * @param string $method
@@ -141,20 +156,44 @@ class Sphinxql extends SphinxqlConnection
 	 */
 	public function __call($method, $parameters)
 	{
-		$gets = array(
-			'meta' => 'SHOW META',
-			'warnings' => 'SHOW WARNINGS',
-			'status' => 'SHOW STATUS',
-			'tables' => 'SHOW TABLES',
-			'variables' => 'SHOW '.(isset($parameters[0]) ? $parameters[0].' ' : '').'VARIABLES',
-		);
-		
-		if (isset($gets[$method]))
+		if (in_array($method, array('select', 'insert', 'replace', 'update', 'delete')))
 		{
-			return $this->query($gets[$method]);
+			return \call_user_func_array(array($this, 'do_'.$method), $parameters);
 		}
 		
-		throw new \BadMethodCallException;
+		if (isset(static::$show_queries[$method]))
+		{
+			return $this->query(static::$show_queries[$method]);
+		}
+		
+		throw new \BadMethodCallException($method);
+	}
+	
+	
+	/**
+	 * Catches static select, insert, replace, update, delete
+	 * Used for the SHOW queries
+	 * 
+	 * @param string $method
+	 * @param array $parameters
+	 * @return array
+	 * @throws \BadMethodCallException
+	 */
+	public static function __callStatic($method, $parameters)
+	{
+		if (in_array($method, array('select', 'insert', 'replace', 'update', 'delete')))
+		{
+			$new = static::forgeFromDefault();
+			return \call_user_func_array(array($new, 'do_'.$method), $parameters);
+		}
+		
+		if (isset(static::$show_queries[$method]))
+		{
+			$new = static::forgeFromDefault();
+			return $new->query(static::$show_queries[$method]);
+		}
+		
+		throw new \BadMethodCallException($method);
 	}
 	
 	/**
@@ -181,7 +220,7 @@ class Sphinxql extends SphinxqlConnection
 	public function execute()
 	{
 		// pass the object so execute compiles it by itself
-		return $this->last_result = $this->query($this->compile()->get_compiled());
+		return $this->last_result = $this->query($this->compile()->getCompiled());
 	}
 
 
@@ -208,14 +247,166 @@ class Sphinxql extends SphinxqlConnection
 
 	
 	/**
+	 * SET syntax
+	 * 
+	 * @param string $name
+	 * @param array|string|int $value
+	 * @param bool $global
+	 * @return array
+	 */
+	public function setVariable($name, $value, $global = false)
+	{
+		$query = 'SET '.$this->quoteIdentifier($name).' ';
+		
+		if ($global)
+		{
+			$query .= 'GLOBAL ';
+		}
+		
+		if (is_array($value))
+		{
+			$query .= '('.implode(', ', $this->quoteArr($value)).')';
+		}
+		else
+		{
+			$query .= $this->quote($value);
+		}
+		
+		$this->query($query);
+		return $this;
+	}
+	
+	
+	/**
+	 * Begins transaction
+	 * 
+	 * @return \Foolz\Sphinxql\Sphinxql
+	 */
+	public function transactionBegin()
+	{
+		$this->query('BEGIN');
+		return $this;
+	}
+	
+	
+	/**
+	 * Commits transaction
+	 * 
+	 * @return \Foolz\Sphinxql\Sphinxql
+	 */
+	public function transactionCommit()
+	{
+		$this->query('COMMIT');
+		return $this;
+	}
+	
+	
+	/**
+	 * Rollbacks transaction
+	 * 
+	 * @return \Foolz\Sphinxql\Sphinxql
+	 */
+	public function transactionRollback()
+	{
+		$this->query('ROLLBACK');
+		return $this;
+	}
+	
+	
+	/**
+	 * CALL SNIPPETS syntax
+	 * 
+	 * @param string $data
+	 * @param string $index
+	 * @param array $extra
+	 */
+	public function callSnippets($data, $index, $extra = array())
+	{
+		array_unshift($index, $extra);
+		array_unshift($data, $extra);
+		$this->query('CALL SNIPPETS('.implode(', ', $this->quoteArr($extra)).')');
+		
+		return $this;
+	}
+	
+	
+	public function callKeywords($text, $index, $hits = null)
+	{
+		$arr = array($text, $index);
+		if ($hits !== null)
+		{
+			$arr[] = $hits;
+		}
+		
+		$this->query('CALL KEYWORDS('.implode(', ', $this->quoteArr($arr)).')');
+		return $this;
+	}
+	
+	
+	/**
 	 * Runs the compile function
 	 * 
 	 * @return \Foolz\Sphinxql\Sphinxql
 	 */
 	public function compile()
 	{
-		$this->{'compile_'.$this->type}();
+		switch ($this->type)
+		{
+			case 'select':
+				$this->compileSelect();
+				break;
+			case 'insert':
+			case 'replace':
+				$this->compileInsert();
+				break;
+			case 'update':
+				$this->compileUpdate();
+				break;
+			case 'delete':
+				$this->compileDelete();
+				break;
+		}
+		
 		return $this;
+	}
+	
+	/**
+	 * Compiles the MATCH part of the queries
+	 * Used by: SELECT, DELETE, UPDATE
+	 * 
+	 * @return string
+	 */
+	public function compileMatch()
+	{
+		$query = '';
+
+		if ( ! empty($this->match))
+		{
+			$query .= 'WHERE ';
+		}
+		
+		if ( ! empty($this->match))
+		{
+			$query .= "MATCH('";
+
+			foreach ($this->match as $match)
+			{
+				$query .= '@'.$match['column'].' ';
+
+				if ($match['half'])
+				{
+					$query .= $this->halfEscapeString($match['value']);
+				}
+				else
+				{
+					$query .= $this->escapeString($match['value']);
+				}
+			}
+
+			$query .= "') ";
+		}
+		
+		return $query;
 	}
 	
 	
@@ -228,6 +419,13 @@ class Sphinxql extends SphinxqlConnection
 	 */
 	public function compileWhere()
 	{
+		$query = '';
+		
+		if (empty($this->match) || ! empty($this->where))
+		{
+			$query .= 'WHERE ';
+		}
+				
 		if ( ! empty($this->where))
 		{
 			foreach ($this->where as $key => $where)
@@ -259,15 +457,15 @@ class Sphinxql extends SphinxqlConnection
 				}
 				else
 				{
-					$query .= $this->quoteIdentifier($where['column']).' '.$where['operator'].' ';
+					$query .= $this->quoteIdentifier($where['column']).' ';
 
 					if (strtoupper($where['operator']) === 'IN')
 					{
-						$query .= '('.implode(', ', $this->quoteArr($where['value'])).') ';
+						$query .= 'IN ('.implode(', ', $this->quoteArr($where['value'])).') ';
 					}
 					else
 					{
-						$query .= $this->quote($where['value']).' ';
+						$query .= $where['operator'].' '.$this->quote($where['value']).' ';
 					}
 				}
 			}
@@ -305,35 +503,7 @@ class Sphinxql extends SphinxqlConnection
 			$query .= 'FROM '.implode(', ', $this->quoteIdentifierArr($this->from)).' ';
 		}
 
-		if ( ! empty($this->match) || ! empty($this->where))
-		{
-			$query .= 'WHERE ';
-		}
-
-		if ( ! empty($this->match))
-		{
-			$used_where = true;
-
-			$query .= "MATCH('";
-
-			foreach ($this->match as $match)
-			{
-				$query .= '@'.$match['column'].' ';
-
-				if ($match['half'])
-				{
-					$query .= $this->halfEscapeString($match['value']);
-				}
-				else
-				{
-					$query .= $this->escapeString($match['value']);
-				}
-			}
-
-			$query .= "') ";
-		}
-		
-		$query .= $this->compile_where();
+		$query .= $this->compileMatch().$this->compileWhere();
 
 		if ( ! empty($this->group_by))
 		{
@@ -454,13 +624,55 @@ class Sphinxql extends SphinxqlConnection
 	
 	
 	/**
+	 * Compiles the statements for UPDATE
+	 * 
+	 * @return \Foolz\Sphinxql\Sphinql
+	 */
+	public function compileUpdate()
+	{
+		$query = 'UPDATE ';
+		
+		if ($this->into !== null)
+		{
+			$query .= $this->into.' ';
+		}
+		
+		if ( ! empty($this->set))
+		{
+			$query_sub = array();
+			
+			foreach ($this->set as $column => $value)
+			{				
+				// MVA support
+				if (is_array($value))
+				{
+					$query_sub[] = $this->quoteIdentifier($column).' = ('.implode(', ', $this->queryArr($value)).')';
+				}
+				else
+				{
+					$query_sub[] = $this->quoteIdentifier($column).' = '.$this->quote($value);
+				}
+			}
+			
+			$query .= implode(', ', $query_sub).' ';
+		}
+
+		$query .= $this->compileMatch().$this->compileWhere();
+		
+		$this->last_compiled = $query;
+		
+		return $this;
+	}
+	
+	
+	/**
 	 * Compiles the statements for DELETE
 	 * 
 	 * @return \Foolz\Sphinxql\Sphinql
 	 */
 	public function compileDelete()
 	{
-		$query .= 'DELETE ';
+		$query = 'DELETE ';
 		
 		if ( ! empty($this->from))
 		{
@@ -469,7 +681,7 @@ class Sphinxql extends SphinxqlConnection
 		
 		if ( ! empty($this->where))
 		{
-			$query .= $this->compile_where();
+			$query .= $this->compileWhere();
 		}
 		
 		$this->last_compiled = $query;
@@ -485,8 +697,15 @@ class Sphinxql extends SphinxqlConnection
 	 * 
 	 * @return \Foolz\Sphinxql\Sphinql
 	 */
-	public function select()
+	public function do_select()
 	{
+		if ($this->type !== null)
+		{
+			$new = static::forgeWithConnection($this->conn);
+			\call_user_func_array(array($new, 'select'), \func_get_args());
+			return $new;
+		}
+		
 		$this->type = 'select';
 		$this->select = \func_get_args();
 		return $this;
@@ -498,8 +717,15 @@ class Sphinxql extends SphinxqlConnection
 	 * 
 	 * @return \Foolz\Sphinxql\Sphinxql
 	 */
-	public function insert()
+	public function do_insert()
 	{
+		if ($this->type !== null)
+		{
+			$new = static::forgeWithConnection($this->conn);
+			$new->insert();
+			return $new;
+		}
+
 		$this->type = 'insert';
 		return $this;
 	}
@@ -510,8 +736,15 @@ class Sphinxql extends SphinxqlConnection
 	 * 
 	 * @return \Foolz\Sphinxql\Sphinxql
 	 */
-	public function replace()
+	public function do_replace()
 	{
+		if ($this->type !== null)
+		{
+			$new = static::forgeWithConnection($this->conn);
+			$new->replace();
+			return $new;
+		}
+		
 		$this->type = 'replace';
 		return $this;
 	}
@@ -522,8 +755,15 @@ class Sphinxql extends SphinxqlConnection
 	 * 
 	 * @return \Foolz\Sphinxql\Sphinxql
 	 */
-	public function update()
+	public function do_update()
 	{
+		if ($this->type !== null)
+		{
+			$new = static::forgeWithConnection($this->conn);
+			$new->update();
+			return $new;
+		}
+		
 		$this->type = 'update';
 		return $this;
 	}
@@ -533,8 +773,15 @@ class Sphinxql extends SphinxqlConnection
 	 * 
 	 * @return \Foolz\Sphinxql\Sphinxql
 	 */
-	public function delete()
+	public function do_delete()
 	{
+		if ($this->type !== null)
+		{
+			$new = static::forgeWithConnection($this->conn);
+			$new->delete();
+			return $new;
+		}
+		
 		$this->type = 'delete';
 		return $this;
 	}
@@ -834,15 +1081,22 @@ class Sphinxql extends SphinxqlConnection
 	 */
 	public function value($column, $value)
 	{
-		$this->columns[] = $column;
-		$this->values[0][] = $value;
+		if ($this->type === 'insert')
+		{
+			$this->columns[] = $column;
+			$this->values[0][] = $value;
+		}
+		else
+		{
+			$this->set[$column] = $value;
+		}
 		return $this;
 	}
 
 	
 	/**
 	 * Allows passing an array with the key as column and value as value
-	 * Used in: INSERT, REPLACE
+	 * Used in: INSERT, REPLACE, UPDATE
 	 * 
 	 * @param type $array
 	 * @return \Foolz\Sphinxql\Sphinxql

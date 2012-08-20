@@ -7,91 +7,102 @@ namespace Foolz\Sphinxql;
  */
 class SphinxqlConnection
 {
+	
 	/**
-	 * The current connection
+	 * The array of live connections
 	 * 
 	 * @var object
 	 */
-	protected $conn;
+	protected static $connections = array();
+	
 	
 	/**
-	 * Static connection to use with static functions
+	 * The array key of the current selected connection
+	 *
+	 * @var string 
+	 */
+	protected static $current_connection = 'default';
+	
+	/**
+	 * Connection data array
 	 * 
 	 * @var type 
 	 */
-	protected static $default_conn = null;
-	
-	/**
-	 * Connection defaults, should be good for all servers with local Sphinx
-	 * 
-	 * @var type 
-	 */
-	protected static $default = array(
-		'host' => 'localhost',
-		'port' => 9306,
-		'charset' => 'utf8'
+	protected static $connection_info = array(
+		'default' => array(
+			'host' => 'localhost',
+			'port' => 9306,
+			'charset' => 'utf8'
+		)
 	);
 	
 	
 	/**
-	 * Change the default connection data for static use
-	 * 
-	 * @param type $array
-	 */
-	public static function setDefault($array)
-	{
-		static::$default = array_merge(static::$default, $array);
-	}
-	
-	
-	/**
-	 * Connects through the default data, or reuses the open connection
+	 * Creates a new Sphinxql object and if necessary connects to DB
 	 * 
 	 * @return \Foolz\Sphinxql\Sphinxql
 	 */
-	public static function forgeFromDefault()
+	public static function forge()
 	{
-		if (static::$default_conn instanceof \MySQLi)
-		{
-			return static::forgeWithConnection(static::$default_conn);
-		}
-		else
-		{
-			$new = static::forge(static::$default['host'], static::$default['port'], static::$default['charset']);
-			static::$default_conn = $new->getConnection();
-			return $new;
-		}
-	}
+		$new = new Sphinxql;
+		
+		static::getConnection() or static::connect();
+		
+		return $new;
+	}	
 	
 	
 	/**
-	 * Connects to SphinxQL
+	 * Add a connection to the array
 	 * 
+	 * @param string $name the key name of the connection
 	 * @param string $host
 	 * @param int $port
 	 * @param string $charset
-	 * @return \Foolz\Sphinxql\Sphinxql
 	 */
-	public static function forge($host = 'localhost', $port = 9306, $charset = 'utf8')
+	public static function addConnection($name = 'default', $host = 'localhost', $port = 9306, $charset = 'utf8')
 	{
-		$class = new Sphinxql;
-		$class->setConnection($host, $port, $charset);
-		return $class;
+		static::$connection_info[$name] = array('host' => $host, 'port' => $port, 'charset' => $charset);
 	}
 	
 	
 	/**
-	 * Reuses a SphinxQL connection
+	 * Sets the connection to use
 	 * 
-	 * @param \MySQLi $conn
-	 * @return \Foolz\Sphinxql\Sphinxql
+	 * @param string $name
 	 */
-	public static function forgeWithConnection($conn)
+	public static function setConnection($name)
 	{
-		$class = new Sphinxql;
-		$class->setConnection($conn);
-		return $class;
+		static::$current_connection = $name;
 	}
+	
+	
+	/**
+	 * Returns the \MySQLi connection
+	 * 
+	 * @return bool|\MySQLi false in case the array key is not found
+	 */
+	public static function getConnection()
+	{
+		if (isset(static::$connections[static::$current_connection]))
+		{
+			return static::$connections[static::$current_connection];
+		}
+		
+		return false;
+	}
+	
+	
+	/**
+	 * Returns the connection info (host, port, charset) for the currently selected connection
+	 * 
+	 * @return array
+	 */
+	public static function getConnectionInfo()
+	{
+		return static::$connection_info[static::$current_connection];
+	}
+	
 	
 	/**
 	 * Enstablishes connection to SphinxQL with MySQLi
@@ -101,29 +112,17 @@ class SphinxqlConnection
 	 * @param type $persistent
 	 * @return boolean|\Foolz\Sphinxql\Sphinql
 	 */
-	public function setConnection($host = 'localhost', $port = 9306, $charset = 'utf8')
+	public static function connect()
 	{
-		if ($host instanceof \MySQLi)
-		{
-			$this->conn = $host;
-			return $this;
-		}
+		$data = static::getConnectionInfo();
+		static::$connections[static::$current_connection] = new \MySQLi($data['host'], null, null, null, $data['port']);
 		
-		$this->conn = new \MySQLi($host, null, null, null, $port);
-		
-		if ($this->conn->connect_error) 
+		if (static::getConnection()->connect_error) 
 		{
 			return false;
 		}
 		
-		$this->conn->set_charset($charset);
-	
-		return $this;
-	}
-	
-	public function getConnection()
-	{
-		return $this->conn;
+		static::getConnection()->set_charset($data['charset']);
 	}
 	
 	
@@ -134,13 +133,15 @@ class SphinxqlConnection
 	 * @return array
 	 * @throws SphinxqlDatabaseException
 	 */
-	public function query($query)
+	public static function query($query)
 	{
-		$resource = $this->conn->query($query);
+		static::getConnection() or static::connect();
 		
-		if ($this->conn->error)
+		$resource = static::getConnection()->query($query);
+		
+		if (static::getConnection()->error)
 		{
-			throw new SphinxqlDatabaseException('['.$this->conn->errno.'] '.$this->conn->error);
+			throw new SphinxqlDatabaseException('['.static::getConnection()->errno.'] '.static::getConnection()->error);
 		}
 		
 		if($resource instanceof \mysqli_result)
@@ -158,12 +159,14 @@ class SphinxqlConnection
 	 */
 	public function escape($value)
 	{
-		if (($value = $this->conn->real_escape_string((string) $value)) === false)
+		static::getConnection() or static::connect();
+		
+		if (($value = $this->getConnection()->real_escape_string((string) $value)) === false)
 		{
-			throw new \SphinxqlDatabaseException($this->conn->error, $this->conn->errno);
+			throw new \SphinxqlDatabaseException($this->getConnection()->error, $this->getConnection()->errno);
 		}
 		
-		return "'".$this->conn->real_escape_string($value)."'";
+		return "'".$this->getConnection()->real_escape_string($value)."'";
 	}
 	
 	

@@ -18,32 +18,15 @@ The examples will omit the namespace.
 
 #### Static uses one default connection
 
-If you have one single connection, it's convenient to use the static methods.
-
-	// if you don't use the default connection, use this function to change the defaults
-	Sphinxql::setDefault(array('host' => 'yourhost.com', 'port' => 9348, 'charset' => 'utf8));
+	// if you don't use the Sphinxql default connection, use this function to change the host and port
+	Sphinxql::addConnection('superspecial', 'yourhost.com', 9231);
+	Sphinxql::setConnection('superspecial');
 	$query = Sphinxql::select('column_one', 'column_two')
 		->from('index_delta', 'index_main', 'index_ancient')
 		->match('comment', 'my opinion is better')
 		->where('banned', '=', 1);
 
 	$result = $query->execute();
-
-To use it non-statically, the following `$sq = Sphinxql::forgeFromDefault();` will return the object.
-
-#### Non-static uses custom connection
-
-This is to be used when there's multiple servers to connect to. You can use it in conjunction with the static version.
-
-	$sq = Sphinxql::forge('yourhost.com', 9348, 'charset' = 'utf8)
-	$query = $sq->select('column_one', 'column_two')
-		->from('index_delta', 'index_main', 'index_ancient')
-		->match('comment', 'my opinion is better')
-		->where('banned', '=', 1);
-
-	$result = $query->execute();
-
-Unlike with the static version, you will need to keep the `$sq` object to keep using the connection.
 
 ## Methods
 

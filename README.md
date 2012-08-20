@@ -3,23 +3,22 @@ Query Builder for SphinxQL
 
 ### About
 
-If you didn't know, the SphinxQL is faster than the API counterpart, and gives several more functions, especially for interacting with RT indexes.
+This is a PHP Query Builder created ad-hoc to work with SphinxQL, an SQL dialect to use with the Sphinx search engine. 
+It maps every function listed in the [SphinxQL reference](http://sphinxsearch.com/docs/current.html#sphinxql-reference) and is generally [faster](http://sphinxsearch.com/blog/2010/04/25/sphinxapi-vs-sphinxql-benchmark/) than the Sphinx API, beside having more functions.
 
-This package maps every function listed in the [SphinxQL reference](http://sphinxsearch.com/docs/current.html#sphinxql-reference). It is closely styled to FuelPHP's query builder.
+This Query Builder has no dependencies except PHP 5.3, `\MySQLi` and of course a working Sphinx server. FuelPHP is not necessary but we've added a bootstrap for using it as a Package. It is styled after FuelPHP's Query Builder.
 
-This package has no dependencies except PHP 5.3, `\MySQLi` and of course a working Sphinx server. FuelPHP is not necessary but we've added a bootstrap for using it as a Package.
-
-__This package is ALPHA QUALITY.__ We use it into our FoolFrame project that is still unreleased. Try it at our own risk.
+__This package is ALPHA QUALITY.__
 
 ## Usage
 
-The examples will use just \Sphinxql.
+The examples will omit the namespace.
 
 	use Foolz\Sphinxql\Sphinxql as Sphinxql;
 
 #### Static uses one default connection
 
-Since it the most of cases you will have one single connection, this likely will be enough for your needs.
+If you have one single connection, it's convenient to use the static methods.
 
 	// if you don't use the default connection, use this function to change the defaults
 	Sphinxql::setDefault(array('host' => 'yourhost.com', 'port' => 9348, 'charset' => 'utf8));
@@ -30,13 +29,11 @@ Since it the most of cases you will have one single connection, this likely will
 
 	$result = $query->execute();
 
-It connects at the first use you make of it, so when `Sphinxql::select()` is called.
-
-If can also use this as non-static by calling `$sq = Sphinxql::forgeFromDefault();`.
+To use it non-statically, the following `$sq = Sphinxql::forgeFromDefault();` will return the object.
 
 #### Non-static uses custom connection
 
-This is to be used when there's multiple servers to connect to.
+This is to be used when there's multiple servers to connect to. You can use it in conjunction with the static version.
 
 	$sq = Sphinxql::forge('yourhost.com', 9348, 'charset' = 'utf8)
 	$query = $sq->select('column_one', 'column_two')
@@ -46,7 +43,7 @@ This is to be used when there's multiple servers to connect to.
 
 	$result = $query->execute();
 
-It didn't change much, but you must keep a hold of that $sq object to be able to keep the object with the connection. Nothing weird there.
+Unlike with the static version, you will need to keep the `$sq` object to keep using the connection.
 
 ## Methods
 
@@ -62,7 +59,7 @@ Each of these can be called statically or non-statically. It follows SQL logic.
 
 #### Where
 
-Classic WHERE, works with Sphinx filters and fulltext. ___OR__ is not yet implemented in SphinxQL_.
+Classic WHERE, works with Sphinx filters and fulltext. _`OR` is not yet implemented in SphinxQL_.
 
     $sq->where('column', 'value');
     // WHERE `column` = 'value'

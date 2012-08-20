@@ -1,7 +1,10 @@
 <?php
-
 namespace Foolz\Sphinxql;
 
+/**
+ * SphinxQL connection class based on MySQLi.
+ * Contains also escaping and quoting functions.
+ */
 class SphinxqlConnection
 {
 	/**
@@ -11,10 +14,33 @@ class SphinxqlConnection
 	 */
 	protected $conn;
 	
+	
+	/**
+	 * Connects to SphinxQL
+	 * 
+	 * @param string $host
+	 * @param int $port
+	 * @param string $charset
+	 * @return \Foolz\Sphinxql\Sphinxql
+	 */
 	public static function forge($host = 'localhost', $port = 9306, $charset = 'utf8')
 	{
 		$class = new Sphinxql;
 		$class->setConnection($host, $port, $charset);
+		return $class;
+	}
+	
+	
+	/**
+	 * Reuses a SphinxQL connection
+	 * 
+	 * @param \MySQLi $conn
+	 * @return \Foolz\Sphinxql\Sphinxql
+	 */
+	public static function forgeWithConnection($conn)
+	{
+		$class = new Sphinxql;
+		$class->setConnection($conn);
 		return $class;
 	}
 	
@@ -28,6 +54,12 @@ class SphinxqlConnection
 	 */
 	public function setConnection($host = 'localhost', $port = 9306, $charset = 'utf8')
 	{
+		if ($host instanceof \MySQLi)
+		{
+			$this->conn = $host;
+			return $this;
+		}
+		
 		$this->conn = new \MySQLi($host, null, null, null, $port);
 		
 		if ($this->conn->connect_error) 
@@ -40,6 +72,14 @@ class SphinxqlConnection
 		return $this;
 	}
 	
+	
+	/**
+	 * Sends the query to Sphinx
+	 * 
+	 * @param string $query
+	 * @return array
+	 * @throws SphinxqlDatabaseException
+	 */
 	public function query($query)
 	{
 		$resource = $this->conn->query($query);
@@ -73,6 +113,12 @@ class SphinxqlConnection
 	}
 	
 	
+	/**
+	 * Wraps the input in identifiers where necessary
+	 * 
+	 * @param \Foolz\Sphinxql\SphinxqlExpression|string $value
+	 * @return \Foolz\Sphinxql\SphinxqlExpression
+	 */
 	public function quoteIdentifier($value)
 	{
 		if ($value instanceof SphinxqlExpression)
@@ -96,7 +142,13 @@ class SphinxqlConnection
 	}
 	
 	
-	public function quoteIdentifiersArr($array = array())
+	/**
+	 * Runs $this->quoteIdentifier on every element of an array
+	 * 
+	 * @param array $array
+	 * @return type
+	 */
+	public function quoteIdentifierArr($array = array())
 	{
 		$result = array();
 		
@@ -108,11 +160,12 @@ class SphinxqlConnection
 		return $result;
 	}
 	
+	
 	/**
-	 * 
+	 * Adds quotes where necessary for values
 	 * Taken from FuelPHP and edited
 	 * 
-	 * @param \Foolz\Sphinxql\SphinxqlExpression $value
+	 * @param \Foolz\Sphinxql\SphinxqlExpression|string $value
 	 * @return string
 	 */
 	public function quote($value)
@@ -145,6 +198,25 @@ class SphinxqlConnection
 		}
 
 		return $this->escape($value);
+	}
+	
+	
+	/**
+	 * Runs $this->quote on every element of an array
+	 * 
+	 * @param array $array
+	 * @return type
+	 */
+	public function quoteArr($array = array())
+	{
+		$result = array();
+		
+		foreach ($array as $key => $item)
+		{
+			$result[$key] = $this->quote($item);
+		}
+		
+		return $result;
 	}
 
 }

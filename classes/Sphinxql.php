@@ -139,9 +139,9 @@ class Sphinxql extends SphinxqlConnection
 		{
 			$query .= 'SELECT ';
 
-			if (!empty($this->_select))
+			if ( ! empty($this->_select))
 			{
-				$query .= implode(', ', $this->quoteIdentifiersArr($this->_select)) . ' ';
+				$query .= implode(', ', $this->quoteIdentifiersArr($this->_select)).' ';
 			}
 			else
 			{
@@ -149,17 +149,17 @@ class Sphinxql extends SphinxqlConnection
 			}
 		}
 
-		if (!empty($this->_from))
+		if ( ! empty($this->_from))
 		{
-			$query .= 'FROM ' . implode(', ', $this->quoteIdentifiersArr($this->_from)) . ' ';
+			$query .= 'FROM '.implode(', ', $this->quoteIdentifiersArr($this->_from)).' ';
 		}
 
-		if (!empty($this->_match) || !empty($this->_where))
+		if ( ! empty($this->_match) || ! empty($this->_where))
 		{
 			$query .= 'WHERE ';
 		}
 
-		if (!empty($this->_match))
+		if ( ! empty($this->_match))
 		{
 			$used_where = true;
 
@@ -167,7 +167,7 @@ class Sphinxql extends SphinxqlConnection
 
 			foreach ($this->_match as $match)
 			{
-				$query .= '@' . $match['column'] . ' ';
+				$query .= '@'.$match['column'].' ';
 
 				if ($match['half'])
 				{
@@ -182,38 +182,39 @@ class Sphinxql extends SphinxqlConnection
 			$query .= "') ";
 		}
 
-		if (!empty($this->_where))
+		if ( ! empty($this->_where))
 		{
 			foreach ($this->_where as $key => $where)
 			{
 				if (in_array($where['ext_operator'], array('AND (', 'OR (', ')')))
 				{
-					if ($key == 0 || !empty($this->_match))
+					// if match is not empty we've got to use an operator 
+					if ($key == 0 || ! empty($this->_match))
 					{
 						$query .= '(';
 					}
 					else
 					{
-						$query .= $where['ext_operator'] . ' ';
+						$query .= $where['ext_operator'].' ';
 					}
 					continue;
 				}
 
-				if ($key > 0 || !empty($this->_match))
+				if ($key > 0 || ! empty($this->_match))
 				{
-					$query .= $where['ext_operator'] . ' '; // AND/OR
+					$query .= $where['ext_operator'].' '; // AND/OR
 				}
 
-				$query .= $this->quoteIdentifier($where['column']) . " " . $where['operator'] . " " . $this->quote($where['value']) . " ";
+				$query .= $this->quoteIdentifier($where['column']).' '. $where['operator'].' '.$this->quote($where['value']).' ';
 			}
 		}
 
-		if (!empty($this->_group_by))
+		if ( ! empty($this->_group_by))
 		{
-			$query .= 'GROUP BY ' . implode(', ', $this->quoteIdentifiersArr($this->_group_by)) . ' ';
+			$query .= 'GROUP BY '.implode(', ', $this->quoteIdentifiersArr($this->_group_by)).' ';
 		}
 
-		if (!empty($this->_order_by))
+		if ( ! empty($this->_order_by))
 		{
 			$query .= 'ORDER BY ';
 
@@ -221,7 +222,7 @@ class Sphinxql extends SphinxqlConnection
 
 			foreach ($this->_order_by as $order)
 			{
-				$order_sub = $this->quoteIdentifier($order['column']) . ' ';
+				$order_sub = $this->quoteIdentifier($order['column']).' ';
 
 				if ($order['direction'] !== null)
 				{
@@ -231,17 +232,17 @@ class Sphinxql extends SphinxqlConnection
 				$order_arr[] = $order_sub;
 			}
 
-			$query .= implode(', ', $order_arr) . ' ';
+			$query .= implode(', ', $order_arr).' ';
 		}
 
 		if ($this->_limit !== null)
 		{
-			$query .= 'LIMIT ' . ((int) $this->_limit) . ' ';
+			$query .= 'LIMIT '.((int) $this->_limit).' ';
 		}
 
 		if ($this->_offset !== null)
 		{
-			$query .= 'OFFSET ' . ((int) $this->_offset) . ' ';
+			$query .= 'OFFSET ' . ((int) $this->_offset).' ';
 		}
 
 		if (!empty($this->_options))
@@ -249,10 +250,10 @@ class Sphinxql extends SphinxqlConnection
 			$options = array();
 			foreach ($this->_options as $option)
 			{
-				$options[] = $this->quoteIdentifier($option['name']) . ' = ' . $this->quote($option['value']);
+				$options[] = $this->quoteIdentifier($option['name']).' = '.$this->quote($option['value']);
 			}
 
-			$query .= 'OPTION ' . implode(', ', $options);
+			$query .= 'OPTION '.implode(', ', $options);
 		}
 
 		$this->_last_compiled = $query;

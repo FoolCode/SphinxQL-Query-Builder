@@ -158,7 +158,7 @@ class Sphinxql extends SphinxqlConnection
 	{
 		if (in_array($method, array('select', 'insert', 'replace', 'update', 'delete')))
 		{
-			return \call_user_func_array(array($this, 'do_'.$method), $parameters);
+			return \call_user_func_array(array($this, 'do'.ucfirst($method)), $parameters);
 		}
 		
 		if (isset(static::$show_queries[$method]))
@@ -184,7 +184,7 @@ class Sphinxql extends SphinxqlConnection
 		if (in_array($method, array('select', 'insert', 'replace', 'update', 'delete')))
 		{
 			$new = static::forgeFromDefault();
-			return \call_user_func_array(array($new, 'do_'.$method), $parameters);
+			return \call_user_func_array(array($new, 'do'.ucfirst($method)), $parameters);
 		}
 		
 		if (isset(static::$show_queries[$method]))
@@ -765,7 +765,7 @@ class Sphinxql extends SphinxqlConnection
 	 * 
 	 * @return \Foolz\Sphinxql\Sphinql
 	 */
-	public function do_select()
+	public function doSelect()
 	{
 		if ($this->type !== null)
 		{
@@ -785,7 +785,7 @@ class Sphinxql extends SphinxqlConnection
 	 * 
 	 * @return \Foolz\Sphinxql\Sphinxql
 	 */
-	public function do_insert()
+	public function doInsert()
 	{
 		if ($this->type !== null)
 		{
@@ -804,7 +804,7 @@ class Sphinxql extends SphinxqlConnection
 	 * 
 	 * @return \Foolz\Sphinxql\Sphinxql
 	 */
-	public function do_replace()
+	public function doReplace()
 	{
 		if ($this->type !== null)
 		{
@@ -823,16 +823,18 @@ class Sphinxql extends SphinxqlConnection
 	 * 
 	 * @return \Foolz\Sphinxql\Sphinxql
 	 */
-	public function do_update()
+	public function doUpdate($index)
 	{
 		if ($this->type !== null)
 		{
 			$new = static::forgeWithConnection($this->conn);
-			$new->update();
+			$new->update($index);
+			$new->into($index);
 			return $new;
 		}
 		
 		$this->type = 'update';
+		$this->into($index);
 		return $this;
 	}
 	
@@ -841,7 +843,7 @@ class Sphinxql extends SphinxqlConnection
 	 * 
 	 * @return \Foolz\Sphinxql\Sphinxql
 	 */
-	public function do_delete()
+	public function doDelete()
 	{
 		if ($this->type !== null)
 		{
@@ -945,7 +947,7 @@ class Sphinxql extends SphinxqlConnection
 	 * @param string|int|null|bool $value
 	 * @return \Foolz\Sphinxql\Sphinxql
 	 */
-	public function or_where($column, $operator, $value = null)
+	public function orWhere($column, $operator, $value = null)
 	{
 		$this->where($column, $operator, $value, true);
 		return $this;
@@ -957,7 +959,7 @@ class Sphinxql extends SphinxqlConnection
 	 * 
 	 * @return \Foolz\Sphinxql\Sphinxql
 	 */
-	public function where_open()
+	public function whereOpen()
 	{
 		$this->where[] = array('ext_operator' => 'AND (');
 		return $this;
@@ -969,7 +971,7 @@ class Sphinxql extends SphinxqlConnection
 	 * 
 	 * @return \Foolz\Sphinxql\Sphinxql
 	 */
-	public function or_where_open()
+	public function orWhereOpen()
 	{
 		$this->where[] = array('ext_operator' => 'OR (');
 		return $this;
@@ -981,7 +983,7 @@ class Sphinxql extends SphinxqlConnection
 	 * 
 	 * @return \Foolz\Sphinxql\Sphinxql
 	 */
-	public function where_close()
+	public function whereClose()
 	{
 		$this->where[] = array('ext_operator' => ')');
 		return $this;
@@ -994,7 +996,7 @@ class Sphinxql extends SphinxqlConnection
 	 * @param string $column
 	 * @return \Foolz\Sphinxql\Sphinxql
 	 */
-	public function group_by($column)
+	public function groupBy($column)
 	{
 		$this->group_by[] = $column;
 		return $this;
@@ -1009,7 +1011,7 @@ class Sphinxql extends SphinxqlConnection
 	 * @param string $direction
 	 * @return \Foolz\Sphinxql\Sphinxql
 	 */
-	public function within_group_order_by($column, $direction = null)
+	public function withinGroupOrderBy($column, $direction = null)
 	{
 		$this->within_group_order_by[] = array('column' => $column, 'direction' => $direction);
 		return $this;
@@ -1023,7 +1025,7 @@ class Sphinxql extends SphinxqlConnection
 	 * @param string $direction asc or desc
 	 * @return \Foolz\Sphinxql\Sphinxql
 	 */
-	public function order_by($column, $direction = null)
+	public function orderBy($column, $direction = null)
 	{
 		$this->order_by[] = array('column' => $column, 'direction' => $direction);
 		return $this;

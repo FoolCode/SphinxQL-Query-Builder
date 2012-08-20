@@ -319,17 +319,24 @@ class Sphinxql extends SphinxqlConnection
 	 * @param string $data
 	 * @param string $index
 	 * @param array $extra
+	 * @return array
 	 */
 	public function callSnippets($data, $index, $extra = array())
 	{
 		array_unshift($index, $extra);
 		array_unshift($data, $extra);
-		$this->query('CALL SNIPPETS('.implode(', ', $this->quoteArr($extra)).')');
-		
-		return $this;
+		return $this->query('CALL SNIPPETS('.implode(', ', $this->quoteArr($extra)).')');
 	}
 	
 	
+	/**
+	 * CALL KEYWORDS syntax
+	 * 
+	 * @param string $text
+	 * @param string $index
+	 * @param null|string $hits
+	 * @return array
+	 */
 	public function callKeywords($text, $index, $hits = null)
 	{
 		$arr = array($text, $index);
@@ -338,8 +345,69 @@ class Sphinxql extends SphinxqlConnection
 			$arr[] = $hits;
 		}
 		
-		$this->query('CALL KEYWORDS('.implode(', ', $this->quoteArr($arr)).')');
-		return $this;
+		return $this->query('CALL KEYWORDS('.implode(', ', $this->quoteArr($arr)).')');
+	}
+	
+	
+	/**
+	 * DESCRIBE syntax
+	 * 
+	 * @param string $index
+	 */
+	public function describe($index)
+	{
+		return $this->query('DESCRIBE '.$this->quoteIdentifier($index));
+	}
+	
+	
+	/**
+	 * CREATE FUNCTION syntax
+	 * 
+	 * @param string $udf_name
+	 * @param string $returns INT|BIGINT|FLOAT
+	 * @param string $soname
+	 */
+	public function createFunction($udf_name, $returns, $soname)
+	{
+		return $this->query('CREATE FUNCTION '.$this->quoteIdentifier($udf_name).
+			' RETURNS '.$returns.' SONAME '.$this->quote($soname));
+	}
+	
+	
+	/**
+	 * DROP FUNCTION syntax
+	 * 
+	 * @param string $udf_name
+	 */
+	public function dropFunction($udf_name)
+	{
+		return $this->query('DROP FUNCTION '.$this->quoteIdentifier($udf_name));
+	}
+	
+	
+	/**
+	 * ATTACH INDEX * TO RTINDEX * syntax
+	 * 
+	 * @param string $disk_index
+	 * @param string $rt_index
+	 * @return array
+	 */
+	public function attachIndex($disk_index, $rt_index)
+	{
+		return $this->query('ATTACH INDEX '.$this->quoteIdentifier($disk_index).
+			' TO RTINDEX '. $this->quoteIdentifier());
+	}
+	
+	
+	/**
+	 * FLUSH RTINDEX syntax
+	 * 
+	 * @param string $index
+	 * @return array
+	 */
+	public function flushRtindex($index)
+	{
+		return $this->query('FLUSH RTINDEX '.$this->quoteIdentifier($index));
 	}
 	
 	

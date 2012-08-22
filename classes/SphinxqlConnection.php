@@ -1,6 +1,8 @@
 <?php
 namespace Foolz\Sphinxql;
 
+class SphinxqlConnectionException extends \Exception {};
+
 /**
  * SphinxQL connection class based on MySQLi.
  * Contains also escaping and quoting functions.
@@ -14,7 +16,6 @@ class SphinxqlConnection
 	 * @var object
 	 */
 	protected static $connections = array();
-	
 	
 	/**
 	 * The array key of the current selected connection
@@ -115,14 +116,17 @@ class SphinxqlConnection
 	public static function connect()
 	{
 		$data = static::getConnectionInfo();
+		
 		static::$connections[static::$current_connection] = new \MySQLi($data['host'], null, null, null, $data['port']);
 		
 		if (static::getConnection()->connect_error) 
 		{
-			return false;
+			throw new SphinxqlConnectionException();
 		}
 		
 		static::getConnection()->set_charset($data['charset']);
+		
+		return true;
 	}
 	
 	

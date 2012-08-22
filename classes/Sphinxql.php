@@ -26,7 +26,7 @@ class Sphinxql extends SphinxqlConnection
 	protected $last_compiled = null;
 
 	/**
-	 * The last choosen method (select, update, insert, delete)
+	 * The last choosen method (select, insert, replace, update, delete)
 	 *
 	 * @var string 
 	 */
@@ -166,7 +166,13 @@ class Sphinxql extends SphinxqlConnection
 		if (isset(static::$show_queries[$method]))
 		{
 			$new = static::forge();
-			return $new->query(static::$show_queries[$method]);
+			$ordered = array();
+			$result = $new->query(static::$show_queries[$method]);
+			foreach ($result as $item)
+			{
+				$ordered[$item['Variable_name']] = $item['Value'];
+			}
+			return $ordered;
 		}
 		
 		throw new \BadMethodCallException($method);
@@ -456,11 +462,11 @@ class Sphinxql extends SphinxqlConnection
 	{
 		$query = '';
 		
-		if (empty($this->match) || ! empty($this->where))
+		if (empty($this->match) && ! empty($this->where))
 		{
 			$query .= 'WHERE ';
 		}
-				
+		
 		if ( ! empty($this->where))
 		{
 			foreach ($this->where as $key => $where)
@@ -589,13 +595,15 @@ class Sphinxql extends SphinxqlConnection
 
 		if ($this->limit !== null)
 		{
-			$query .= 'LIMIT '.((int) $this->limit).' ';
+			if ($this->offset === null)
+			{
+				$this->offset = 0;
+			}
+			
+			$query .= 'LIMIT '.((int) $this->offset).', '.((int) $this->limit).' ';
 		}
 
-		if ($this->offset !== null)
-		{
-			$query .= 'OFFSET ' . ((int) $this->offset).' ';
-		}
+		
 
 		if (!empty($this->options))
 		{
@@ -1012,6 +1020,7 @@ class Sphinxql extends SphinxqlConnection
 		if ($limit === null)
 		{
 			$this->limit = (int) $offset;
+			return $this;
 		}
 
 		$this->offset($offset);

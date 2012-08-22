@@ -16,11 +16,10 @@ The examples will omit the namespace.
 
 	use Foolz\Sphinxql\Sphinxql as Sphinxql;
 
-#### Static uses one default connection
-
 	// if you don't use the Sphinxql default connection, use this function to change the host and port
 	Sphinxql::addConnection('superspecial', 'yourhost.com', 9231);
 	Sphinxql::setConnection('superspecial');
+	
 	$query = Sphinxql::select('column_one', 'column_two')
 		->from('index_delta', 'index_main', 'index_ancient')
 		->match('comment', 'my opinion is better')

@@ -150,7 +150,13 @@ class SphinxqlConnection
 		
 		if($resource instanceof \mysqli_result)
 		{
-			return $resource->fetch_all(MYSQLI_ASSOC);
+			$rows = array();
+			while ($row = $resource->fetch_assoc())
+			{
+				$rows[] = $row;
+			}
+			
+			return $rows;
 		}
 	}
 	

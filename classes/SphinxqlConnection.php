@@ -175,8 +175,8 @@ class SphinxqlConnection
 		{
 			throw new \SphinxqlDatabaseException($this->getConnection()->error, $this->getConnection()->errno);
 		}
-		
-		return "'".$this->getConnection()->real_escape_string($value)."'";
+
+		return "'".$value."'";
 	}
 	
 	

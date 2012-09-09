@@ -428,23 +428,27 @@ class Sphinxql extends SphinxqlConnection
 		
 		if ( ! empty($this->match))
 		{
-			$query .= "MATCH('";
+			$query .= "MATCH(";
+			
+			$pre = '';
 
 			foreach ($this->match as $match)
 			{
-				$query .= '@'.$match['column'].' ';
+				$pre .= '@'.$match['column'].' ';
 
 				if ($match['half'])
 				{
-					$query .= $this->halfEscapeString($match['value']);
+					$pre .= $this->halfEscapeString($match['value']);
 				}
 				else
 				{
-					$query .= $this->escapeString($match['value']);
+					$pre .= $this->escapeString($match['value']);
 				}
+				
+				$pre .= ' ';
 			}
 
-			$query .= "') ";
+			$query .= $this->escape($pre).") ";
 		}
 		
 		return $query;

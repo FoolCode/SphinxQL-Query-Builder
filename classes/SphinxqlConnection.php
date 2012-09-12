@@ -113,11 +113,20 @@ class SphinxqlConnection
 	 * @param type $persistent
 	 * @return boolean|\Foolz\Sphinxql\Sphinql
 	 */
-	public static function connect()
+	public static function connect($suppress_error = false)
 	{
 		$data = static::getConnectionInfo();
 		
-		static::$connections[static::$current_connection] = new \MySQLi($data['host'], null, null, null, $data['port']);
+		if ( ! $suppress_error)
+		{
+			static::$connections[static::$current_connection] = 
+				new \MySQLi($data['host'], null, null, null, $data['port']);
+		}
+		else
+		{
+			static::$connections[static::$current_connection] = 
+				@ new \MySQLi($data['host'], null, null, null, $data['port']);
+		}
 		
 		if (static::getConnection()->connect_error) 
 		{

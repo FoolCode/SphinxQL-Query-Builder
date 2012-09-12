@@ -1188,6 +1188,13 @@ class Sphinxql extends SphinxqlConnection
 		$from = array('\\', '(', ')', '!', '@', '~', '&', '/', '^', '$', '=');
 		$to = array('\\\\', '\(', '\)', '\!', '\@', '\~', '\&', '\/', '\^', '\$', '\=');
 		$string	 = str_replace($from, $to, $string);
+		
+		// close stay quotes
+		if(substr_count($string, '"') % 2 !== 0)
+		{
+			$string .= '"';
+		}
+		
 		$string	 = preg_replace("'\"([^\s]+)-([^\s]*)\"'", "\\1\-\\2", $string);
 		return preg_replace("'([^\s]+)-([^\s]*)'", "\"\\1\-\\2\"", $string);
 	}

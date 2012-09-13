@@ -154,7 +154,8 @@ class SphinxqlConnection
 		
 		if (static::getConnection()->error)
 		{
-			throw new SphinxqlDatabaseException('['.static::getConnection()->errno.'] '.static::getConnection()->error);
+			throw new SphinxqlDatabaseException('['.static::getConnection()->errno.'] '.
+				static::getConnection()->error.' [ '.$query.']');
 		}
 		
 		if($resource instanceof \mysqli_result)

@@ -1180,23 +1180,37 @@ class Sphinxql extends SphinxqlConnection
 	 * Allows some of the control characters to pass through for use with a search field: -, |, "
 	 * It also does some tricks to wrap/unwrap within " the string and prevents errors
 	 * 
+	 * |, -, "
+	 * 
 	 * @param string $string
 	 * @return string
 	 */
 	public function halfEscapeString($string)
 	{
-		$from = array('\\', '(', ')', '!', '@', '~', '&', '/', '^', '$', '=');
-		$to = array('\\\\', '\(', '\)', '\!', '\@', '\~', '\&', '\/', '\^', '\$', '\=');
-		$string	 = str_replace($from, $to, $string);
+		$from_to = array(
+			'\\' => '\\\\',
+			'(' => '\(',
+			')' => '\)',
+			'!' => '\!',
+			'@' => '\@',
+			'~' => '\~',
+			'&' => '\&',
+			'/' => '\/',
+			'^' => '\^',
+			'$' => '\$',
+			'=' => '\=',
+		);
 		
-		// close stay quotes
-		if(substr_count($string, '"') % 2 !== 0)
-		{
-			$string .= '"';
-		}
+		$string	 = str_replace(array_keys($from_to), array_values($from_to), $string);
 		
-		$string	 = preg_replace("'\"([^\s]+)-([^\s]*)\"'", "\\1\-\\2", $string);
-		return preg_replace("'([^\s]+)-([^\s]*)'", "\"\\1\-\\2\"", $string);
+		$from_to_preg = array(
+			"'\"([^\s]+)-([^\s]*)\"'" => "\\1\-\\2",
+			"'([^\s]+)-([^\s]*)'" => "\"\\1\-\\2\""
+		);
+		
+		$string = preg_replace(array_keys($from_to_preg), array_values($from_to_preg), $string);
+				
+		return $string;
 	}
 
 }

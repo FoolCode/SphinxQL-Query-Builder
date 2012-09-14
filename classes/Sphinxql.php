@@ -1204,7 +1204,7 @@ class Sphinxql extends SphinxqlConnection
 		$string	 = str_replace(array_keys($from_to), array_values($from_to), $string);
 		
 		// this manages to lower the error rate by a lot
-		if (substr_count('"') % 2 !== 0)
+		if (substr_count($string, '"') % 2 !== 0)
 		{
 			$string .= '"';
 		}

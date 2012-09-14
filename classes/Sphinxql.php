@@ -1203,6 +1203,12 @@ class Sphinxql extends SphinxqlConnection
 		
 		$string	 = str_replace(array_keys($from_to), array_values($from_to), $string);
 		
+		// this manages to lower the error rate by a lot
+		if (substr_count('"') % 2 !== 0)
+		{
+			$string .= '"';
+		}
+		
 		$from_to_preg = array(
 			"'\"([^\s]+)-([^\s]*)\"'" => "\\1\-\\2",
 			"'([^\s]+)-([^\s]*)'" => "\"\\1\-\\2\""

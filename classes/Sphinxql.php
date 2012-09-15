@@ -448,7 +448,7 @@ class Sphinxql extends SphinxqlConnection
 				$pre .= ' ';
 			}
 
-			$query .= $this->escape(trim($pre)).") ";
+			$query .= "'".trim($pre)."') ";
 		}
 		
 		return $query;

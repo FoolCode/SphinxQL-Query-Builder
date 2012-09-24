@@ -528,8 +528,8 @@ class Sphinxql extends SphinxqlConnection
 				}
 				else
 				{
-					// deletion only allows id
-					if ($this->type === 'delete')
+					// id can't be quoted!
+					if ($where['column'] === 'id')
 					{
 						$query .= 'id ';
 					}
@@ -1165,7 +1165,7 @@ class Sphinxql extends SphinxqlConnection
 	 */
 	public function value($column, $value)
 	{
-		if ($this->type === 'insert')
+		if ($this->type === 'insert' || $this->type === 'replace')
 		{
 			$this->columns[] = $column;
 			$this->values[0][] = $value;

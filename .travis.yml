@@ -13,7 +13,7 @@ before_install:
   - sudo apt-get install -qq sphinxsearch
 
 before_script:
-  - cd test
+  - cd tests
   - searchd -c sphinx.conf
   
 script: phpunit --configuration phpunit.xml --coverage-text

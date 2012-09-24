@@ -7,7 +7,7 @@ php:
 branches:
   only:
     - phpunit
-		
+
 notifications:
   email:
     - woxxy@foolrulez.org
@@ -15,7 +15,7 @@ notifications:
 
 before_install:
   - sudo apt-get install -qq sphinxsearch
-	
+
 before_script:
   - cd test
   - searchd -c sphinx.conf

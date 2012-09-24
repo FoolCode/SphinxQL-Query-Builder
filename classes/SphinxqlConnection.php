@@ -31,7 +31,7 @@ class SphinxqlConnection
 	 */
 	protected static $connection_info = array(
 		'default' => array(
-			'host' => 'localhost',
+			'host' => '127.0.0.1',
 			'port' => 9306,
 			'charset' => 'utf8'
 		)
@@ -61,8 +61,13 @@ class SphinxqlConnection
 	 * @param int $port
 	 * @param string $charset
 	 */
-	public static function addConnection($name = 'default', $host = 'localhost', $port = 9306, $charset = 'utf8')
+	public static function addConnection($name = 'default', $host = '127.0.0.1', $port = 9306, $charset = 'utf8')
 	{
+		if ($host === 'localhost')
+		{
+			$host = '127.0.0.1';
+		}
+		
 		static::$connection_info[$name] = array('host' => $host, 'port' => $port, 'charset' => $charset);
 	}
 	
@@ -125,14 +130,14 @@ class SphinxqlConnection
 		if ( ! $suppress_error)
 		{
 			static::$connections[static::$current_connection] = 
-				new \MySQLi($data['host'], null, null, null, $data['port']);
+				new \MySQLi($data['host'], null, null, null, $data['port'], null);
 		}
 		else
 		{
 			static::$connections[static::$current_connection] = 
-				@ new \MySQLi($data['host'], null, null, null, $data['port']);
+				@ new \MySQLi($data['host'], null, null, null, $data['port'], null);
 		}
-		
+				
 		if (static::getConnection()->connect_error) 
 		{
 			throw new SphinxqlConnectionException();

@@ -499,6 +499,8 @@ class Sphinxql extends SphinxqlConnection
 		
 		if ( ! empty($this->where))
 		{
+			$just_opened = false;
+			
 			foreach ($this->where as $key => $where)
 			{
 				if (in_array($where['ext_operator'], array('AND (', 'OR (', ')')))
@@ -507,18 +509,23 @@ class Sphinxql extends SphinxqlConnection
 					if ($key == 0 || ! empty($this->match))
 					{
 						$query .= '(';
+						
+						$just_opened = true;
 					}
 					else
 					{
 						$query .= $where['ext_operator'].' ';
 					}
+					
 					continue;
 				}
 
-				if ($key > 0 || ! empty($this->match))
+				if ($key > 0 && ! $just_opened || ! empty($this->match))
 				{
 					$query .= $where['ext_operator'].' '; // AND/OR
 				}
+				
+				$just_opened = false;
 
 				if (strtoupper($where['operator']) === 'BETWEEN')
 				{
@@ -631,11 +638,16 @@ class Sphinxql extends SphinxqlConnection
 			$query .= implode(', ', $order_arr).' ';
 		}
 
-		if ($this->limit !== null)
+		if ($this->limit !== null || $this->offset !== null)
 		{
 			if ($this->offset === null)
 			{
 				$this->offset = 0;
+			}
+			
+			if ($this->limit === null)
+			{
+				$this->limit = 9999999999999;
 			}
 			
 			$query .= 'LIMIT '.((int) $this->offset).', '.((int) $this->limit).' ';

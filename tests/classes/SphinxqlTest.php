@@ -20,7 +20,7 @@ class SphinxqlTest extends PHPUnit_Framework_TestCase
 		// empty that poor db. TRUNCATE is still in beta in Sphinxsearch 2.1.1-beta
 		Sphinxql::delete()
 			->from('rt')
-			->where('id', 'IN', array(10, 11, 12, 13, 14, 15))
+			->where('id', 'IN', array(1, 10, 11, 12, 13, 14, 15))
 			->execute();
 	}
 	
@@ -162,7 +162,7 @@ class SphinxqlTest extends PHPUnit_Framework_TestCase
 			),
 		), $result);
 		
-		Sphinxql::insert()
+		$res = Sphinxql::insert()
 			->into('rt')
 			->columns('id', 'title', 'content', 'gid')
 			->values(13, 'i am getting bored', 'with all this CONTENT', 300)
@@ -259,6 +259,149 @@ class SphinxqlTest extends PHPUnit_Framework_TestCase
 		$result = Sphinxql::select()
 			->from('rt')
 			->where('gid', '=', 305)
+			->execute();
+		
+		$this->assertCount(3, $result);
+	}
+	
+	
+	public function testWhere()
+	{
+		$result = Sphinxql::select()
+			->from('rt')
+			->where('gid', 'BETWEEN', array(300, 400))
+			->execute();
+		
+		$this->assertCount(3, $result);
+		
+		$result = Sphinxql::select()
+			->from('rt')
+			->where('id', 'IN', array(11, 12, 13))
+			->execute();
+		
+		$this->assertCount(3, $result);
+		
+		$result = Sphinxql::select()
+			->from('rt')
+			->where('gid', '>', 300)
+			->execute();
+		
+		$this->assertCount(4, $result);
+	}
+	
+	
+	public function testMatch()
+	{
+		$result = Sphinxql::select()
+			->from('rt')
+			->match('content', 'content')
+			->execute();
+		
+		$this->assertCount(2, $result);
+		
+		$result = Sphinxql::select()
+			->from('rt')
+			->match('title', 'value')
+			->execute();
+		
+		$this->assertCount(1, $result);
+		
+		$result = Sphinxql::select()
+			->from('rt')
+			->match('title', 'value')
+			->match('content', 'directly')
+			->execute();
+		
+		$this->assertCount(1, $result);
+	}
+	
+	
+	public function testOption()
+	{	
+		$result = Sphinxql::select()
+			->from('rt')
+			->match('content', 'content')
+			->option('max_matches', 1)
+			->execute();
+		
+		$this->assertCount(1, $result);
+	}
+	
+	
+	public function testGroupBy()
+	{
+		$result = Sphinxql::select(Sphinxql::expr('@count'))
+			->from('rt')
+			->groupBy('gid')
+			->execute();
+		
+		$this->assertCount(4, $result);
+		$this->assertSame('3', $result[3]['@count']);
+	}
+	
+	
+	public function testOrderBy()
+	{	
+		$result = Sphinxql::select()
+			->from('rt')
+			->orderBy('id', 'desc')
+			->execute();
+		
+		$this->assertSame('15', $result[0]['id']);
+		
+		$result = Sphinxql::select()
+			->from('rt')
+			->orderBy('id', 'asc')
+			->execute();
+		
+		$this->assertSame('10', $result[0]['id']);
+	}
+	
+	
+	public function testWithinGroupOrderBy()
+	{	
+		$result = Sphinxql::select()
+			->from('rt')
+			->groupBy('gid')
+			->orderBy('id', 'desc')
+			->execute();
+		
+		$this->assertSame('13', $result[0]['id']);
+		
+		$result = Sphinxql::select()
+			->from('rt')
+			->groupBy('gid')
+			->orderBy('id', 'asc')
+			->execute();
+				
+		$this->assertSame('10', $result[0]['id']);
+		
+	}
+	
+	
+	public function testOffset()
+	{
+		$result = Sphinxql::select()
+			->from('rt')
+			->offset(3)
+			->execute();
+		
+		$this->assertCount(3, $result);
+	}
+	
+	
+	public function testLimit()
+	{
+		$result = Sphinxql::select()
+			->from('rt')
+			->limit(3)
+			->execute();
+		
+		$this->assertCount(3, $result);
+		
+		$result = Sphinxql::select()
+			->from('rt')
+			->limit(2, 3)
 			->execute();
 		
 		$this->assertCount(3, $result);

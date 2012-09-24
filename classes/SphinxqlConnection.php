@@ -200,14 +200,8 @@ class SphinxqlConnection
 			return $rows;
 		}
 		
-		if (count($resource) == 2)
-		{
-			return array(static::getConnection()->insert_id, static::getConnection()->affected_rows);
-		}
-		else
-		{
-			return array(static::getConnection()->affected_rows);
-		}
+		// sphinxql doesn't return insert_id because we always have to point it out ourselves!
+		return array(static::getConnection()->affected_rows);
 	}
 	
 	/**

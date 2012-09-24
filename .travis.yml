@@ -14,6 +14,7 @@ before_install:
 
 before_script:
   - cd tests
+  - mkdir data
   - searchd -c sphinx.conf
   
 script: phpunit --configuration phpunit.xml --coverage-text

@@ -141,8 +141,8 @@ class Sphinxql extends SphinxqlConnection
 		'status' => 'SHOW STATUS',
 		'tables' => 'SHOW TABLES',
 		'variables' => 'SHOW VARIABLES',
-		'variables_session' => 'SHOW SESSION VARIABLES',
-		'variables_global' => 'SHOW GLOBAL VARIABLES',
+		'variablesSession' => 'SHOW SESSION VARIABLES',
+		'variablesGlobal' => 'SHOW GLOBAL VARIABLES',
 	);
 	
 	
@@ -168,10 +168,16 @@ class Sphinxql extends SphinxqlConnection
 			$new = static::forge();
 			$ordered = array();
 			$result = $new->query(static::$show_queries[$method]);
+			if ($method === 'tables')
+			{
+				return $result;
+			}
+			
 			foreach ($result as $item)
 			{
 				$ordered[$item['Variable_name']] = $item['Value'];
 			}
+			
 			return $ordered;
 		}
 		
@@ -238,20 +244,39 @@ class Sphinxql extends SphinxqlConnection
 	 */
 	public static function setVariable($name, $value, $global = false)
 	{
-		$query = 'SET '.$this->quoteIdentifier($name).' ';
+		$sq = Sphinxql::forge();
+		
+		$query = 'SET ';
 		
 		if ($global)
 		{
 			$query .= 'GLOBAL ';
 		}
 		
-		if (is_array($value))
+		$user_var = strpos($name, '@') === 0;
+		
+		// if it has an @ it's a user variable and we can't wrap it
+		if ($user_var)
 		{
-			$query .= '('.implode(', ', $this->quoteArr($value)).')';
+			$query .= $name.' ';
 		}
 		else
 		{
-			$query .= $this->quote($value);
+			$query .= $sq->quoteIdentifier($name).' ';
+		}
+		
+		// user variables must always be processed as arrays
+		if ($user_var && ! is_array($value))
+		{
+			$query .= '= ('.$sq->quote($value).')';
+		}
+		else if (is_array($value))
+		{
+			$query .= '= ('.implode(', ', $sq->quoteArr($value)).')';
+		}
+		else
+		{
+			$query .= '= '.$sq->quote($value);
 		}
 		
 		static::query($query);
@@ -329,7 +354,8 @@ class Sphinxql extends SphinxqlConnection
 	 */
 	public static function describe($index)
 	{
-		return static::query('DESCRIBE '.$this->quoteIdentifier($index));
+		$sq = Sphinxql::forge();
+		return static::query('DESCRIBE '.$sq->quoteIdentifier($index));
 	}
 	
 	
@@ -378,7 +404,7 @@ class Sphinxql extends SphinxqlConnection
 	 * @param string $index
 	 * @return array
 	 */
-	public static function flushRtindex($index)
+	public static function flushRtIndex($index)
 	{
 		return static::query('FLUSH RTINDEX '.$this->quoteIdentifier($index));
 	}
@@ -502,7 +528,15 @@ class Sphinxql extends SphinxqlConnection
 				}
 				else
 				{
-					$query .= $this->quoteIdentifier($where['column']).' ';
+					// deletion only allows id
+					if ($this->type === 'delete')
+					{
+						$query .= 'id ';
+					}
+					else
+					{
+						$query .= $this->quoteIdentifier($where['column']).' ';
+					}
 
 					if (strtoupper($where['operator']) === 'IN')
 					{
@@ -649,7 +683,7 @@ class Sphinxql extends SphinxqlConnection
 		
 		if ( ! empty ($this->columns))
 		{
-			$query .= implode(', ', $this->quoteIdentifierArr($this->columns)).' ';
+			$query .= '('.implode(', ', $this->quoteIdentifierArr($this->columns)).') ';
 		}
 		
 		if ( ! empty ($this->values))

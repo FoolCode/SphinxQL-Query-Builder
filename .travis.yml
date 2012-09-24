@@ -1,0 +1,21 @@
+language: php
+
+php:
+	- 5.3
+	- 5.4
+
+branches:
+	only:
+		- phpunit
+		
+notifications:
+	email:
+		- woxxy@foolrulez.org
+	irc: "irc.irchighway.net#fooldriver"
+
+before_install:
+	- sudo apt-get install -qq sphinxsearch
+	
+before_script:
+	- cd test
+	- searchd -c sphinx.conf

@@ -24,6 +24,15 @@ class SphinxqlConnection
 	 */
 	protected static $current_connection = 'default';
 	
+	
+	/**
+	 * Disable warnings coming from server downtimes with a @ on \MySQLi
+	 *
+	 * @var string 
+	 */
+	protected static $silence_connection_warning = false;
+	
+	
 	/**
 	 * Connection data array
 	 * 
@@ -50,8 +59,20 @@ class SphinxqlConnection
 		static::getConnection() or static::connect();
 		
 		return $new;
-	}	
+	}
 	
+	
+	/**
+	 * While horrible, we have a function to enable silencing \MySQLi connection errors
+	 * Use it only if you are running with high error reporting on a production server
+	 * 
+	 * @param bool $enable
+	 */
+	public static function silenceConnectionWarning($enable = true)
+	{
+		static::$silence_connection_warning = $enable;
+	}
+
 	
 	/**
 	 * Add a connection to the array
@@ -127,7 +148,7 @@ class SphinxqlConnection
 	{
 		$data = static::getConnectionInfo();
 		
-		if ( ! $suppress_error)
+		if ( ! $suppress_error && ! static::$silence_connection_warning)
 		{
 			static::$connections[static::$current_connection] = 
 				new \MySQLi($data['host'], null, null, null, $data['port'], null);
@@ -189,7 +210,10 @@ class SphinxqlConnection
 	 */
 	public function escape($value)
 	{
-		static::getConnection() or static::connect();
+		if ( ! $conn = static::getConnection() && $conn->connect_errno)
+		{
+			static::connect();
+		}
 		
 		if (($value = $this->getConnection()->real_escape_string((string) $value)) === false)
 		{
@@ -204,11 +228,11 @@ class SphinxqlConnection
 	 * Wraps the input in identifiers where necessary
 	 * 
 	 * @param \Foolz\Sphinxql\SphinxqlExpression|string $value
-	 * @return \Foolz\Sphinxql\SphinxqlExpression
+	 * @return \Foolz\Sphinxql\SphinxqlExpression|string
 	 */
 	public function quoteIdentifier($value)
 	{
-		if ($value instanceof SphinxqlExpression)
+		if ($value instanceof \Foolz\Sphinxql\SphinxqlExpression)
 		{
 			return $value->value();
 		}

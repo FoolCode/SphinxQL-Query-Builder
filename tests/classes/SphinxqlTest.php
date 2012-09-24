@@ -180,7 +180,7 @@ class SphinxqlTest extends PHPUnit_Framework_TestCase
 	
 	public function testReplace()
 	{
-		Sphinxql::replace()
+		$res = Sphinxql::replace()
 			->into('rt')
 			->set(array(
 				'id' => 10,
@@ -190,6 +190,8 @@ class SphinxqlTest extends PHPUnit_Framework_TestCase
 			))
 			->execute();
 		
+		$this->assertSame(1, $res[0]);
+		
 		$result = Sphinxql::select()
 			->from('rt')
 			->where('id', '=', 10)
@@ -197,12 +199,14 @@ class SphinxqlTest extends PHPUnit_Framework_TestCase
 		
 		$this->assertSame('9002', $result[0]['gid']);
 		
-		Sphinxql::replace()
+		$res = Sphinxql::replace()
 			->into('rt')
 			->columns('id', 'title', 'content', 'gid')
 			->values(10, 'modifying the same line again', 'because i am that lazy', 9003)
 			->values(11, 'i am getting really creative with these strings', 'i\'ll need them to test MATCH!', 300)
 			->execute();
+		
+		$this->assertSame(2, $res[0]);
 		
 		$result = Sphinxql::select()
 			->from('rt')
@@ -228,5 +232,36 @@ class SphinxqlTest extends PHPUnit_Framework_TestCase
 		$this->assertSame('200', $result[0]['gid']);
 	}
 	
+	
+	public function testUpdate()
+	{
+		$result = Sphinxql::update('rt')
+			->where('id', '=', 11)
+			->value('gid', 201)
+			->execute();
+		
+		$this->assertSame(1, $result[0]);
+		
+		$result = Sphinxql::update('rt')
+			->where('gid', '=', 300)
+			->value('gid', 305)
+			->execute();
+		
+		$this->assertSame(3, $result[0]);
+		
+		$result = Sphinxql::select()
+			->from('rt')
+			->where('id', '=', 11)
+			->execute();
+		
+		$this->assertSame('201', $result[0]['gid']);
+		
+		$result = Sphinxql::select()
+			->from('rt')
+			->where('gid', '=', 305)
+			->execute();
+		
+		$this->assertCount(3, $result);
+	}
 	
 }

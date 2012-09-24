@@ -720,6 +720,9 @@ class Sphinxql extends SphinxqlConnection
 		
 		if ( ! empty($this->set))
 		{
+			
+			$query .= 'SET ';
+			
 			$query_sub = array();
 			
 			foreach ($this->set as $column => $value)

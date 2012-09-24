@@ -189,7 +189,7 @@ class SphinxqlConnection
 				static::getConnection()->error.' [ '.$query.']');
 		}
 		
-		if($resource instanceof \mysqli_result)
+		if ($resource instanceof \mysqli_result)
 		{
 			$rows = array();
 			while ($row = $resource->fetch_assoc())
@@ -198,6 +198,15 @@ class SphinxqlConnection
 			}
 			
 			return $rows;
+		}
+		
+		if (count($resource) == 2)
+		{
+			return array(static::getConnection()->insert_id, static::getConnection()->affected_rows);
+		}
+		else
+		{
+			return array(static::getConnection()->affected_rows);
 		}
 	}
 	

@@ -68,6 +68,22 @@ class SphinxqlConnection
 	
 	
 	/**
+	 * Returns the connection info (host, port, charset) for the currently selected connection
+	 * 
+	 * @return array
+	 */
+	public static function getConnectionInfo($name = null)
+	{
+		if ($name !== null)
+		{
+			return static::$connection_info[$name];
+		}
+		
+		return static::$connection_info[static::$current_connection];
+	}
+	
+	
+	/**
 	 * Sets the connection to use
 	 * 
 	 * @param string $name
@@ -91,17 +107,6 @@ class SphinxqlConnection
 		}
 		
 		return false;
-	}
-	
-	
-	/**
-	 * Returns the connection info (host, port, charset) for the currently selected connection
-	 * 
-	 * @return array
-	 */
-	public static function getConnectionInfo()
-	{
-		return static::$connection_info[static::$current_connection];
 	}
 	
 	

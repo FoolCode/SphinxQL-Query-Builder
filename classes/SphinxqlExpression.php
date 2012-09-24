@@ -42,7 +42,7 @@ class SphinxqlExpression
 	 * 
 	 * @return string
 	 */
-	public function __to_string()
+	public function __toString()
 	{
 		return (string) $this->value();
 	}

@@ -10,7 +10,6 @@ services:
 notifications:
   email:
     - woxxy@foolrulez.org
-  irc: "irc.irchighway.net#fooldriver"
 
 before_install:
   - sudo apt-get install -qq sphinxsearch

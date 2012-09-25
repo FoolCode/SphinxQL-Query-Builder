@@ -84,9 +84,9 @@ class SphinxqlConnection
 	 */
 	public static function addConnection($name = 'default', $host = '127.0.0.1', $port = 9306, $charset = 'utf8')
 	{
-		if ($host === '127.0.0.1')
+		if ($host === 'localhost')
 		{
-			$host = 'localhost';
+			$host = '127.0.0.1';
 		}
 		
 		static::$connection_info[$name] = array('host' => $host, 'port' => $port, 'charset' => $charset);

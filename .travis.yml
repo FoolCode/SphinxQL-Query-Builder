@@ -3,16 +3,18 @@ language: php
 php:
   - 5.3
   - 5.4
+  
+services:
+  - mysql
 
 notifications:
   email:
     - woxxy@foolrulez.org
 
 before_install:
-  - sudo apt-get install -qq libmysqlclient18
-  - wget http://woxxy.foolz.us/sphinx-2.0.5-foolz.tar.gz
-  - tar xvzf sphinx-2.0.5-foolz.tar.gz
-  - cd sphinx-2.0.5-foolz
+  - sudo apt-get install -qq libmysqlclient18 libmysql++-dev
+  - svn checkout http://sphinxsearch.googlecode.com/svn/trunk/ sphinxsearch-read-only
+  - cd sphinxsearch-read-only
   - ./configure --prefix=/usr/local/sphinx
   - sudo make && sudo make install
   - cd ..

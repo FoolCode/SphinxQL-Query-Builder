@@ -151,12 +151,12 @@ class SphinxqlConnection
 		if ( ! $suppress_error && ! static::$silence_connection_warning)
 		{
 			static::$connections[static::$current_connection] = 
-				new \MySQLi($data['host'], '', '', '', $data['port']);
+				new \MySQLi($data['host'], '', '', '', $data['port'], '');
 		}
 		else
 		{
 			static::$connections[static::$current_connection] = 
-				@ new \MySQLi($data['host'], '', '', '', $data['port']);
+				@ new \MySQLi($data['host'], '', '', '', $data['port'], '');
 		}
 				
 		if (static::getConnection()->connect_error) 

@@ -12,17 +12,11 @@ notifications:
     - woxxy@foolrulez.org
 
 before_install:
-  - sudo apt-get install -qq libmysqlclient18 libexpat1-dev
-  - wget http://sphinxsearch.com/files/sphinx-2.0.5-release.tar.gz
-  - tar xvzf sphinx-2.0.5-release.tar.gz
-  - cd sphinx-2.0.5-release
-  - sudo ./configure --prefix=/usr/local/sphinx
-  - sudo make && sudo make install
-  - cd ..
+  - sudo apt-get install -qq sphinxsearch
 
 before_script:
   - cd tests
   - mkdir data
-  - /usr/local/sphinx/bin/searchd -c sphinx.conf
+  - searchd -c sphinx.conf
   
 script: phpunit --configuration phpunit.xml --coverage-text

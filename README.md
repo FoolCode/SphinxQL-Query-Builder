@@ -40,37 +40,37 @@ The static connection manager lets you handle multiple connections.
 
 There's the `default` connection, that connects to 127.0.0.1:9306 as per SphinxQL defaults.
 
-* `Sphinxql::silenceConnectionWarning($enable = true)`
+* __Sphinxql::silenceConnectionWarning($enable = true)__
 	
 	Use it when you have warning display enabled in PHP, but you don't want to see errors when MySQLi fails connecting to the server. Custom errors are in place. (This is actually the so-evil @ silencing. Use it if you know what are you doing.)
 
 	_Disabled by default._
 
-* `Sphinxql::addConnection($name = 'default', $host = '127.0.0.1', $port = 9306)`
+* __Sphinxql::addConnection($name = 'default', $host = '127.0.0.1', $port = 9306)__
 
 	Use it to add connection to the array of available connections.
 
-* `Sphinxql::setConnection($name)`
+* __Sphinxql::setConnection($name)__
 
 	Set the connection to be used for the next operations. Remember that the class always starts with `default` set.
 
-* `Sphinxql::getConnectionInfo($name = null)`
+* __Sphinxql::getConnectionInfo($name = null)__
 
 	Get info (host, port) on the connection. When name is not specified it gives info on the currently selected connection.
 
-* `Sphinxql::connect()`
+* __Sphinxql::connect()__
 
 	_Throws \Foolz\Sphinxql\SphinxqlConnectionException_
 
 	Enstablish the connection to the server.
 
-* `Sphinxql::getConnection()`
+* __Sphinxql::getConnection()__
 
 	_Throws \Foolz\Sphinxql\SphinxqlConnectionException_
 
 	Returns the \MySQLi object of the currently selected connection, an exception if not available.
 
-* `Sphinxql::query($query)`
+* __Sphinxql::query($query)__
 
 	Runs the query. Returns an array of results on `SELECT`, or an array with the number of affected rows (Sphinx doesn't support last-insert-id, so this values for `INSERT` too).
 
@@ -120,7 +120,7 @@ _While implemented in the package, `OR` and parenthesis are not yet implemented 
 
 #### Match
 
-* `$sq->match($column, $value, $half = false)`
+* __$sq->match($column, $value, $half = false)__
 
 	Search in full-text fields. Can be used multiple times in the same query.
 
@@ -145,37 +145,37 @@ _While implemented in the package, `OR` and parenthesis are not yet implemented 
 
 #### Grouping, ordering etc.
  
-* `$sq->groupBy($column)`
+* __$sq->groupBy($column)__
 
 	`GROUP BY $column`
 
-* `$sq->withinGroupOrderBy($column, $direction = null)`
+* __$sq->withinGroupOrderBy($column, $direction = null)__
 
 	`WITHIN GROUP ORDER BY $column [$direction]`
 
 	Direction can be omitted with `null`, or be `asc` or `desc` case insensitive.
 
-* `$sq->orderBy($column, $direction = null)`
+* __$sq->orderBy($column, $direction = null)__
 
 	`ORDER BY $column [$direction]`
 
 	Direction can be omitted with `null`, or be `asc` or `desc` case insensitive.
 
-* `$sq->offset($offset)`
+* __$sq->offset($offset)__
 
 	`LIMIT $offset, 9999999999999`
 
 	Set the offset. The `LIMIT` is set to a high number because SphinxQL doesn't support the `OFFSET` keyword.
 
-* `$sq->limit($limit)`
+* __$sq->limit($limit)__
 
 	`LIMIT $limit`
 
-* `$sq->limit($offset, $limit)`
+* __$sq->limit($offset, $limit)__
 
 	`LIMIT $offset, $limit`
 
-* `$sq->option($name, $value)`
+* __$sq->option($name, $value)__
 
 	`OPTION $name = $value`
 
@@ -183,10 +183,10 @@ _While implemented in the package, `OR` and parenthesis are not yet implemented 
 
 #### Escaping
 
-* `$sq->escape($value)__
+* __$sq->escape($value)__
 
 	Returns the escaped value, processed with `\MySQLi::real_escape_string`.
 
-* `$sq->quoteIdentifier($value)`
+* __$sq->quoteIdentifier($value)__
 
 	Adds oblique quotes to identifiers.

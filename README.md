@@ -84,38 +84,55 @@ Often you need to run SQL functions, but those would get escaped as other values
 	Disables escaping for the string.
 
 
-#### SELECT, INSERT, REPLACE, UPDATE, DELETE
+#### Executing and Compiling
 
-Each of these can be called statically or non-statically. It follows SQL logic.
+* __$sq->execute()__
 
-	$query = Sphinxql::select('column', 'anothercolumn')->from('anindex', 'anotherindex');
-	$query = Sphinxql::insert()->into('oneindex');
-	$query = Sphinxql::replace()->into('oneindex');
-	$query = Sphinxql::update('oneindex')
-	$query = Sphinxql::delete()->from('oneindex')
+	Compiles the query, executes it, and __returns__ the array of results.
 
+* __$sq->compile()__
+
+	Compiles the query.
+
+* __$sq->getCompiled()__
+
+	Returns the last compiled query.
+
+* __$sq->getCompiled()__
+
+	Returns the last result.
+
+#### Select
+
+* __$sq = Sphinxql::select($column1, $column2, $column3)->from($index1, $index2, $index3)
+
+	Starts a `SELECT`. `$columns1` can be an array. If no column is specified it defaults to `*`. `$index1` can be an array.
+
+The options for the select follow.
 
 #### Where
 
-Classic WHERE, works with Sphinx filters and fulltext. 
+* $sq->where($column, $operator, $value)
 
-    $sq->where('column', 'value');
-    // WHERE `column` = 'value'
+	Classic WHERE, works with Sphinx filters and fulltext. 
 
-    $sq->where('column', '=', 'value');
-    // WHERE `column` = 'value'
+		$sq->where('column', 'value');
+		// WHERE `column` = 'value'
 
-    $sq->where('column', '>=', 'value')
-    // WHERE `column` >= 'value'
+		$sq->where('column', '=', 'value');
+		// WHERE `column` = 'value'
 
-    $sq->where('column', 'IN', array('value1', 'value2', 'value3'));
-    // WHERE `column` IN ('value1', 'value2', 'value3')
+		$sq->where('column', '>=', 'value')
+		// WHERE `column` >= 'value'
 
-    $sq->where('column', 'BETWEEN', array('value1', 'value2'))
-    // WHERE `column` BETWEEN 'value1' AND 'value2'
-    // WHERE `example` BETWEEN 10 AND 100
+		$sq->where('column', 'IN', array('value1', 'value2', 'value3'));
+		// WHERE `column` IN ('value1', 'value2', 'value3')
 
-_While implemented in the package, `OR` and parenthesis are not yet implemented in SphinxQL_.
+		$sq->where('column', 'BETWEEN', array('value1', 'value2'))
+		// WHERE `column` BETWEEN 'value1' AND 'value2'
+		// WHERE `example` BETWEEN 10 AND 100
+
+	_While implemented in the package, `OR` and parenthesis are not yet implemented in SphinxQL_.
 
 
 #### Match
@@ -181,12 +198,127 @@ _While implemented in the package, `OR` and parenthesis are not yet implemented 
 
 	Set a SphinxQL option like `max_matches` or `reverse_scan` for this query only.
 
+#### Insert and Replace
+
+Will return an array with an `INT` as first member, the number of rows inserted/replaced.
+
+* __$sq = Sphinxql::insert()->into($index)__
+
+	Begins an `INSERT`.
+
+* __$sq = Sphinxql::replace()->into($index)__
+
+	Begins an `REPLACE`.
+
+* __$sq->set($associative_array)__
+
+	Inserts the associative array, where the keys are the columns and the respective values are the column values.
+
+* __$sq->value($column1, $value1)->value($column2, $value2)->value($column3, $value3)__
+
+	Sets columns one by one
+
+* __$sq->columns($column1, $column2, $column3)->values($value1, $value2, $value3)->values($value11, $value22, $value33)__
+
+	Allows inserting multiple arrays of values in the specified columns.
+
+	`$column1` and `$value1` can be arrays.
+
+
+#### Update
+
+Will return an array with an `INT` as first member, the number of rows updated.
+
+* __$sq = Sphinxql::update($index)__
+
+	Begins an `UPDATE`.
+
+* __$sq->value($column1, $value1)->value($column2, $value2)__
+
+	Updates the selected columns with the respective value.
+
+* __$sq->set($associative_array)__
+
+	Inserts the associative array, where the keys are the columns and the respective values are the column values.	
+
+The `WHERE` part of the query works just as for `SELECT`.
+
+
+#### Delete
+
+Will return an array with an `INT` as first member, the number of rows deleted.
+
+* __$sq = Sphinxql::delete()->from($column)__
+
+	Begins a `DELETE`.
+
+The `WHERE` part of the query works just as for `SELECT`.
+
+
+#### Transactions
+
+* __Sphinxql::transactionBegin()__
+
+	Begins a transaction.
+
+* __Sphinxql::transactionCommit()__
+
+	Commits a transaction.
+
+* __Sphinxql::transactionRollback()__
+
+	Rollbacks a transaction.
+
+
 #### Escaping
 
 * __$sq->escape($value)__
 
 	Returns the escaped value, processed with `\MySQLi::real_escape_string`.
 
-* __$sq->quoteIdentifier($value)__
+* __$sq->quoteIdentifier($identifier)__
 
-	Adds oblique quotes to identifiers.
+	Adds oblique quotes to identifiers. To run this on array elements use `$sq->quoteIdentifierArr($arr)`.
+
+* __$sq->quote($value)__
+
+	Adds quotes to values and escapes. To run this on array elements use `$sq->quoteArr($arr)`.
+
+* __$sq->escapeMatch($value)
+
+	Escapes the string for use in a `MATCH`.
+
+* __$sq->halfEscapeMatch($value)
+
+	Escapes the string for use in a `MATCH`. Allows `-`, `|`, `"`. Read about this on the `$sq->match()` explanation.
+
+
+#### Show
+
+	Sphinxql::meta() => 'SHOW META'
+	Sphinxql::warnings() => 'SHOW WARNINGS'
+	Sphinxql::status() => 'SHOW STATUS'
+	Sphinxql::tables() => 'SHOW TABLES'
+	Sphinxql::variables() => 'SHOW VARIABLES'
+	Sphinxql::variablesSession() => 'SHOW SESSION VARIABLES'
+	Sphinxql::variablesGlobal() => 'SHOW GLOBAL VARIABLES'
+
+
+#### Set variable
+
+__Sphinxql::setVariable($name, $value, $global = false)__
+
+	Set a server variable.
+
+
+#### More
+
+There's several more functions to complete the SphinxQL library:
+
+* `Sphinxql::callSnippets($data, $index, $extra = array())`
+* `Sphinxql::callKeywords($text, $index, $hits = null)`
+* `Sphinxql::describe($index)`
+* `Sphinxql::createFunction($udf_name, $returns, $soname)`
+* `Sphinxql::dropFunction($udf_name)`
+* `Sphinxql::attachIndex($disk_index, $rt_index)`
+* `Sphinxql::flushRtIndex($index)`

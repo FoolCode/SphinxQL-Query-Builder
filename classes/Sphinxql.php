@@ -463,11 +463,11 @@ class Sphinxql extends SphinxqlConnection
 
 				if ($match['half'])
 				{
-					$pre .= $this->halfEscapeString($match['value']);
+					$pre .= $this->halfEscapeMatch($match['value']);
 				}
 				else
 				{
-					$pre .= $this->escapeString($match['value']);
+					$pre .= $this->escapeMatch($match['value']);
 				}
 				
 				$pre .= ' ';
@@ -1215,7 +1215,7 @@ class Sphinxql extends SphinxqlConnection
 	 * @param string $string
 	 * @return string
 	 */
-	public function escapeString($string)
+	public function escapeMatch($string)
 	{
 		$from = array('\\', '(', ')', '|', '-', '!', '@', '~', '"', '&', '/', '^', '$', '=');
 		$to = array('\\\\', '\(', '\)', '\|', '\-', '\!', '\@', '\~', '\"', '\&', '\/', '\^', '\$', '\=');
@@ -1233,7 +1233,7 @@ class Sphinxql extends SphinxqlConnection
 	 * @param string $string
 	 * @return string
 	 */
-	public function halfEscapeString($string)
+	public function halfEscapeMatch($string)
 	{
 		$from_to = array(
 			'\\' => '\\\\',

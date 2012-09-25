@@ -224,9 +224,14 @@ class SphinxqlTest extends PHPUnit_Framework_TestCase
 		
 		$this->assertSame('201', $result[0]['gid']);
 		
+		$result = Sphinxql::update('rt')
+			->where('gid', '=', 305)
+			->set(array('gid' => 304))
+			->execute();
+		
 		$result = Sphinxql::select()
 			->from('rt')
-			->where('gid', '=', 305)
+			->where('gid', '=', 304)
 			->execute();
 		
 		$this->assertCount(3, $result);

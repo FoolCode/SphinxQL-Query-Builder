@@ -19,13 +19,13 @@ class SphinxqlConnectionTest extends PHPUnit_Framework_TestCase
 	{
 		// get info on a default connection
 		$conn_info = SphinxqlConnection::getConnectionInfo();
-		$this->assertSame(array('host' => '127.0.0.1', 'port' => 9326, 'charset' => 'utf8'), $conn_info);
+		$this->assertSame(array('host' => '127.0.0.1', 'port' => 9306, 'charset' => 'utf8'), $conn_info);
 		
 		// create a new connection and get info
-		SphinxqlConnection::addConnection('nondefault', 'localhost', 9326, 'utf8');
+		SphinxqlConnection::addConnection('nondefault', 'localhost', 9306, 'utf8');
 		$conn_info = SphinxqlConnection::getConnectionInfo('nondefault');
 		// localhost gets converted to ip
-		$this->assertSame(array('host' => '127.0.0.1', 'port' => 9326, 'charset' => 'utf8'), $conn_info);
+		$this->assertSame(array('host' => '127.0.0.1', 'port' => 9306, 'charset' => 'utf8'), $conn_info);
 		
 		// brokendefault should throw an error later, there's no such a port
 		SphinxqlConnection::addConnection('brokendefault', 'localhost', 93067, 'utf8');

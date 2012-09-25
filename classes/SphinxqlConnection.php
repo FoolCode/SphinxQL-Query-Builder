@@ -41,7 +41,7 @@ class SphinxqlConnection
 	protected static $connection_info = array(
 		'default' => array(
 			'host' => '127.0.0.1',
-			'port' => 9326,
+			'port' => 9306,
 			'charset' => 'utf8'
 		)
 	);

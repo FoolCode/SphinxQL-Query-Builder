@@ -151,7 +151,7 @@ class SphinxqlConnection
 		if ( ! $suppress_error && ! static::$silence_connection_warning)
 		{
 			static::$connections[static::$current_connection] = 
-				new \MySQLi($data['host'], 'foolz', 'foolz', 'foolz', $data['port'], '');
+				new \MySQLi($data['host'], '', '', '', $data['port'], '');
 		}
 		else
 		{
@@ -213,7 +213,7 @@ class SphinxqlConnection
 	 */
 	public function escape($value)
 	{
-		if ( ! $conn = static::getConnection() && $conn->connect_errno)
+		if (( ! $conn = static::getConnection()) && $conn->connect_errno)
 		{
 			static::connect();
 		}

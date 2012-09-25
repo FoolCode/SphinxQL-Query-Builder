@@ -10,9 +10,9 @@ notifications:
 
 before_install:
   - sudo apt-get install -qq libmysqlclient18
-  - wget http://woxxy.foolz.us/sphinx_foolz.tar.gz
-  - tar xvzf sphinx_foolz.tar.gz
-  - cd sphinx_foolz
+  - wget http://woxxy.foolz.us/sphinx-2.0.5-foolz.tar.gz
+  - tar xvzf sphinx-2.0.5-foolz.tar.gz
+  - cd sphinx-2.0.5-foolz
   - ./configure --prefix=/usr/local/sphinx
   - sudo make && sudo make install
   - cd ..

@@ -3,16 +3,12 @@ language: php
 php:
   - 5.3
   - 5.4
-  
-services:
-  - mysql
 
 notifications:
   email:
     - woxxy@foolrulez.org
 
 before_install:
-  - sudo apt-get install -qq libmysqlclient18 libmysql++-dev
   - svn checkout http://sphinxsearch.googlecode.com/svn/trunk/ sphinxsearch-read-only
   - cd sphinxsearch-read-only
   - ./configure --prefix=/usr/local/sphinx
@@ -23,5 +19,5 @@ before_script:
   - cd tests
   - mkdir data
   - /usr/local/sphinx/bin/searchd -c sphinx.conf
-  
+
 script: phpunit --configuration phpunit.xml --coverage-text

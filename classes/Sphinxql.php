@@ -1188,6 +1188,7 @@ class Sphinxql extends SphinxqlConnection
 		{
 			$this->set[$column] = $value;
 		}
+		
 		return $this;
 	}
 

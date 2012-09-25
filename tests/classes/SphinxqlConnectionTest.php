@@ -8,11 +8,17 @@ class SphinxqlConnectionTest extends PHPUnit_Framework_TestCase
 {
 	
 	
-	public static function setUpBeforeClass()
+	public function setUp()
     {
 		// always disable the silencing
         SphinxqlConnection::silenceConnectionWarning(false);
     }
+	
+	
+	public function test()
+	{
+		new SphinxqlConnection();
+	}
 	
 	
 	public function testGetConnectionInfo()
@@ -31,6 +37,16 @@ class SphinxqlConnectionTest extends PHPUnit_Framework_TestCase
 		SphinxqlConnection::addConnection('brokendefault', 'localhost', 93067, 'utf8');
 		$conn_info = SphinxqlConnection::getConnectionInfo('brokendefault');
 		$this->assertSame(array('host' => '127.0.0.1', 'port' => 93067, 'charset' => 'utf8'), $conn_info);
+	}
+	
+	
+	/**
+	 * @expectedException Foolz\Sphinxql\SphinxqlConnectionException
+	 */
+	public function testGetConnectionThrowsException()
+	{
+		SphinxqlConnection::setConnection('nondefault');
+		$conn_data = Sphinxql::getConnection();
 	}
 
 	

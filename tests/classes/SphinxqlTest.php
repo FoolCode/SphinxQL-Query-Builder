@@ -85,6 +85,16 @@ class SphinxqlTest extends PHPUnit_Framework_TestCase
 		);
 	}
 	
+	
+	/**
+	 * @covers \Foolz\Sphinxql\Sphinxql::compileInsert
+	 * @covers \Foolz\Sphinxql\Sphinxql::doInsert
+	 * @covers \Foolz\Sphinxql\Sphinxql::set
+	 * @covers \Foolz\Sphinxql\Sphinxql::value
+	 * @covers \Foolz\Sphinxql\Sphinxql::columns
+	 * @covers \Foolz\Sphinxql\Sphinxql::values
+	 * @covers \Foolz\Sphinxql\Sphinxql::into
+	 */
 	public function testInsert()
 	{
 		$result = Sphinxql::insert()
@@ -146,6 +156,16 @@ class SphinxqlTest extends PHPUnit_Framework_TestCase
 	}
 	
 	
+	/**
+	 * @covers \Foolz\Sphinxql\Sphinxql::compile
+	 * @covers \Foolz\Sphinxql\Sphinxql::compileInsert
+	 * @covers \Foolz\Sphinxql\Sphinxql::doReplace
+	 * @covers \Foolz\Sphinxql\Sphinxql::set
+	 * @covers \Foolz\Sphinxql\Sphinxql::value
+	 * @covers \Foolz\Sphinxql\Sphinxql::columns
+	 * @covers \Foolz\Sphinxql\Sphinxql::values
+	 * @covers \Foolz\Sphinxql\Sphinxql::into
+	 */
 	public function testReplace()
 	{
 		$res = Sphinxql::replace()
@@ -201,6 +221,10 @@ class SphinxqlTest extends PHPUnit_Framework_TestCase
 	}
 	
 	
+	/**
+	 * @covers \Foolz\Sphinxql\Sphinxql::compileUpdate
+	 * @covers \Foolz\Sphinxql\Sphinxql::doUpdate
+	 */
 	public function testUpdate()
 	{
 		$result = Sphinxql::update('rt')
@@ -238,6 +262,10 @@ class SphinxqlTest extends PHPUnit_Framework_TestCase
 	}
 	
 	
+	/**
+	 * @covers \Foolz\Sphinxql\Sphinxql::compileWhere
+	 * @covers \Foolz\Sphinxql\Sphinxql::from
+	 */
 	public function testWhere()
 	{
 		$result = Sphinxql::select()
@@ -260,9 +288,25 @@ class SphinxqlTest extends PHPUnit_Framework_TestCase
 			->execute();
 		
 		$this->assertCount(4, $result);
+		
+		$result = Sphinxql::select()
+			->from('rt')
+			->where('gid', 304)
+			->execute();
+		
+		$result = Sphinxql::select()
+			->from('rt')
+			->where('gid', '>', 300)
+			->execute();
+		
+		$this->assertCount(4, $result);
 	}
 	
 	
+	/**
+	 * @covers \Foolz\Sphinxql\Sphinxql::compileMatch
+	 * @covers \Foolz\Sphinxql\Sphinxql::halfEscapeMatch
+	 */
 	public function testMatch()
 	{
 		$result = Sphinxql::select()
@@ -286,6 +330,13 @@ class SphinxqlTest extends PHPUnit_Framework_TestCase
 			->execute();
 		
 		$this->assertCount(1, $result);
+		
+		$result = Sphinxql::select()
+			->from('rt')
+			->match('content', 'directly | lazy', true)
+			->execute();
+		
+		$this->assertCount(2, $result);
 	}
 	
 	
@@ -336,7 +387,7 @@ class SphinxqlTest extends PHPUnit_Framework_TestCase
 		$result = Sphinxql::select()
 			->from('rt')
 			->groupBy('gid')
-			->orderBy('id', 'desc')
+			->withinGroupOrderBy('id', 'desc')
 			->execute();
 		
 		$this->assertSame('13', $result[0]['id']);
@@ -344,7 +395,7 @@ class SphinxqlTest extends PHPUnit_Framework_TestCase
 		$result = Sphinxql::select()
 			->from('rt')
 			->groupBy('gid')
-			->orderBy('id', 'asc')
+			->withinGroupOrderBy('id', 'asc')
 			->execute();
 				
 		$this->assertSame('10', $result[0]['id']);
@@ -380,4 +431,22 @@ class SphinxqlTest extends PHPUnit_Framework_TestCase
 		$this->assertCount(3, $result);
 	}
 	
+	
+	/**
+	 * @covers \Foolz\Sphinxql\Sphinxql::compileDelete
+	 */
+	public function testDelete()
+	{
+		Sphinxql::delete()
+			->from('rt')
+			->where('id', 'IN', array(10, 11, 12))
+			->execute();
+		
+		$result = Sphinxql::select()
+			->from('rt')
+			->execute();
+		
+		$this->assertCount(3, $result);
+	}
+		
 }

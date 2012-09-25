@@ -18,6 +18,7 @@ before_install:
   - cd sphinx-2.0.5-release
   - sudo ./configure --prefix=/usr/local/sphinx
   - sudo make && sudo make install
+  - cd ..
 
 before_script:
   - cd tests

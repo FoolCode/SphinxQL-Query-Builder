@@ -150,8 +150,8 @@ class SphinxqlConnection
 		
 		if ( ! $suppress_error && ! static::$silence_connection_warning)
 		{
-			static::$connections[static::$current_connection] = 
-				new \MySQLi($data['host'], '', '', '', $data['port'], '');
+			static::$connections[static::$current_connection] = mysqli_init();
+				static::$connections[static::$current_connection]->real_connect($data['host'], '', '', '', $data['port'], '');
 		}
 		else
 		{
@@ -164,7 +164,7 @@ class SphinxqlConnection
 			throw new SphinxqlConnectionException();
 		}
 		
-		static::getConnection()->set_charset($data['charset']);
+		//static::getConnection()->set_charset($data['charset']);
 		
 		return true;
 	}

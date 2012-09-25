@@ -13,6 +13,7 @@ notifications:
   irc: "irc.irchighway.net#fooldriver"
 
 before_install:
+  - sudo apt-get install -qq libmysqlclient18
   - sudo apt-get install -qq sphinxsearch
 
 before_script:

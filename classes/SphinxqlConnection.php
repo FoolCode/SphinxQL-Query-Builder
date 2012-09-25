@@ -94,6 +94,17 @@ class SphinxqlConnection
 	
 	
 	/**
+	 * Sets the connection to use
+	 * 
+	 * @param string $name
+	 */
+	public static function setConnection($name)
+	{
+		static::$current_connection = $name;
+	}
+	
+	
+	/**
 	 * Returns the connection info (host, port, charset) for the currently selected connection
 	 * 
 	 * @return array
@@ -106,33 +117,6 @@ class SphinxqlConnection
 		}
 		
 		return static::$connection_info[static::$current_connection];
-	}
-	
-	
-	/**
-	 * Sets the connection to use
-	 * 
-	 * @param string $name
-	 */
-	public static function setConnection($name)
-	{
-		static::$current_connection = $name;
-	}
-	
-	
-	/**
-	 * Returns the \MySQLi connection
-	 * 
-	 * @return bool|\MySQLi false in case the array key is not found
-	 */
-	public static function getConnection()
-	{
-		if (isset(static::$connections[static::$current_connection]))
-		{
-			return static::$connections[static::$current_connection];
-		}
-		
-		return false;
 	}
 	
 	
@@ -164,9 +148,26 @@ class SphinxqlConnection
 			throw new SphinxqlConnectionException();
 		}
 		
+		// SphinxQL just uses its own
 		//static::getConnection()->set_charset($data['charset']);
 		
 		return true;
+	}
+	
+	
+	/**
+	 * Returns the \MySQLi connection
+	 * 
+	 * @return bool|\MySQLi false in case the array key is not found
+	 */
+	public static function getConnection()
+	{
+		if (isset(static::$connections[static::$current_connection]))
+		{
+			return static::$connections[static::$current_connection];
+		}
+		
+		throw new SphinxqlConnectionException();
 	}
 	
 	

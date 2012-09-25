@@ -104,7 +104,7 @@ Often you need to run SQL functions, but those would get escaped as other values
 
 #### Select
 
-* __$sq = Sphinxql::select($column1, $column2, $column3)->from($index1, $index2, $index3)
+* __$sq = Sphinxql::select($column1, $column2, $column3)->from($index1, $index2, $index3)__
 
 	Starts a `SELECT`. `$columns1` can be an array. If no column is specified it defaults to `*`. `$index1` can be an array.
 
@@ -284,11 +284,11 @@ The `WHERE` part of the query works just as for `SELECT`.
 
 	Adds quotes to values and escapes. To run this on array elements use `$sq->quoteArr($arr)`.
 
-* __$sq->escapeMatch($value)
+* __$sq->escapeMatch($value)__
 
 	Escapes the string for use in a `MATCH`.
 
-* __$sq->halfEscapeMatch($value)
+* __$sq->halfEscapeMatch($value)__
 
 	Escapes the string for use in a `MATCH`. Allows `-`, `|`, `"`. Read about this on the `$sq->match()` explanation.
 
@@ -306,7 +306,7 @@ The `WHERE` part of the query works just as for `SELECT`.
 
 #### Set variable
 
-__Sphinxql::setVariable($name, $value, $global = false)__
+* __Sphinxql::setVariable($name, $value, $global = false)__
 
 	Set a server variable.
 

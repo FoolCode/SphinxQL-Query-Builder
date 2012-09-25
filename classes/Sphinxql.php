@@ -280,7 +280,6 @@ class Sphinxql extends SphinxqlConnection
 		}
 		
 		static::query($query);
-		return $this;
 	}
 	
 	

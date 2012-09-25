@@ -9,7 +9,13 @@ notifications:
     - woxxy@foolrulez.org
 
 before_install:
-  - sudo apt-get install -qq sphinxsearch
+  - sudo apt-get install -qq libmysqlclient18
+  - wget http://woxxy.foolz.us/sphinx_foolz.tar.gz
+  - tar xvzf sphinx_foolz.tar.gz
+  - cd sphinx_foolz
+  - ./configure --prefix=/usr/local/sphinx
+  - sudo make && sudo make install
+  - cd ..
 
 before_script:
   - cd tests

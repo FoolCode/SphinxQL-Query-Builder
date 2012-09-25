@@ -102,7 +102,7 @@ class SphinxqlConnectionTest extends PHPUnit_Framework_TestCase
 	
 	
 	/**
-	 * @expectedException Foolz\Sphinxql\SphinxqlConnectionException
+	 * @expectedException PHPUnit_Framework_Error_Warning
 	 */
 	public function testEscapeThrowsException()
 	{

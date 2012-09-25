@@ -164,7 +164,7 @@ class SphinxqlConnection
 			throw new SphinxqlConnectionException();
 		}
 		
-		static::getConnection()->set_charset($data['charset']);
+		//static::getConnection()->set_charset($data['charset']);
 		
 		return true;
 	}

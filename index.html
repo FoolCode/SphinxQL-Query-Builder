@@ -1,0 +1,413 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>SphinxQL Query Builder for PHP by FoolRulez</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1 class="header">SphinxQL Query Builder for PHP</h1>
+        <p class="header">A SphinxQL query builder for any PHP 5.3+ project, composer compatible.</p>
+
+        <ul>
+          <li class="download"><a class="buttons" href="https://github.com/FoolRulez/fuel-sphinxql/zipball/master">Download ZIP</a></li>
+          <li class="download"><a class="buttons" href="https://github.com/FoolRulez/fuel-sphinxql/tarball/master">Download TAR</a></li>
+          <li><a class="buttons github" href="https://github.com/FoolRulez/fuel-sphinxql">View On GitHub</a></li>
+        </ul>
+
+        <p class="header">This project is maintained by <a class="header name" href="https://github.com/FoolRulez">FoolRulez</a></p>
+
+
+      </header>
+      <section>
+        <h1>Query Builder for SphinxQL</h1>
+
+<h3>About</h3>
+
+<p>This is a PHP Query Builder created ad-hoc to work with SphinxQL, an SQL dialect to use with the Sphinx search engine. 
+It maps every function listed in the <a href="http://sphinxsearch.com/docs/current.html#sphinxql-reference">SphinxQL reference</a> and is generally <a href="http://sphinxsearch.com/blog/2010/04/25/sphinxapi-vs-sphinxql-benchmark/">faster</a> than the Sphinx API, beside having more functions.</p>
+
+<p>This Query Builder has no dependencies except PHP 5.3, <code>\MySQLi</code> and of course a working Sphinx server. FuelPHP is not necessary but we've added a bootstrap for using it as a Package. It is styled after FuelPHP's Query Builder.</p>
+
+<p><strong>This package is BETA QUALITY.</strong> Don't rely on it in production unless you tested it massively in development.</p>
+
+<h3>Code Quality</h3>
+
+<p>Most of the methods in the package are unit tested. Methods that haven't been tested are single queries like <code>flushRtIndex</code>, but as they are independent they are supposed to work.</p>
+
+<p>We test on Travis-CI with the SVN build of Sphinx: <a href="http://travis-ci.org/FoolRulez/fuel-sphinxql"><img src="https://secure.travis-ci.org/FoolRulez/fuel-sphinxql.png" alt="Build Status"></a></p>
+
+<h2>Usage</h2>
+
+<p>The examples will omit the namespace.</p>
+
+<pre><code>use Foolz\Sphinxql\Sphinxql as Sphinxql;
+
+// if you don't use the Sphinxql default connection, use this function to change the host and port
+Sphinxql::addConnection('superspecial', 'yourhost.com', 9231);
+Sphinxql::setConnection('superspecial');
+
+$query = Sphinxql::select('column_one', 'column_two')
+    -&gt;from('index_delta', 'index_main', 'index_ancient')
+    -&gt;match('comment', 'my opinion is better')
+    -&gt;where('banned', '=', 1);
+
+$result = $query-&gt;execute();
+</code></pre>
+
+<h4>General</h4>
+
+<p>The static connection manager lets you handle multiple connections.</p>
+
+<p>There's the <code>default</code> connection, that connects to 127.0.0.1:9306 as per SphinxQL defaults.</p>
+
+<ul>
+<li>
+<p><strong>Sphinxql::silenceConnectionWarning($enable = true)</strong></p>
+
+<p>Use it when you have warning display enabled in PHP, but you don't want to see errors when MySQLi fails connecting to the server. Custom errors are in place. (This is actually the so-evil @ silencing. Use it if you know what are you doing.)</p>
+
+<p><em>Disabled by default.</em></p>
+</li>
+<li>
+<p><strong>Sphinxql::addConnection($name = 'default', $host = '127.0.0.1', $port = 9306)</strong></p>
+
+<p>Use it to add connection to the array of available connections.</p>
+</li>
+<li>
+<p><strong>Sphinxql::setConnection($name)</strong></p>
+
+<p>Set the connection to be used for the next operations. Remember that the class always starts with <code>default</code> set.</p>
+</li>
+<li>
+<p><strong>Sphinxql::getConnectionInfo($name = null)</strong></p>
+
+<p>Get info (host, port) on the connection. When name is not specified it gives info on the currently selected connection.</p>
+</li>
+<li>
+<p><strong>Sphinxql::connect()</strong></p>
+
+<p><em>Throws \Foolz\Sphinxql\SphinxqlConnectionException</em></p>
+
+<p>Enstablish the connection to the server.</p>
+</li>
+<li>
+<p><strong>Sphinxql::getConnection()</strong></p>
+
+<p><em>Throws \Foolz\Sphinxql\SphinxqlConnectionException</em></p>
+
+<p>Returns the \MySQLi object of the currently selected connection, an exception if not available.</p>
+</li>
+<li>
+<p><strong>Sphinxql::query($query)</strong></p>
+
+<p>Runs the query. Returns an array of results on <code>SELECT</code>, or an array with the number of affected rows (Sphinx doesn't support last-insert-id, so this values for <code>INSERT</code> too).</p>
+</li>
+</ul><h4>Getting around escaping</h4>
+
+<p>Often you need to run SQL functions, but those would get escaped as other values or identifiers. You can ignore the escaping by wrapping the query in a SphinxqlExpression.</p>
+
+<ul>
+<li>
+<p><strong>Sphinxql::expr($string)</strong></p>
+
+<p>Disables escaping for the string.</p>
+</li>
+</ul><h4>Executing and Compiling</h4>
+
+<ul>
+<li>
+<p><strong>$sq-&gt;execute()</strong></p>
+
+<p>Compiles the query, executes it, and <strong>returns</strong> the array of results.</p>
+</li>
+<li>
+<p><strong>$sq-&gt;compile()</strong></p>
+
+<p>Compiles the query.</p>
+</li>
+<li>
+<p><strong>$sq-&gt;getCompiled()</strong></p>
+
+<p>Returns the last compiled query.</p>
+</li>
+<li>
+<p><strong>$sq-&gt;getCompiled()</strong></p>
+
+<p>Returns the last result.</p>
+</li>
+</ul><h4>Select</h4>
+
+<ul>
+<li>
+<p><strong>$sq = Sphinxql::select($column1, $column2, $column3)-&gt;from($index1, $index2, $index3)</strong></p>
+
+<p>Starts a <code>SELECT</code>. <code>$columns1</code> can be an array. If no column is specified it defaults to <code>*</code>. <code>$index1</code> can be an array.</p>
+</li>
+</ul><p>The options for the select follow.</p>
+
+<h4>Where</h4>
+
+<ul>
+<li>
+<p>$sq-&gt;where($column, $operator, $value)</p>
+
+<p>Classic WHERE, works with Sphinx filters and fulltext. </p>
+
+<pre><code>$sq-&gt;where('column', 'value');
+// WHERE `column` = 'value'
+
+$sq-&gt;where('column', '=', 'value');
+// WHERE `column` = 'value'
+
+$sq-&gt;where('column', '&gt;=', 'value')
+// WHERE `column` &gt;= 'value'
+
+$sq-&gt;where('column', 'IN', array('value1', 'value2', 'value3'));
+// WHERE `column` IN ('value1', 'value2', 'value3')
+
+$sq-&gt;where('column', 'BETWEEN', array('value1', 'value2'))
+// WHERE `column` BETWEEN 'value1' AND 'value2'
+// WHERE `example` BETWEEN 10 AND 100
+</code></pre>
+
+<p><em>While implemented in the package, <code>OR</code> and parenthesis are not yet implemented in SphinxQL</em>.</p>
+</li>
+</ul><h4>Match</h4>
+
+<ul>
+<li>
+<p><strong>$sq-&gt;match($column, $value, $half = false)</strong></p>
+
+<p>Search in full-text fields. Can be used multiple times in the same query.</p>
+
+<pre><code>$sq-&gt;match('title', 'Otoshimono')
+    -&gt;match('character', 'Nymph');
+</code></pre>
+
+<p>The characters are fully escaped. You will need to use Sphinxql::expr($value) to use your own options. </p>
+
+<p>The <code>$half</code>, if turned to <code>true</code>, will allow the following characters: <code>-</code>, <code>|</code>, <code>"</code>. You <strong>will have to</strong> wrap the query in a <code>try</code> if you use this feature and expose it to public interfaces, because character order might throw a query error.</p>
+
+<pre><code>try
+{
+    $result Sphinxql::select()
+        -&gt;from('rt')
+        -&gt;match('title', 'Sora no || Otoshimono')
+        -&gt;execute();
+}
+catch (\Foolz\Sphinxql\SphinxqlDatabaseException $e)
+{
+    // it will get here because two `|` one after the other aren't allowed
+}
+</code></pre>
+</li>
+</ul><h4>Grouping, ordering etc.</h4>
+
+<ul>
+<li>
+<p><strong>$sq-&gt;groupBy($column)</strong></p>
+
+<p><code>GROUP BY $column</code></p>
+</li>
+<li>
+<p><strong>$sq-&gt;withinGroupOrderBy($column, $direction = null)</strong></p>
+
+<p><code>WITHIN GROUP ORDER BY $column [$direction]</code></p>
+
+<p>Direction can be omitted with <code>null</code>, or be <code>asc</code> or <code>desc</code> case insensitive.</p>
+</li>
+<li>
+<p><strong>$sq-&gt;orderBy($column, $direction = null)</strong></p>
+
+<p><code>ORDER BY $column [$direction]</code></p>
+
+<p>Direction can be omitted with <code>null</code>, or be <code>asc</code> or <code>desc</code> case insensitive.</p>
+</li>
+<li>
+<p><strong>$sq-&gt;offset($offset)</strong></p>
+
+<p><code>LIMIT $offset, 9999999999999</code></p>
+
+<p>Set the offset. The <code>LIMIT</code> is set to a high number because SphinxQL doesn't support the <code>OFFSET</code> keyword.</p>
+</li>
+<li>
+<p><strong>$sq-&gt;limit($limit)</strong></p>
+
+<p><code>LIMIT $limit</code></p>
+</li>
+<li>
+<p><strong>$sq-&gt;limit($offset, $limit)</strong></p>
+
+<p><code>LIMIT $offset, $limit</code></p>
+</li>
+<li>
+<p><strong>$sq-&gt;option($name, $value)</strong></p>
+
+<p><code>OPTION $name = $value</code></p>
+
+<p>Set a SphinxQL option like <code>max_matches</code> or <code>reverse_scan</code> for this query only.</p>
+</li>
+</ul><h4>Insert and Replace</h4>
+
+<p>Will return an array with an <code>INT</code> as first member, the number of rows inserted/replaced.</p>
+
+<ul>
+<li>
+<p><strong>$sq = Sphinxql::insert()-&gt;into($index)</strong></p>
+
+<p>Begins an <code>INSERT</code>.</p>
+</li>
+<li>
+<p><strong>$sq = Sphinxql::replace()-&gt;into($index)</strong></p>
+
+<p>Begins an <code>REPLACE</code>.</p>
+</li>
+<li>
+<p><strong>$sq-&gt;set($associative_array)</strong></p>
+
+<p>Inserts the associative array, where the keys are the columns and the respective values are the column values.</p>
+</li>
+<li>
+<p><strong>$sq-&gt;value($column1, $value1)-&gt;value($column2, $value2)-&gt;value($column3, $value3)</strong></p>
+
+<p>Sets columns one by one</p>
+</li>
+<li>
+<p><strong>$sq-&gt;columns($column1, $column2, $column3)-&gt;values($value1, $value2, $value3)-&gt;values($value11, $value22, $value33)</strong></p>
+
+<p>Allows inserting multiple arrays of values in the specified columns.</p>
+
+<p><code>$column1</code> and <code>$value1</code> can be arrays.</p>
+</li>
+</ul><h4>Update</h4>
+
+<p>Will return an array with an <code>INT</code> as first member, the number of rows updated.</p>
+
+<ul>
+<li>
+<p><strong>$sq = Sphinxql::update($index)</strong></p>
+
+<p>Begins an <code>UPDATE</code>.</p>
+</li>
+<li>
+<p><strong>$sq-&gt;value($column1, $value1)-&gt;value($column2, $value2)</strong></p>
+
+<p>Updates the selected columns with the respective value.</p>
+</li>
+<li>
+<p><strong>$sq-&gt;set($associative_array)</strong></p>
+
+<p>Inserts the associative array, where the keys are the columns and the respective values are the column values.  </p>
+</li>
+</ul><p>The <code>WHERE</code> part of the query works just as for <code>SELECT</code>.</p>
+
+<h4>Delete</h4>
+
+<p>Will return an array with an <code>INT</code> as first member, the number of rows deleted.</p>
+
+<ul>
+<li>
+<p><strong>$sq = Sphinxql::delete()-&gt;from($column)</strong></p>
+
+<p>Begins a <code>DELETE</code>.</p>
+</li>
+</ul><p>The <code>WHERE</code> part of the query works just as for <code>SELECT</code>.</p>
+
+<h4>Transactions</h4>
+
+<ul>
+<li>
+<p><strong>Sphinxql::transactionBegin()</strong></p>
+
+<p>Begins a transaction.</p>
+</li>
+<li>
+<p><strong>Sphinxql::transactionCommit()</strong></p>
+
+<p>Commits a transaction.</p>
+</li>
+<li>
+<p><strong>Sphinxql::transactionRollback()</strong></p>
+
+<p>Rollbacks a transaction.</p>
+</li>
+</ul><h4>Escaping</h4>
+
+<ul>
+<li>
+<p><strong>$sq-&gt;escape($value)</strong></p>
+
+<p>Returns the escaped value, processed with <code>\MySQLi::real_escape_string</code>.</p>
+</li>
+<li>
+<p><strong>$sq-&gt;quoteIdentifier($identifier)</strong></p>
+
+<p>Adds oblique quotes to identifiers. To run this on array elements use <code>$sq-&gt;quoteIdentifierArr($arr)</code>.</p>
+</li>
+<li>
+<p><strong>$sq-&gt;quote($value)</strong></p>
+
+<p>Adds quotes to values and escapes. To run this on array elements use <code>$sq-&gt;quoteArr($arr)</code>.</p>
+</li>
+<li>
+<p><strong>$sq-&gt;escapeMatch($value)</strong></p>
+
+<p>Escapes the string for use in a <code>MATCH</code>.</p>
+</li>
+<li>
+<p><strong>$sq-&gt;halfEscapeMatch($value)</strong></p>
+
+<p>Escapes the string for use in a <code>MATCH</code>. Allows <code>-</code>, <code>|</code>, <code>"</code>. Read about this on the <code>$sq-&gt;match()</code> explanation.</p>
+</li>
+</ul><h4>Show</h4>
+
+<pre><code>Sphinxql::meta() =&gt; 'SHOW META'
+Sphinxql::warnings() =&gt; 'SHOW WARNINGS'
+Sphinxql::status() =&gt; 'SHOW STATUS'
+Sphinxql::tables() =&gt; 'SHOW TABLES'
+Sphinxql::variables() =&gt; 'SHOW VARIABLES'
+Sphinxql::variablesSession() =&gt; 'SHOW SESSION VARIABLES'
+Sphinxql::variablesGlobal() =&gt; 'SHOW GLOBAL VARIABLES'
+</code></pre>
+
+<h4>Set variable</h4>
+
+<ul>
+<li>
+<p><strong>Sphinxql::setVariable($name, $value, $global = false)</strong></p>
+
+<p>Set a server variable.</p>
+</li>
+</ul><h4>More</h4>
+
+<p>There's several more functions to complete the SphinxQL library:</p>
+
+<ul>
+<li><code>Sphinxql::callSnippets($data, $index, $extra = array())</code></li>
+<li><code>Sphinxql::callKeywords($text, $index, $hits = null)</code></li>
+<li><code>Sphinxql::describe($index)</code></li>
+<li><code>Sphinxql::createFunction($udf_name, $returns, $soname)</code></li>
+<li><code>Sphinxql::dropFunction($udf_name)</code></li>
+<li><code>Sphinxql::attachIndex($disk_index, $rt_index)</code></li>
+<li><code>Sphinxql::flushRtIndex($index)</code></li>
+</ul>
+      </section>
+      <footer>
+        <p><small>Hosted on <a href="https://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+		
+  </body>
+</html>

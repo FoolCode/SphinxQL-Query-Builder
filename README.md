@@ -14,7 +14,9 @@ __This package is BETA QUALITY.__ Don't rely on it in production unless you test
 
 Most of the methods in the package are unit tested. Methods that haven't been tested are single queries like `flushRtIndex`, but as they are independent they are supposed to work.
 
-We test on Travis-CI with the SVN build of Sphinx: [![Build Status](https://secure.travis-ci.org/FoolRulez/fuel-sphinxql.png)](http://travis-ci.org/FoolRulez/fuel-sphinxql)
+We test on Travis-CI with the SVN build of Sphinx:
+
+[![Build Status](https://secure.travis-ci.org/FoolRulez/fuel-sphinxql.png)](http://travis-ci.org/FoolRulez/fuel-sphinxql)
 
 ## Usage
 
@@ -98,7 +100,7 @@ Often you need to run SQL functions, but those would get escaped as other values
 
 	Returns the last compiled query.
 
-* __$sq->getCompiled()__
+* __$sq->getResult()__
 
 	Returns the last result.
 

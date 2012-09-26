@@ -45,7 +45,9 @@ It maps every function listed in the <a href="http://sphinxsearch.com/docs/curre
 
 <p>Most of the methods in the package are unit tested. Methods that haven't been tested are single queries like <code>flushRtIndex</code>, but as they are independent they are supposed to work.</p>
 
-<p>We test on Travis-CI with the SVN build of Sphinx: <a href="http://travis-ci.org/FoolRulez/fuel-sphinxql"><img src="https://secure.travis-ci.org/FoolRulez/fuel-sphinxql.png" alt="Build Status"></a></p>
+<p>We test on Travis-CI with the SVN build of Sphinx:</p>
+
+<p><a href="http://travis-ci.org/FoolRulez/fuel-sphinxql"><img src="https://secure.travis-ci.org/FoolRulez/fuel-sphinxql.png" alt="Build Status"></a></p>
 
 <h2>Usage</h2>
 
@@ -142,7 +144,7 @@ $result = $query-&gt;execute();
 <p>Returns the last compiled query.</p>
 </li>
 <li>
-<p><strong>$sq-&gt;getCompiled()</strong></p>
+<p><strong>$sq-&gt;getResult()</strong></p>
 
 <p>Returns the last result.</p>
 </li>

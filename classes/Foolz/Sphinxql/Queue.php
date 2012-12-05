@@ -87,11 +87,14 @@ class Queue extends Connection
 				$resource->free_result();
 			}
 
+			$continue = false;
 			if (static::getConnection()->more_results())
 			{
 				$multi_count++;
+				static::getConnection()->next_result();
+				$continue = true;
 			}
-		} while (static::getConnection()->next_result());
+		} while ($continue);
 
 
 		return $multi_result;

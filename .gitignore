@@ -12,3 +12,5 @@ nbproject
 
 fuel/app/logs/*/*/*
 fuel/app/cache/*/*
+/tests/searchd.log
+/tests/searchd.pid

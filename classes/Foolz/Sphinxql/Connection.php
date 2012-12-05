@@ -7,36 +7,36 @@ class SphinxqlConnectionException extends \Exception {};
  * SphinxQL connection class based on MySQLi.
  * Contains also escaping and quoting functions.
  */
-class SphinxqlConnection
+class Connection
 {
-	
+
 	/**
 	 * The array of live connections
-	 * 
+	 *
 	 * @var object
 	 */
 	protected static $connections = array();
-	
+
 	/**
 	 * The array key of the current selected connection
 	 *
-	 * @var string 
+	 * @var string
 	 */
 	protected static $current_connection = 'default';
-	
-	
+
+
 	/**
 	 * Disable warnings coming from server downtimes with a @ on \MySQLi
 	 *
-	 * @var string 
+	 * @var string
 	 */
 	protected static $silence_connection_warning = false;
-	
-	
+
+
 	/**
 	 * Connection data array
-	 * 
-	 * @var type 
+	 *
+	 * @var type
 	 */
 	protected static $connection_info = array(
 		'default' => array(
@@ -45,27 +45,27 @@ class SphinxqlConnection
 			'charset' => 'utf8'
 		)
 	);
-	
-	
+
+
 	/**
 	 * Creates a new Sphinxql object and if necessary connects to DB
-	 * 
+	 *
 	 * @return \Foolz\Sphinxql\Sphinxql
 	 */
 	public static function forge()
 	{
 		$new = new Sphinxql;
-		
+
 		static::getConnection() or static::connect();
-		
+
 		return $new;
 	}
-	
-	
+
+
 	/**
 	 * While horrible, we have a function to enable silencing \MySQLi connection errors
 	 * Use it only if you are running with high error reporting on a production server
-	 * 
+	 *
 	 * @param bool $enable
 	 */
 	public static function silenceConnectionWarning($enable = true)
@@ -73,10 +73,10 @@ class SphinxqlConnection
 		static::$silence_connection_warning = $enable;
 	}
 
-	
+
 	/**
 	 * Add a connection to the array
-	 * 
+	 *
 	 * @param string $name the key name of the connection
 	 * @param string $host
 	 * @param int $port
@@ -88,25 +88,25 @@ class SphinxqlConnection
 		{
 			$host = '127.0.0.1';
 		}
-		
+
 		static::$connection_info[$name] = array('host' => $host, 'port' => $port, 'charset' => $charset);
 	}
-	
-	
+
+
 	/**
 	 * Sets the connection to use
-	 * 
+	 *
 	 * @param string $name
 	 */
 	public static function setConnection($name)
 	{
 		static::$current_connection = $name;
 	}
-	
-	
+
+
 	/**
 	 * Returns the connection info (host, port, charset) for the currently selected connection
-	 * 
+	 *
 	 * @return array
 	 */
 	public static function getConnectionInfo($name = null)
@@ -115,14 +115,14 @@ class SphinxqlConnection
 		{
 			return static::$connection_info[$name];
 		}
-		
+
 		return static::$connection_info[static::$current_connection];
 	}
-	
-	
+
+
 	/**
 	 * Enstablishes connection to SphinxQL with MySQLi
-	 * 
+	 *
 	 * @param string $host
 	 * @param int $port
 	 * @param type $persistent
@@ -131,33 +131,33 @@ class SphinxqlConnection
 	public static function connect($suppress_error = false)
 	{
 		$data = static::getConnectionInfo();
-		
+
 		if ( ! $suppress_error && ! static::$silence_connection_warning)
 		{
-			static::$connections[static::$current_connection] = 
+			static::$connections[static::$current_connection] =
 				new \MySQLi($data['host'], null, null, null, $data['port'], null);
 		}
 		else
 		{
-			static::$connections[static::$current_connection] = 
+			static::$connections[static::$current_connection] =
 				@ new \MySQLi($data['host'], null, null, null, $data['port'], null);
 		}
-				
-		if (static::getConnection()->connect_error) 
+
+		if (static::getConnection()->connect_error)
 		{
 			throw new SphinxqlConnectionException();
 		}
-		
+
 		// SphinxQL just uses its own
 		//static::getConnection()->set_charset($data['charset']);
-		
+
 		return true;
 	}
-	
-	
+
+
 	/**
 	 * Returns the \MySQLi connection
-	 * 
+	 *
 	 * @return bool|\MySQLi false in case the array key is not found
 	 */
 	public static function getConnection()
@@ -166,14 +166,14 @@ class SphinxqlConnection
 		{
 			return static::$connections[static::$current_connection];
 		}
-		
+
 		throw new SphinxqlConnectionException();
 	}
-	
-	
+
+
 	/**
 	 * Sends the query to Sphinx
-	 * 
+	 *
 	 * @param string $query
 	 * @return array
 	 * @throws SphinxqlDatabaseException
@@ -181,15 +181,15 @@ class SphinxqlConnection
 	public static function query($query)
 	{
 		static::getConnection() or static::connect();
-		
+
 		$resource = static::getConnection()->query($query);
-		
+
 		if (static::getConnection()->error)
 		{
 			throw new SphinxqlDatabaseException('['.static::getConnection()->errno.'] '.
 				static::getConnection()->error.' [ '.$query.']');
 		}
-		
+
 		if ($resource instanceof \mysqli_result)
 		{
 			$rows = array();
@@ -197,19 +197,20 @@ class SphinxqlConnection
 			{
 				$rows[] = $row;
 			}
-			
+
 			return $rows;
 		}
-		
+
 		// sphinxql doesn't return insert_id because we always have to point it out ourselves!
 		return array(static::getConnection()->affected_rows);
 	}
-	
+
+
 	/**
-	 * 
+	 *
 	 * Taken from FuelPHP and edited
-	 * 
-	 * @param \Foolz\Sphinxql\SphinxqlExpression $value
+	 *
+	 * @param \Foolz\Sphinxql\Expression $value
 	 * @return string
 	 */
 	public function escape($value)
@@ -218,7 +219,7 @@ class SphinxqlConnection
 		{
 			static::connect();
 		}
-		
+
 		if (($value = $this->getConnection()->real_escape_string((string) $value)) === false)
 		{
 			throw new \SphinxqlDatabaseException($this->getConnection()->error, $this->getConnection()->errno);
@@ -226,61 +227,61 @@ class SphinxqlConnection
 
 		return "'".$value."'";
 	}
-	
-	
+
+
 	/**
 	 * Wraps the input in identifiers where necessary
-	 * 
-	 * @param \Foolz\Sphinxql\SphinxqlExpression|string $value
-	 * @return \Foolz\Sphinxql\SphinxqlExpression|string
+	 *
+	 * @param \Foolz\Sphinxql\SExpression|string $value
+	 * @return \Foolz\Sphinxql\Expression|string
 	 */
 	public function quoteIdentifier($value)
 	{
-		if ($value instanceof \Foolz\Sphinxql\SphinxqlExpression)
+		if ($value instanceof \Foolz\Sphinxql\Expression)
 		{
 			return $value->value();
 		}
-		
+
 		if ($value === '*')
 		{
 			return $value;
 		}
 
 		$pieces = explode('.', $value);
-		
+
 		foreach ($pieces as $key => $piece)
 		{
 			$pieces[$key] = '`'.$piece.'`';
 		}
-		
+
 		return implode('.', $pieces);
 	}
-	
-	
+
+
 	/**
 	 * Runs $this->quoteIdentifier on every element of an array
-	 * 
+	 *
 	 * @param array $array
-	 * @return type
+	 * @return array
 	 */
 	public function quoteIdentifierArr($array = array())
 	{
 		$result = array();
-		
+
 		foreach ($array as $key => $item)
 		{
 			$result[$key] = $this->quoteIdentifier($item);
 		}
-		
+
 		return $result;
 	}
-	
-	
+
+
 	/**
 	 * Adds quotes where necessary for values
 	 * Taken from FuelPHP and edited
-	 * 
-	 * @param \Foolz\Sphinxql\SphinxqlExpression|string $value
+	 *
+	 * @param \Foolz\Sphinxql\Expression|string $value
 	 * @return string
 	 */
 	public function quote($value)
@@ -297,7 +298,7 @@ class SphinxqlConnection
 		{
 			return "'0'";
 		}
-		elseif ($value instanceof SphinxqlExpression)
+		elseif ($value instanceof Expression)
 		{
 			// Use a raw expression
 			return $value->value();
@@ -314,23 +315,23 @@ class SphinxqlConnection
 
 		return $this->escape($value);
 	}
-	
-	
+
+
 	/**
 	 * Runs $this->quote on every element of an array
-	 * 
+	 *
 	 * @param array $array
-	 * @return type
+	 * @return array
 	 */
 	public function quoteArr($array = array())
 	{
 		$result = array();
-		
+
 		foreach ($array as $key => $item)
 		{
 			$result[$key] = $this->quote($item);
 		}
-		
+
 		return $result;
 	}
 

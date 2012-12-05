@@ -110,7 +110,7 @@ Often you need to run SQL functions, but those would get escaped as other values
 
 	Create a new queue for multiquerying
 
-* __$queue->add(\Foolz\Sphinxql\Sphinxql $sphinxql)
+* __$queue->add(\Foolz\Sphinxql\Sphinxql $sphinxql)__
 
 	Add a query object
 

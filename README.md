@@ -3,7 +3,7 @@ Query Builder for SphinxQL
 
 ### About
 
-This is a PHP Query Builder created ad-hoc to work with SphinxQL, an SQL dialect to use with the Sphinx search engine. 
+This is a PHP Query Builder created ad-hoc to work with SphinxQL, an SQL dialect to use with the Sphinx search engine.
 It maps every function listed in the [SphinxQL reference](http://sphinxsearch.com/docs/current.html#sphinxql-reference) and is generally [faster](http://sphinxsearch.com/blog/2010/04/25/sphinxapi-vs-sphinxql-benchmark/) than the Sphinx API, beside having more functions.
 
 This Query Builder has no dependencies except PHP 5.3, `\MySQLi` and of course a working Sphinx server. FuelPHP is not necessary but we've added a bootstrap for using it as a Package. It is styled after FuelPHP's Query Builder.
@@ -27,7 +27,7 @@ The examples will omit the namespace.
 	// if you don't use the Sphinxql default connection, use this function to change the host and port
 	Sphinxql::addConnection('superspecial', 'yourhost.com', 9231);
 	Sphinxql::setConnection('superspecial');
-	
+
 	$query = Sphinxql::select('column_one', 'column_two')
 		->from('index_delta', 'index_main', 'index_ancient')
 		->match('comment', 'my opinion is better')
@@ -43,7 +43,7 @@ The static connection manager lets you handle multiple connections.
 There's the `default` connection, that connects to 127.0.0.1:9306 as per SphinxQL defaults.
 
 * __Sphinxql::silenceConnectionWarning($enable = true)__
-	
+
 	Use it when you have warning display enabled in PHP, but you don't want to see errors when MySQLi fails connecting to the server. Custom errors are in place. (This is actually the so-evil @ silencing. Use it if you know what are you doing.)
 
 	_Disabled by default._
@@ -104,6 +104,20 @@ Often you need to run SQL functions, but those would get escaped as other values
 
 	Returns the last result.
 
+#### Multiquery
+
+* __new Queue()__
+
+	Create a new queue for multiquerying
+
+* __$queue->add(\Foolz\Sphinxql\Sphinxql $sphinxql)
+
+	Add a query object
+
+* __$queue->execute()__
+
+	Returns an array of the results of all the queued queries
+
 #### Select
 
 * __$sq = Sphinxql::select($column1, $column2, $column3)->from($index1, $index2, $index3)__
@@ -116,7 +130,7 @@ The options for the select follow.
 
 * $sq->where($column, $operator, $value)
 
-	Classic WHERE, works with Sphinx filters and fulltext. 
+	Classic WHERE, works with Sphinx filters and fulltext.
 
 		$sq->where('column', 'value');
 		// WHERE `column` = 'value'
@@ -146,8 +160,8 @@ The options for the select follow.
 		$sq->match('title', 'Otoshimono')
 			->match('character', 'Nymph');
 
-	The characters are fully escaped. You will need to use Sphinxql::expr($value) to use your own options. 
-	
+	The characters are fully escaped. You will need to use Sphinxql::expr($value) to use your own options.
+
 	The `$half`, if turned to `true`, will allow the following characters: `-`, `|`, `"`. You __will have to__ wrap the query in a `try` if you use this feature and expose it to public interfaces, because character order might throw a query error.
 
 		try
@@ -163,7 +177,7 @@ The options for the select follow.
 		}
 
 #### Grouping, ordering etc.
- 
+
 * __$sq->groupBy($column)__
 
 	`GROUP BY $column`
@@ -241,7 +255,7 @@ Will return an array with an `INT` as first member, the number of rows updated.
 
 * __$sq->set($associative_array)__
 
-	Inserts the associative array, where the keys are the columns and the respective values are the column values.	
+	Inserts the associative array, where the keys are the columns and the respective values are the column values.
 
 The `WHERE` part of the query works just as for `SELECT`.
 

@@ -18,7 +18,7 @@ class Expression
 	/**
 	 * The constructor accepts the expression as string
 	 *
-	 * @param type $string
+	 * @param string $string
 	 */
 	public function __construct($string = '')
 	{
@@ -29,7 +29,7 @@ class Expression
 	/**
 	 * Return the unmodified expression
 	 *
-	 * @return type
+	 * @return string
 	 */
 	public function value()
 	{

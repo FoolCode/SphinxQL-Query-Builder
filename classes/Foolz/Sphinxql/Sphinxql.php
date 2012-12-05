@@ -243,7 +243,7 @@ class Sphinxql extends Connection
 	 *		$sq->where('time', '>', Sphinxql::expr('CURRENT_TIMESTAMP'));
 	 *		// WHERE `time` > CURRENT_TIMESTAMP
 	 *
-	 * @param type $string
+	 * @param string $string
 	 * @return \Foolz\Sphinxql\Expression
 	 */
 	public static function expr($string = '')
@@ -255,7 +255,7 @@ class Sphinxql extends Connection
 	/**
 	 * Runs the query built
 	 *
-	 * @return type
+	 * @return array
 	 */
 	public function execute()
 	{
@@ -278,7 +278,7 @@ class Sphinxql extends Connection
 	/**
 	 * Returns the latest compiled query
 	 *
-	 * @return type
+	 * @return string
 	 */
 	public function getCompiled()
 	{
@@ -962,9 +962,9 @@ class Sphinxql extends Connection
 	/**
 	 * MATCH clause (Sphinx-specific)
 	 *
-	 * @param type $column
-	 * @param type $value
-	 * @param type $half
+	 * @param string $column
+	 * @param string $value
+	 * @param boolean $half
 	 * @return \Foolz\Sphinxql\Sphinxql
 	 */
 	public function match($column, $value, $half = false)
@@ -1151,13 +1151,13 @@ class Sphinxql extends Connection
 	 * OPTION clause (SphinxQL-specific)
 	 * Used by: SELECT
 	 *
-	 * @param type $name
-	 * @param type $value
+	 * @param string $name
+	 * @param string $value
 	 * @return \Foolz\Sphinxql\Sphinxql
 	 */
 	public function option($name, $value)
 	{
-		$this->options[] = array('name'	 => $name, 'value'	 => $value);
+		$this->options[] = array('name' => $name, 'value' => $value);
 		return $this;
 	}
 
@@ -1204,7 +1204,7 @@ class Sphinxql extends Connection
 	 * Used in: INSERT, REPLACE
 	 * func_get_args()-enabled
 	 *
-	 * @param type $array
+	 * @param array $array
 	 * @return \Foolz\Sphinxql\Sphinxql
 	 */
 	public function values($array)
@@ -1225,8 +1225,8 @@ class Sphinxql extends Connection
 	 * Set column and relative value
 	 * Used in: INSERT, REPLACE
 	 *
-	 * @param type $column
-	 * @param type $value
+	 * @param string $column
+	 * @param string $value
 	 * @return \Foolz\Sphinxql\Sphinxql
 	 */
 	public function value($column, $value)
@@ -1249,7 +1249,7 @@ class Sphinxql extends Connection
 	 * Allows passing an array with the key as column and value as value
 	 * Used in: INSERT, REPLACE, UPDATE
 	 *
-	 * @param type $array
+	 * @param array $array
 	 * @return \Foolz\Sphinxql\Sphinxql
 	 */
 	public function set($array)

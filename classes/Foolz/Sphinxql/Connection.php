@@ -36,7 +36,7 @@ class Connection
 	/**
 	 * Connection data array
 	 *
-	 * @var type
+	 * @var array
 	 */
 	protected static $connection_info = array(
 		'default' => array(
@@ -123,9 +123,7 @@ class Connection
 	/**
 	 * Enstablishes connection to SphinxQL with MySQLi
 	 *
-	 * @param string $host
-	 * @param int $port
-	 * @param type $persistent
+	 * @param boolean $suppress_error
 	 * @return boolean|\Foolz\Sphinxql\Sphinql
 	 */
 	public static function connect($suppress_error = false)

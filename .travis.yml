@@ -16,6 +16,7 @@ before_install:
   - cd ..
 
 before_script:
+  - composer install
   - cd tests
   - mkdir data
   - /usr/local/sphinx/bin/searchd -c sphinx.conf

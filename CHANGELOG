@@ -1,0 +1,5 @@
+2012-12-06  Woxxy  <woxxy@foolrulez.org>
+
+    * Added Queue class
+
+    * Renamed classes (removed Sphinxql prefix)

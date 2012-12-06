@@ -18,6 +18,12 @@ We test on Travis-CI with the SVN build of Sphinx:
 
 [![Build Status](https://secure.travis-ci.org/FoolRulez/fuel-sphinxql.png)](http://travis-ci.org/FoolRulez/fuel-sphinxql)
 
+## Installation
+
+This is a Composer package. You can install it as any other Composer package.
+
+If you use FuelPHP 1.x, include `bootstrap.php` that contains the autoloading array.
+
 ## Usage
 
 The examples will omit the namespace.

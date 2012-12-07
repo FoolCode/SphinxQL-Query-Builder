@@ -956,7 +956,7 @@ class Sphinxql extends Connection
 	 *
 	 * @return \Foolz\Sphinxql\Sphinxql  The current object
 	 */
-	public function from(Array $array = null)
+	public function from($array = null)
 	{
 		if (is_string($array))
 		{

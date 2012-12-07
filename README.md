@@ -16,7 +16,7 @@ Most of the methods in the package are unit tested. Methods that haven't been te
 
 We test on Travis-CI with the SVN build of Sphinx:
 
-[![Build Status](https://secure.travis-ci.org/FoolRulez/fuel-sphinxql.png)](http://travis-ci.org/FoolRulez/fuel-sphinxql)
+[![Build Status](https://secure.travis-ci.org/FoolRulez/fuel-sphinxql.png)](http://travis-ci.org/FoolCode/SphinxQL-Query-Builder)
 
 ## Installation
 

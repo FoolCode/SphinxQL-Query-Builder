@@ -1211,7 +1211,7 @@ class Sphinxql extends Connection
 	 *
 	 * @return  \Foolz\Sphinxql\Sphinxql  The current object
 	 */
-	public function columns(Array $array = array())
+	public function columns($array = array())
 	{
 		if(is_array($array))
 		{

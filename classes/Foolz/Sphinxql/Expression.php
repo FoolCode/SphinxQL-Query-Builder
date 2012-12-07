@@ -1,4 +1,5 @@
 <?php
+
 namespace Foolz\Sphinxql;
 
 /**
@@ -8,9 +9,9 @@ namespace Foolz\Sphinxql;
 class Expression
 {
 	/**
-	 * The expression
+	 * The expression content
 	 *
-	 * @var string
+	 * @var  string
 	 */
 	protected $string;
 
@@ -18,7 +19,7 @@ class Expression
 	/**
 	 * The constructor accepts the expression as string
 	 *
-	 * @param string $string
+	 * @param  string  $string  The content to prevent being quoted
 	 */
 	public function __construct($string = '')
 	{
@@ -29,7 +30,7 @@ class Expression
 	/**
 	 * Return the unmodified expression
 	 *
-	 * @return string
+	 * @return  string  The unaltered content of the expression
 	 */
 	public function value()
 	{
@@ -38,9 +39,9 @@ class Expression
 
 
 	/**
-	 * returns the unmodified expression
+	 * Returns the unmodified expression
 	 *
-	 * @return string
+	 * @return  string  The unaltered content of the expression
 	 */
 	public function __toString()
 	{

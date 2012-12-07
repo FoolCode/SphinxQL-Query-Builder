@@ -2,28 +2,31 @@
 
 namespace Foolz\Sphinxql;
 
+/**
+ * Extension to the connection class that allows the use of MySQLi::multiQuery()
+ */
 class Queue extends Connection
 {
 	/**
-	 * The array of added Sphinxql objects
+	 * Array of added Sphinxql objects
 	 *
 	 * @var  \Foolz\Sphinxql\Sphinxql[]
 	 */
 	protected $queue = array();
 
 	/**
-	 * The array of
+	 * Array of compiled queries
 	 *
 	 * @var  string[]
 	 */
 	protected $compiled = array();
 
 	/**
-	 *
+	 * Add a Sphinxql query builder object to the queue
 	 *
 	 * @param  \Foolz\Sphinxql\Sphinxql  $sphinxql
 	 *
-	 * @return  \Foolz\Sphinxql\Queue
+	 * @return  \Foolz\Sphinxql\Queue  The current object
 	 */
 	public function add(\Foolz\Sphinxql\Sphinxql $sphinxql)
 	{
@@ -33,7 +36,9 @@ class Queue extends Connection
 	}
 
 	/**
-	 * Runs all the queries with mysqli::multi_query. It will use the connection of the first object loaded.
+	 * Runs all the queries with mysqli::multi_query(). It will use the connection of the first object loaded.
+	 *
+	 * @return  array  The result array
 	 */
 	public function execute()
 	{
@@ -48,12 +53,13 @@ class Queue extends Connection
 	/**
 	 * Sends multiple queries to Sphinx
 	 *
-	 * @param  array  $query
+	 * @param  string[]  $query  Array of queries in string form
 	 *
-	 * @return  array
-	 * @throws  SphinxqlDatabaseException
+	 * @return  array  The result array
+	 * @throws  \Foolz\Sphinxql\SphinxqlException          If the input array is empty
+	 * @throws  \Foolz\Sphinxql\SphinxqlDatabaseException  If a query generated an error when being executed
 	 */
-	public static function multiQuery(array $query)
+	public static function multiQuery(Array $query)
 	{
 		if (count($query) === 0)
 		{
@@ -95,7 +101,6 @@ class Queue extends Connection
 				$continue = true;
 			}
 		} while ($continue);
-
 
 		return $multi_result;
 	}

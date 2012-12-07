@@ -1,9 +1,9 @@
 <?php
+
 namespace Foolz\Sphinxql;
 
 class SphinxqlException extends \Exception {}
 class SphinxqlDatabaseException extends SphinxqlException {}
-
 
 /**
  * This class is a Query Builder for SphinxQL,
@@ -14,126 +14,126 @@ class Sphinxql extends Connection
 	/**
 	 * The last result object
 	 *
-	 * @var type
+	 * @var  array
 	 */
 	protected $last_result = null;
 
 	/**
 	 * The last compiled query
 	 *
-	 * @var type
+	 * @var  string
 	 */
 	protected $last_compiled = null;
 
 	/**
 	 * The last choosen method (select, insert, replace, update, delete)
 	 *
-	 * @var string
+	 * @var  string
 	 */
 	protected $type = null;
 
 	/**
 	 * Array of select elements that will be comma separated
 	 *
-	 * @var array
+	 * @var  array
 	 */
 	protected $select = array();
 
 	/**
 	 * From in SphinxQL is the list of indexes that will be used
 	 *
-	 * @var array
+	 * @var  array
 	 */
 	protected $from = array();
 
 	/**
 	 * The list of where and parenthesis, must be inserted in order
 	 *
-	 * @var array
+	 * @var  array
 	 */
 	protected $where = array();
 
 	/**
 	 * The list of matches for the MATCH function in SphinxQL
 	 *
-	 * @var array
+	 * @var  array
 	 */
 	protected $match = array();
 
 	/**
 	 * GROUP BY array to be comma separated
 	 *
-	 * @var array
+	 * @var  array
 	 */
 	protected $group_by = array();
 
 	/**
 	 * ORDER BY array
 	 *
-	 * @var array
+	 * @var  array
 	 */
 	protected $within_group_order_by = array();
 
 	/**
 	 * ORDER BY array
 	 *
-	 * @var array
+	 * @var  array
 	 */
 	protected $order_by = array();
 
 	/**
 	 * When not null it adds an offset
 	 *
-	 * @var null|int
+	 * @var  null|int
 	 */
 	protected $offset = null;
 
 	/**
 	 * When not null it adds a limit
 	 *
-	 * @var null|int
+	 * @var  null|int
 	 */
 	protected $limit = null;
 
 	/**
 	 * Value of INTO query for INSERT or REPLACE
 	 *
-	 * @var null|string
+	 * @var  null|string
 	 */
 	protected $into = null;
 
 	/**
 	 * Array of columns for INSERT or REPLACE
 	 *
-	 * @var array
+	 * @var  array
 	 */
 	protected $columns = array();
 
 	/**
 	 * Array OF ARRAYS of values for INSERT or REPLACE
 	 *
-	 * @var array
+	 * @var  array
 	 */
 	protected $values = array();
 
 	/**
 	 * Array arrays containing column and value for SET in UPDATE
 	 *
-	 * @var array
+	 * @var  array
 	 */
 	protected $set = array();
 
 	/**
 	 * Array of OPTION specific to SphinxQL
 	 *
-	 * @var array
+	 * @var  array
 	 */
 	protected $options = array();
 
 	/**
 	 * Ready for use queries
 	 *
-	 * @var type
+	 * @var  array
 	 */
 	protected static $show_queries = array(
 		'meta' => 'SHOW META',
@@ -150,10 +150,11 @@ class Sphinxql extends Connection
 	 * Catches static select, insert, replace, update, delete
 	 * Used for the SHOW queries
 	 *
-	 * @param string $method
-	 * @param array $parameters
-	 * @return array
-	 * @throws \BadMethodCallException
+	 * @param  string  $method      The method
+	 * @param  array   $parameters  The parameters
+	 *
+	 * @return  array  The result of the SHOW query
+	 * @throws  \BadMethodCallException  If there's no such a method
 	 */
 	public static function __callStatic($method, $parameters)
 	{
@@ -180,8 +181,9 @@ class Sphinxql extends Connection
 
 	/**
 	 * Begins building a select query
+	 * Uses func_get_args to get input
 	 *
-	 * @return  \Foolz\Sphinxql\Sphinxql
+	 * @return  \Foolz\Sphinxql\Sphinxql  The new object
 	 */
 	public static function select()
 	{
@@ -197,7 +199,7 @@ class Sphinxql extends Connection
 	/**
 	 * Begins building an insert query
 	 *
-	 * @return  \Foolz\Sphinxql\Sphinxql
+	 * @return  \Foolz\Sphinxql\Sphinxql  The new object
 	 */
 	public static function insert()
 	{
@@ -207,7 +209,7 @@ class Sphinxql extends Connection
 	/**
 	 * Begins building a replace query
 	 *
-	 * @return  \Foolz\Sphinxql\Sphinxql
+	 * @return  \Foolz\Sphinxql\Sphinxql  The new object
 	 */
 	public static function replace()
 	{
@@ -219,7 +221,7 @@ class Sphinxql extends Connection
 	 *
 	 * @param  string  $index  The index to update
 	 *
-	 * @return  \Foolz\Sphinxql\Sphinxql
+	 * @return  \Foolz\Sphinxql\Sphinxql  The new object
 	 */
 	public static function update($index)
 	{
@@ -229,7 +231,7 @@ class Sphinxql extends Connection
 	/**
 	 * Begins building a delete query
 	 *
-	 * @return  \Foolz\Sphinxql\Sphinxql
+	 * @return  \Foolz\Sphinxql\Sphinxql  The new object
 	 */
 	public static function delete()
 	{
@@ -243,8 +245,9 @@ class Sphinxql extends Connection
 	 *		$sq->where('time', '>', Sphinxql::expr('CURRENT_TIMESTAMP'));
 	 *		// WHERE `time` > CURRENT_TIMESTAMP
 	 *
-	 * @param string $string
-	 * @return \Foolz\Sphinxql\Expression
+	 * @param  string  $string  The string to keep unaltered
+	 *
+	 * @return  \Foolz\Sphinxql\Expression  The new Expression
 	 */
 	public static function expr($string = '')
 	{
@@ -255,7 +258,7 @@ class Sphinxql extends Connection
 	/**
 	 * Runs the query built
 	 *
-	 * @return array
+	 * @return  array  The result of the query
 	 */
 	public function execute()
 	{
@@ -267,7 +270,7 @@ class Sphinxql extends Connection
 	/**
 	 * Returns the result of the last query
 	 *
-	 * @return array
+	 * @return  array  The result of the last query
 	 */
 	public function getResult()
 	{
@@ -278,7 +281,7 @@ class Sphinxql extends Connection
 	/**
 	 * Returns the latest compiled query
 	 *
-	 * @return string
+	 * @return  string  The last compiled query
 	 */
 	public function getCompiled()
 	{
@@ -289,10 +292,11 @@ class Sphinxql extends Connection
 	/**
 	 * SET syntax
 	 *
-	 * @param string $name
-	 * @param array|string|int $value
-	 * @param bool $global
-	 * @return array
+	 * @param  string   $name    The name of the variable
+	 * @param  mixed    $value   The value o the variable
+	 * @param  boolean  $global  True if the variable should be global, false otherwise
+	 *
+	 * @return  array  The result of the query
 	 */
 	public static function setVariable($name, $value, $global = false)
 	{
@@ -365,10 +369,11 @@ class Sphinxql extends Connection
 	/**
 	 * CALL SNIPPETS syntax
 	 *
-	 * @param string $data
-	 * @param string $index
-	 * @param array $extra
-	 * @return array
+	 * @param  string  $data
+	 * @param  string  $index
+	 * @param  array   $extra
+	 *
+	 * @return  array  The result of the query
 	 */
 	public static function callSnippets($data, $index, $extra = array())
 	{
@@ -381,10 +386,11 @@ class Sphinxql extends Connection
 	/**
 	 * CALL KEYWORDS syntax
 	 *
-	 * @param string $text
-	 * @param string $index
-	 * @param null|string $hits
-	 * @return array
+	 * @param  string       $text
+	 * @param  string       $index
+	 * @param  null|string  $hits
+	 *
+	 * @return  array  The result of the query
 	 */
 	public static function callKeywords($text, $index, $hits = null)
 	{
@@ -401,7 +407,9 @@ class Sphinxql extends Connection
 	/**
 	 * DESCRIBE syntax
 	 *
-	 * @param string $index
+	 * @param  string  $index  The name of the index
+	 *
+	 * @return  array  The result of the query
 	 */
 	public static function describe($index)
 	{
@@ -413,21 +421,25 @@ class Sphinxql extends Connection
 	/**
 	 * CREATE FUNCTION syntax
 	 *
-	 * @param string $udf_name
-	 * @param string $returns INT|BIGINT|FLOAT
-	 * @param string $soname
+	 * @param  string  $udf_name
+	 * @param  string  $returns   Whether INT|BIGINT|FLOAT
+	 * @param  string  $so_name
+	 *
+	 * @return  array  The result of the query
 	 */
-	public static function createFunction($udf_name, $returns, $soname)
+	public static function createFunction($udf_name, $returns, $so_name)
 	{
 		return static::query('CREATE FUNCTION '.$this->quoteIdentifier($udf_name).
-			' RETURNS '.$returns.' SONAME '.$this->quote($soname));
+			' RETURNS '.$returns.' SONAME '.$this->quote($so_name));
 	}
 
 
 	/**
 	 * DROP FUNCTION syntax
 	 *
-	 * @param string $udf_name
+	 * @param  string  $udf_name
+	 *
+	 * @return  array  The result of the query
 	 */
 	public static function dropFunction($udf_name)
 	{
@@ -438,9 +450,10 @@ class Sphinxql extends Connection
 	/**
 	 * ATTACH INDEX * TO RTINDEX * syntax
 	 *
-	 * @param string $disk_index
-	 * @param string $rt_index
-	 * @return array
+	 * @param  string  $disk_index
+	 * @param  string  $rt_index
+	 *
+	 * @return  array  The result of the query
 	 */
 	public static function attachIndex($disk_index, $rt_index)
 	{
@@ -452,8 +465,9 @@ class Sphinxql extends Connection
 	/**
 	 * FLUSH RTINDEX syntax
 	 *
-	 * @param string $index
-	 * @return array
+	 * @param  string  $index
+	 *
+	 * @return  array  The result of the query
 	 */
 	public static function flushRtIndex($index)
 	{
@@ -464,7 +478,7 @@ class Sphinxql extends Connection
 	/**
 	 * Runs the compile function
 	 *
-	 * @return \Foolz\Sphinxql\Sphinxql
+	 * @return  \Foolz\Sphinxql\Sphinxql  The current object
 	 */
 	public function compile()
 	{
@@ -492,7 +506,7 @@ class Sphinxql extends Connection
 	 * Compiles the MATCH part of the queries
 	 * Used by: SELECT, DELETE, UPDATE
 	 *
-	 * @return string
+	 * @return  string  The compiled MATCH
 	 */
 	public function compileMatch()
 	{
@@ -537,7 +551,7 @@ class Sphinxql extends Connection
 	 * It interacts with the MATCH() and of course isn't usable stand-alone
 	 * Used by: SELECT, DELETE, UPDATE
 	 *
-	 * @return string
+	 * @return  string  The compiled WHERE
 	 */
 	public function compileWhere()
 	{
@@ -615,7 +629,7 @@ class Sphinxql extends Connection
 	/**
 	 * Compiles the statements for SELECT
 	 *
-	 * @return \Foolz\Sphinxql\Sphinql
+	 * @return  \Foolz\Sphinxql\Sphinxql  The current object
 	 */
 	public function compileSelect()
 	{
@@ -704,8 +718,6 @@ class Sphinxql extends Connection
 			$query .= 'LIMIT '.((int) $this->offset).', '.((int) $this->limit).' ';
 		}
 
-
-
 		if (!empty($this->options))
 		{
 			$options = array();
@@ -726,7 +738,7 @@ class Sphinxql extends Connection
 	/**
 	 * Compiles the statements for INSERT or REPLACE
 	 *
-	 * @return \Foolz\Sphinxql\Sphinql
+	 * @return  \Foolz\Sphinxql\Sphinxql  The current object
 	 */
 	public function compileInsert()
 	{
@@ -770,7 +782,7 @@ class Sphinxql extends Connection
 	/**
 	 * Compiles the statements for UPDATE
 	 *
-	 * @return \Foolz\Sphinxql\Sphinql
+	 * @return  \Foolz\Sphinxql\Sphinxql  The current object
 	 */
 	public function compileUpdate()
 	{
@@ -815,7 +827,7 @@ class Sphinxql extends Connection
 	/**
 	 * Compiles the statements for DELETE
 	 *
-	 * @return \Foolz\Sphinxql\Sphinql
+	 * @return  \Foolz\Sphinxql\Sphinxql  The current object
 	 */
 	public function compileDelete()
 	{
@@ -842,7 +854,7 @@ class Sphinxql extends Connection
 	 * Gets the arguments passed as $sphinxql->select('one', 'two')
 	 * Using it without arguments equals to having '*' as argument
 	 *
-	 * @return \Foolz\Sphinxql\Sphinql
+	 * @return  \Foolz\Sphinxql\Sphinxql  The current object
 	 */
 	public function doSelect()
 	{
@@ -862,7 +874,7 @@ class Sphinxql extends Connection
 	/**
 	 * Activates the INSERT mode
 	 *
-	 * @return \Foolz\Sphinxql\Sphinxql
+	 * @return  \Foolz\Sphinxql\Sphinxql  The current object
 	 */
 	public function doInsert()
 	{
@@ -881,7 +893,7 @@ class Sphinxql extends Connection
 	/**
 	 * Activates the REPLACE mode
 	 *
-	 * @return \Foolz\Sphinxql\Sphinxql
+	 * @return  \Foolz\Sphinxql\Sphinxql  The current object
 	 */
 	public function doReplace()
 	{
@@ -900,7 +912,7 @@ class Sphinxql extends Connection
 	/**
 	 * Activates the UPDATE mode
 	 *
-	 * @return \Foolz\Sphinxql\Sphinxql
+	 * @return  \Foolz\Sphinxql\Sphinxql  The current object
 	 */
 	public function doUpdate($index)
 	{
@@ -920,7 +932,7 @@ class Sphinxql extends Connection
 	/**
 	 * Activates the DELETE mode
 	 *
-	 * @return \Foolz\Sphinxql\Sphinxql
+	 * @return  \Foolz\Sphinxql\Sphinxql  The current object
 	 */
 	public function doDelete()
 	{
@@ -940,10 +952,11 @@ class Sphinxql extends Connection
 	 * FROM clause (Sphinx-specific since it works with multiple indexes)
 	 * func_get_args()-enabled
 	 *
-	 * @param array $array
-	 * @return \Foolz\Sphinxql\Sphinql
+	 * @param  array  $array  An array of indexes to use
+	 *
+	 * @return \Foolz\Sphinxql\Sphinxql  The current object
 	 */
-	public function from($array = null)
+	public function from(Array $array = null)
 	{
 		if (is_string($array))
 		{
@@ -962,14 +975,15 @@ class Sphinxql extends Connection
 	/**
 	 * MATCH clause (Sphinx-specific)
 	 *
-	 * @param string $column
-	 * @param string $value
-	 * @param boolean $half
-	 * @return \Foolz\Sphinxql\Sphinxql
+	 * @param  string   $column  The column name
+	 * @param  string   $value   The value
+	 * @param  boolean  $half    Exclude ", |, - control characters from being escaped
+	 *
+	 * @return  \Foolz\Sphinxql\Sphinxql  The current object
 	 */
 	public function match($column, $value, $half = false)
 	{
-		$this->match[] = array('column' => $column, 'value' => $value, 'half'	=> $half);
+		$this->match[] = array('column' => $column, 'value' => $value, 'half' => $half);
 		return $this;
 	}
 
@@ -994,11 +1008,12 @@ class Sphinxql extends Connection
 	 *		// WHERE `column` BETWEEN 'value1' AND 'value2'
 	 *		// WHERE `example` BETWEEN 10 AND 100
 	 *
-	 * @param string $column
-	 * @param string $operator
-	 * @param string $value
-	 * @param bool $or
-	 * @return \Foolz\Sphinxql\Sphinxql
+	 * @param  string   $column    The column name
+	 * @param  string   $operator  The operator to use
+	 * @param  string   $value     The value to check against
+	 * @param  boolean  $or        If it should be prepended with OR (true) or AND (false) - not available as for Sphinx 2.0.2
+	 *
+	 * @return  \Foolz\Sphinxql\Sphinxql  The current object
 	 */
 	public function where($column, $operator, $value = null, $or = false)
 	{
@@ -1021,10 +1036,11 @@ class Sphinxql extends Connection
 	/**
 	 * OR WHERE - at this time (Sphinx 2.0.2) it's not available
 	 *
-	 * @param string $column
-	 * @param string $operator
-	 * @param string|int|null|bool $value
-	 * @return \Foolz\Sphinxql\Sphinxql
+	 * @param  string  $column    The column name
+	 * @param  string  $operator  The operator to use
+	 * @param  mixed   $value     The value to compare against
+	 *
+	 * @return \Foolz\Sphinxql\Sphinxql  The current object
 	 */
 	public function orWhere($column, $operator, $value = null)
 	{
@@ -1036,7 +1052,7 @@ class Sphinxql extends Connection
 	/**
 	 * Opens a parenthesis prepended with AND (where necessary)
 	 *
-	 * @return \Foolz\Sphinxql\Sphinxql
+	 * @return  \Foolz\Sphinxql\Sphinxql  The current object
 	 */
 	public function whereOpen()
 	{
@@ -1048,7 +1064,7 @@ class Sphinxql extends Connection
 	/**
 	 * Opens a parenthesis prepended with OR (where necessary)
 	 *
-	 * @return \Foolz\Sphinxql\Sphinxql
+	 * @return  \Foolz\Sphinxql\Sphinxql  The current object
 	 */
 	public function orWhereOpen()
 	{
@@ -1060,7 +1076,7 @@ class Sphinxql extends Connection
 	/**
 	 * Closes a parenthesis in WHERE
 	 *
-	 * @return \Foolz\Sphinxql\Sphinxql
+	 * @return  \Foolz\Sphinxql\Sphinxql  The current object
 	 */
 	public function whereClose()
 	{
@@ -1071,9 +1087,11 @@ class Sphinxql extends Connection
 
 	/**
 	 * GROUP BY clause
+	 * Adds to the previously added columns
 	 *
-	 * @param string $column
-	 * @return \Foolz\Sphinxql\Sphinxql
+	 * @param  string  $column  A column to group by
+	 *
+	 * @return  \Foolz\Sphinxql\Sphinxql  The current object
 	 */
 	public function groupBy($column)
 	{
@@ -1084,11 +1102,13 @@ class Sphinxql extends Connection
 
 	/**
 	 * WITHIN GROUP ORDER BY clause (SphinxQL-specific)
+	 * Adds to the previously added columns
 	 * Works just like a classic ORDER BY
 	 *
-	 * @param string $column
-	 * @param string $direction
-	 * @return \Foolz\Sphinxql\Sphinxql
+	 * @param  string  $column     The column to group by
+	 * @param  string  $direction  The group by direction (asc/desc)
+	 *
+	 * @return  \Foolz\Sphinxql\Sphinxql  The current object
 	 */
 	public function withinGroupOrderBy($column, $direction = null)
 	{
@@ -1099,10 +1119,12 @@ class Sphinxql extends Connection
 
 	/**
 	 * ORDER BY clause
+	 * Adds to the previously added columns
 	 *
-	 * @param string $column
-	 * @param string $direction asc or desc
-	 * @return \Foolz\Sphinxql\Sphinxql
+	 * @param  string  $column     The column to order on
+	 * @param  string  $direction  The ordering direction (asc/desc)
+	 *
+	 * @return  \Foolz\Sphinxql\Sphinxql  The current object
 	 */
 	public function orderBy($column, $direction = null)
 	{
@@ -1115,9 +1137,10 @@ class Sphinxql extends Connection
 	 * LIMIT clause
 	 * Supports also LIMIT offset, limit
 	 *
-	 * @param int $offset offset if $limit is specified, else limit
-	 * @param int $limit
-	 * @return \Foolz\Sphinxql\Sphinxql
+	 * @param  int       $offset  Offset if $limit is specified, else limit
+	 * @param  null|int  $limit   The limit to set, null for no limit
+	 *
+	 * @return  \Foolz\Sphinxql\Sphinxql  The current object
 	 */
 	public function limit($offset, $limit = null)
 	{
@@ -1137,8 +1160,9 @@ class Sphinxql extends Connection
 	/**
 	 * OFFSET clause
 	 *
-	 * @param int $offset
-	 * @return \Foolz\Sphinxql\Sphinxql
+	 * @param  int  $offset  The offset
+	 *
+	 * @return  \Foolz\Sphinxql\Sphinxql  The current object
 	 */
 	public function offset($offset)
 	{
@@ -1151,9 +1175,10 @@ class Sphinxql extends Connection
 	 * OPTION clause (SphinxQL-specific)
 	 * Used by: SELECT
 	 *
-	 * @param string $name
-	 * @param string $value
-	 * @return \Foolz\Sphinxql\Sphinxql
+	 * @param  string  $name   Option name
+	 * @param  string  $value  Option value
+	 *
+	 * @return  \Foolz\Sphinxql\Sphinxql  The current object
 	 */
 	public function option($name, $value)
 	{
@@ -1166,8 +1191,9 @@ class Sphinxql extends Connection
 	 * INTO clause
 	 * Used by: INSERT, REPLACE
 	 *
-	 * @param string $index
-	 * @return \Foolz\Sphinxql\Sphinxql
+	 * @param  string  $index  The index to insert/replace into
+	 *
+	 * @return  \Foolz\Sphinxql\Sphinxql  The current object
 	 */
 	public function into($index)
 	{
@@ -1181,10 +1207,11 @@ class Sphinxql extends Connection
 	 * Used in: INSERT, REPLACE
 	 * func_get_args()-enabled
 	 *
-	 * @param array $array
-	 * @return \Foolz\Sphinxql\Sphinxql
+	 * @param  array  $array  The array of columns
+	 *
+	 * @return  \Foolz\Sphinxql\Sphinxql  The current object
 	 */
-	public function columns($array = array())
+	public function columns(Array $array = array())
 	{
 		if(is_array($array))
 		{
@@ -1204,8 +1231,9 @@ class Sphinxql extends Connection
 	 * Used in: INSERT, REPLACE
 	 * func_get_args()-enabled
 	 *
-	 * @param array $array
-	 * @return \Foolz\Sphinxql\Sphinxql
+	 * @param  array  $array  The array of values matching the columns from $this->columns()
+	 *
+	 * @return  \Foolz\Sphinxql\Sphinxql  The current object
 	 */
 	public function values($array)
 	{
@@ -1225,9 +1253,10 @@ class Sphinxql extends Connection
 	 * Set column and relative value
 	 * Used in: INSERT, REPLACE
 	 *
-	 * @param string $column
-	 * @param string $value
-	 * @return \Foolz\Sphinxql\Sphinxql
+	 * @param  string  $column  The column name
+	 * @param  string  $value   The value
+	 *
+	 * @return  \Foolz\Sphinxql\Sphinxql  The current object
 	 */
 	public function value($column, $value)
 	{
@@ -1249,8 +1278,9 @@ class Sphinxql extends Connection
 	 * Allows passing an array with the key as column and value as value
 	 * Used in: INSERT, REPLACE, UPDATE
 	 *
-	 * @param array $array
-	 * @return \Foolz\Sphinxql\Sphinxql
+	 * @param  array  $array  Array of key-values
+	 *
+	 * @return \Foolz\Sphinxql\Sphinxql  The current object
 	 */
 	public function set($array)
 	{
@@ -1265,8 +1295,9 @@ class Sphinxql extends Connection
 	/**
 	 * Escapes the query for the MATCH() function
 	 *
-	 * @param string $string
-	 * @return string
+	 * @param  string  $string The string to escape for the MATCH
+	 *
+	 * @return  string  The escaped string
 	 */
 	public function escapeMatch($string)
 	{
@@ -1281,10 +1312,9 @@ class Sphinxql extends Connection
 	 * Allows some of the control characters to pass through for use with a search field: -, |, "
 	 * It also does some tricks to wrap/unwrap within " the string and prevents errors
 	 *
-	 * |, -, "
+	 * @param  string  $string  The string to escape for the MATCH
 	 *
-	 * @param string $string
-	 * @return string
+	 * @return  string  The escaped string
 	 */
 	public function halfEscapeMatch($string)
 	{

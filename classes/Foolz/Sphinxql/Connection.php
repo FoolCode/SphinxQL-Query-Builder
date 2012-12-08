@@ -146,7 +146,8 @@ class Connection
 
 		if (static::getConnection()->connect_error)
 		{
-			throw new SphinxqlConnectionException('Connection error: '.static::getConnection()->connect_error);
+			throw new SphinxqlConnectionException('Connection error: ['.static::getConnection()->connect_errno.']'
+				.static::getConnection()->connect_error);
 		}
 
 		return true;

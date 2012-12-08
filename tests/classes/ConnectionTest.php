@@ -68,6 +68,25 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
 	}
 
 
+	public function testPing()
+	{
+		SphinxqlConnection::setConnection('default');
+		$this->assertTrue(SphinxqlConnection::ping());
+
+		// difficult to test false
+	}
+
+	/**
+	 * @expectedException Foolz\Sphinxql\SphinxqlConnectionException
+	 */
+	public function testClose()
+	{
+		SphinxqlConnection::setConnection('default');
+		SphinxqlConnection::close();
+		SphinxqlConnection::getConnection('default');
+	}
+
+
 	public function testGetConnection()
 	{
 		Sphinxql::setConnection('nondefault');

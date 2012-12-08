@@ -78,6 +78,14 @@ There's the `default` connection, that connects to 127.0.0.1:9306 as per SphinxQ
 
 	Returns the \MySQLi object of the currently selected connection, an exception if not available.
 
+* __Sphinxql::ping()__
+
+	Pings the server. Returns false on failure, true on success.
+
+* __Sphinxql::close()__
+
+	Closes the server connection.
+
 * __Sphinxql::query($query)__
 
 	Runs the query. Returns an array of results on `SELECT`, or an array with the number of affected rows (Sphinx doesn't support last-insert-id, so this values for `INSERT` too).

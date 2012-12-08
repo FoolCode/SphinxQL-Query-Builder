@@ -54,7 +54,14 @@ class Connection
 	{
 		$new = new Sphinxql;
 
-		static::getConnection() or static::connect();
+		try
+		{
+			static::getConnection();
+		}
+		catch (SphinxqlConnectionException $e)
+		{
+			static::connect();
+		}
 
 		return $new;
 	}
@@ -139,10 +146,38 @@ class Connection
 
 		if (static::getConnection()->connect_error)
 		{
-			throw new SphinxqlConnectionException();
+			throw new SphinxqlConnectionException('Connection error: '.static::getConnection()->connect_error);
 		}
 
 		return true;
+	}
+
+	/**
+	 * Ping the SphinxQL server
+	 *
+	 * @return  boolean  True if connected, false otherwise
+	 */
+	public static function ping()
+	{
+		try
+		{
+			static::getConnection();
+		}
+		catch (SphinxqlConnectionException $e)
+		{
+			static::connect();
+		}
+
+		return static::getConnection()->ping();
+	}
+
+	/**
+	 * Closes the connection to SphinxQL
+	 */
+	public static function close()
+	{
+		static::getConnection()->close();
+		unset(static::$connections[static::$current_connection]);
 	}
 
 	/**
@@ -158,7 +193,7 @@ class Connection
 			return static::$connections[static::$current_connection];
 		}
 
-		throw new SphinxqlConnectionException();
+		throw new SphinxqlConnectionException('The connection has not yet been established.');
 	}
 
 	/**
@@ -171,7 +206,14 @@ class Connection
 	 */
 	public static function query($query)
 	{
-		static::getConnection() or static::connect();
+		try
+		{
+			static::getConnection();
+		}
+		catch (SphinxqlConnectionException $e)
+		{
+			static::connect();
+		}
 
 		$resource = static::getConnection()->query($query);
 
@@ -188,6 +230,8 @@ class Connection
 			{
 				$rows[] = $row;
 			}
+
+			$resource->free_result();
 
 			return $rows;
 		}
@@ -207,7 +251,11 @@ class Connection
 	 */
 	public function escape($value)
 	{
-		if (( ! $conn = static::getConnection()) && $conn->connect_errno)
+		try
+		{
+			static::getConnection();
+		}
+		catch (SphinxqlConnectionException $e)
 		{
 			static::connect();
 		}

@@ -145,7 +145,6 @@ class Sphinxql extends Connection
 		'variablesGlobal' => 'SHOW GLOBAL VARIABLES',
 	);
 
-
 	/**
 	 * Catches static select, insert, replace, update, delete
 	 * Used for the SHOW queries
@@ -254,7 +253,6 @@ class Sphinxql extends Connection
 		return new Expression($string);
 	}
 
-
 	/**
 	 * Runs the query built
 	 *
@@ -266,7 +264,6 @@ class Sphinxql extends Connection
 		return $this->last_result = static::query($this->compile()->getCompiled());
 	}
 
-
 	/**
 	 * Returns the result of the last query
 	 *
@@ -277,7 +274,6 @@ class Sphinxql extends Connection
 		return $this->last_result;
 	}
 
-
 	/**
 	 * Returns the latest compiled query
 	 *
@@ -287,7 +283,6 @@ class Sphinxql extends Connection
 	{
 		return $this->last_compiled;
 	}
-
 
 	/**
 	 * SET syntax
@@ -338,7 +333,6 @@ class Sphinxql extends Connection
 		static::query($query);
 	}
 
-
 	/**
 	 * Begins transaction
 	 */
@@ -346,7 +340,6 @@ class Sphinxql extends Connection
 	{
 		static::query('BEGIN');
 	}
-
 
 	/**
 	 * Commits transaction
@@ -356,7 +349,6 @@ class Sphinxql extends Connection
 		static::query('COMMIT');
 	}
 
-
 	/**
 	 * Rollbacks transaction
 	 */
@@ -364,7 +356,6 @@ class Sphinxql extends Connection
 	{
 		static::query('ROLLBACK');
 	}
-
 
 	/**
 	 * CALL SNIPPETS syntax
@@ -379,9 +370,9 @@ class Sphinxql extends Connection
 	{
 		array_unshift($index, $extra);
 		array_unshift($data, $extra);
+		
 		return static::query('CALL SNIPPETS('.implode(', ', $this->quoteArr($extra)).')');
 	}
-
 
 	/**
 	 * CALL KEYWORDS syntax
@@ -403,7 +394,6 @@ class Sphinxql extends Connection
 		return static::query('CALL KEYWORDS('.implode(', ', $this->quoteArr($arr)).')');
 	}
 
-
 	/**
 	 * DESCRIBE syntax
 	 *
@@ -414,9 +404,9 @@ class Sphinxql extends Connection
 	public static function describe($index)
 	{
 		$sq = Sphinxql::forge();
+
 		return static::query('DESCRIBE '.$sq->quoteIdentifier($index));
 	}
-
 
 	/**
 	 * CREATE FUNCTION syntax
@@ -433,7 +423,6 @@ class Sphinxql extends Connection
 			' RETURNS '.$returns.' SONAME '.$this->quote($so_name));
 	}
 
-
 	/**
 	 * DROP FUNCTION syntax
 	 *
@@ -445,7 +434,6 @@ class Sphinxql extends Connection
 	{
 		return static::query('DROP FUNCTION '.$this->quoteIdentifier($udf_name));
 	}
-
 
 	/**
 	 * ATTACH INDEX * TO RTINDEX * syntax
@@ -461,7 +449,6 @@ class Sphinxql extends Connection
 			' TO RTINDEX '. $this->quoteIdentifier());
 	}
 
-
 	/**
 	 * FLUSH RTINDEX syntax
 	 *
@@ -473,7 +460,6 @@ class Sphinxql extends Connection
 	{
 		return static::query('FLUSH RTINDEX '.$this->quoteIdentifier($index));
 	}
-
 
 	/**
 	 * Runs the compile function
@@ -544,7 +530,6 @@ class Sphinxql extends Connection
 
 		return $query;
 	}
-
 
 	/**
 	 * Compiles the WHERE part of the queries
@@ -624,7 +609,6 @@ class Sphinxql extends Connection
 
 		return $query;
 	}
-
 
 	/**
 	 * Compiles the statements for SELECT
@@ -734,7 +718,6 @@ class Sphinxql extends Connection
 		return $this;
 	}
 
-
 	/**
 	 * Compiles the statements for INSERT or REPLACE
 	 *
@@ -777,7 +760,6 @@ class Sphinxql extends Connection
 
 		return $this;
 	}
-
 
 	/**
 	 * Compiles the statements for UPDATE
@@ -823,7 +805,6 @@ class Sphinxql extends Connection
 		return $this;
 	}
 
-
 	/**
 	 * Compiles the statements for DELETE
 	 *
@@ -848,7 +829,6 @@ class Sphinxql extends Connection
 		return $this;
 	}
 
-
 	/**
 	 * Select the columns
 	 * Gets the arguments passed as $sphinxql->select('one', 'two')
@@ -867,9 +847,9 @@ class Sphinxql extends Connection
 
 		$this->type = 'select';
 		$this->select = \func_get_args();
+
 		return $this;
 	}
-
 
 	/**
 	 * Activates the INSERT mode
@@ -886,9 +866,9 @@ class Sphinxql extends Connection
 		}
 
 		$this->type = 'insert';
+
 		return $this;
 	}
-
 
 	/**
 	 * Activates the REPLACE mode
@@ -905,9 +885,9 @@ class Sphinxql extends Connection
 		}
 
 		$this->type = 'replace';
+
 		return $this;
 	}
-
 
 	/**
 	 * Activates the UPDATE mode
@@ -926,6 +906,7 @@ class Sphinxql extends Connection
 
 		$this->type = 'update';
 		$this->into($index);
+
 		return $this;
 	}
 
@@ -944,9 +925,9 @@ class Sphinxql extends Connection
 		}
 
 		$this->type = 'delete';
+
 		return $this;
 	}
-
 
 	/**
 	 * FROM clause (Sphinx-specific since it works with multiple indexes)
@@ -971,7 +952,6 @@ class Sphinxql extends Connection
 		return $this;
 	}
 
-
 	/**
 	 * MATCH clause (Sphinx-specific)
 	 *
@@ -984,9 +964,9 @@ class Sphinxql extends Connection
 	public function match($column, $value, $half = false)
 	{
 		$this->match[] = array('column' => $column, 'value' => $value, 'half' => $half);
+
 		return $this;
 	}
-
 
 	/**
 	 * WHERE clause
@@ -1029,9 +1009,9 @@ class Sphinxql extends Connection
 			'operator'		 => $operator,
 			'value'			 => $value
 		);
+
 		return $this;
 	}
-
 
 	/**
 	 * OR WHERE - at this time (Sphinx 2.0.2) it's not available
@@ -1045,9 +1025,9 @@ class Sphinxql extends Connection
 	public function orWhere($column, $operator, $value = null)
 	{
 		$this->where($column, $operator, $value, true);
+
 		return $this;
 	}
-
 
 	/**
 	 * Opens a parenthesis prepended with AND (where necessary)
@@ -1057,9 +1037,9 @@ class Sphinxql extends Connection
 	public function whereOpen()
 	{
 		$this->where[] = array('ext_operator' => 'AND (');
+
 		return $this;
 	}
-
 
 	/**
 	 * Opens a parenthesis prepended with OR (where necessary)
@@ -1069,9 +1049,9 @@ class Sphinxql extends Connection
 	public function orWhereOpen()
 	{
 		$this->where[] = array('ext_operator' => 'OR (');
+
 		return $this;
 	}
-
 
 	/**
 	 * Closes a parenthesis in WHERE
@@ -1081,9 +1061,9 @@ class Sphinxql extends Connection
 	public function whereClose()
 	{
 		$this->where[] = array('ext_operator' => ')');
+
 		return $this;
 	}
-
 
 	/**
 	 * GROUP BY clause
@@ -1096,9 +1076,9 @@ class Sphinxql extends Connection
 	public function groupBy($column)
 	{
 		$this->group_by[] = $column;
+
 		return $this;
 	}
-
 
 	/**
 	 * WITHIN GROUP ORDER BY clause (SphinxQL-specific)
@@ -1113,9 +1093,9 @@ class Sphinxql extends Connection
 	public function withinGroupOrderBy($column, $direction = null)
 	{
 		$this->within_group_order_by[] = array('column' => $column, 'direction' => $direction);
+
 		return $this;
 	}
-
 
 	/**
 	 * ORDER BY clause
@@ -1129,9 +1109,9 @@ class Sphinxql extends Connection
 	public function orderBy($column, $direction = null)
 	{
 		$this->order_by[] = array('column' => $column, 'direction' => $direction);
+
 		return $this;
 	}
-
 
 	/**
 	 * LIMIT clause
@@ -1156,7 +1136,6 @@ class Sphinxql extends Connection
 		return $this;
 	}
 
-
 	/**
 	 * OFFSET clause
 	 *
@@ -1167,9 +1146,9 @@ class Sphinxql extends Connection
 	public function offset($offset)
 	{
 		$this->offset = (int) $offset;
+
 		return $this;
 	}
-
 
 	/**
 	 * OPTION clause (SphinxQL-specific)
@@ -1183,9 +1162,9 @@ class Sphinxql extends Connection
 	public function option($name, $value)
 	{
 		$this->options[] = array('name' => $name, 'value' => $value);
+
 		return $this;
 	}
-
 
 	/**
 	 * INTO clause
@@ -1198,9 +1177,9 @@ class Sphinxql extends Connection
 	public function into($index)
 	{
 		$this->into = $index;
+
 		return $this;
 	}
-
 
 	/**
 	 * Set columns
@@ -1225,7 +1204,6 @@ class Sphinxql extends Connection
 		return $this;
 	}
 
-
 	/**
 	 * Set VALUES
 	 * Used in: INSERT, REPLACE
@@ -1245,9 +1223,9 @@ class Sphinxql extends Connection
 		{
 			$this->values[] = \func_get_args();
 		}
+
 		return $this;
 	}
-
 
 	/**
 	 * Set column and relative value
@@ -1273,7 +1251,6 @@ class Sphinxql extends Connection
 		return $this;
 	}
 
-
 	/**
 	 * Allows passing an array with the key as column and value as value
 	 * Used in: INSERT, REPLACE, UPDATE
@@ -1288,9 +1265,9 @@ class Sphinxql extends Connection
 		{
 			$this->value($key, $item);
 		}
+
 		return $this;
 	}
-
 
 	/**
 	 * Escapes the query for the MATCH() function
@@ -1303,9 +1280,9 @@ class Sphinxql extends Connection
 	{
 		$from = array('\\', '(', ')', '|', '-', '!', '@', '~', '"', '&', '/', '^', '$', '=');
 		$to = array('\\\\', '\(', '\)', '\|', '\-', '\!', '\@', '\~', '\"', '\&', '\/', '\^', '\$', '\=');
+
 		return str_replace($from, $to, $string);
 	}
-
 
 	/**
 	 * Escapes the query for the MATCH() function

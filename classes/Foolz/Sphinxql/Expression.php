@@ -15,7 +15,6 @@ class Expression
 	 */
 	protected $string;
 
-
 	/**
 	 * The constructor accepts the expression as string
 	 *
@@ -26,7 +25,6 @@ class Expression
 		$this->string = $string;
 	}
 
-
 	/**
 	 * Return the unmodified expression
 	 *
@@ -36,7 +34,6 @@ class Expression
 	{
 		return (string) $this->string;
 	}
-
 
 	/**
 	 * Returns the unmodified expression

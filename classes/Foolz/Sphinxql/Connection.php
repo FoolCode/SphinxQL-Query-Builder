@@ -24,14 +24,12 @@ class Connection
 	 */
 	protected static $current_connection = 'default';
 
-
 	/**
 	 * Disable warnings coming from server downtimes with a @ on \MySQLi
 	 *
 	 * @var  boolean
 	 */
 	protected static $silence_connection_warning = false;
-
 
 	/**
 	 * Connection data array

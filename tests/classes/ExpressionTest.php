@@ -4,7 +4,6 @@ use Foolz\Sphinxql\Expression as SphinxqlExpression;
 
 class ExpressionTest extends PHPUnit_Framework_TestCase
 {
-
 	public function testValue()
 	{
 		$result = new SphinxqlExpression('');
@@ -17,5 +16,4 @@ class ExpressionTest extends PHPUnit_Framework_TestCase
 		$this->assertInstanceOf('Foolz\Sphinxql\Expression', $result);
 		$this->assertEquals('* \\ Ç"" \'', (string) $result);
 	}
-
 }

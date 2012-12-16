@@ -133,20 +133,20 @@ class Connection
 
 		if ( ! $suppress_error && ! static::$silence_connection_warning)
 		{
-			static::$connections[static::$current_connection] =
-				new \MySQLi($data['host'], null, null, null, $data['port'], null);
+			$conn = new \MySQLi($data['host'], null, null, null, $data['port'], null);
 		}
 		else
 		{
-			static::$connections[static::$current_connection] =
-				@ new \MySQLi($data['host'], null, null, null, $data['port'], null);
+			$conn = @ new \MySQLi($data['host'], null, null, null, $data['port'], null);
 		}
 
-		if (static::getConnection()->connect_error)
+		if ($conn->connect_error)
 		{
-			throw new SphinxqlConnectionException('Connection error: ['.static::getConnection()->connect_errno.']'
-				.static::getConnection()->connect_error);
+			throw new SphinxqlConnectionException('Connection error: ['.$conn->connect_errno.']'
+				.$conn->connect_error);
 		}
+		
+		static::$connections[static::$current_connection] = $conn;
 
 		return true;
 	}

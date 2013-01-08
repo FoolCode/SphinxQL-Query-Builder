@@ -370,7 +370,7 @@ class Sphinxql extends Connection
 	{
 		array_unshift($index, $extra);
 		array_unshift($data, $extra);
-		
+
 		return static::query('CALL SNIPPETS('.implode(', ', $this->quoteArr($extra)).')');
 	}
 
@@ -647,7 +647,7 @@ class Sphinxql extends Connection
 
 		if ( ! empty($this->within_group_order_by))
 		{
-			$query .= 'ORDER BY ';
+			$query .= 'WITHIN GROUP ORDER BY ';
 
 			$order_arr = array();
 

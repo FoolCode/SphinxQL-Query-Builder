@@ -18,7 +18,7 @@ class SphinxqlTest extends PHPUnit_Framework_TestCase
 		// empty that poor db. TRUNCATE is still in beta in Sphinxsearch 2.1.1-beta
 		Sphinxql::delete()
 			->from('rt')
-			->where('id', 'IN', array(1, 10, 11, 12, 13, 14, 15))
+			->where('id', 'IN', array(1, 10, 11, 12, 13, 14, 15, 16, 17))
 			->execute();
 	}
 
@@ -138,7 +138,7 @@ class SphinxqlTest extends PHPUnit_Framework_TestCase
 
 		$this->assertCount(3, $result);
 
-		$res = Sphinxql::insert()
+		Sphinxql::insert()
 			->into('rt')
 			->columns('id', 'title', 'content', 'gid')
 			->values(13, 'i am getting bored', 'with all this CONTENT', 300)
@@ -151,6 +151,19 @@ class SphinxqlTest extends PHPUnit_Framework_TestCase
 			->execute();
 
 		$this->assertCount(6, $result);
+
+		Sphinxql::insert()
+			->into('rt')
+			->columns('id', 'title', 'content', 'gid')
+			->values(16, 'we need to test', 'selecting the best result in groups', 500)
+			->values(17, 'what is there to do', 'we need to create dummy data for tests', 500)
+			->execute();
+
+		$result = Sphinxql::select()
+			->from('rt')
+			->execute();
+
+		$this->assertCount(8, $result);
 	}
 
 
@@ -285,7 +298,7 @@ class SphinxqlTest extends PHPUnit_Framework_TestCase
 			->where('gid', '>', 300)
 			->execute();
 
-		$this->assertCount(4, $result);
+		$this->assertCount(6, $result);
 
 		$result = Sphinxql::select()
 			->from('rt')
@@ -297,7 +310,7 @@ class SphinxqlTest extends PHPUnit_Framework_TestCase
 			->where('gid', '>', 300)
 			->execute();
 
-		$this->assertCount(4, $result);
+		$this->assertCount(6, $result);
 	}
 
 
@@ -357,7 +370,7 @@ class SphinxqlTest extends PHPUnit_Framework_TestCase
 			->groupBy('gid')
 			->execute();
 
-		$this->assertCount(4, $result);
+		$this->assertCount(5, $result);
 		$this->assertSame('3', $result[3]['@count']);
 	}
 
@@ -369,7 +382,7 @@ class SphinxqlTest extends PHPUnit_Framework_TestCase
 			->orderBy('id', 'desc')
 			->execute();
 
-		$this->assertSame('15', $result[0]['id']);
+		$this->assertSame('17', $result[0]['id']);
 
 		$result = Sphinxql::select()
 			->from('rt')
@@ -384,19 +397,21 @@ class SphinxqlTest extends PHPUnit_Framework_TestCase
 	{
 		$result = Sphinxql::select()
 			->from('rt')
+			->where('gid', 500)
 			->groupBy('gid')
 			->withinGroupOrderBy('id', 'desc')
 			->execute();
 
-		$this->assertSame('13', $result[0]['id']);
+		$this->assertSame('17', $result[0]['id']);
 
 		$result = Sphinxql::select()
 			->from('rt')
+			->where('gid', 500)
 			->groupBy('gid')
 			->withinGroupOrderBy('id', 'asc')
 			->execute();
 
-		$this->assertSame('10', $result[0]['id']);
+		$this->assertSame('16', $result[0]['id']);
 
 	}
 
@@ -405,10 +420,10 @@ class SphinxqlTest extends PHPUnit_Framework_TestCase
 	{
 		$result = Sphinxql::select()
 			->from('rt')
-			->offset(3)
+			->offset(4)
 			->execute();
 
-		$this->assertCount(3, $result);
+		$this->assertCount(4, $result);
 	}
 
 
@@ -444,7 +459,7 @@ class SphinxqlTest extends PHPUnit_Framework_TestCase
 			->from('rt')
 			->execute();
 
-		$this->assertCount(3, $result);
+		$this->assertCount(5, $result);
 	}
 
 }

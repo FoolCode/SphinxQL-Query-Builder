@@ -9,8 +9,15 @@ class SphinxqlDatabaseException extends SphinxqlException {}
  * This class is a Query Builder for SphinxQL,
  * inspired by the FuelPHP Query Builder.
  */
-class Sphinxql extends Connection
+class Sphinxql
 {
+	/**
+	 * The connection for this object
+	 *
+	 * @var Foolz\Sphinxql\Connection
+	 */
+	protected $connection = null;
+
 	/**
 	 * The last result object
 	 *
@@ -146,7 +153,43 @@ class Sphinxql extends Connection
 	);
 
 	/**
-	 * Catches static select, insert, replace, update, delete
+	 *
+	 * @param type $connection
+	 * @param type $instance_name
+	 */
+	public function instantiate($connection, $instance_name = 'default')
+	{
+
+	}
+
+	/**
+	 *
+	 *
+	 * @param \Foolz\Sphinxql\Connection $connection
+	 */
+	public function forge($connection = 'default')
+	{
+		if ($connection instanceof \Foolz\Sphinxql\Connection)
+		{
+			$this->connection = $connection;
+		}
+		else
+		{
+			$this->connection = \Foolz\Sphinxql\Connection::forge();
+		}
+	}
+
+	/**
+	 * Returns the currently attached connection
+	 *
+	 * @returns \Foolz\Sphinxql\Connection
+	 */
+	public function getConnection()
+	{
+		return $this->connection;
+	}
+
+	/**
 	 * Used for the SHOW queries
 	 *
 	 * @param  string  $method      The method
@@ -155,13 +198,12 @@ class Sphinxql extends Connection
 	 * @return  array  The result of the SHOW query
 	 * @throws  \BadMethodCallException  If there's no such a method
 	 */
-	public static function __callStatic($method, $parameters)
+	public function __call($method, $parameters)
 	{
 		if (isset(static::$show_queries[$method]))
 		{
-			$new = static::forge();
 			$ordered = array();
-			$result = $new->query(static::$show_queries[$method]);
+			$result = $this->getConnection()->query(static::$show_queries[$method]);
 			if ($method === 'tables')
 			{
 				return $result;
@@ -176,65 +218,6 @@ class Sphinxql extends Connection
 		}
 
 		throw new \BadMethodCallException($method);
-	}
-
-	/**
-	 * Begins building a select query
-	 * Uses func_get_args to get input
-	 *
-	 * @return  \Foolz\Sphinxql\Sphinxql  The new object
-	 */
-	public static function select()
-	{
-		if (count(\func_get_args()))
-		{
-			$new = static::forge();
-			return \call_user_func_array(array($new, 'doSelect'), \func_get_args());
-		}
-
-		return static::forge()->doSelect();
-	}
-
-	/**
-	 * Begins building an insert query
-	 *
-	 * @return  \Foolz\Sphinxql\Sphinxql  The new object
-	 */
-	public static function insert()
-	{
-		return static::forge()->doInsert();
-	}
-
-	/**
-	 * Begins building a replace query
-	 *
-	 * @return  \Foolz\Sphinxql\Sphinxql  The new object
-	 */
-	public static function replace()
-	{
-		return static::forge()->doReplace();
-	}
-
-	/**
-	 * Begins building an update query
-	 *
-	 * @param  string  $index  The index to update
-	 *
-	 * @return  \Foolz\Sphinxql\Sphinxql  The new object
-	 */
-	public static function update($index)
-	{
-		return static::forge()->doUpdate($index);
-	}
-
-	/**
-	 * Begins building a delete query
-	 *
-	 * @return  \Foolz\Sphinxql\Sphinxql  The new object
-	 */
-	public static function delete()
-	{
-		return static::forge()->doDelete();
 	}
 
 	/**
@@ -261,7 +244,7 @@ class Sphinxql extends Connection
 	public function execute()
 	{
 		// pass the object so execute compiles it by itself
-		return $this->last_result = static::query($this->compile()->getCompiled());
+		return $this->last_result = $this->getConnection()->query($this->compile()->getCompiled());
 	}
 
 	/**
@@ -293,10 +276,8 @@ class Sphinxql extends Connection
 	 *
 	 * @return  array  The result of the query
 	 */
-	public static function setVariable($name, $value, $global = false)
+	public function setVariable($name, $value, $global = false)
 	{
-		$sq = Sphinxql::forge();
-
 		$query = 'SET ';
 
 		if ($global)
@@ -313,48 +294,48 @@ class Sphinxql extends Connection
 		}
 		else
 		{
-			$query .= $sq->quoteIdentifier($name).' ';
+			$query .= $this->getConnection()->quoteIdentifier($name).' ';
 		}
 
 		// user variables must always be processed as arrays
 		if ($user_var && ! is_array($value))
 		{
-			$query .= '= ('.$sq->quote($value).')';
+			$query .= '= ('.$this->getConnection()->quote($value).')';
 		}
 		else if (is_array($value))
 		{
-			$query .= '= ('.implode(', ', $sq->quoteArr($value)).')';
+			$query .= '= ('.implode(', ', $this->getConnection()->quoteArr($value)).')';
 		}
 		else
 		{
-			$query .= '= '.$sq->quote($value);
+			$query .= '= '.$this->getConnection()->quote($value);
 		}
 
-		static::query($query);
+		$this->getConnection()->query($query);
 	}
 
 	/**
 	 * Begins transaction
 	 */
-	public static function transactionBegin()
+	public function transactionBegin()
 	{
-		static::query('BEGIN');
+		$this->getConnection()->query('BEGIN');
 	}
 
 	/**
 	 * Commits transaction
 	 */
-	public static function transactionCommit()
+	public function transactionCommit()
 	{
-		static::query('COMMIT');
+		$this->getConnection()->query('COMMIT');
 	}
 
 	/**
 	 * Rollbacks transaction
 	 */
-	public static function transactionRollback()
+	public function transactionRollback()
 	{
-		static::query('ROLLBACK');
+		$this->getConnection()->query('ROLLBACK');
 	}
 
 	/**
@@ -366,12 +347,12 @@ class Sphinxql extends Connection
 	 *
 	 * @return  array  The result of the query
 	 */
-	public static function callSnippets($data, $index, $extra = array())
+	public function callSnippets($data, $index, $extra = array())
 	{
 		array_unshift($index, $extra);
 		array_unshift($data, $extra);
-		
-		return static::query('CALL SNIPPETS('.implode(', ', $this->quoteArr($extra)).')');
+
+		return $this->getConnection()->query('CALL SNIPPETS('.implode(', ', $this->getConnection()->quoteArr($extra)).')');
 	}
 
 	/**
@@ -383,7 +364,7 @@ class Sphinxql extends Connection
 	 *
 	 * @return  array  The result of the query
 	 */
-	public static function callKeywords($text, $index, $hits = null)
+	public function callKeywords($text, $index, $hits = null)
 	{
 		$arr = array($text, $index);
 		if ($hits !== null)
@@ -391,7 +372,7 @@ class Sphinxql extends Connection
 			$arr[] = $hits;
 		}
 
-		return static::query('CALL KEYWORDS('.implode(', ', $this->quoteArr($arr)).')');
+		return $this->getConnection()->query('CALL KEYWORDS('.implode(', ', $this->getConnection()->quoteArr($arr)).')');
 	}
 
 	/**
@@ -401,11 +382,9 @@ class Sphinxql extends Connection
 	 *
 	 * @return  array  The result of the query
 	 */
-	public static function describe($index)
+	public function describe($index)
 	{
-		$sq = Sphinxql::forge();
-
-		return static::query('DESCRIBE '.$sq->quoteIdentifier($index));
+		return $this->getConnection()->query('DESCRIBE '.$this->getConnection()->quoteIdentifier($index));
 	}
 
 	/**
@@ -417,10 +396,10 @@ class Sphinxql extends Connection
 	 *
 	 * @return  array  The result of the query
 	 */
-	public static function createFunction($udf_name, $returns, $so_name)
+	public function createFunction($udf_name, $returns, $so_name)
 	{
-		return static::query('CREATE FUNCTION '.$this->quoteIdentifier($udf_name).
-			' RETURNS '.$returns.' SONAME '.$this->quote($so_name));
+		return $this->getConnection()->query('CREATE FUNCTION '.$this->getConnection()->quoteIdentifier($udf_name).
+			' RETURNS '.$returns.' SONAME '.$this->getConnection()->quote($so_name));
 	}
 
 	/**
@@ -430,9 +409,9 @@ class Sphinxql extends Connection
 	 *
 	 * @return  array  The result of the query
 	 */
-	public static function dropFunction($udf_name)
+	public function dropFunction($udf_name)
 	{
-		return static::query('DROP FUNCTION '.$this->quoteIdentifier($udf_name));
+		return $this->getConnection()->query('DROP FUNCTION '.$this->getConnection()->quoteIdentifier($udf_name));
 	}
 
 	/**
@@ -443,10 +422,10 @@ class Sphinxql extends Connection
 	 *
 	 * @return  array  The result of the query
 	 */
-	public static function attachIndex($disk_index, $rt_index)
+	public function attachIndex($disk_index, $rt_index)
 	{
-		return static::query('ATTACH INDEX '.$this->quoteIdentifier($disk_index).
-			' TO RTINDEX '. $this->quoteIdentifier());
+		return $this->getConnection()->query('ATTACH INDEX '.$this->getConnection()->quoteIdentifier($disk_index).
+			' TO RTINDEX '. $this->getConnection()->quoteIdentifier());
 	}
 
 	/**
@@ -456,9 +435,9 @@ class Sphinxql extends Connection
 	 *
 	 * @return  array  The result of the query
 	 */
-	public static function flushRtIndex($index)
+	public function flushRtIndex($index)
 	{
-		return static::query('FLUSH RTINDEX '.$this->quoteIdentifier($index));
+		return $this->getConnection()->query('FLUSH RTINDEX '.$this->getConnection()->quoteIdentifier($index));
 	}
 
 	/**
@@ -525,7 +504,7 @@ class Sphinxql extends Connection
 				$pre .= ' ';
 			}
 
-			$query .= $this->escape(trim($pre)).") ";
+			$query .= $this->getConnection()->escape(trim($pre)).") ";
 		}
 
 		return $query;
@@ -579,9 +558,10 @@ class Sphinxql extends Connection
 
 				if (strtoupper($where['operator']) === 'BETWEEN')
 				{
-					$query .= $this->quoteIdentifier($where['column']);
+					$query .= $this->getConnection()->quoteIdentifier($where['column']);
 					$query .=' BETWEEN ';
-					$query .= $this->quote($where['value'][0]).' AND '.$this->quote($where['value'][1]).' ';
+					$query .= $this->getConnection()->quote($where['value'][0]).' AND '
+						.$this->getConnection()->quote($where['value'][1]).' ';
 				}
 				else
 				{
@@ -592,16 +572,16 @@ class Sphinxql extends Connection
 					}
 					else
 					{
-						$query .= $this->quoteIdentifier($where['column']).' ';
+						$query .= $this->getConnection()->quoteIdentifier($where['column']).' ';
 					}
 
 					if (strtoupper($where['operator']) === 'IN')
 					{
-						$query .= 'IN ('.implode(', ', $this->quoteArr($where['value'])).') ';
+						$query .= 'IN ('.implode(', ', $this->getConnection()->quoteArr($where['value'])).') ';
 					}
 					else
 					{
-						$query .= $where['operator'].' '.$this->quote($where['value']).' ';
+						$query .= $where['operator'].' '.$this->getConnection()->quote($where['value']).' ';
 					}
 				}
 			}
@@ -625,7 +605,7 @@ class Sphinxql extends Connection
 
 			if ( ! empty($this->select))
 			{
-				$query .= implode(', ', $this->quoteIdentifierArr($this->select)).' ';
+				$query .= implode(', ', $this->getConnection()->quoteIdentifierArr($this->select)).' ';
 			}
 			else
 			{
@@ -635,14 +615,14 @@ class Sphinxql extends Connection
 
 		if ( ! empty($this->from))
 		{
-			$query .= 'FROM '.implode(', ', $this->quoteIdentifierArr($this->from)).' ';
+			$query .= 'FROM '.implode(', ', $this->getConnection()->quoteIdentifierArr($this->from)).' ';
 		}
 
 		$query .= $this->compileMatch().$this->compileWhere();
 
 		if ( ! empty($this->group_by))
 		{
-			$query .= 'GROUP BY '.implode(', ', $this->quoteIdentifierArr($this->group_by)).' ';
+			$query .= 'GROUP BY '.implode(', ', $this->getConnection()->quoteIdentifierArr($this->group_by)).' ';
 		}
 
 		if ( ! empty($this->within_group_order_by))
@@ -653,7 +633,7 @@ class Sphinxql extends Connection
 
 			foreach ($this->within_group_order_by as $order)
 			{
-				$order_sub = $this->quoteIdentifier($order['column']).' ';
+				$order_sub = $this->getConnection()->quoteIdentifier($order['column']).' ';
 
 				if ($order['direction'] !== null)
 				{
@@ -674,7 +654,7 @@ class Sphinxql extends Connection
 
 			foreach ($this->order_by as $order)
 			{
-				$order_sub = $this->quoteIdentifier($order['column']).' ';
+				$order_sub = $this->getConnection()->quoteIdentifier($order['column']).' ';
 
 				if ($order['direction'] !== null)
 				{
@@ -707,7 +687,8 @@ class Sphinxql extends Connection
 			$options = array();
 			foreach ($this->options as $option)
 			{
-				$options[] = $this->quoteIdentifier($option['name']).' = '.$this->quote($option['value']);
+				$options[] = $this->getConnection()->quoteIdentifier($option['name'])
+					.' = '.$this->getConnection()->quote($option['value']);
 			}
 
 			$query .= 'OPTION '.implode(', ', $options);
@@ -741,16 +722,16 @@ class Sphinxql extends Connection
 
 		if ( ! empty ($this->columns))
 		{
-			$query .= '('.implode(', ', $this->quoteIdentifierArr($this->columns)).') ';
+			$query .= '('.implode(', ', $this->getConnection->quoteIdentifierArr($this->columns)).') ';
 		}
 
 		if ( ! empty ($this->values))
 		{
 			$query .= 'VALUES ';
 			$query_sub = '';
-			foreach($this->values as $value)
+			foreach ($this->values as $value)
 			{
-				$query_sub[] = '('.implode(', ', $this->quoteArr($value)).')';
+				$query_sub[] = '('.implode(', ', $this->getConnection->quoteArr($value)).')';
 			}
 
 			$query .= implode(', ', $query_sub);
@@ -787,11 +768,13 @@ class Sphinxql extends Connection
 				// MVA support
 				if (is_array($value))
 				{
-					$query_sub[] = $this->quoteIdentifier($column).' = ('.implode(', ', $this->queryArr($value)).')';
+					$query_sub[] = $this->getConnection()->quoteIdentifier($column)
+						.' = ('.implode(', ', $this->getConnection()->quoteArr($value)).')';
 				}
 				else
 				{
-					$query_sub[] = $this->quoteIdentifier($column).' = '.$this->quote($value);
+					$query_sub[] = $this->getConnection()->quoteIdentifier($column)
+						.' = '.$this->getConnection()->quote($value);
 				}
 			}
 
@@ -836,15 +819,8 @@ class Sphinxql extends Connection
 	 *
 	 * @return  \Foolz\Sphinxql\Sphinxql  The current object
 	 */
-	public function doSelect()
+	public function select()
 	{
-		if ($this->type !== null)
-		{
-			$new = static::forge($this->conn);
-			\call_user_func_array(array($new, 'select'), \func_get_args());
-			return $new;
-		}
-
 		$this->type = 'select';
 		$this->select = \func_get_args();
 
@@ -856,15 +832,8 @@ class Sphinxql extends Connection
 	 *
 	 * @return  \Foolz\Sphinxql\Sphinxql  The current object
 	 */
-	public function doInsert()
+	public function insert()
 	{
-		if ($this->type !== null)
-		{
-			$new = static::forge($this->conn);
-			$new->insert();
-			return $new;
-		}
-
 		$this->type = 'insert';
 
 		return $this;
@@ -875,15 +844,8 @@ class Sphinxql extends Connection
 	 *
 	 * @return  \Foolz\Sphinxql\Sphinxql  The current object
 	 */
-	public function doReplace()
+	public function replace()
 	{
-		if ($this->type !== null)
-		{
-			$new = static::forge($this->conn);
-			$new->replace();
-			return $new;
-		}
-
 		$this->type = 'replace';
 
 		return $this;
@@ -894,16 +856,8 @@ class Sphinxql extends Connection
 	 *
 	 * @return  \Foolz\Sphinxql\Sphinxql  The current object
 	 */
-	public function doUpdate($index)
+	public function update($index)
 	{
-		if ($this->type !== null)
-		{
-			$new = static::forge($this->conn);
-			$new->update($index);
-			$new->into($index);
-			return $new;
-		}
-
 		$this->type = 'update';
 		$this->into($index);
 
@@ -915,15 +869,8 @@ class Sphinxql extends Connection
 	 *
 	 * @return  \Foolz\Sphinxql\Sphinxql  The current object
 	 */
-	public function doDelete()
+	public function delete()
 	{
-		if ($this->type !== null)
-		{
-			$new = static::forgeWithConnection($this->conn);
-			$new->delete();
-			return $new;
-		}
-
 		$this->type = 'delete';
 
 		return $this;
@@ -999,15 +946,15 @@ class Sphinxql extends Connection
 	{
 		if ($value === null)
 		{
-			$value		 = $operator;
-			$operator	 = '=';
+			$value = $operator;
+			$operator = '=';
 		}
 
 		$this->where[] = array(
-			'ext_operator'	 => $or ? 'OR' : 'AND',
-			'column'		 => $column,
-			'operator'		 => $operator,
-			'value'			 => $value
+			'ext_operator' => $or ? 'OR' : 'AND',
+			'column' => $column,
+			'operator' => $operator,
+			'value' => $value
 		);
 
 		return $this;

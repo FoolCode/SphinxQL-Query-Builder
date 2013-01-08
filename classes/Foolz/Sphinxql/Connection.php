@@ -13,16 +13,9 @@ class Connection
 	/**
 	 * The array of live connections
 	 *
-	 * @var  \MySQLi[]
+	 * @var  \Foolz\Sphinxql\Connection[]
 	 */
 	protected static $connections = array();
-
-	/**
-	 * The array key of the current selected connection
-	 *
-	 * @var  string
-	 */
-	protected static $current_connection = 'default';
 
 	/**
 	 * Disable warnings coming from server downtimes with a @ on \MySQLi
@@ -36,29 +29,20 @@ class Connection
 	 *
 	 * @var  array
 	 */
-	protected static $connection_info = array(
-		'default' => array(
-			'host' => '127.0.0.1',
-			'port' => 9306
-		)
-	);
+	protected $connection_info = array('host' => '127.0.0.1', 'port' => 9306);
 
 	/**
 	 * Creates a new Sphinxql object and if necessary connects to DB
 	 *
 	 * @return  \Foolz\Sphinxql\Sphinxql  A new Sphinxql object
 	 */
-	public static function forge()
+	public static function forge($instance_name = null)
 	{
-		$new = new Sphinxql;
+		$new = new static();
 
-		try
+		if ($instance_name !== null)
 		{
-			static::getConnection();
-		}
-		catch (SphinxqlConnectionException $e)
-		{
-			static::connect();
+			static::$connections[$name] = $new;
 		}
 
 		return $new;
@@ -76,30 +60,15 @@ class Connection
 	}
 
 	/**
-	 * Add a connection to the array
+	 * * Add a connection to the array
 	 *
 	 * @param  string  $name     The key name of the connection
 	 * @param  string  $host     The hostname or IP
 	 * @param  int     $port     The port to the host
 	 */
-	public static function addConnection($name = 'default', $host = '127.0.0.1', $port = 9306)
+	public static function setConnection($host = '127.0.0.1', $port = 9306)
 	{
-		if ($host === 'localhost')
-		{
-			$host = '127.0.0.1';
-		}
-
-		static::$connection_info[$name] = array('host' => $host, 'port' => $port);
-	}
-
-	/**
-	 * Sets the connection to use
-	 *
-	 * @param  string  $name  The name of the connection
-	 */
-	public static function setConnection($name)
-	{
-		static::$current_connection = $name;
+		static::$connection_info = array('host' => $host, 'port' => $port);
 	}
 
 	/**
@@ -111,12 +80,7 @@ class Connection
 	 */
 	public static function getConnectionInfo($name = null)
 	{
-		if ($name !== null)
-		{
-			return static::$connection_info[$name];
-		}
-
-		return static::$connection_info[static::$current_connection];
+		return $this->connection_info;
 	}
 
 	/**
@@ -145,7 +109,7 @@ class Connection
 			throw new SphinxqlConnectionException('Connection error: ['.$conn->connect_errno.']'
 				.$conn->connect_error);
 		}
-		
+
 		static::$connections[static::$current_connection] = $conn;
 
 		return true;
@@ -236,7 +200,7 @@ class Connection
 		}
 
 		// sphinxql doesn't return insert_id because we always have to point it out ourselves!
-		return array(static::getConnection()->affected_rows);
+		return array($this->getConnection()->affected_rows);
 	}
 
 	/**
@@ -252,11 +216,11 @@ class Connection
 	{
 		try
 		{
-			static::getConnection();
+			$this->getConnection();
 		}
 		catch (SphinxqlConnectionException $e)
 		{
-			static::connect();
+			$this->connect();
 		}
 
 		if (($value = $this->getConnection()->real_escape_string((string) $value)) === false)
@@ -350,6 +314,11 @@ class Connection
 		{
 			// Convert to non-locale aware float to prevent possible commas
 			return sprintf('%F', $value);
+		}
+		elseif (is_array($value))
+		{
+			// (1,2,3) format to support MVA attributes
+			return '(' . implode(',', $this->quoteArr($value)) . ')';
 		}
 
 		return $this->escape($value);

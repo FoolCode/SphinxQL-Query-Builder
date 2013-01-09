@@ -627,7 +627,7 @@ class Sphinxql
 
 		if ( ! empty($this->within_group_order_by))
 		{
-			$query .= 'ORDER BY ';
+			$query .= 'WITHIN GROUP ORDER BY ';
 
 			$order_arr = array();
 

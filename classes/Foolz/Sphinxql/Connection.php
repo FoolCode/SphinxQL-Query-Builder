@@ -2,7 +2,8 @@
 
 namespace Foolz\Sphinxql;
 
-class SphinxqlConnectionException extends \Exception {};
+class ConnectionException extends \Exception {};
+class DatabaseException extends \Exception {};
 
 /**
  * SphinxQL connection class based on MySQLi.
@@ -11,18 +12,18 @@ class SphinxqlConnectionException extends \Exception {};
 class Connection
 {
 	/**
-	 * The array of live connections
+	 * Object for the current connection
 	 *
 	 * @var  \Foolz\Sphinxql\Connection[]
 	 */
-	protected static $connections = array();
+	protected $connection = null;
 
 	/**
 	 * Disable warnings coming from server downtimes with a @ on \MySQLi
 	 *
 	 * @var  boolean
 	 */
-	protected static $silence_connection_warning = false;
+	protected $silence_connection_warning = false;
 
 	/**
 	 * Connection data array
@@ -32,31 +33,14 @@ class Connection
 	protected $connection_info = array('host' => '127.0.0.1', 'port' => 9306);
 
 	/**
-	 * Creates a new Sphinxql object and if necessary connects to DB
-	 *
-	 * @return  \Foolz\Sphinxql\Sphinxql  A new Sphinxql object
-	 */
-	public static function forge($instance_name = null)
-	{
-		$new = new static();
-
-		if ($instance_name !== null)
-		{
-			static::$connections[$name] = $new;
-		}
-
-		return $new;
-	}
-
-	/**
 	 * While horrible, we have a function to enable silencing \MySQLi connection errors
 	 * Use it only if you are running with high error reporting on a production server
 	 *
 	 * @param  boolean  $enable  True if it should be enabled, false if it should be disabled
 	 */
-	public static function silenceConnectionWarning($enable = true)
+	public function silenceConnectionWarning($enable = true)
 	{
-		static::$silence_connection_warning = $enable;
+		$this->silence_connection_warning = $enable;
 	}
 
 	/**
@@ -66,9 +50,9 @@ class Connection
 	 * @param  string  $host     The hostname or IP
 	 * @param  int     $port     The port to the host
 	 */
-	public static function setConnection($host = '127.0.0.1', $port = 9306)
+	public function setConnection($host = '127.0.0.1', $port = 9306)
 	{
-		static::$connection_info = array('host' => $host, 'port' => $port);
+		$this->connection_info = array('host' => $host, 'port' => $port);
 	}
 
 	/**
@@ -78,7 +62,7 @@ class Connection
 	 *
 	 * @return  array  The connection info
 	 */
-	public static function getConnectionInfo($name = null)
+	public function getConnectionInfo()
 	{
 		return $this->connection_info;
 	}
@@ -89,13 +73,13 @@ class Connection
 	 * @param  boolean  $suppress_error  If the warning on connection should be suppressed
 	 *
 	 * @return  boolean  True if connected
-	 * @throws  \Foolz\Sphinxql\SphinxqlConnectionException  If there was a connection error
+	 * @throws  \Foolz\Sphinxql\ConnectionException  If there was a connection error
 	 */
-	public static function connect($suppress_error = false)
+	public function connect($suppress_error = false)
 	{
-		$data = static::getConnectionInfo();
+		$data = $this->getConnectionInfo();
 
-		if ( ! $suppress_error && ! static::$silence_connection_warning)
+		if ( ! $suppress_error && ! $this->silence_connection_warning)
 		{
 			$conn = new \MySQLi($data['host'], null, null, null, $data['port'], null);
 		}
@@ -106,11 +90,11 @@ class Connection
 
 		if ($conn->connect_error)
 		{
-			throw new SphinxqlConnectionException('Connection error: ['.$conn->connect_errno.']'
+			throw new ConnectionException('Connection error: ['.$conn->connect_errno.']'
 				.$conn->connect_error);
 		}
 
-		static::$connections[static::$current_connection] = $conn;
+		$this->connection = $conn;
 
 		return true;
 	}
@@ -120,43 +104,43 @@ class Connection
 	 *
 	 * @return  boolean  True if connected, false otherwise
 	 */
-	public static function ping()
+	public function ping()
 	{
 		try
 		{
-			static::getConnection();
+			$this->getConnection();
 		}
-		catch (SphinxqlConnectionException $e)
+		catch (ConnectionException $e)
 		{
-			static::connect();
+			$this->connect();
 		}
 
-		return static::getConnection()->ping();
+		return $this->getConnection()->ping();
 	}
 
 	/**
 	 * Closes the connection to SphinxQL
 	 */
-	public static function close()
+	public function close()
 	{
-		static::getConnection()->close();
-		unset(static::$connections[static::$current_connection]);
+		$this->getConnection()->close();
+		$this->connection = null;
 	}
 
 	/**
 	 * Returns the \MySQLi connection
 	 *
 	 * @return  \MySQLi  The MySQLi connection
-	 * @throws  \Foolz\Sphinxql\SphinxqlConnectionException  If there was no connection open or selected
+	 * @throws  \Foolz\Sphinxql\ConnectionException  If there was no connection open or selected
 	 */
-	public static function getConnection()
+	public function getConnection()
 	{
-		if (isset(static::$connections[static::$current_connection]))
+		if ($this->connection !== null)
 		{
-			return static::$connections[static::$current_connection];
+			return $this->connection;
 		}
 
-		throw new SphinxqlConnectionException('The connection has not yet been established.');
+		throw new ConnectionException('The connection has not yet been established.');
 	}
 
 	/**
@@ -165,25 +149,25 @@ class Connection
 	 * @param  string  $query  The query string
 	 *
 	 * @return  array  The result array
-	 * @throws  \Foolz\Sphinxql\SphinxqlDatabaseException  If the executed query produced an error
+	 * @throws  \Foolz\Sphinxql\DatabaseException  If the executed query produced an error
 	 */
-	public static function query($query)
+	public function query($query)
 	{
 		try
 		{
-			static::getConnection();
+			$this->getConnection();
 		}
-		catch (SphinxqlConnectionException $e)
+		catch (ConnectionException $e)
 		{
-			static::connect();
+			$this->connect();
 		}
 
-		$resource = static::getConnection()->query($query);
+		$resource = $this->getConnection()->query($query);
 
-		if (static::getConnection()->error)
+		if ($this->getConnection()->error)
 		{
-			throw new SphinxqlDatabaseException('['.static::getConnection()->errno.'] '.
-				static::getConnection()->error.' [ '.$query.']');
+			throw new DatabaseException('['.$this->getConnection()->errno.'] '.
+				$this->getConnection()->error.' [ '.$query.']');
 		}
 
 		if ($resource instanceof \mysqli_result)
@@ -210,7 +194,7 @@ class Connection
 	 * @param  string  $value  The string to escape
 	 *
 	 * @return  string  The escaped string
-	 * @throws  \Foolz\Sphinxql\SphinxqlDatabaseException  If there was an error during the escaping
+	 * @throws  \Foolz\Sphinxql\DatabaseException  If there was an error during the escaping
 	 */
 	public function escape($value)
 	{
@@ -218,14 +202,14 @@ class Connection
 		{
 			$this->getConnection();
 		}
-		catch (SphinxqlConnectionException $e)
+		catch (ConnectionException $e)
 		{
 			$this->connect();
 		}
 
 		if (($value = $this->getConnection()->real_escape_string((string) $value)) === false)
 		{
-			throw new SphinxqlDatabaseException($this->getConnection()->error, $this->getConnection()->errno);
+			throw new DatabaseException($this->getConnection()->error, $this->getConnection()->errno);
 		}
 
 		return "'".$value."'";
@@ -317,7 +301,7 @@ class Connection
 		}
 		elseif (is_array($value))
 		{
-			// (1,2,3) format to support MVA attributes
+			// (1, 2, 3) format to support MVA attributes
 			return '(' . implode(',', $this->quoteArr($value)) . ')';
 		}
 

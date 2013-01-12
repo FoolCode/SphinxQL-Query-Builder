@@ -2,7 +2,7 @@
 
 <phpunit colors="true" stopOnFailure="false" bootstrap="bootstrap.php">
 	<testsuites>
-		<testsuite name="sphinxql">
+		<testsuite name="SphinxQL">
 			<directory suffix=".php">classes</directory>
 		</testsuite>
 	</testsuites>

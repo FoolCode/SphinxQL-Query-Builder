@@ -1,15 +1,14 @@
 <?php
 
-namespace Foolz\Sphinxql;
+namespace Foolz\SphinxQL;
 
-class SphinxqlException extends \Exception {}
-class SphinxqlDatabaseException extends SphinxqlException {}
+class SphinxQLException extends \Exception {}
+class SphinxQLDatabaseException extends SphinxQLException {}
 
 /**
- * This class is a Query Builder for SphinxQL,
- * inspired by the FuelPHP Query Builder.
+ * Query Builder class for SphinxQL statements.
  */
-class Sphinxql
+class SphinxQL
 {
 	/**
 	 * The connection for this object
@@ -151,16 +150,6 @@ class Sphinxql
 		'variablesSession' => 'SHOW SESSION VARIABLES',
 		'variablesGlobal' => 'SHOW GLOBAL VARIABLES',
 	);
-
-	/**
-	 *
-	 * @param type $connection
-	 * @param type $instance_name
-	 */
-	public function instantiate($connection, $instance_name = 'default')
-	{
-
-	}
 
 	/**
 	 *

@@ -1,18 +1,18 @@
 <?php
 
-namespace Foolz\Sphinxql;
+namespace Foolz\SphinxQL;
 
 class ConnectionException extends \Exception {};
 class DatabaseException extends \Exception {};
 
 /**
- * SphinxQL connection class based on MySQLi.
+ * SphinxQL connection class utilizing the MySQLi extension.
  * Contains also escaping and quoting functions.
  */
 class Connection
 {
 	/**
-	 * Object for the current connection
+	 * The connection for this object
 	 *
 	 * @var  \Foolz\Sphinxql\Connection[]
 	 */
@@ -30,7 +30,7 @@ class Connection
 	 *
 	 * @var  array
 	 */
-	protected $connection_info = array('host' => '127.0.0.1', 'port' => 9306);
+	protected $connection_params = array('host' => '127.0.0.1', 'port' => 9306);
 
 	/**
 	 * While horrible, we have a function to enable silencing \MySQLi connection errors
@@ -50,9 +50,9 @@ class Connection
 	 * @param  string  $host     The hostname or IP
 	 * @param  int     $port     The port to the host
 	 */
-	public function setConnection($host = '127.0.0.1', $port = 9306)
+	public function setConnectionParams($host = '127.0.0.1', $port = 9306)
 	{
-		$this->connection_info = array('host' => $host, 'port' => $port);
+		$this->connection_params = array('host' => $host, 'port' => $port);
 	}
 
 	/**
@@ -62,9 +62,25 @@ class Connection
 	 *
 	 * @return  array  The connection info
 	 */
-	public function getConnectionInfo()
+	public function getConnectionParams()
 	{
-		return $this->connection_info;
+		return $this->connection_params;
+	}
+
+	/**
+	 * Returns the \MySQLi connection
+	 *
+	 * @return  \MySQLi  The MySQLi connection
+	 * @throws  \Foolz\Sphinxql\ConnectionException  If there was no connection open or selected
+	 */
+	public function getConnection()
+	{
+		if ($this->connection !== null)
+		{
+			return $this->connection;
+		}
+
+		throw new ConnectionException('The connection has not yet been established.');
 	}
 
 	/**
@@ -77,7 +93,7 @@ class Connection
 	 */
 	public function connect($suppress_error = false)
 	{
-		$data = $this->getConnectionInfo();
+		$data = $this->getConnectionParams();
 
 		if ( ! $suppress_error && ! $this->silence_connection_warning)
 		{
@@ -125,22 +141,6 @@ class Connection
 	{
 		$this->getConnection()->close();
 		$this->connection = null;
-	}
-
-	/**
-	 * Returns the \MySQLi connection
-	 *
-	 * @return  \MySQLi  The MySQLi connection
-	 * @throws  \Foolz\Sphinxql\ConnectionException  If there was no connection open or selected
-	 */
-	public function getConnection()
-	{
-		if ($this->connection !== null)
-		{
-			return $this->connection;
-		}
-
-		throw new ConnectionException('The connection has not yet been established.');
 	}
 
 	/**

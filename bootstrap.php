@@ -5,8 +5,9 @@
  */
 
 \Autoloader::add_classes(array(
-	'Foolz\\Sphinxql\\Sphinxql' => __DIR__.'/classes/Foolz/Sphinxql/Sphinxql.php',
-	'Foolz\\Sphinxql\\Connection' => __DIR__.'/classes/Foolz/Sphinxql/Connection.php',
-	'Foolz\\Sphinxql\\Expression' => __DIR__.'/classes/Foolz/Sphinxql/Expression.php',
-	'Foolz\\Sphinxql\\Queue' => __DIR__.'/classes/Foolz/Sphinxql/Queue.php'
+	'Foolz\\SphinxQL\\SphinxQL' => __DIR__.'/classes/Foolz/SphinxQL/Sphinxql.php',
+	'Foolz\\SphinxQL\\Connection' => __DIR__.'/classes/Foolz/SphinxQL/Connection.php',
+	'Foolz\\SphinxQL\\ConnectionPool' => __DIR__.'/classes/Foolz/SphinxQL/ConnectionPool.php',
+	'Foolz\\SphinxQL\\Expression' => __DIR__.'/classes/Foolz/SphinxQL/Expression.php',
+	'Foolz\\SphinxQL\\Queue' => __DIR__.'/classes/Foolz/SphinxQL/Queue.php'
 ));

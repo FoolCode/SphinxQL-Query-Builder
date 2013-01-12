@@ -1,9 +1,9 @@
 <?php
 
-namespace Foolz\Sphinxql;
+namespace Foolz\SphinxQL;
 
 /**
- * Extension to the connection class that allows the use of MySQLi::multiQuery()
+ * Extends the SphinxQL connection class utilizing the MySQLi::multiQuery() function.
  */
 class Queue extends Connection
 {

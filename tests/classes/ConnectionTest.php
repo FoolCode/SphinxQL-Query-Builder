@@ -1,8 +1,7 @@
 <?php
 
-use Foolz\Sphinxql\Sphinxql;
-use Foolz\Sphinxql\Connection as SphinxqlConnection;
-use Foolz\Sphinxql\Expression as SphinxqlExpression;
+use Foolz\SphinxQL\Connection as Connection;
+use Foolz\SphinxQL\Expression as Expression;
 
 class ConnectionTest extends PHPUnit_Framework_TestCase
 {
@@ -10,29 +9,29 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
 
 	public function setUp()
     {
-		$this->connection = new SphinxqlConnection();
+		$this->connection = new Connection();
         $this->connection->silenceConnectionWarning(false);
     }
 
 
 	public function test()
 	{
-		new SphinxqlConnection();
+		new Connection();
 	}
 
 
-	public function testGetConnectionInfo()
+	public function testgetConnectionParams()
 	{
-		$this->assertSame(array('host' => '127.0.0.1', 'port' => 9306), $this->connection->getConnectionInfo());
+		$this->assertSame(array('host' => '127.0.0.1', 'port' => 9306), $this->connection->getConnectionParams());
 
 		// create a new connection and get info
-		$this->connection->setConnection('127.0.0.1', 93067);
-		$this->assertSame(array('host' => '127.0.0.1', 'port' => 93067), $this->connection->getConnectionInfo());
+		$this->connection->setConnectionParams('127.0.0.1', 93067);
+		$this->assertSame(array('host' => '127.0.0.1', 'port' => 93067), $this->connection->getConnectionParams());
 	}
 
 
 	/**
-	 * @expectedException Foolz\Sphinxql\ConnectionException
+	 * @expectedException Foolz\SphinxQL\ConnectionException
 	 */
 	public function testGetConnectionThrowsException()
 	{
@@ -51,7 +50,7 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
 	 */
 	public function testConnectThrowsPHPException()
 	{
-		$this->connection->setConnection('127.0.0.1', 93067);
+		$this->connection->setConnectionParams('127.0.0.1', 93067);
 		$this->connection->connect();
 	}
 
@@ -63,7 +62,7 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * @expectedException Foolz\Sphinxql\ConnectionException
+	 * @expectedException Foolz\SphinxQL\ConnectionException
 	 */
 	public function testClose()
 	{
@@ -81,11 +80,11 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
 
 
 	/**
-	 * @expectedException Foolz\Sphinxql\ConnectionException
+	 * @expectedException Foolz\SphinxQL\ConnectionException
 	 */
 	public function testConnectThrowsException()
 	{
-		$this->connection->setConnection('127.0.0.1', 93067);
+		$this->connection->setConnectionParams('127.0.0.1', 93067);
 		$this->connection->silenceConnectionWarning(true);
 		$this->connection->connect();
 	}
@@ -103,7 +102,7 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
 
 
 	/**
-	 * @expectedException Foolz\Sphinxql\DatabaseException
+	 * @expectedException Foolz\SphinxQL\DatabaseException
 	 */
 	public function testQueryThrowsException()
 	{
@@ -120,12 +119,12 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
 
 
 	/**
-	 * @expectedException Foolz\Sphinxql\ConnectionException
+	 * @expectedException Foolz\SphinxQL\ConnectionException
 	 */
 	public function testEscapeThrowsException()
 	{
 		// or we get the wrong error popping up
-		$this->connection->setConnection('127.0.0.1', 93067);
+		$this->connection->setConnectionParams('127.0.0.1', 93067);
 		$this->connection->connect();
 		$this->connection->escape('\' "" \'\' ');
 	}
@@ -139,8 +138,8 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
 		// test a normal string
 		$this->assertEquals('`foo`.`bar`', $this->connection->quoteIdentifier('foo.bar'));
 
-		// test a SphinxqlExpression
-		$this->assertEquals('foo.bar', $this->connection->quoteIdentifier(new SphinxqlExpression('foo.bar')));
+		// test a SphinxQLExpression
+		$this->assertEquals('foo.bar', $this->connection->quoteIdentifier(new Expression('foo.bar')));
 	}
 
 
@@ -148,7 +147,7 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
 	{
 		$this->assertSame(
 			array('*', '`foo`.`bar`', 'foo.bar'),
-			$this->connection->quoteIdentifierArr(array('*', 'foo.bar', new SphinxqlExpression('foo.bar')))
+			$this->connection->quoteIdentifierArr(array('*', 'foo.bar', new Expression('foo.bar')))
 		);
 	}
 
@@ -159,7 +158,7 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals('null', $this->connection->quote(null));
 		$this->assertEquals("'1'", $this->connection->quote(true));
 		$this->assertEquals("'0'", $this->connection->quote(false));
-		$this->assertEquals("fo'o'bar", $this->connection->quote(new SphinxqlExpression("fo'o'bar")));
+		$this->assertEquals("fo'o'bar", $this->connection->quote(new Expression("fo'o'bar")));
 		$this->assertEquals("123", $this->connection->quote(123));
 		$this->assertEquals("12.3", $this->connection->quote(12.3));
 		$this->assertEquals("'12.3'", $this->connection->quote('12.3'));
@@ -172,7 +171,7 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
 		$this->connection->connect();
 		$this->assertEquals(
 			array('null', "'1'", "'0'", "fo'o'bar", "123", "12.3", "'12.3'", "'12'"),
-			$this->connection->quoteArr(array(null, true, false, new SphinxqlExpression("fo'o'bar"), 123, 12.3, '12.3', '12'))
+			$this->connection->quoteArr(array(null, true, false, new Expression("fo'o'bar"), 123, 12.3, '12.3', '12'))
 		);
 	}
 

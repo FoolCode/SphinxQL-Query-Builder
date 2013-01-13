@@ -9,14 +9,12 @@ class ConnectionPoolException extends \Exception {};
  */
 class ConnectionPool
 {
-
 	/**
 	 * Connection Pool array
 	 *
 	 * @var  array
 	 */
 	protected $connections = array();
-
 
 	public function addServer($server_name, $host = '127.0.0.1', $port = 9306)
 	{
@@ -28,7 +26,6 @@ class ConnectionPool
 		$this->connections[$server_name] = array('host' => $host, 'port' => $port);
 	}
 
-
 	public function getServer($server_name)
 	{
 		if ( ! isset($this->connections[$server_name]))
@@ -39,12 +36,10 @@ class ConnectionPool
 		return $this->connections[$server_name];
 	}
 
-
 	public function getServers()
 	{
 		return $this->connections;
 	}
-
 
 	public function removeServer($server_name)
 	{
@@ -55,5 +50,4 @@ class ConnectionPool
 
 		return $this;
 	}
-
 }

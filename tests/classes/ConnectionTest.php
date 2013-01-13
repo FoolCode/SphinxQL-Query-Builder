@@ -13,12 +13,10 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
         $this->connection->silenceConnectionWarning(false);
     }
 
-
 	public function test()
 	{
 		new Connection();
 	}
-
 
 	public function testgetConnectionParams()
 	{
@@ -29,7 +27,6 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
 		$this->assertSame(array('host' => '127.0.0.1', 'port' => 93067), $this->connection->getConnectionParams());
 	}
 
-
 	/**
 	 * @expectedException Foolz\SphinxQL\ConnectionException
 	 */
@@ -38,12 +35,10 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
 		$this->connection->getConnection();
 	}
 
-
 	public function testConnect()
 	{
 		$this->connection->connect();
 	}
-
 
 	/**
 	 * @expectedException PHPUnit_Framework_Error_Warning
@@ -71,13 +66,11 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
 		$this->connection->getConnection();
 	}
 
-
 	public function testGetConnection()
 	{
 		$this->connection->connect();
 		$this->assertInstanceOf('MySQLi', $this->connection->getConnection());
 	}
-
 
 	/**
 	 * @expectedException Foolz\SphinxQL\ConnectionException
@@ -89,7 +82,6 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
 		$this->connection->connect();
 	}
 
-
 	public function testQuery()
 	{
 		$this->connection->connect();
@@ -100,7 +92,6 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
 		), $this->connection->query('SHOW META'));
 	}
 
-
 	/**
 	 * @expectedException Foolz\SphinxQL\DatabaseException
 	 */
@@ -109,14 +100,12 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
 		$this->connection->query('SHOW METAL');
 	}
 
-
 	public function testEscape()
 	{
 		$this->connection->connect();
 		$result = $this->connection->escape('\' "" \'\' ');
 		$this->assertEquals('\'\\\' \\"\\" \\\'\\\' \'', $result);
 	}
-
 
 	/**
 	 * @expectedException Foolz\SphinxQL\ConnectionException
@@ -128,7 +117,6 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
 		$this->connection->connect();
 		$this->connection->escape('\' "" \'\' ');
 	}
-
 
 	public function testQuoteIdentifier()
 	{
@@ -142,7 +130,6 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals('foo.bar', $this->connection->quoteIdentifier(new Expression('foo.bar')));
 	}
 
-
 	public function testQuoteIdentifierArr()
 	{
 		$this->assertSame(
@@ -150,7 +137,6 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
 			$this->connection->quoteIdentifierArr(array('*', 'foo.bar', new Expression('foo.bar')))
 		);
 	}
-
 
 	public function testQuote()
 	{
@@ -165,7 +151,6 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals("'12'", $this->connection->quote('12'));
 	}
 
-
 	public function testQuoteArr()
 	{
 		$this->connection->connect();
@@ -174,6 +159,4 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
 			$this->connection->quoteArr(array(null, true, false, new Expression("fo'o'bar"), 123, 12.3, '12.3', '12'))
 		);
 	}
-
-
 }

@@ -8,9 +8,9 @@ namespace Foolz\SphinxQL;
 class Queue extends Connection
 {
 	/**
-	 * Array of added Sphinxql objects
+	 * Array of added SphinxQL objects
 	 *
-	 * @var  \Foolz\Sphinxql\Sphinxql[]
+	 * @var  \Foolz\SphinxQL\SphinxQL[]
 	 */
 	protected $queue = array();
 
@@ -22,13 +22,13 @@ class Queue extends Connection
 	protected $compiled = array();
 
 	/**
-	 * Add a Sphinxql query builder object to the queue
+	 * Add a SphinxQL query builder object to the queue
 	 *
-	 * @param  \Foolz\Sphinxql\Sphinxql  $sphinxql
+	 * @param  \Foolz\SphinxQL\SphinxQL  $sphinxql
 	 *
-	 * @return  \Foolz\Sphinxql\Queue  The current object
+	 * @return  \Foolz\SphinxQL\Queue  The current object
 	 */
-	public function add(\Foolz\Sphinxql\Sphinxql $sphinxql)
+	public function add(\Foolz\SphinxQL\SphinxQL $sphinxql)
 	{
 		$this->queue[] = $sphinxql;
 
@@ -47,7 +47,7 @@ class Queue extends Connection
 			$this->compiled[] = $sphinxql->compile()->getCompiled();
 		}
 
-		return static::multiQuery($this->compiled);
+		return $this->multiQuery($this->compiled);
 	}
 
 	/**
@@ -56,24 +56,24 @@ class Queue extends Connection
 	 * @param  string[]  $query  Array of queries in string form
 	 *
 	 * @return  array  The result array
-	 * @throws  \Foolz\Sphinxql\SphinxqlException          If the input array is empty
-	 * @throws  \Foolz\Sphinxql\SphinxqlDatabaseException  If a query generated an error when being executed
+	 * @throws  \Foolz\SphinxQL\SphinxException          If the input array is empty
+	 * @throws  \Foolz\SphinxQL\SphinxDatabaseException  If a query generated an error when being executed
 	 */
-	public static function multiQuery(Array $query)
+	public function multiQuery(Array $query)
 	{
 		if (count($query) === 0)
 		{
-			throw new SphinxqlException('No query queued.');
+			throw new SphinxException('No query queued.');
 		}
 
-		static::getConnection() or static::connect();
+		$this->getConnection() or $this->connect();
 
-		static::getConnection()->multi_query(implode(';', $query));
+		$this->getConnection()->multi_query(implode(';', $query));
 
-		if (static::getConnection()->error)
+		if ($this->getConnection()->error)
 		{
-			throw new SphinxqlDatabaseException('['.static::getConnection()->errno.'] '.
-				static::getConnection()->error.' [ '.implode(';', $query).']');
+			throw new SphinxDatabaseException('['.$this->getConnection()->errno.'] '.
+				$this->getConnection()->error.' [ '.implode(';', $query).']');
 		}
 
 		$multi_result = array();
@@ -81,7 +81,7 @@ class Queue extends Connection
 
 		do
 		{
-			if ($resource = static::getConnection()->store_result())
+			if ($resource = $this->getConnection()->store_result())
 			{
 				$multi_result[$multi_count] = array();
 
@@ -94,10 +94,10 @@ class Queue extends Connection
 			}
 
 			$continue = false;
-			if (static::getConnection()->more_results())
+			if ($this->getConnection()->more_results())
 			{
 				$multi_count++;
-				static::getConnection()->next_result();
+				$this->getConnection()->next_result();
 				$continue = true;
 			}
 		} while ($continue);

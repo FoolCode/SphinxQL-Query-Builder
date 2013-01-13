@@ -1,14 +1,14 @@
 <?php
 
 use Foolz\SphinxQL\SphinxQL;
+use Foolz\SphinxQL\Connection;
 use Foolz\SphinxQL\Queue;
 
 class QueueTest extends PHPUnit_Framework_TestCase
 {
-
 	public function testQueue()
 	{
-		$res = Sphinxql::insert()
+		$this->sq->insert()
 			->into('rt')
 			->columns('id', 'title', 'content', 'gid')
 			->values(13, 'i am getting bored', 'with all this CONTENT', 1)
@@ -16,11 +16,11 @@ class QueueTest extends PHPUnit_Framework_TestCase
 			->values(15, 'there\'s no hope in this class', 'just give up', 3)
 			->execute();
 
-		$first = Sphinxql::select()
+		$first = $this->sq->insert()
 			->from('rt')
 			->where('gid', '=', 1);
 
-		$second = Sphinxql::select()
+		$second = $this->sq->select()
 			->from('rt')
 			->where('gid', '=', 2);
 
@@ -33,10 +33,9 @@ class QueueTest extends PHPUnit_Framework_TestCase
 		$this->assertSame('13', $result[0][0]['id']);
 		$this->assertSame('14', $result[1][0]['id']);
 
-		Sphinxql::delete()
+		$this->sq->delete()
 			->from('rt')
 			->where('id', 'IN', array(13, 14, 15))
 			->execute();
 	}
-
 }

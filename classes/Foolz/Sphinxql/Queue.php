@@ -36,6 +36,18 @@ class Queue extends Connection
 	}
 
 	/**
+	 * Clears the entire queue
+	 *
+	 * @return \Foolz\SphinxQL\Queue  The current object
+	 */
+	public function reset()
+	{
+		$this->queue = array();
+
+		return $this;
+	}
+
+	/**
 	 * Runs all the queries with mysqli::multi_query(). It will use the connection of the first object loaded.
 	 *
 	 * @return  array  The result array
@@ -48,6 +60,16 @@ class Queue extends Connection
 		}
 
 		return $this->multiQuery($this->compiled);
+	}
+
+	/**
+	 * Alias to the execute() function
+	 *
+	 * @return  \Foolz\SphinxQL\Queue  The current object
+	 */
+	public function executeBatch()
+	{
+		return $this->execute();
 	}
 
 	/**

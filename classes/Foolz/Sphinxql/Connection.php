@@ -12,9 +12,9 @@ class DatabaseException extends \Exception {};
 class Connection
 {
 	/**
-	 * The connection for this object
+	 * The connection for this object.
 	 *
-	 * @var  \Foolz\Sphinxql\Connection[]
+	 * @var  \Foolz\SphinxQL\Connection[]
 	 */
 	protected $connection = null;
 
@@ -58,7 +58,7 @@ class Connection
 	}
 
 	/**
-	 * Returns the connection info (host, port, charset) for the currently selected connection
+	 * Returns the connection params (host, port) for the currently selected connection
 	 *
 	 * @param  null|string  $name  The connection name or null for the currently active connection
 	 *
@@ -73,7 +73,7 @@ class Connection
 	 * Returns the \MySQLi connection
 	 *
 	 * @return  \MySQLi  The MySQLi connection
-	 * @throws  \Foolz\Sphinxql\ConnectionException  If there was no connection open or selected
+	 * @throws  \Foolz\SphinxQL\ConnectionException  If there was no connection open or selected
 	 */
 	public function getConnection()
 	{
@@ -91,7 +91,7 @@ class Connection
 	 * @param  boolean  $suppress_error  If the warning on connection should be suppressed
 	 *
 	 * @return  boolean  True if connected
-	 * @throws  \Foolz\Sphinxql\ConnectionException  If there was a connection error
+	 * @throws  \Foolz\SphinxQL\ConnectionException  If there was a connection error
 	 */
 	public function connect($suppress_error = false)
 	{
@@ -151,7 +151,7 @@ class Connection
 	 * @param  string  $query  The query string
 	 *
 	 * @return  array  The result array
-	 * @throws  \Foolz\Sphinxql\DatabaseException  If the executed query produced an error
+	 * @throws  \Foolz\SphinxQL\DatabaseException  If the executed query produced an error
 	 */
 	public function query($query)
 	{
@@ -196,7 +196,7 @@ class Connection
 	 * @param  string  $value  The string to escape
 	 *
 	 * @return  string  The escaped string
-	 * @throws  \Foolz\Sphinxql\DatabaseException  If there was an error during the escaping
+	 * @throws  \Foolz\SphinxQL\DatabaseException  If there was an error during the escaping
 	 */
 	public function escape($value)
 	{
@@ -220,13 +220,13 @@ class Connection
 	/**
 	 * Wraps the input in identifiers where necessary
 	 *
-	 * @param  \Foolz\Sphinxql\Expression|string  $value  The string to be quoted, or an Expression to leave it untouched
+	 * @param  \Foolz\SphinxQL\Expression|string  $value  The string to be quoted, or an Expression to leave it untouched
 	 *
-	 * @return  \Foolz\Sphinxql\Expression|string  The untouched Expression or the quoted string
+	 * @return  \Foolz\SphinxQL\Expression|string  The untouched Expression or the quoted string
 	 */
 	public function quoteIdentifier($value)
 	{
-		if ($value instanceof \Foolz\Sphinxql\Expression)
+		if ($value instanceof \Foolz\SphinxQL\Expression)
 		{
 			return $value->value();
 		}
@@ -269,9 +269,9 @@ class Connection
 	 * Adds quotes where necessary for values
 	 * Taken from FuelPHP and edited
 	 *
-	 * @param  \Foolz\Sphinxql\Expression|string  $value  The input string, eventually wrapped in an expression to leave it untouched
+	 * @param  \Foolz\SphinxQL\Expression|string  $value  The input string, eventually wrapped in an expression to leave it untouched
 	 *
-	 * @return  \Foolz\Sphinxql\Expression|string  The untouched Expression or the quoted string
+	 * @return  \Foolz\SphinxQL\Expression|string  The untouched Expression or the quoted string
 	 */
 	public function quote($value)
 	{

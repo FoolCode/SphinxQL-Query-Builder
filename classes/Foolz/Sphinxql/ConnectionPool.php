@@ -16,6 +16,13 @@ class ConnectionPool
 	 */
 	protected $connections = array();
 
+	/**
+	 * Add a new server to the connection pool
+	 *
+	 * @param  string  $server_name  The name of the server
+	 * @param  string  $host         The hostname or IP
+	 * @param  int     $port         The port to the host
+	 */
 	public function addServer($server_name, $host = '127.0.0.1', $port = 9306)
 	{
 		if ($host === 'localhost')
@@ -26,6 +33,14 @@ class ConnectionPool
 		$this->connections[$server_name] = array('host' => $host, 'port' => $port);
 	}
 
+	/**
+	 * Get the connection params for the specified server in the pool
+	 *
+	 * @param  string$server_name
+	 *
+	 * @return  array
+	 * @throws  ConnectionPoolException
+	 */
 	public function getServer($server_name)
 	{
 		if ( ! isset($this->connections[$server_name]))
@@ -36,11 +51,21 @@ class ConnectionPool
 		return $this->connections[$server_name];
 	}
 
+	/**
+	 * @return  array  The list of servers in the connection pool
+	 */
 	public function getServers()
 	{
 		return $this->connections;
 	}
 
+	/**
+	 * Remove a server from the connection pool
+	 *
+	 * @param $server_name
+	 *
+	 * @return \Foolz\SphinxQL\ConnectionPool
+	 */
 	public function removeServer($server_name)
 	{
 		if (isset($this->connections[$server_name]))

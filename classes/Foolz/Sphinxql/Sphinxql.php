@@ -152,9 +152,11 @@ class SphinxQL extends Connection
 	);
 
 	/**
+	 * Forges a SphinxQL object
 	 *
+	 * @param  mixed  $connection
 	 *
-	 * @param \Foolz\SphinxQL\Connection $connection
+	 * @return \Foolz\SphinxQL\SphinxQL  The current object
 	 */
 	public function forge($connection = null)
 	{

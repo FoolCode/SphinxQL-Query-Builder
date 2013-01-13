@@ -10,7 +10,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
 	public function __construct()
 	{
 		$conn = new SphinxConnection();
-		$conn->setConnectionParams('127.0.0.1', 9306)->connect();
+		$conn->setConnectionParams('127.0.0.1', 9306);
 
 		$this->sq = SphinxQL::forge($conn);
 

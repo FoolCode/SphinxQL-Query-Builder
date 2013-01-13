@@ -166,10 +166,12 @@ class SphinxQL extends Connection
 		{
 			$new->connection = $connection;
 		}
-		else if ($connection instanceof \Foolz\SphinxQL\ConnectionPool)
+		else
 		{
-			$new->connection = \Foolz\SphinxQL\Connection::forge();
+			$new->connection = new Connection();
 		}
+
+		$new->ping();
 
 		return $new;
 	}

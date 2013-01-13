@@ -75,7 +75,7 @@ class Queue extends Connection
 	/**
 	 * Sends multiple queries to Sphinx
 	 *
-	 * @param  string[]  $query  Array of queries in string form
+	 * @param  array  $query  Array of queries in string form
 	 *
 	 * @return  array  The result array
 	 * @throws  \Foolz\SphinxQL\SphinxException          If the input array is empty
@@ -88,7 +88,7 @@ class Queue extends Connection
 			throw new SphinxException('No query queued.');
 		}
 
-		$this->getConnection() or $this->connect();
+		$this->ping();
 
 		$this->getConnection()->multi_query(implode(';', $query));
 

@@ -8,14 +8,13 @@ class QueueTest extends PHPUnit_Framework_TestCase
 	public function testQueue()
 	{
 		$queue = new Queue();
-		$queue->setConnectionParams('127.0.0.1', 9306)->connect();
 
-		SphinxQL::forge($queue)->delete()
+		SphinxQL::forge()->delete()
 			->from('rt')
 			->where('id', 'IN', array(13, 14, 15))
 			->execute();
 
-		SphinxQL::forge($queue)->insert()
+		SphinxQL::forge()->insert()
 			->into('rt')
 			->columns('id', 'title', 'content', 'gid')
 			->values(13, 'i am getting bored', 'with all this CONTENT', 1)
@@ -23,11 +22,11 @@ class QueueTest extends PHPUnit_Framework_TestCase
 			->values(15, 'there\'s no hope in this class', 'just give up', 3)
 			->execute();
 
-		$one = SphinxQL::forge($queue)->select()
+		$one = SphinxQL::forge()->select()
 			->from('rt')
 			->where('gid', '=', 1);
 
-		$two = SphinxQL::forge($queue)->select()
+		$two = SphinxQL::forge()->select()
 			->from('rt')
 			->where('gid', '=', 2);
 
@@ -39,7 +38,7 @@ class QueueTest extends PHPUnit_Framework_TestCase
 		$this->assertSame('13', $result[0][0]['id']);
 		$this->assertSame('14', $result[1][0]['id']);
 
-		SphinxQL::forge($queue)->delete()
+		SphinxQL::forge()->delete()
 			->from('rt')
 			->where('id', 'IN', array(13, 14, 15))
 			->execute();

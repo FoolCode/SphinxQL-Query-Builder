@@ -18,30 +18,25 @@ class ConnectionPool
 	protected $connections = array();
 
 
-	public function addServer($name, $params = array())
+	public function addServer($server_name, $host = '127.0.0.1', $port = 9306)
 	{
-		if ( ! isset($params['host']) && ! isset($params['port']))
+		if ($host === 'localhost')
 		{
-			throw new ConnectionPoolException('The server connection parameters are missing.');
+			$host = '127.0.0.1';
 		}
 
-		if ($params['host'] === 'localhost')
-		{
-			$params['host'] = '127.0.0.1';
-		}
-
-		$this->connections[$name] = array('host' => $params['host'], 'port' => $params['port']);
+		$this->connections[$server_name] = array('host' => $host, 'port' => $port);
 	}
 
 
-	public function getServer($name)
+	public function getServer($server_name)
 	{
-		if ( ! isset($this->connections[$name]))
+		if ( ! isset($this->connections[$server_name]))
 		{
 			throw new ConnectionPoolException('The server is not available in the pool.');
 		}
 
-		return $this->connections[$name];
+		return $this->connections[$server_name];
 	}
 
 
@@ -51,11 +46,11 @@ class ConnectionPool
 	}
 
 
-	public function removeServer($name)
+	public function removeServer($server_name)
 	{
-		if (isset($this->connections[$name]))
+		if (isset($this->connections[$server_name]))
 		{
-			unset($this->connections[$name]);
+			unset($this->connections[$server_name]);
 		}
 
 		return $this;

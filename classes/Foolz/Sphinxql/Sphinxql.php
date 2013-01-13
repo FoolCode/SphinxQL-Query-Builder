@@ -156,16 +156,18 @@ class SphinxQL
 	 *
 	 * @param \Foolz\Sphinxql\Connection $connection
 	 */
-	public function forge($connection = 'default')
+	public function forge($connection = null)
 	{
-		if ($connection instanceof \Foolz\Sphinxql\Connection)
+		if ($connection instanceof \Foolz\SphinxQL\Connection)
 		{
 			$this->connection = $connection;
 		}
-		else
+		else if ($connection instanceof \Foolz\SphinxQL\ConnectionPool)
 		{
 			$this->connection = \Foolz\Sphinxql\Connection::forge();
 		}
+
+		return $this;
 	}
 
 	/**

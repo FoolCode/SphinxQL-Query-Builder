@@ -1,22 +1,22 @@
 <?php
 
-use Foolz\Sphinxql\Sphinxql;
-use Foolz\Sphinxql\Connection as SphinxqlConnection;
-use Foolz\Sphinxql\Expression as SphinxqlExpression;
+use Foolz\SphinxQL\SphinxQL as SphinxQL;
+use Foolz\SphinxQL\Connection as SphinxConnection;
+use Foolz\SphinxQL\Expression as SphinxExpression;
 
-class SphinxqlTest extends PHPUnit_Framework_TestCase
+class SphinxQLTest extends PHPUnit_Framework_TestCase
 {
 	private $sq = null;
 
 	public function __construct()
 	{
-		Sphinxql::setConnection('default');
-		Sphinxql::connect();
+		$conn = new SphinxConnection();
+		$conn->setConnectionParams('127.0.0.1', 9306)->connect();
 
-		$this->sq = Sphinxql::forge();
+		$this->sq = SphinxQL::forge($conn);
 
 		// empty that poor db. TRUNCATE is still in beta in Sphinxsearch 2.1.1-beta
-		Sphinxql::delete()
+		SphinxQL::delete()
 			->from('rt')
 			->where('id', 'IN', array(1, 10, 11, 12, 13, 14, 15, 16, 17))
 			->execute();
@@ -26,12 +26,12 @@ class SphinxqlTest extends PHPUnit_Framework_TestCase
 	{
 		$result = Sphinxql::expr('');
 
-		$this->assertInstanceOf('Foolz\Sphinxql\Expression', $result);
+		$this->assertInstanceOf('Foolz\SphinxQL\SphinxExpression', $result);
 		$this->assertEquals('', (string) $result);
 
 		$result = Sphinxql::expr('* \\ Ç"" \'');
 
-		$this->assertInstanceOf('Foolz\Sphinxql\Expression', $result);
+		$this->assertInstanceOf('Foolz\SphinxQL\SphinxExpression', $result);
 		$this->assertEquals('* \\ Ç"" \'', (string) $result);
 	}
 

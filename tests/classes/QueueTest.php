@@ -1,7 +1,7 @@
 <?php
 
-use Foolz\Sphinxql\Sphinxql;
-use Foolz\Sphinxql\Queue;
+use Foolz\SphinxQL\SphinxQL;
+use Foolz\SphinxQL\Queue;
 
 class QueueTest extends PHPUnit_Framework_TestCase
 {

@@ -444,25 +444,26 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
         $this->assertCount(5, $result);
     }
 
-	/**
-	 * @covers \Foolz\SphinxQL\SphinxQL::enqueue
-	 * @covers \Foolz\SphinxQL\SphinxQL::getQueue
-	 * @covers \Foolz\SphinxQL\SphinxQL::getQueuePrev
-	 * @covers \Foolz\SphinxQL\SphinxQL::setQueuePrev
-	 */
-	public function testQueue()
-	{
-		$result = SphinxQL::forge()
-			->select()
-			->from('rt')
-			->where('gid', 304)
-			->enqueue()
-			->select()
-			->from('rt')
-			->where('gid', 500)
-			->enqueue()->executeBatch();
+    /**
+     * @covers \Foolz\SphinxQL\SphinxQL::enqueue
+     * @covers \Foolz\SphinxQL\SphinxQL::getQueue
+     * @covers \Foolz\SphinxQL\SphinxQL::getQueuePrev
+     * @covers \Foolz\SphinxQL\SphinxQL::setQueuePrev
+     */
+    public function testQueue()
+    {
+        $result = SphinxQL::forge()
+            ->select()
+            ->from('rt')
+            ->where('gid', 304)
+            ->enqueue()
+            ->select()
+            ->from('rt')
+            ->where('gid', 500)
+            ->enqueue()
+            ->executeBatch();
 
-		$this->assertSame('13', $result[0][0]['id']);
-		$this->assertSame('16', $result[1][0]['id']);
-	}
+        $this->assertSame('13', $result[0][0]['id']);
+        $this->assertSame('16', $result[1][0]['id']);
+    }
 }

@@ -136,7 +136,7 @@ class SphinxQL extends Connection
      */
     protected $options = array();
 
-	protected $queue_prev = null;
+    protected $queue_prev = null;
 
     /**
      * Ready for use queries
@@ -245,52 +245,54 @@ class SphinxQL extends Connection
         return $this->last_result = $this->getConnection()->query($this->compile()->getCompiled());
     }
 
-	public function executeBatch()
-	{
-		if (count($this->getQueue())) {
-			$queue = array();
+    public function executeBatch()
+    {
+        if (count($this->getQueue()) == 0) {
+            throw new DatabaseException('There is no Queue present to execute.');
+        }
 
-			foreach ($this->getQueue() as $sq) {
-				$queue[] = $sq->compile()->getCompiled();
-			}
+        $queue = array();
 
-			return $this->last_result = $this->getConnection()->multiQuery($queue);
-		}
-	}
+        foreach ($this->getQueue() as $sq) {
+            $queue[] = $sq->compile()->getCompiled();
+        }
 
-	public function enqueue()
-	{
-		$sq = new static($this->getConnection());
-		$sq->setQueuePrev($this);
+        return $this->last_result = $this->getConnection()->multiQuery($queue);
+    }
 
-		return $sq;
-	}
+    public function enqueue()
+    {
+        $sq = new static($this->getConnection());
+        $sq->setQueuePrev($this);
 
-	public function getQueue()
-	{
-		$queue = array();
-		$curr = $this;
+        return $sq;
+    }
 
-		do {
-			if ($curr->type != null) {
-				$queue[] = $curr;
-			}
-		} while ($curr = $curr->getQueuePrev());
+    public function getQueue()
+    {
+        $queue = array();
+        $curr = $this;
 
-		return array_reverse($queue);
-	}
+        do {
+            if ($curr->type != null) {
+                $queue[] = $curr;
+            }
+        } while ($curr = $curr->getQueuePrev());
 
-	public function getQueuePrev()
-	{
-		return $this->queue_prev;
-	}
+        return array_reverse($queue);
+    }
 
-	public function setQueuePrev($sq)
-	{
-		$this->queue_prev = $sq;
+    public function getQueuePrev()
+    {
+        return $this->queue_prev;
+    }
 
-		return $this;
-	}
+    public function setQueuePrev($sq)
+    {
+        $this->queue_prev = $sq;
+
+        return $this;
+    }
 
     /**
      * Returns the result of the last query

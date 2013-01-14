@@ -10,7 +10,7 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->connection = new Connection();
-		$this->connection->setConnectionParams('127.0.0.1', 9307);
+        $this->connection->setConnectionParams('127.0.0.1', 9307);
         $this->connection->silenceConnectionWarning(false);
     }
 
@@ -19,10 +19,10 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
         new Connection();
     }
 
-	/**
-	 * @covers \Foolz\SphinxQL\Connection::setConnectionParams
-	 */
-	public function testGetConnectionParams()
+    /**
+     * @covers \Foolz\SphinxQL\Connection::setConnectionParams
+     */
+    public function testGetConnectionParams()
     {
         $this->assertSame(array('host' => '127.0.0.1', 'port' => 9307), $this->connection->getConnectionParams());
 
@@ -96,15 +96,15 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
         ), $this->connection->query('SHOW META'));
     }
 
-	public function testMultiQuery()
-	{
-		$this->connection->connect();
-		$this->assertSame(array(array(
+    public function testMultiQuery()
+    {
+        $this->connection->connect();
+        $this->assertSame(array(array(
             array('Variable_name' => 'total', 'Value' => '0'),
             array('Variable_name' => 'total_found', 'Value' => '0'),
             array('Variable_name' => 'time', 'Value' => '0.000'),
         )), $this->connection->multiQuery(array('SHOW META')));
-	}
+    }
 
     /**
      * @expectedException Foolz\SphinxQL\DatabaseException

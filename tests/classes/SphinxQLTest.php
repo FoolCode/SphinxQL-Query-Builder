@@ -48,12 +48,12 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
         SphinxQL::forge()->setVariable('@foo', array(0), true);
     }
 
-	/**
-	 * @covers \Foolz\SphinxQL\SphinxQL::transactionBegin
-	 * @covers \Foolz\SphinxQL\SphinxQL::transactionCommit
-	 * @covers \Foolz\SphinxQL\SphinxQL::transactionRollback
-	 */
-	public function testTransactions()
+    /**
+     * @covers \Foolz\SphinxQL\SphinxQL::transactionBegin
+     * @covers \Foolz\SphinxQL\SphinxQL::transactionCommit
+     * @covers \Foolz\SphinxQL\SphinxQL::transactionRollback
+     */
+    public function testTransactions()
     {
         SphinxQL::forge()->transactionBegin();
         SphinxQL::forge()->transactionRollback();
@@ -438,7 +438,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
 
     /**
      * @covers \Foolz\SphinxQL\SphinxQL::compileDelete
-	 * @covers \Foolz\SphinxQL\SphinxQL::delete
+     * @covers \Foolz\SphinxQL\SphinxQL::delete
      */
     public function testDelete()
     {
@@ -455,7 +455,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-	 * @covers \Foolz\SphinxQL\SphinxQL::executeBatch
+     * @covers \Foolz\SphinxQL\SphinxQL::executeBatch
      * @covers \Foolz\SphinxQL\SphinxQL::enqueue
      * @covers \Foolz\SphinxQL\SphinxQL::getQueue
      * @covers \Foolz\SphinxQL\SphinxQL::getQueuePrev

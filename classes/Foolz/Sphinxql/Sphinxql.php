@@ -136,6 +136,8 @@ class SphinxQL extends Connection
      */
     protected $options = array();
 
+	protected $queue_prev = null;
+
     /**
      * Ready for use queries
      *
@@ -184,7 +186,7 @@ class SphinxQL extends Connection
      */
     public function getConnection()
     {
-        return $this->stored_connection;
+        return static::$stored_connection;
     }
 
     /**
@@ -243,14 +245,51 @@ class SphinxQL extends Connection
         return $this->last_result = $this->getConnection()->query($this->compile()->getCompiled());
     }
 
+	public function executeBatch()
+	{
+		if (count($this->getQueue())) {
+			$queue = array();
+
+			foreach ($this->getQueue() as $sq) {
+				$queue[] = $sq->compile()->getCompiled();
+			}
+
+			return $this->last_result = $this->getConnection()->multiQuery($queue);
+		}
+	}
+
 	public function enqueue()
 	{
+		$sq = new static($this->getConnection());
+		$sq->setQueuePrev($this);
 
+		return $sq;
 	}
 
 	public function getQueue()
 	{
+		$queue = array();
+		$curr = $this;
 
+		do {
+			if ($curr->type != null) {
+				$queue[] = $curr;
+			}
+		} while ($curr = $curr->getQueuePrev());
+
+		return array_reverse($queue);
+	}
+
+	public function getQueuePrev()
+	{
+		return $this->queue_prev;
+	}
+
+	public function setQueuePrev($sq)
+	{
+		$this->queue_prev = $sq;
+
+		return $this;
 	}
 
     /**

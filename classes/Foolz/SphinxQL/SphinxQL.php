@@ -153,6 +153,13 @@ class SphinxQL extends Connection
         'variablesGlobal' => 'SHOW GLOBAL VARIABLES',
     );
 
+	public function __construct($connection = null)
+	{
+		if ($connection instanceof \Foolz\SphinxQL\Connection) {
+            static::$stored_connection = $connection;
+        }
+	}
+
     /**
      * Forges a SphinxQL object
      *
@@ -162,13 +169,7 @@ class SphinxQL extends Connection
      */
     public static function forge($connection = null)
     {
-        $new = new SphinxQL();
-
-        if ($connection instanceof \Foolz\SphinxQL\Connection) {
-            static::$stored_connection = $connection;
-        }
-
-        $new->stored_connection = static::$stored_connection;
+        $new = new SphinxQL($connection);
 
         try {
             $new->getConnection();

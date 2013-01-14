@@ -10,6 +10,7 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->connection = new Connection();
+		$this->connection->setConnectionParams('127.0.0.1', 9307);
         $this->connection->silenceConnectionWarning(false);
     }
 
@@ -23,7 +24,7 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
 	 */
 	public function testGetConnectionParams()
     {
-        $this->assertSame(array('host' => '127.0.0.1', 'port' => 9306), $this->connection->getConnectionParams());
+        $this->assertSame(array('host' => '127.0.0.1', 'port' => 9307), $this->connection->getConnectionParams());
 
         // create a new connection and get info
         $this->connection->setConnectionParams('127.0.0.1', 93067);

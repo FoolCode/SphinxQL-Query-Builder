@@ -16,7 +16,7 @@
     },
     "autoload": {
         "psr-0": {
-            "Foolz\\Sphinxql": "classes/"
+            "Foolz\\SphinxQL": "classes/"
         }
     }
 }

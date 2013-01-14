@@ -18,13 +18,22 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
         new Connection();
     }
 
-    public function testgetConnectionParams()
+	/**
+	 * @covers \Foolz\SphinxQL\Connection::setConnectionParams
+	 */
+	public function testGetConnectionParams()
     {
         $this->assertSame(array('host' => '127.0.0.1', 'port' => 9306), $this->connection->getConnectionParams());
 
         // create a new connection and get info
         $this->connection->setConnectionParams('127.0.0.1', 93067);
         $this->assertSame(array('host' => '127.0.0.1', 'port' => 93067), $this->connection->getConnectionParams());
+    }
+
+    public function testGetConnection()
+    {
+        $this->connection->connect();
+        $this->assertInstanceOf('MySQLi', $this->connection->getConnection());
     }
 
     /**
@@ -49,6 +58,16 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
         $this->connection->connect();
     }
 
+    /**
+     * @expectedException Foolz\SphinxQL\ConnectionException
+     */
+    public function testConnectThrowsException()
+    {
+        $this->connection->setConnectionParams('127.0.0.1', 93067);
+        $this->connection->silenceConnectionWarning(true);
+        $this->connection->connect();
+    }
+
 
     public function testPing()
     {
@@ -66,22 +85,6 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
         $this->connection->getConnection();
     }
 
-    public function testGetConnection()
-    {
-        $this->connection->connect();
-        $this->assertInstanceOf('MySQLi', $this->connection->getConnection());
-    }
-
-    /**
-     * @expectedException Foolz\SphinxQL\ConnectionException
-     */
-    public function testConnectThrowsException()
-    {
-        $this->connection->setConnectionParams('127.0.0.1', 93067);
-        $this->connection->silenceConnectionWarning(true);
-        $this->connection->connect();
-    }
-
     public function testQuery()
     {
         $this->connection->connect();
@@ -91,6 +94,16 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
             array('Variable_name' => 'time', 'Value' => '0.000'),
         ), $this->connection->query('SHOW META'));
     }
+
+	public function testMultiQuery()
+	{
+		$this->connection->connect();
+		$this->assertSame(array(array(
+            array('Variable_name' => 'total', 'Value' => '0'),
+            array('Variable_name' => 'total_found', 'Value' => '0'),
+            array('Variable_name' => 'time', 'Value' => '0.000'),
+        )), $this->connection->multiQuery(array('SHOW META')));
+	}
 
     /**
      * @expectedException Foolz\SphinxQL\DatabaseException

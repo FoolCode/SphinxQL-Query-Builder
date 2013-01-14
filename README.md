@@ -3,38 +3,39 @@ Query Builder for SphinxQL
 
 ### About
 
-This is a PHP Query Builder created ad-hoc to work with SphinxQL, an SQL dialect to use with the Sphinx search engine.
-It maps every function listed in the [SphinxQL reference](http://sphinxsearch.com/docs/current.html#sphinxql-reference) and is generally [faster](http://sphinxsearch.com/blog/2010/04/25/sphinxapi-vs-sphinxql-benchmark/) than the Sphinx API, beside having more functions.
+This is a SphinxQL Query Builder used to work with SphinxQL, a SQL dialect used with the Sphinx search engine. It maps every function listed in the [Sphinx reference](http://sphinxsearch.com/docs/current.html#SphinxQL-reference) and is generally [faster](http://sphinxsearch.com/blog/2010/04/25/sphinxapi-vs-SphinxQL-benchmark/) and is generally [faster](http://sphinxsearch.com/blog/2010/04/25/sphinxapi-vs-SphinxQL-benchmark/) than the available Sphinx API.
 
-This Query Builder has no dependencies except PHP 5.3, `\MySQLi` and of course a working Sphinx server. FuelPHP is not necessary but we've added a bootstrap for using it as a Package. It is styled after FuelPHP's Query Builder.
+This Query Builder has no dependencies besides PHP 5.3, `\MySQLi` extension, and [Sphinx](http://sphinxsearch.com).
 
-__This package is BETA QUALITY.__ Don't rely on it in production unless you tested it massively in development.
+__This package is BETA QUALITY.__ It is recommended that you do extensive testing in development before using it in a production environment.
 
 ### Code Quality
 
-Most of the methods in the package are unit tested. Methods that haven't been tested are single queries like `flushRtIndex`, but as they are independent they are supposed to work.
+The majority of the methods in the package have been unit tested. The only methods that have not been tested are single queries such as `flushRtIndex`, but these are independent and should work fine.
 
-We test on Travis-CI with the SVN build of Sphinx:
+We have tested our package locally and remotely with Travis-CI:
 
-[![Build Status](https://secure.travis-ci.org/FoolRulez/fuel-sphinxql.png)](http://travis-ci.org/FoolCode/SphinxQL-Query-Builder)
+[![Build Status](https://secure.travis-ci.org/FoolRulez/fuel-SphinxQL.png)](http://travis-ci.org/FoolCode/SphinxQL-Query-Builder)
 
 ## Installation
 
-This is a Composer package. You can install it as any other Composer package.
-
-If you use FuelPHP 1.x, include `bootstrap.php` that contains the autoloading array.
+This is a Composer package. You can install this package with the following command: `php composer.phar install`
 
 ## Usage
 
 The examples will omit the namespace.
 
-	use Foolz\Sphinxql\Sphinxql as Sphinxql;
+	use Foolz\SphinxQL\SphinxQL as SphinxQL;
+	use Foolz\SphinxQL\Connection as SphinxConnection;
 
-	// if you don't use the Sphinxql default connection, use this function to change the host and port
-	Sphinxql::addConnection('superspecial', 'yourhost.com', 9231);
-	Sphinxql::setConnection('superspecial');
+	// create a connection object to use for SphinxQL
+	$conn = new SphinxConnection();
+	$conn->setConnectionParams('domain.tld', 9306);
 
-	$query = Sphinxql::select('column_one', 'column_two')
+	// use SphinxQL::forge($conn) to initialize and bind the connection to be used
+	SphinxQL::forge($conn);
+
+	$query = SphinxQL::forge()->select('column_one', 'colume_two')
 		->from('index_delta', 'index_main', 'index_ancient')
 		->match('comment', 'my opinion is better')
 		->where('banned', '=', 1);
@@ -44,58 +45,54 @@ The examples will omit the namespace.
 
 #### General
 
-The static connection manager lets you handle multiple connections.
-
-There's the `default` connection, that connects to 127.0.0.1:9306 as per SphinxQL defaults.
-
-* __Sphinxql::silenceConnectionWarning($enable = true)__
+* __SphinxQL::forge()->silenceConnectionWarning($enable = true)__
 
 	Use it when you have warning display enabled in PHP, but you don't want to see errors when MySQLi fails connecting to the server. Custom errors are in place. (This is actually the so-evil @ silencing. Use it if you know what are you doing.)
 
 	_Disabled by default._
 
-* __Sphinxql::addConnection($name = 'default', $host = '127.0.0.1', $port = 9306)__
+* __SphinxQL::forge()->addConnection($name = 'default', $host = '127.0.0.1', $port = 9306)__
 
 	Use it to add connection to the array of available connections.
 
-* __Sphinxql::setConnection($name)__
+* __SphinxQL::forge()->setConnection($name)__
 
 	Set the connection to be used for the next operations. Remember that the class always starts with `default` set.
 
-* __Sphinxql::getConnectionInfo($name = null)__
+* __SphinxQL::forge()->getConnectionInfo($name = null)__
 
 	Get info (host, port) on the connection. When name is not specified it gives info on the currently selected connection.
 
-* __Sphinxql::connect()__
+* __SphinxQL::forge()->connect()__
 
-	_Throws \Foolz\Sphinxql\SphinxqlConnectionException_
+	_Throws \Foolz\SphinxQL\SphinxQLConnectionException_
 
 	Enstablish the connection to the server.
 
-* __Sphinxql::getConnection()__
+* __SphinxQL::forge()->getConnection()__
 
-	_Throws \Foolz\Sphinxql\SphinxqlConnectionException_
+	_Throws \Foolz\SphinxQL\SphinxQLConnectionException_
 
 	Returns the \MySQLi object of the currently selected connection, an exception if not available.
 
-* __Sphinxql::ping()__
+* __SphinxQL::forge()->ping()__
 
 	Pings the server. Returns false on failure, true on success.
 
-* __Sphinxql::close()__
+* __SphinxQL::forge()->close()__
 
 	Closes the server connection.
 
-* __Sphinxql::query($query)__
+* __SphinxQL::forge()->query($query)__
 
 	Runs the query. Returns an array of results on `SELECT`, or an array with the number of affected rows (Sphinx doesn't support last-insert-id, so this values for `INSERT` too).
 
 
-#### Getting around escaping
+#### Bypass Query Escaping
 
-Often you need to run SQL functions, but those would get escaped as other values or identifiers. You can ignore the escaping by wrapping the query in a SphinxqlExpression.
+Often, you would need to call and run SQL functions that shouldn't be escaped in the query. You can bypass the query escape by wrapping the query in an `\Expression`.
 
-* __Sphinxql::expr($string)__
+* __SphinxQL::expr($string)__
 
 	Disables escaping for the string.
 
@@ -104,7 +101,11 @@ Often you need to run SQL functions, but those would get escaped as other values
 
 * __$sq->execute()__
 
-	Compiles the query, executes it, and __returns__ the array of results.
+	Compiles, executes, and __returns__ an array of results of a query.
+
+* __$sq->executeBatch()__
+
+	Compiles, executes, and __returns__ an array of results for a multi-query.
 
 * __$sq->compile()__
 
@@ -112,33 +113,17 @@ Often you need to run SQL functions, but those would get escaped as other values
 
 * __$sq->getCompiled()__
 
-	Returns the last compiled query.
+	Returns the last query compiled.
 
 * __$sq->getResult()__
 
 	Returns the last result.
 
-#### Multiquery
-
-* __new Queue()__
-
-	Create a new queue for multiquerying
-
-* __$queue->add(\Foolz\Sphinxql\Sphinxql $sphinxql)__
-
-	Add a query object
-
-* __$queue->execute()__
-
-	Returns an array of the results of all the queued queries
-
 #### Select
 
-* __$sq = Sphinxql::select($column1, $column2, $column3)->from($index1, $index2, $index3)__
+* __$sq = SphinxQL::forge()->select($column1, $column2, ...)->from($index1, $index2, ...)__
 
-	Starts a `SELECT`. `$columns1` can be an array. If no column is specified it defaults to `*`. `$index1` can be an array.
-
-The options for the select follow.
+	Begins a `SELECT` query statement. If no column is specified, the statement defaults to using `*`. Both `$column1` and `$index1` can be arrays.
 
 #### Where
 
@@ -146,23 +131,23 @@ The options for the select follow.
 
 	Classic WHERE, works with Sphinx filters and fulltext.
 
+		// WHERE `column` = 'value'
 		$sq->where('column', 'value');
-		// WHERE `column` = 'value'
 
+		// WHERE `column` = 'value'
 		$sq->where('column', '=', 'value');
-		// WHERE `column` = 'value'
 
-		$sq->where('column', '>=', 'value')
 		// WHERE `column` >= 'value'
+		$sq->where('column', '>=', 'value')
 
-		$sq->where('column', 'IN', array('value1', 'value2', 'value3'));
 		// WHERE `column` IN ('value1', 'value2', 'value3')
+		$sq->where('column', 'IN', array('value1', 'value2', 'value3'));
 
-		$sq->where('column', 'BETWEEN', array('value1', 'value2'))
 		// WHERE `column` BETWEEN 'value1' AND 'value2'
 		// WHERE `example` BETWEEN 10 AND 100
+		$sq->where('column', 'BETWEEN', array('value1', 'value2'))
 
-	_While implemented in the package, `OR` and parenthesis are not yet implemented in SphinxQL_.
+	_It should be noted that `OR` and parenthesis are not supported and implemented in the SphinxQL dialect yet._
 
 
 #### Match
@@ -174,23 +159,26 @@ The options for the select follow.
 		$sq->match('title', 'Otoshimono')
 			->match('character', 'Nymph');
 
-	The characters are fully escaped. You will need to use Sphinxql::expr($value) to use your own options.
+	The characters are fully escaped. You will need to use SphinxQL::expr($value) to use your own options.
 
 	The `$half`, if turned to `true`, will allow the following characters: `-`, `|`, `"`. You __will have to__ wrap the query in a `try` if you use this feature and expose it to public interfaces, because character order might throw a query error.
 
+	The `$half` argument, if `true`, will allow the following charact
+	The `$half` argument, if `true`, will not escape and allow the usage of the following characters: `-`, `|`, `"`. If you plan to use this feature and expose it to public interfaces, it is __recommended__ that you wrap the query in a `try catch` block as the character order may `throw` a query error.
+
 		try
 		{
-			$result Sphinxql::select()
+			$result = SphinxQL::forge()->select()
 				->from('rt')
 				->match('title', 'Sora no || Otoshimono')
 				->execute();
 		}
-		catch (\Foolz\Sphinxql\SphinxqlDatabaseException $e)
+		catch (\Foolz\SphinxQL\DatabaseException $e)
 		{
-			// it will get here because two `|` one after the other aren't allowed
+			// an error is thrown because two `|` one after the other aren't allowed
 		}
 
-#### Grouping, ordering etc.
+#### Grouping, Ordering, Offset, Limit, and Option
 
 * __$sq->groupBy($column)__
 
@@ -200,19 +188,19 @@ The options for the select follow.
 
 	`WITHIN GROUP ORDER BY $column [$direction]`
 
-	Direction can be omitted with `null`, or be `asc` or `desc` case insensitive.
+	Direction can be omitted with `null`, or be `ASC` or `DESC` case insensitive.
 
 * __$sq->orderBy($column, $direction = null)__
 
 	`ORDER BY $column [$direction]`
 
-	Direction can be omitted with `null`, or be `asc` or `desc` case insensitive.
+	Direction can be omitted with `null`, or be `ASC` or `DESC` case insensitive.
 
 * __$sq->offset($offset)__
 
 	`LIMIT $offset, 9999999999999`
 
-	Set the offset. The `LIMIT` is set to a high number because SphinxQL doesn't support the `OFFSET` keyword.
+	Set the offset. Since SphinxQL doesn't support the `OFFSET` keyword, `LIMIT` has been set at an extremely high number.
 
 * __$sq->limit($limit)__
 
@@ -226,17 +214,17 @@ The options for the select follow.
 
 	`OPTION $name = $value`
 
-	Set a SphinxQL option like `max_matches` or `reverse_scan` for this query only.
+	Set a SphinxQL option such as `max_matches` or `reverse_scan` for the query.
 
 #### Insert and Replace
 
-Will return an array with an `INT` as first member, the number of rows inserted/replaced.
+This will return an `INT` with the number of rows affected.
 
-* __$sq = Sphinxql::insert()->into($index)__
+* __$sq = SphinxQL::forge()->insert()->into($index)__
 
 	Begins an `INSERT`.
 
-* __$sq = Sphinxql::replace()->into($index)__
+* __$sq = SphinxQL::forge()->replace()->into($index)__
 
 	Begins an `REPLACE`.
 
@@ -257,9 +245,9 @@ Will return an array with an `INT` as first member, the number of rows inserted/
 
 #### Update
 
-Will return an array with an `INT` as first member, the number of rows updated.
+This will return an `INT` with the number of rows affected.
 
-* __$sq = Sphinxql::update($index)__
+* __$sq = SphinxQL::forge()->update($index)__
 
 	Begins an `UPDATE`.
 
@@ -278,24 +266,33 @@ The `WHERE` part of the query works just as for `SELECT`.
 
 Will return an array with an `INT` as first member, the number of rows deleted.
 
-* __$sq = Sphinxql::delete()->from($column)__
+* __$sq = SphinxQL::forge()->delete()->from($column)__
 
 	Begins a `DELETE`.
 
 The `WHERE` part of the query works just as for `SELECT`.
 
+#### Multi-Query
+
+* __$sq->enqueue()__
+
+	Queues the query.
+
+* __$sq->executeBatch()__
+
+	Returns an array of the results of all the queued queries.
 
 #### Transactions
 
-* __Sphinxql::transactionBegin()__
+* __SphinxQL::forge()->transactionBegin()__
 
 	Begins a transaction.
 
-* __Sphinxql::transactionCommit()__
+* __SphinxQL::forge()->transactionCommit()__
 
 	Commits a transaction.
 
-* __Sphinxql::transactionRollback()__
+* __SphinxQL::forge()->transactionRollback()__
 
 	Rollbacks a transaction.
 
@@ -325,18 +322,18 @@ The `WHERE` part of the query works just as for `SELECT`.
 
 #### Show
 
-	Sphinxql::meta() => 'SHOW META'
-	Sphinxql::warnings() => 'SHOW WARNINGS'
-	Sphinxql::status() => 'SHOW STATUS'
-	Sphinxql::tables() => 'SHOW TABLES'
-	Sphinxql::variables() => 'SHOW VARIABLES'
-	Sphinxql::variablesSession() => 'SHOW SESSION VARIABLES'
-	Sphinxql::variablesGlobal() => 'SHOW GLOBAL VARIABLES'
+	SphinxQL::forge()->meta() => 'SHOW META'
+	SphinxQL::forge()->warnings() => 'SHOW WARNINGS'
+	SphinxQL::forge()->status() => 'SHOW STATUS'
+	SphinxQL::forge()->tables() => 'SHOW TABLES'
+	SphinxQL::forge()->variables() => 'SHOW VARIABLES'
+	SphinxQL::forge()->variablesSession() => 'SHOW SESSION VARIABLES'
+	SphinxQL::forge()->variablesGlobal() => 'SHOW GLOBAL VARIABLES'
 
 
 #### Set variable
 
-* __Sphinxql::setVariable($name, $value, $global = false)__
+* __SphinxQL::forge()->setVariable($name, $value, $global = false)__
 
 	Set a server variable.
 
@@ -345,10 +342,10 @@ The `WHERE` part of the query works just as for `SELECT`.
 
 There's several more functions to complete the SphinxQL library:
 
-* `Sphinxql::callSnippets($data, $index, $extra = array())`
-* `Sphinxql::callKeywords($text, $index, $hits = null)`
-* `Sphinxql::describe($index)`
-* `Sphinxql::createFunction($udf_name, $returns, $soname)`
-* `Sphinxql::dropFunction($udf_name)`
-* `Sphinxql::attachIndex($disk_index, $rt_index)`
-* `Sphinxql::flushRtIndex($index)`
+* `SphinxQL::forge()->callSnippets($data, $index, $extra = array())`
+* `SphinxQL::forge()->callKeywords($text, $index, $hits = null)`
+* `SphinxQL::forge()->describe($index)`
+* `SphinxQL::forge()->createFunction($udf_name, $returns, $soname)`
+* `SphinxQL::forge()->dropFunction($udf_name)`
+* `SphinxQL::forge()->attachIndex($disk_index, $rt_index)`
+* `SphinxQL::forge()->flushRtIndex($index)`

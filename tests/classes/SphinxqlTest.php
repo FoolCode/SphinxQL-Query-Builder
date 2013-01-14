@@ -48,7 +48,12 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
         SphinxQL::forge()->setVariable('@foo', array(0), true);
     }
 
-    public function testTransactions()
+	/**
+	 * @covers \Foolz\SphinxQL\SphinxQL::transactionBegin
+	 * @covers \Foolz\SphinxQL\SphinxQL::transactionCommit
+	 * @covers \Foolz\SphinxQL\SphinxQL::transactionRollback
+	 */
+	public function testTransactions()
     {
         SphinxQL::forge()->transactionBegin();
         SphinxQL::forge()->transactionRollback();
@@ -80,8 +85,10 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers \Foolz\SphinxQL\SphinxQL::compile
      * @covers \Foolz\SphinxQL\SphinxQL::compileInsert
-     * @covers \Foolz\SphinxQL\SphinxQL::doInsert
+     * @covers \Foolz\SphinxQL\SphinxQL::compileSelect
+     * @covers \Foolz\SphinxQL\SphinxQL::insert
      * @covers \Foolz\SphinxQL\SphinxQL::set
      * @covers \Foolz\SphinxQL\SphinxQL::value
      * @covers \Foolz\SphinxQL\SphinxQL::columns
@@ -163,7 +170,8 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
     /**
      * @covers \Foolz\SphinxQL\SphinxQL::compile
      * @covers \Foolz\SphinxQL\SphinxQL::compileInsert
-     * @covers \Foolz\SphinxQL\SphinxQL::doReplace
+     * @covers \Foolz\SphinxQL\SphinxQL::compileSelect
+     * @covers \Foolz\SphinxQL\SphinxQL::replace
      * @covers \Foolz\SphinxQL\SphinxQL::set
      * @covers \Foolz\SphinxQL\SphinxQL::value
      * @covers \Foolz\SphinxQL\SphinxQL::columns
@@ -226,7 +234,8 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
 
     /**
      * @covers \Foolz\SphinxQL\SphinxQL::compileUpdate
-     * @covers \Foolz\SphinxQL\SphinxQL::doUpdate
+     * @covers \Foolz\SphinxQL\SphinxQL::compileSelect
+     * @covers \Foolz\SphinxQL\SphinxQL::update
      */
     public function testUpdate()
     {
@@ -429,6 +438,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
 
     /**
      * @covers \Foolz\SphinxQL\SphinxQL::compileDelete
+	 * @covers \Foolz\SphinxQL\SphinxQL::delete
      */
     public function testDelete()
     {
@@ -445,6 +455,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+	 * @covers \Foolz\SphinxQL\SphinxQL::executeBatch
      * @covers \Foolz\SphinxQL\SphinxQL::enqueue
      * @covers \Foolz\SphinxQL\SphinxQL::getQueue
      * @covers \Foolz\SphinxQL\SphinxQL::getQueuePrev

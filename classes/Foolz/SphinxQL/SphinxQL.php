@@ -13,7 +13,7 @@ class SphinxQL extends Connection
     /**
      * The \MySQLi connection for this object.
      *
-     * @var  Foolz\SphinxQL\Connection
+     * @var  \Foolz\SphinxQL\Connection
      */
     protected static $stored_connection = null;
 
@@ -136,7 +136,12 @@ class SphinxQL extends Connection
      */
     protected $options = array();
 
-    protected $queue_prev = null;
+	/**
+	 * The reference to the object that queued itself and created this object
+	 *
+	 * @var null|\Foolz\SphinxQL\SphinxQL
+	 */
+	protected $queue_prev = null;
 
     /**
      * Ready for use queries
@@ -246,10 +251,16 @@ class SphinxQL extends Connection
         return $this->last_result = $this->getConnection()->query($this->compile()->getCompiled());
     }
 
-    public function executeBatch()
+	/**
+	 * Executes a batch of queued queries
+	 *
+	 * @return  array  The array of results from MySQLi
+	 * @throws  SphinxQLException  In case no query is in queue
+	 */
+	public function executeBatch()
     {
         if (count($this->getQueue()) == 0) {
-            throw new DatabaseException('There is no Queue present to execute.');
+            throw new SphinxQLException('There is no Queue present to execute.');
         }
 
         $queue = array();
@@ -261,7 +272,12 @@ class SphinxQL extends Connection
         return $this->last_result = $this->getConnection()->multiQuery($queue);
     }
 
-    public function enqueue()
+	/**
+	 * Enqueues the current object and returns a new one
+	 *
+	 * @return  \Foolz\SphinxQL\SphinxQL  A new SphinxQL object with the current object referenced
+	 */
+	public function enqueue()
     {
         $sq = new static($this->getConnection());
         $sq->setQueuePrev($this);
@@ -269,7 +285,12 @@ class SphinxQL extends Connection
         return $sq;
     }
 
-    public function getQueue()
+	/**
+	 * Returns the ordered array of enqueued objects
+	 *
+	 * @return  \Foolz\SphinxQL\SphinxQL[]  The ordered array of enqueued objects
+	 */
+	public function getQueue()
     {
         $queue = array();
         $curr = $this;
@@ -283,12 +304,24 @@ class SphinxQL extends Connection
         return array_reverse($queue);
     }
 
-    public function getQueuePrev()
+	/**
+	 * Gets the enqueued object
+	 *
+	 * @return SphinxQL|null
+	 */
+	public function getQueuePrev()
     {
         return $this->queue_prev;
     }
 
-    public function setQueuePrev($sq)
+	/**
+	 * Sets the reference to the enqueued object
+	 *
+	 * @param  $sq  The object to set as previous
+	 *
+	 * @return  \Foolz\SphinxQL\SphinxQL  The current object
+	 */
+	public function setQueuePrev($sq)
     {
         $this->queue_prev = $sq;
 

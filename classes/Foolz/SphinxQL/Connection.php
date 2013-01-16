@@ -47,9 +47,9 @@ class Connection
     /**
      * Sets the connection parameters.
      *
-     * @param  string  $name     The key name of the connection
-     * @param  string  $host     The hostname or IP
-     * @param  int     $port     The port to the host
+     * @param  string  $name  The key name of the connection
+     * @param  string  $host  The hostname or IP
+     * @param  int     $port  The port to the host
      */
     public function setConnectionParams($host = '127.0.0.1', $port = 9306)
     {
@@ -181,8 +181,8 @@ class Connection
      * @param  array  $queue  Queue holding all of the queries to be executed
      *
      * @return  array  The result array
-     * @throws  \Foolz\SphinxQL\DatabaseException
-     * @throws  \Foolz\SphinxQL\SphinxException
+     * @throws  \Foolz\SphinxQL\DatabaseException  In case a query throws an error
+     * @throws  \Foolz\SphinxQL\SphinxException    In case the array passed is empty
      */
     public function multiQuery(Array $queue)
     {
@@ -196,7 +196,7 @@ class Connection
 
         if ($this->getConnection()->error) {
             throw new DatabaseException('['.$this->getConnection()->errno.'] '.
-                $this->getConnection()->error.' [ '.$query.']');
+                $this->getConnection()->error.' [ '.implode(';', $queue).']');
         }
 
         $result = array();

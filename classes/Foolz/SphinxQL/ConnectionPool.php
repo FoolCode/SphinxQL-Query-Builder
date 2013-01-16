@@ -35,10 +35,10 @@ class ConnectionPool
     /**
      * Get the connection params for the specified server in the pool
      *
-     * @param  string$server_name
+     * @param  string  $server_name  The given name for the server
      *
-     * @return  array
-     * @throws  ConnectionPoolException
+     * @return  array  The server connection data
+     * @throws  ConnectionPoolException  If the server doesn't exist
      */
     public function getServer($server_name)
     {
@@ -50,6 +50,8 @@ class ConnectionPool
     }
 
     /**
+     * Returns the list of the servers in the connection pool
+     *
      * @return  array  The list of servers in the connection pool
      */
     public function getServers()
@@ -60,9 +62,9 @@ class ConnectionPool
     /**
      * Remove a server from the connection pool
      *
-     * @param $server_name
+     * @param  $server_name  The given name of the server to remove
      *
-     * @return \Foolz\SphinxQL\ConnectionPool
+     * @return  \Foolz\SphinxQL\ConnectionPool  The current object
      */
     public function removeServer($server_name)
     {

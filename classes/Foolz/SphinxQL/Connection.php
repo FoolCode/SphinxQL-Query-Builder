@@ -4,7 +4,7 @@ namespace Foolz\SphinxQL;
 
 class ConnectionException extends \Exception {};
 class DatabaseException extends \Exception {};
-class SphinxException extends \Exception {};
+class SphinxQLException extends \Exception {};
 
 /**
  * SphinxQL connection class utilizing the MySQLi extension.
@@ -182,12 +182,12 @@ class Connection
      *
      * @return  array  The result array
      * @throws  \Foolz\SphinxQL\DatabaseException  In case a query throws an error
-     * @throws  \Foolz\SphinxQL\SphinxException    In case the array passed is empty
+     * @throws  \Foolz\SphinxQL\SphinxQLException    In case the array passed is empty
      */
     public function multiQuery(Array $queue)
     {
         if (count($queue) === 0) {
-            throw new SphinxException('The Queue is empty.');
+            throw new SphinxQLException('The Queue is empty.');
         }
 
         $this->ping();

@@ -5,8 +5,6 @@ use Foolz\SphinxQL\Connection as SphinxConnection;
 
 class SphinxQLTest extends PHPUnit_Framework_TestCase
 {
-    private $sq = null;
-
     public function __construct()
     {
         $conn = new SphinxConnection();

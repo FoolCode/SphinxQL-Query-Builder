@@ -1,7 +1,7 @@
 Query Builder for SphinxQL
 ==========================
 
-### About
+## About
 
 This is a SphinxQL Query Builder used to work with SphinxQL, a SQL dialect used with the Sphinx search engine. It maps every function listed in the [SphinxQL reference](http://sphinxsearch.com/docs/current.html#SphinxQL-reference) and is generally [faster](http://sphinxsearch.com/blog/2010/04/25/sphinxapi-vs-SphinxQL-benchmark/) and is generally [faster](http://sphinxsearch.com/blog/2010/04/25/sphinxapi-vs-SphinxQL-benchmark/) than the available Sphinx API.
 
@@ -9,7 +9,7 @@ This Query Builder has no dependencies besides PHP 5.3, `\MySQLi` extension, and
 
 __This package is BETA QUALITY.__ It is recommended that you do extensive testing in development before using it in a production environment.
 
-### Code Quality
+## Code Quality
 
 The majority of the methods in the package have been unit tested. The only methods that have not been tested are single queries such as `flushRtIndex`, but these are independent and should work fine.
 

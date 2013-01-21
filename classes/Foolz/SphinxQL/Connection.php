@@ -47,7 +47,6 @@ class Connection
     /**
      * Sets the connection parameters.
      *
-     * @param  string  $name  The key name of the connection
      * @param  string  $host  The hostname or IP
      * @param  int     $port  The port to the host
      */
@@ -182,7 +181,7 @@ class Connection
      *
      * @return  array  The result array
      * @throws  \Foolz\SphinxQL\DatabaseException  In case a query throws an error
-     * @throws  \Foolz\SphinxQL\SphinxQLException    In case the array passed is empty
+     * @throws  \Foolz\SphinxQL\SphinxQLException  In case the array passed is empty
      */
     public function multiQuery(Array $queue)
     {

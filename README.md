@@ -27,11 +27,11 @@ This is a Composer package. You can install this package with the following comm
 
 The following examples will omit the namespace.
 
-	use Foolz\SphinxQL\SphinxQL as SphinxQL;
-	use Foolz\SphinxQL\Connection as SphinxConnection;
+	use Foolz\SphinxQL\SphinxQL;
+	use Foolz\SphinxQL\Connection;
 
 	// create a SphinxQL Connection object to use with SphinxQL
-	$conn = new SphinxConnection();
+	$conn = new Connection();
 	$conn->setConnectionParams('domain.tld', 9306);
 
 	// use SphinxQL::forge($conn) to initialize and bind the connection to be used for future calls
@@ -45,46 +45,27 @@ The following examples will omit the namespace.
 	$result = $query->execute();
 
 
-#### General
+#### Connection
 
-* __SphinxQL::forge()->silenceConnectionWarning($enable = true)__
+* __$conn = new Connection()__
+
+	Create a new Connection instance to use what follows.
+
+* __$conn->silenceConnectionWarning($enable = true)__
 
 	Forces any warnings and errors displayed by the `\MySQLi` extension upon connection failure to be suppressed.
 
 	_This is disabled by default._
 
-* __SphinxQL::forge()->setConnectionParams($host = '127.0.0.1', $port = 9306)__
+* __$conn->setConnectionParams($host = '127.0.0.1', $port = 9306)__
 
 	Sets the connection parameters used to establish a connection to the server.
 
-* __SphinxQL::forge()->getConnectionParams()__
-
-	Returns the connection parameters (host, port) for the current `\Connection` object.
-
-* __SphinxQL::forge()->connect()__
-
-	_Throws \Foolz\SphinxQL\ConnectionException_
-
-	Establishes a connection to the server.
-
-* __SphinxQL::forge()->getConnection()__
-
-	_Throws \Foolz\SphinxQL\ConnectionException_
-
-	Returns the `\MySQLi` object of the current connection, or `throws` an exception.
-
-* __SphinxQL::forge()->ping()__
-
-	Pings the server for a response. Returns `false` on failure, `true` on success.
-
-* __SphinxQL::forge()->close()__
-
-	Closes the connection.
-
-* __SphinxQL::forge()->query($query)__
+* __$conn->query($query)__
 
 	Performs the query on the server. Returns an _array_ of results for `SELECT`, or an _int_ with the number of rows affected.
 
+_More methods are available in the Connection class, but usually not necessary as these are handled automatically._
 
 #### Bypass Query Escaping
 
@@ -93,7 +74,6 @@ Often, you would need to call and run SQL functions that shouldn't be escaped in
 * __SphinxQL::expr($string)__
 
 	Returns the string without being escaped.
-
 
 #### Query Escaping
 
@@ -130,13 +110,13 @@ There are cases when an input __must__ be escaped in the SQL statement. The foll
 
 #### SHOW
 
-	SphinxQL::forge()->meta() => 'SHOW META'
-	SphinxQL::forge()->warnings() => 'SHOW WARNINGS'
-	SphinxQL::forge()->status() => 'SHOW STATUS'
-	SphinxQL::forge()->tables() => 'SHOW TABLES'
-	SphinxQL::forge()->variables() => 'SHOW VARIABLES'
-	SphinxQL::forge()->variablesSession() => 'SHOW SESSION VARIABLES'
-	SphinxQL::forge()->variablesGlobal() => 'SHOW GLOBAL VARIABLES'
+* `SphinxQL::forge()->meta() => 'SHOW META'`
+* `SphinxQL::forge()->warnings() => 'SHOW WARNINGS'`
+* `SphinxQL::forge()->status() => 'SHOW STATUS'`
+* `SphinxQL::forge()->tables() => 'SHOW TABLES'`
+* `SphinxQL::forge()->variables() => 'SHOW VARIABLES'`
+* `SphinxQL::forge()->variablesSession() => 'SHOW SESSION VARIABLES'`
+* `SphinxQL::forge()->variablesGlobal() => 'SHOW GLOBAL VARIABLES'`
 
 
 #### SELECT

@@ -1,7 +1,8 @@
 #### 0.9.0
 
-* refactored to object-oriented programming
+* refactored to be fully OOP
 * changed code style to be PSR-2 compliant
+* removed all unnecessary `static` keywords
 
 #### 0.8.6
 

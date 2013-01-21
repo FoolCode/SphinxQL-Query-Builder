@@ -5,7 +5,7 @@ namespace Foolz\SphinxQL;
 /**
  * Query Builder class for SphinxQL statements.
  */
-class SphinxQL extends Connection
+class SphinxQL
 {
     /**
      * The \MySQLi connection for this object.

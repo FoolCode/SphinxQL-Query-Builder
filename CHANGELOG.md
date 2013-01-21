@@ -1,15 +1,36 @@
-#### 2012-12-16 Woxxy <woxxy@foolz.us>
+#### 0.9.0
 
- * Sphinxql doesn't extend Connection anymore, it's now an Engine pattern
- 
+* refactored to object-oriented programming
+* changed code style to be PSR-2 compliant
 
-#### 2012-12-08  Woxxy  <woxxy@foolz.us>
+#### 0.8.6
 
-* Added Connection::ping() and Connection::close()
-* Fixed bug where expecting false instead of an exception on Connection::getConnection()
+* added Connection::ping()
+* added Connection::close()
+* fixed uncaught exception thrown by Connection::getConnection()
 
+#### 0.8.5
 
-#### 2012-12-06  Woxxy  <woxxy@foolz.us>
+* removed Array typehints
+* removed unsupported charset argument
 
-* Added Queue class
-* Renamed classes (removed Sphinxql prefix)
+#### 0.8.4
+
+* fixed composer bootstrap
+* removed `Sphinxql` prefix on Connection and Expression classes
+
+#### 0.8.3
+
+* added Queue support
+
+#### 0.8.2
+
+* fixed composer bootstrap
+
+#### 0.8.1
+
+* improved phpunit tests
+
+#### 0.8.0
+
+* initial release

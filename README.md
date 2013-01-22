@@ -47,12 +47,11 @@ The following examples will omit the namespace.
 
 * __$conn = new Connection()__
 
-	Create a new Connection instance to use what follows.
+	Create a new Connection instance to be used with the following methods or SphinxQL class.
 
 * __$conn->silenceConnectionWarning($enable = true)__
 
-	Forces any warnings and errors displayed by the `\MySQLi` extension upon connection failure to be suppressed.
-
+	Suppresses any warnings and errors displayed by the `\MySQLi` extension upon connection failure.
 	_This is disabled by default._
 
 * __$conn->setConnectionParams($host = '127.0.0.1', $port = 9306)__
@@ -65,6 +64,14 @@ The following examples will omit the namespace.
 
 _More methods are available in the Connection class, but usually not necessary as these are handled automatically._
 
+
+#### SphinxQL
+
+* __SphinxQL::forge($conn = null)__
+
+	Creates a SphinxQL instance used for generating queries.
+
+
 #### Bypass Query Escaping
 
 Often, you would need to call and run SQL functions that shouldn't be escaped in the query. You can bypass the query escape by wrapping the query in an `\Expression`.
@@ -72,6 +79,7 @@ Often, you would need to call and run SQL functions that shouldn't be escaped in
 * __SphinxQL::expr($string)__
 
 	Returns the string without being escaped.
+
 
 #### Query Escaping
 
@@ -96,6 +104,7 @@ There are cases when an input __must__ be escaped in the SQL statement. The foll
 * __$sq->halfEscapeMatch($value)__
 
 	Escapes the string to be used in `MATCH`. The following characters are allowed: `-`, `|`, and `"`.
+
 	_Refer to `$sq->match()` for more information._
 
 
@@ -304,6 +313,7 @@ Will return an array with an `INT` as first member, the number of rows deleted.
 
 	Returns the last result.
 
+
 #### Multi-Query
 
 * __$sq->enqueue()__
@@ -313,6 +323,7 @@ Will return an array with an `INT` as first member, the number of rows deleted.
 * __$sq->executeBatch()__
 
 	Returns an array of the results of all the queued queries.
+
 
 #### More
 

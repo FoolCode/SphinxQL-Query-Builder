@@ -3,6 +3,7 @@
 * refactored to be fully OOP
 * changed code style to be PSR-2 compliant
 * removed all unnecessary `static` keywords
+* removed old bootstrap file for fuelphp
 
 #### 0.8.6
 

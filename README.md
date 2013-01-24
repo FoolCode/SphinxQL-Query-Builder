@@ -17,6 +17,28 @@ We have tested our package locally and remotely with Travis-CI:
 
 [![Build Status](https://travis-ci.org/FoolCode/SphinxQL-Query-Builder.png)](https://travis-ci.org/FoolCode/SphinxQL-Query-Builder)
 
+## How to Contribute
+
+### Pull Requests
+
+1. Fork the SphinxQL Query Builder repository
+2. Create a new branch for each feature or improvement
+3. Submit a pull request from each branch to the **dev** branch
+
+It is very important to separate new features or improvements into separate feature branches, and to send a pull
+request for each branch. This allows me to review and pull in new features or improvements individually.
+
+### Style Guide
+
+All pull requests must adhere to the [PSR-2](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md) standard.
+
+### Unit Testing
+
+All pull requests must be accompanied by passing unit tests and complete code coverage. The SphinxQL Query Builder uses
+`phpunit` for testing.
+
+[Learn about PHPUnit](https://github.com/sebastianbergmann/phpunit/)
+
 ## Installation
 
 This is a Composer package. You can install this package with the following command: `php composer.phar install`
@@ -42,7 +64,6 @@ The following examples will omit the namespace.
 
 	$result = $query->execute();
 
-
 #### Connection
 
 * __$conn = new Connection()__
@@ -64,13 +85,11 @@ The following examples will omit the namespace.
 
 _More methods are available in the Connection class, but usually not necessary as these are handled automatically._
 
-
 #### SphinxQL
 
 * __SphinxQL::forge($conn = null)__
 
 	Creates a SphinxQL instance used for generating queries.
-
 
 #### Bypass Query Escaping
 
@@ -79,7 +98,6 @@ Often, you would need to call and run SQL functions that shouldn't be escaped in
 * __SphinxQL::expr($string)__
 
 	Returns the string without being escaped.
-
 
 #### Query Escaping
 
@@ -107,13 +125,11 @@ There are cases when an input __must__ be escaped in the SQL statement. The foll
 
 	_Refer to `$sq->match()` for more information._
 
-
 #### SET VARIABLE
 
 * __SphinxQL::forge()->setVariable($name, $value, $global = false)__
 
 	Sets a variable server-side.
-
 
 #### SHOW
 
@@ -125,13 +141,11 @@ There are cases when an input __must__ be escaped in the SQL statement. The foll
 * `SphinxQL::forge()->variablesSession() => 'SHOW SESSION VARIABLES'`
 * `SphinxQL::forge()->variablesGlobal() => 'SHOW GLOBAL VARIABLES'`
 
-
 #### SELECT
 
 * __$sq = SphinxQL::forge()->select($column1, $column2, ...)->from($index1, $index2, ...)__
 
 	Begins a `SELECT` query statement. If no column is specified, the statement defaults to using `*`. Both `$column1` and `$index1` can be arrays.
-
 
 #### INSERT, REPLACE
 
@@ -159,7 +173,6 @@ This will return an `INT` with the number of rows affected.
 
 	Both `$column1` and `$index1` can be arrays.
 
-
 #### UPDATE
 
 This will return an `INT` with the number of rows affected.
@@ -176,7 +189,6 @@ This will return an `INT` with the number of rows affected.
 
 	Inserts the associative array, where the keys are the columns and the respective values are the column values.
 
-
 #### DELETE
 
 Will return an array with an `INT` as first member, the number of rows deleted.
@@ -184,7 +196,6 @@ Will return an array with an `INT` as first member, the number of rows deleted.
 * __$sq = SphinxQL::forge()->delete()->from($column)__
 
 	Begins a `DELETE`.
-
 
 #### WHERE
 
@@ -210,7 +221,6 @@ Will return an array with an `INT` as first member, the number of rows deleted.
 
 	_It should be noted that `OR` and parenthesis are not supported and implemented in the SphinxQL dialect yet._
 
-
 #### MATCH
 
 * __$sq->match($column, $value, $half = false)__
@@ -235,7 +245,6 @@ Will return an array with an `INT` as first member, the number of rows deleted.
 		{
 			// an error is thrown because two `|` one after the other aren't allowed
 		}
-
 
 #### GROUP, WITHIN GROUP, ORDER, OFFSET, LIMIT, OPTION
 
@@ -275,7 +284,6 @@ Will return an array with an `INT` as first member, the number of rows deleted.
 
 	Set a SphinxQL option such as `max_matches` or `reverse_scan` for the query.
 
-
 #### TRANSACTION
 
 * __SphinxQL::forge()->transactionBegin()__
@@ -289,7 +297,6 @@ Will return an array with an `INT` as first member, the number of rows deleted.
 * __SphinxQL::forge()->transactionRollback()__
 
 	Rollbacks a transaction.
-
 
 #### Executing and Compiling
 
@@ -313,7 +320,6 @@ Will return an array with an `INT` as first member, the number of rows deleted.
 
 	Returns the last result.
 
-
 #### Multi-Query
 
 * __$sq->enqueue()__
@@ -323,7 +329,6 @@ Will return an array with an `INT` as first member, the number of rows deleted.
 * __$sq->executeBatch()__
 
 	Returns an array of the results of all the queued queries.
-
 
 #### More
 

@@ -360,13 +360,13 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
 
     public function testGroupBy()
     {
-        $result = SphinxQL::forge()->select(SphinxQL::expr('@count'))
+        $result = SphinxQL::forge()->select(SphinxQL::expr('count()'))
             ->from('rt')
             ->groupBy('gid')
             ->execute();
 
         $this->assertCount(5, $result);
-        $this->assertSame('3', $result[3]['@count']);
+        $this->assertSame('3', $result[3]['count()']);
     }
 
     public function testOrderBy()

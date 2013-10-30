@@ -418,8 +418,8 @@ class SphinxQL
      */
     public function callSnippets($data, $index, $extra = array())
     {
-        array_unshift($index, $extra);
-        array_unshift($data, $extra);
+        array_unshift($extra, $index);
+        array_unshift($extra, $data);
 
         return $this->getConnection()->query('CALL SNIPPETS('.implode(', ', $this->getConnection()->quoteArr($extra)).')');
     }

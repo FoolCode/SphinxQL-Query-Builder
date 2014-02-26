@@ -155,6 +155,17 @@ class SphinxQL
         'variablesGlobal' => 'SHOW GLOBAL VARIABLES',
     );
 
+    /**
+     * Query escape types:
+     *
+     *  All, If all potential active characters should be escaped
+     *  Half, Allow the following characters: '-', '|', '"'.
+     *  None, if the query value should be treated literally
+     */
+    const QUERY_ESCAPE_ALL              = 1;
+    const QUERY_ESCAPE_HALF             = 2;
+    const QUERY_ESCAPE_NONE             = 3;
+
     public function __construct($connection = null)
     {
         if ($connection instanceof \Foolz\SphinxQL\Connection) {
@@ -556,10 +567,12 @@ class SphinxQL
             foreach ($this->match as $match) {
                 $pre .= '@'.$match['column'].' ';
 
-                if ($match['half']) {
+                if ($match['escape'] == static::QUERY_ESCAPE_HALF) {
                     $pre .= $this->halfEscapeMatch($match['value']);
-                } else {
+                } elseif ($match['escape'] == static::QUERY_ESCAPE_ALL) {
                     $pre .= $this->escapeMatch($match['value']);
+                } else {
+                    $pre .= $match['value'];
                 }
 
                 $pre .= ' ';
@@ -920,13 +933,16 @@ class SphinxQL
      *
      * @param  string   $column  The column name
      * @param  string   $value   The value
-     * @param  boolean  $half    Exclude ", |, - control characters from being escaped
+     * @param  int      $escape    Exclude ", |, - control characters from being escaped
      *
      * @return  \Foolz\SphinxQL\SphinxQL  The current object
      */
-    public function match($column, $value, $half = false)
+    public function match($column, $value, $escape = null)
     {
-        $this->match[] = array('column' => $column, 'value' => $value, 'half' => $half);
+        if (null === $escape) {
+            $escape = static::QUERY_ESCAPE_ALL; // Defaults to All
+        }
+        $this->match[] = array('column' => $column, 'value' => $value, 'escape' => $escape);
 
         return $this;
     }

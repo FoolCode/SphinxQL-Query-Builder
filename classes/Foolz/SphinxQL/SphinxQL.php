@@ -547,7 +547,7 @@ class SphinxQL
         if ( ! empty($this->match)) {
             $query .= 'WHERE MATCH(';
 
-            $matched = [];
+            $matched = array();
 
             foreach ($this->match as $match) {
                 $pre = '';
@@ -931,6 +931,10 @@ class SphinxQL
      */
     public function match($column, $value, $half = false)
     {
+        if ($column === '*' || (is_array($column) && in_array('*', $column))) {
+            $column = array();
+        }
+
         $this->match[] = array('column' => $column, 'value' => $value, 'half' => $half);
 
         return $this;

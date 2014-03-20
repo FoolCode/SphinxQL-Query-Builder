@@ -545,16 +545,20 @@ class SphinxQL
         $query = '';
 
         if ( ! empty($this->match)) {
-            $query .= 'WHERE ';
-        }
+            $query .= 'WHERE MATCH(';
 
-        if ( ! empty($this->match)) {
-            $query .= "MATCH(";
-
-            $pre = '';
+            $matched = [];
 
             foreach ($this->match as $match) {
-                $pre .= '@'.$match['column'].' ';
+                $pre = '';
+
+                if (empty($match['column'])) {
+                    $pre .= '';
+                } else if (is_array($match['column'])) {
+                    $pre .= '@('.implode(',',$match['column']).') ';
+                } else {
+                    $pre .= '@'.$match['column'].' ';
+                }
 
                 if ($match['half']) {
                     $pre .= $this->halfEscapeMatch($match['value']);
@@ -562,10 +566,11 @@ class SphinxQL
                     $pre .= $this->escapeMatch($match['value']);
                 }
 
-                $pre .= ' ';
+                $matched[] = '('.$pre.')';
             }
 
-            $query .= $this->getConnection()->escape(trim($pre)).") ";
+            $matched = implode(' ', $matched);
+            $query .= $this->getConnection()->escape(trim($matched)).') ';
         }
 
         return $query;

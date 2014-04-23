@@ -15,21 +15,21 @@ class Connection
     /**
      * The \MySQLi connection for this object.
      *
-     * @var  \MySQLi
+     * @var \MySQLi
      */
     protected $connection = null;
 
     /**
      * Disables any warning outputs returned on the \MySQLi connection with @ prefix.
      *
-     * @var  boolean
+     * @var boolean
      */
     protected $silence_connection_warning = false;
 
     /**
      * The connection parameters for the database server.
      *
-     * @var  array
+     * @var array
      */
     protected $connection_params = array('host' => '127.0.0.1', 'port' => 9306);
 
@@ -37,7 +37,7 @@ class Connection
      * Forces the \MySQLi connection to suppress all errors returned. This should only be used
      * when the production server is running with high error reporting settings.
      *
-     * @param  boolean  $enable  True if it should be enabled, false if it should be disabled
+     * @param boolean $enable True if it should be enabled, false if it should be disabled
      */
     public function silenceConnectionWarning($enable = true)
     {
@@ -47,8 +47,8 @@ class Connection
     /**
      * Sets the connection parameters.
      *
-     * @param  string  $host  The hostname or IP
-     * @param  int     $port  The port to the host
+     * @param string $host The hostname or IP
+     * @param int $port The port to the host
      */
     public function setConnectionParams($host = '127.0.0.1', $port = 9306)
     {
@@ -62,7 +62,7 @@ class Connection
     /**
      * Returns the connection parameters (host, port) for the current instance.
      *
-     * @return  array  The current connection parameters
+     * @return array The current connection parameters
      */
     public function getConnectionParams()
     {
@@ -73,8 +73,8 @@ class Connection
      * Returns the current \MySQLi connection established.
      *
      *
-     * @return  \MySQLi  MySQLi connection
-     * @throws  \Foolz\SphinxQL\ConnectionException  If no connection has been established or open
+     * @return \MySQLi MySQLi connection
+     * @throws \Foolz\SphinxQL\ConnectionException If no connection has been established or open
      */
     public function getConnection()
     {
@@ -88,10 +88,10 @@ class Connection
     /**
      * Establishes a connection to the Sphinx server with \MySQLi.
      *
-     * @param  boolean  $suppress_error  If the warnings on the connection should be suppressed
+     * @param boolean $suppress_error If the warnings on the connection should be suppressed
      *
-     * @return  boolean  True if connected
-     * @throws  \Foolz\SphinxQL\ConnectionException  If a connection error was encountered
+     * @return boolean True if connected
+     * @throws \Foolz\SphinxQL\ConnectionException If a connection error was encountered
      */
     public function connect($suppress_error = false)
     {
@@ -117,7 +117,7 @@ class Connection
     /**
      * Pings the Sphinx server.
      *
-     * @return  boolean  True if connected, false otherwise
+     * @return boolean True if connected, false otherwise
      */
     public function ping()
     {
@@ -142,10 +142,10 @@ class Connection
     /**
      * Performs a query on the Sphinx server.
      *
-     * @param  string  $query  The query string
+     * @param string $query The query string
      *
-     * @return  array|int  The result array or number of rows affected
-     * @throws  \Foolz\SphinxQL\DatabaseException  If the executed query procduced an error
+     * @return array|int The result array or number of rows affected
+     * @throws \Foolz\SphinxQL\DatabaseException If the executed query procduced an error
      */
     public function query($query)
     {
@@ -177,11 +177,11 @@ class Connection
     /**
      * Performs multiple queries on the Sphinx server.
      *
-     * @param  array  $queue  Queue holding all of the queries to be executed
+     * @param array $queue Queue holding all of the queries to be executed
      *
-     * @return  array  The result array
-     * @throws  \Foolz\SphinxQL\DatabaseException  In case a query throws an error
-     * @throws  \Foolz\SphinxQL\SphinxQLException  In case the array passed is empty
+     * @return array The result array
+     * @throws \Foolz\SphinxQL\DatabaseException In case a query throws an error
+     * @throws \Foolz\SphinxQL\SphinxQLException In case the array passed is empty
      */
     public function multiQuery(Array $queue)
     {
@@ -228,10 +228,10 @@ class Connection
      * Escapes the input with \MySQLi::real_escape_string.
      * Based on FuelPHP's escaping function.
      *
-     * @param  string  $value  The string to escape
+     * @param string $value The string to escape
      *
-     * @return  string  The escaped string
-     * @throws  \Foolz\SphinxQL\DatabaseException  If an error was encountered during server-side escape
+     * @return string The escaped string
+     * @throws \Foolz\SphinxQL\DatabaseException If an error was encountered during server-side escape
      */
     public function escape($value)
     {
@@ -247,9 +247,9 @@ class Connection
     /**
      * Wraps the input with identifiers when necessary.
      *
-     * @param  \Foolz\SphinxQL\Expression|string  $value  The string to be quoted, or an Expression to leave it untouched
+     * @param \Foolz\SphinxQL\Expression|string $value The string to be quoted, or an Expression to leave it untouched
      *
-     * @return  \Foolz\SphinxQL\Expression|string  The untouched Expression or the quoted string
+     * @return \Foolz\SphinxQL\Expression|string The untouched Expression or the quoted string
      */
     public function quoteIdentifier($value)
     {
@@ -273,9 +273,9 @@ class Connection
     /**
      * Calls $this->quoteIdentifier() on every element of the array passed.
      *
-     * @param  array  $array  An array of strings to be quoted
+     * @param array $array An array of strings to be quoted
      *
-     * @return  array  The array of quoted strings
+     * @return array The array of quoted strings
      */
     public function quoteIdentifierArr(Array $array = array())
     {
@@ -292,9 +292,9 @@ class Connection
      * Adds quotes around values when necessary.
      * Based on FuelPHP's quoting function.
      *
-     * @param  \Foolz\SphinxQL\Expression|string  $value  The input string, eventually wrapped in an expression to leave it untouched
+     * @param \Foolz\SphinxQL\Expression|string $value The input string, eventually wrapped in an expression to leave it untouched
      *
-     * @return  \Foolz\SphinxQL\Expression|string  The untouched Expression or the quoted string
+     * @return \Foolz\SphinxQL\Expression|string The untouched Expression or the quoted string
      */
     public function quote($value)
     {
@@ -323,9 +323,9 @@ class Connection
     /**
      * Calls $this->quote() on every element of the array passed.
      *
-     * @param  array  $array  The array of strings to quote
+     * @param array $array The array of strings to quote
      *
-     * @return  array  The array of quotes strings
+     * @return array The array of quotes strings
      */
     public function quoteArr(Array $array = array())
     {

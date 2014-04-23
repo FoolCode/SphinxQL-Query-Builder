@@ -10,7 +10,7 @@ class SphinxQL
     /**
      * The \MySQLi connection for all SphinxQL objects
      *
-     * @var  \Foolz\SphinxQL\Connection
+     * @var \Foolz\SphinxQL\Connection
      * @deprecated
      */
     protected static $stored_connection = null;
@@ -18,126 +18,126 @@ class SphinxQL
     /**
      * A non-static connection for the current SphinxQL object
      *
-     * @var  \Foolz\SphinxQL\Connection
+     * @var \Foolz\SphinxQL\Connection
      */
     protected $local_connection = null;
 
     /**
      * The last result object.
      *
-     * @var  array
+     * @var array
      */
     protected $last_result = null;
 
     /**
      * The last compiled query.
      *
-     * @var  string
+     * @var string
      */
     protected $last_compiled = null;
 
     /**
      * The last chosen method (select, insert, replace, update, delete).
      *
-     * @var  string
+     * @var string
      */
     protected $type = null;
 
     /**
      * Array of select elements that will be comma separated.
      *
-     * @var  array
+     * @var array
      */
     protected $select = array();
 
     /**
      * From in SphinxQL is the list of indexes that will be used
      *
-     * @var  array
+     * @var array
      */
     protected $from = array();
 
     /**
      * The list of where and parenthesis, must be inserted in order
      *
-     * @var  array
+     * @var array
      */
     protected $where = array();
 
     /**
      * The list of matches for the MATCH function in SphinxQL
      *
-     * @var  array
+     * @var array
      */
     protected $match = array();
 
     /**
      * GROUP BY array to be comma separated
      *
-     * @var  array
+     * @var array
      */
     protected $group_by = array();
 
     /**
      * ORDER BY array
      *
-     * @var  array
+     * @var array
      */
     protected $within_group_order_by = array();
 
     /**
      * ORDER BY array
      *
-     * @var  array
+     * @var array
      */
     protected $order_by = array();
 
     /**
      * When not null it adds an offset
      *
-     * @var  null|int
+     * @var null|int
      */
     protected $offset = null;
 
     /**
      * When not null it adds a limit
      *
-     * @var  null|int
+     * @var null|int
      */
     protected $limit = null;
 
     /**
      * Value of INTO query for INSERT or REPLACE
      *
-     * @var  null|string
+     * @var null|string
      */
     protected $into = null;
 
     /**
      * Array of columns for INSERT or REPLACE
      *
-     * @var  array
+     * @var array
      */
     protected $columns = array();
 
     /**
      * Array OF ARRAYS of values for INSERT or REPLACE
      *
-     * @var  array
+     * @var array
      */
     protected $values = array();
 
     /**
      * Array arrays containing column and value for SET in UPDATE
      *
-     * @var  array
+     * @var array
      */
     protected $set = array();
 
     /**
      * Array of OPTION specific to SphinxQL
      *
-     * @var  array
+     * @var array
      */
     protected $options = array();
 
@@ -151,7 +151,7 @@ class SphinxQL
     /**
      * Ready for use queries
      *
-     * @var  array
+     * @var array
      */
     protected static $show_queries = array(
         'meta' => 'SHOW META',
@@ -177,10 +177,10 @@ class SphinxQL
     /**
      * Forges a SphinxQL object with a Connection shared among all SphinxQL objects
      *
-     * @param  mixed  $connection
+     * @param mixed  $connection
      *
-     * @return  \Foolz\SphinxQL\SphinxQL  The current object
-     * @deprecated  Use ::create instead, coupled with an own static method if static connection is necessary
+     * @return \Foolz\SphinxQL\SphinxQL The current object
+     * @deprecated Use ::create instead, coupled with an own static method if static connection is necessary
      */
     public static function forge($connection = null)
     {
@@ -190,9 +190,9 @@ class SphinxQL
     /**
      * Creates and setups a SphinxQL object
      *
-     * @param  mixed  $connection
+     * @param mixed  $connection
      *
-     * @return  \Foolz\SphinxQL\SphinxQL  The current object
+     * @return \Foolz\SphinxQL\SphinxQL The current object
      */
     public static function create($connection)
     {
@@ -216,11 +216,11 @@ class SphinxQL
     /**
      * Used for the SHOW queries
      *
-     * @param  string  $method      The method
-     * @param  array   $parameters  The parameters
+     * @param string $method      The method
+     * @param array  $parameters  The parameters
      *
-     * @return  array  The result of the SHOW query
-     * @throws  \BadMethodCallException  If there's no such a method
+     * @return array The result of the SHOW query
+     * @throws \BadMethodCallException If there's no such a method
      */
     public function __call($method, $parameters)
     {
@@ -249,9 +249,9 @@ class SphinxQL
      *    $sq->where('time', '>', SphinxQL::expr('CURRENT_TIMESTAMP'));
      *    // WHERE `time` > CURRENT_TIMESTAMP
      *
-     * @param  string  $string  The string to keep unaltered
+     * @param string $string The string to keep unaltered
      *
-     * @return  \Foolz\SphinxQL\Expression  The new Expression
+     * @return \Foolz\SphinxQL\Expression The new Expression
      */
     public static function expr($string = '')
     {
@@ -261,7 +261,7 @@ class SphinxQL
     /**
      * Runs the query built
      *
-     * @return  array  The result of the query
+     * @return array The result of the query
      */
     public function execute()
     {
@@ -272,8 +272,8 @@ class SphinxQL
     /**
      * Executes a batch of queued queries
      *
-     * @return  array  The array of results from MySQLi
-     * @throws  SphinxQLException  In case no query is in queue
+     * @return array The array of results from MySQLi
+     * @throws SphinxQLException In case no query is in queue
      */
     public function executeBatch()
     {
@@ -293,7 +293,7 @@ class SphinxQL
     /**
      * Enqueues the current object and returns a new one
      *
-     * @return  \Foolz\SphinxQL\SphinxQL  A new SphinxQL object with the current object referenced
+     * @return \Foolz\SphinxQL\SphinxQL A new SphinxQL object with the current object referenced
      */
     public function enqueue()
     {
@@ -306,7 +306,7 @@ class SphinxQL
     /**
      * Returns the ordered array of enqueued objects
      *
-     * @return  \Foolz\SphinxQL\SphinxQL[]  The ordered array of enqueued objects
+     * @return \Foolz\SphinxQL\SphinxQL[] The ordered array of enqueued objects
      */
     public function getQueue()
     {
@@ -335,9 +335,9 @@ class SphinxQL
     /**
      * Sets the reference to the enqueued object
      *
-     * @param  $sq  The object to set as previous
+     * @param $sq SphinxQL The object to set as previous
      *
-     * @return  \Foolz\SphinxQL\SphinxQL  The current object
+     * @return \Foolz\SphinxQL\SphinxQL The current object
      */
     public function setQueuePrev($sq)
     {
@@ -349,7 +349,7 @@ class SphinxQL
     /**
      * Returns the result of the last query
      *
-     * @return  array  The result of the last query
+     * @return array The result of the last query
      */
     public function getResult()
     {
@@ -359,7 +359,7 @@ class SphinxQL
     /**
      * Returns the latest compiled query
      *
-     * @return  string  The last compiled query
+     * @return string The last compiled query
      */
     public function getCompiled()
     {
@@ -369,11 +369,11 @@ class SphinxQL
     /**
      * SET syntax
      *
-     * @param  string   $name    The name of the variable
-     * @param  mixed    $value   The value o the variable
-     * @param  boolean  $global  True if the variable should be global, false otherwise
+     * @param string  $name   The name of the variable
+     * @param mixed   $value  The value o the variable
+     * @param boolean $global True if the variable should be global, false otherwise
      *
-     * @return  array  The result of the query
+     * @return array The result of the query
      */
     public function setVariable($name, $value, $global = false)
     {
@@ -431,11 +431,11 @@ class SphinxQL
     /**
      * CALL SNIPPETS syntax
      *
-     * @param  string  $data
-     * @param  string  $index
-     * @param  array   $extra
+     * @param string $data
+     * @param string $index
+     * @param array  $extra
      *
-     * @return  array  The result of the query
+     * @return array The result of the query
      */
     public function callSnippets($data, $index, $extra = array())
     {
@@ -448,11 +448,11 @@ class SphinxQL
     /**
      * CALL KEYWORDS syntax
      *
-     * @param  string       $text
-     * @param  string       $index
-     * @param  null|string  $hits
+     * @param string      $text
+     * @param string      $index
+     * @param null|string $hits
      *
-     * @return  array  The result of the query
+     * @return array The result of the query
      */
     public function callKeywords($text, $index, $hits = null)
     {
@@ -467,9 +467,9 @@ class SphinxQL
     /**
      * DESCRIBE syntax
      *
-     * @param  string  $index  The name of the index
+     * @param string $index The name of the index
      *
-     * @return  array  The result of the query
+     * @return array The result of the query
      */
     public function describe($index)
     {
@@ -479,11 +479,11 @@ class SphinxQL
     /**
      * CREATE FUNCTION syntax
      *
-     * @param  string  $udf_name
-     * @param  string  $returns   Whether INT|BIGINT|FLOAT
-     * @param  string  $so_name
+     * @param string $udf_name
+     * @param string $returns  Whether INT|BIGINT|FLOAT
+     * @param string $so_name
      *
-     * @return  array  The result of the query
+     * @return array The result of the query
      */
     public function createFunction($udf_name, $returns, $so_name)
     {
@@ -494,9 +494,9 @@ class SphinxQL
     /**
      * DROP FUNCTION syntax
      *
-     * @param  string  $udf_name
+     * @param string $udf_name
      *
-     * @return  array  The result of the query
+     * @return array The result of the query
      */
     public function dropFunction($udf_name)
     {
@@ -506,10 +506,10 @@ class SphinxQL
     /**
      * ATTACH INDEX * TO RTINDEX * syntax
      *
-     * @param  string  $disk_index
-     * @param  string  $rt_index
+     * @param string $disk_index
+     * @param string $rt_index
      *
-     * @return  array  The result of the query
+     * @return array The result of the query
      */
     public function attachIndex($disk_index, $rt_index)
     {
@@ -520,9 +520,9 @@ class SphinxQL
     /**
      * FLUSH RTINDEX syntax
      *
-     * @param  string  $index
+     * @param string $index
      *
-     * @return  array  The result of the query
+     * @return array The result of the query
      */
     public function flushRtIndex($index)
     {
@@ -532,7 +532,7 @@ class SphinxQL
     /**
      * Runs the compile function
      *
-     * @return  \Foolz\SphinxQL\SphinxQL  The current object
+     * @return \Foolz\SphinxQL\SphinxQL The current object
      */
     public function compile()
     {
@@ -559,7 +559,7 @@ class SphinxQL
      * Compiles the MATCH part of the queries
      * Used by: SELECT, DELETE, UPDATE
      *
-     * @return  string  The compiled MATCH
+     * @return string The compiled MATCH
      */
     public function compileMatch()
     {
@@ -602,7 +602,7 @@ class SphinxQL
      * It interacts with the MATCH() and of course isn't usable stand-alone
      * Used by: SELECT, DELETE, UPDATE
      *
-     * @return  string  The compiled WHERE
+     * @return string The compiled WHERE
      */
     public function compileWhere()
     {
@@ -663,7 +663,7 @@ class SphinxQL
     /**
      * Compiles the statements for SELECT
      *
-     * @return  \Foolz\SphinxQL\SphinxQL  The current object
+     * @return \Foolz\SphinxQL\SphinxQL The current object
      */
     public function compileSelect()
     {
@@ -756,7 +756,7 @@ class SphinxQL
     /**
      * Compiles the statements for INSERT or REPLACE
      *
-     * @return  \Foolz\SphinxQL\SphinxQL  The current object
+     * @return \Foolz\SphinxQL\SphinxQL The current object
      */
     public function compileInsert()
     {
@@ -793,7 +793,7 @@ class SphinxQL
     /**
      * Compiles the statements for UPDATE
      *
-     * @return  \Foolz\SphinxQL\SphinxQL  The current object
+     * @return \Foolz\SphinxQL\SphinxQL The current object
      */
     public function compileUpdate()
     {
@@ -832,7 +832,7 @@ class SphinxQL
     /**
      * Compiles the statements for DELETE
      *
-     * @return  \Foolz\SphinxQL\SphinxQL  The current object
+     * @return \Foolz\SphinxQL\SphinxQL The current object
      */
     public function compileDelete()
     {
@@ -856,7 +856,7 @@ class SphinxQL
      * Gets the arguments passed as $sphinxql->select('one', 'two')
      * Using it without arguments equals to having '*' as argument
      *
-     * @return  \Foolz\SphinxQL\SphinxQL  The current object
+     * @return \Foolz\SphinxQL\SphinxQL The current object
      */
     public function select()
     {
@@ -870,7 +870,7 @@ class SphinxQL
     /**
      * Activates the INSERT mode
      *
-     * @return  \Foolz\SphinxQL\SphinxQL  The current object
+     * @return \Foolz\SphinxQL\SphinxQL The current object
      */
     public function insert()
     {
@@ -883,7 +883,7 @@ class SphinxQL
     /**
      * Activates the REPLACE mode
      *
-     * @return  \Foolz\SphinxQL\SphinxQL  The current object
+     * @return \Foolz\SphinxQL\SphinxQL The current object
      */
     public function replace()
     {
@@ -896,7 +896,9 @@ class SphinxQL
     /**
      * Activates the UPDATE mode
      *
-     * @return  \Foolz\SphinxQL\SphinxQL  The current object
+     * @param string $index The index to update into
+     *
+     * @return \Foolz\SphinxQL\SphinxQL The current object
      */
     public function update($index)
     {
@@ -910,7 +912,7 @@ class SphinxQL
     /**
      * Activates the DELETE mode
      *
-     * @return  \Foolz\SphinxQL\SphinxQL  The current object
+     * @return \Foolz\SphinxQL\SphinxQL The current object
      */
     public function delete()
     {
@@ -924,9 +926,9 @@ class SphinxQL
      * FROM clause (Sphinx-specific since it works with multiple indexes)
      * func_get_args()-enabled
      *
-     * @param  array  $array  An array of indexes to use
+     * @param array $array An array of indexes to use
      *
-     * @return \Foolz\SphinxQL\SphinxQL  The current object
+     * @return \Foolz\SphinxQL\SphinxQL The current object
      */
     public function from($array = null)
     {
@@ -944,11 +946,11 @@ class SphinxQL
     /**
      * MATCH clause (Sphinx-specific)
      *
-     * @param  string   $column  The column name
-     * @param  string   $value   The value
-     * @param  boolean  $half    Exclude ", |, - control characters from being escaped
+     * @param string   $column The column name
+     * @param string   $value  The value
+     * @param boolean  $half  Exclude ", |, - control characters from being escaped
      *
-     * @return  \Foolz\SphinxQL\SphinxQL  The current object
+     * @return \Foolz\SphinxQL\SphinxQL The current object
      */
     public function match($column, $value, $half = false)
     {
@@ -981,12 +983,12 @@ class SphinxQL
      *    // WHERE `column` BETWEEN 'value1' AND 'value2'
      *    // WHERE `example` BETWEEN 10 AND 100
      *
-     * @param  string   $column    The column name
-     * @param  string   $operator  The operator to use
-     * @param  string   $value     The value to check against
-     * @param  boolean  $or        If it should be prepended with OR (true) or AND (false) - not available as for Sphinx 2.0.2
+     * @param string   $column   The column name
+     * @param string   $operator The operator to use
+     * @param string   $value    The value to check against
+     * @param boolean  $or      If it should be prepended with OR (true) or AND (false) - not available as for Sphinx 2.0.2
      *
-     * @return  \Foolz\SphinxQL\SphinxQL  The current object
+     * @return \Foolz\SphinxQL\SphinxQL The current object
      */
     public function where($column, $operator, $value = null, $or = false)
     {
@@ -1008,11 +1010,11 @@ class SphinxQL
     /**
      * OR WHERE - at this time (Sphinx 2.0.2) it's not available
      *
-     * @param  string  $column    The column name
-     * @param  string  $operator  The operator to use
-     * @param  mixed   $value     The value to compare against
+     * @param string $column    The column name
+     * @param string $operator  The operator to use
+     * @param mixed   $value     The value to compare against
      *
-     * @return \Foolz\SphinxQL\SphinxQL  The current object
+     * @return \Foolz\SphinxQL\SphinxQL The current object
      */
     public function orWhere($column, $operator, $value = null)
     {
@@ -1024,7 +1026,7 @@ class SphinxQL
     /**
      * Opens a parenthesis prepended with AND (where necessary)
      *
-     * @return  \Foolz\SphinxQL\SphinxQL  The current object
+     * @return \Foolz\SphinxQL\SphinxQL The current object
      */
     public function whereOpen()
     {
@@ -1036,7 +1038,7 @@ class SphinxQL
     /**
      * Opens a parenthesis prepended with OR (where necessary)
      *
-     * @return  \Foolz\SphinxQL\SphinxQL  The current object
+     * @return \Foolz\SphinxQL\SphinxQL The current object
      */
     public function orWhereOpen()
     {
@@ -1048,7 +1050,7 @@ class SphinxQL
     /**
      * Closes a parenthesis in WHERE
      *
-     * @return  \Foolz\SphinxQL\SphinxQL  The current object
+     * @return \Foolz\SphinxQL\SphinxQL The current object
      */
     public function whereClose()
     {
@@ -1061,9 +1063,9 @@ class SphinxQL
      * GROUP BY clause
      * Adds to the previously added columns
      *
-     * @param  string  $column  A column to group by
+     * @param string $column A column to group by
      *
-     * @return  \Foolz\SphinxQL\SphinxQL  The current object
+     * @return \Foolz\SphinxQL\SphinxQL The current object
      */
     public function groupBy($column)
     {
@@ -1077,10 +1079,10 @@ class SphinxQL
      * Adds to the previously added columns
      * Works just like a classic ORDER BY
      *
-     * @param  string  $column     The column to group by
-     * @param  string  $direction  The group by direction (asc/desc)
+     * @param string $column    The column to group by
+     * @param string $direction The group by direction (asc/desc)
      *
-     * @return  \Foolz\SphinxQL\SphinxQL  The current object
+     * @return \Foolz\SphinxQL\SphinxQL The current object
      */
     public function withinGroupOrderBy($column, $direction = null)
     {
@@ -1093,10 +1095,10 @@ class SphinxQL
      * ORDER BY clause
      * Adds to the previously added columns
      *
-     * @param  string  $column     The column to order on
-     * @param  string  $direction  The ordering direction (asc/desc)
+     * @param string $column    The column to order on
+     * @param string $direction The ordering direction (asc/desc)
      *
-     * @return  \Foolz\SphinxQL\SphinxQL  The current object
+     * @return \Foolz\SphinxQL\SphinxQL The current object
      */
     public function orderBy($column, $direction = null)
     {
@@ -1109,10 +1111,10 @@ class SphinxQL
      * LIMIT clause
      * Supports also LIMIT offset, limit
      *
-     * @param  int       $offset  Offset if $limit is specified, else limit
-     * @param  null|int  $limit   The limit to set, null for no limit
+     * @param int      $offset Offset if $limit is specified, else limit
+     * @param null|int $limit  The limit to set, null for no limit
      *
-     * @return  \Foolz\SphinxQL\SphinxQL  The current object
+     * @return \Foolz\SphinxQL\SphinxQL The current object
      */
     public function limit($offset, $limit = null)
     {
@@ -1130,9 +1132,9 @@ class SphinxQL
     /**
      * OFFSET clause
      *
-     * @param  int  $offset  The offset
+     * @param int $offset The offset
      *
-     * @return  \Foolz\SphinxQL\SphinxQL  The current object
+     * @return \Foolz\SphinxQL\SphinxQL The current object
      */
     public function offset($offset)
     {
@@ -1145,10 +1147,10 @@ class SphinxQL
      * OPTION clause (SphinxQL-specific)
      * Used by: SELECT
      *
-     * @param  string  $name   Option name
-     * @param  string  $value  Option value
+     * @param string $name  Option name
+     * @param string $value Option value
      *
-     * @return  \Foolz\SphinxQL\SphinxQL  The current object
+     * @return \Foolz\SphinxQL\SphinxQL The current object
      */
     public function option($name, $value)
     {
@@ -1161,9 +1163,9 @@ class SphinxQL
      * INTO clause
      * Used by: INSERT, REPLACE
      *
-     * @param  string  $index  The index to insert/replace into
+     * @param string $index The index to insert/replace into
      *
-     * @return  \Foolz\SphinxQL\SphinxQL  The current object
+     * @return \Foolz\SphinxQL\SphinxQL The current object
      */
     public function into($index)
     {
@@ -1177,9 +1179,9 @@ class SphinxQL
      * Used in: INSERT, REPLACE
      * func_get_args()-enabled
      *
-     * @param  array  $array  The array of columns
+     * @param array $array The array of columns
      *
-     * @return  \Foolz\SphinxQL\SphinxQL  The current object
+     * @return \Foolz\SphinxQL\SphinxQL The current object
      */
     public function columns($array = array())
     {
@@ -1197,9 +1199,9 @@ class SphinxQL
      * Used in: INSERT, REPLACE
      * func_get_args()-enabled
      *
-     * @param  array  $array  The array of values matching the columns from $this->columns()
+     * @param array $array The array of values matching the columns from $this->columns()
      *
-     * @return  \Foolz\SphinxQL\SphinxQL  The current object
+     * @return \Foolz\SphinxQL\SphinxQL The current object
      */
     public function values($array)
     {
@@ -1216,10 +1218,10 @@ class SphinxQL
      * Set column and relative value
      * Used in: INSERT, REPLACE
      *
-     * @param  string  $column  The column name
-     * @param  string  $value   The value
+     * @param string $column The column name
+     * @param string $value  The value
      *
-     * @return  \Foolz\SphinxQL\SphinxQL  The current object
+     * @return \Foolz\SphinxQL\SphinxQL The current object
      */
     public function value($column, $value)
     {
@@ -1237,9 +1239,9 @@ class SphinxQL
      * Allows passing an array with the key as column and value as value
      * Used in: INSERT, REPLACE, UPDATE
      *
-     * @param  array  $array  Array of key-values
+     * @param array $array Array of key-values
      *
-     * @return \Foolz\SphinxQL\SphinxQL  The current object
+     * @return \Foolz\SphinxQL\SphinxQL The current object
      */
     public function set($array)
     {
@@ -1254,9 +1256,9 @@ class SphinxQL
     /**
      * Escapes the query for the MATCH() function
      *
-     * @param  string  $string The string to escape for the MATCH
+     * @param string $string The string to escape for the MATCH
      *
-     * @return  string  The escaped string
+     * @return string The escaped string
      */
     public function escapeMatch($string)
     {
@@ -1271,9 +1273,9 @@ class SphinxQL
      * Allows some of the control characters to pass through for use with a search field: -, |, "
      * It also does some tricks to wrap/unwrap within " the string and prevents errors
      *
-     * @param  string  $string  The string to escape for the MATCH
+     * @param string $string The string to escape for the MATCH
      *
-     * @return  string  The escaped string
+     * @return string The escaped string
      */
     public function halfEscapeMatch($string)
     {
@@ -1311,7 +1313,7 @@ class SphinxQL
     /**
      * Clears the existing query build for new query when using the same SphinxQL instance.
      *
-     * @return  \Foolz\SphinxQL\SphinxQL  The current object
+     * @return \Foolz\SphinxQL\SphinxQL The current object
      */
     public function reset()
     {

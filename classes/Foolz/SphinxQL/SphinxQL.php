@@ -15,6 +15,13 @@ class SphinxQL
     protected static $stored_connection = null;
 
     /**
+     * A dynamic connection for the current SphinxQL object
+     *
+     * @var  \Foolz\SphinxQL\Connection
+     */
+    protected $local_connection = null;
+
+    /**
      * The last result object.
      *
      * @var  array
@@ -155,21 +162,46 @@ class SphinxQL
         'variablesGlobal' => 'SHOW GLOBAL VARIABLES',
     );
 
-    public function __construct($connection = null)
+    public function __construct($connection = null, $static = false)
     {
         if ($connection instanceof \Foolz\SphinxQL\Connection) {
-            static::$stored_connection = $connection;
+            if ($static) {
+                static::$stored_connection = $connection;
+            } else {
+                $this->connection = $connection;
+            }
         }
     }
 
     /**
-     * Forges a SphinxQL object
+     * Forges a SphinxQL object with a Connection shared among all SphinxQL objects
      *
      * @param  mixed  $connection
      *
-     * @return \Foolz\SphinxQL\SphinxQL  The current object
+     * @return  \Foolz\SphinxQL\SphinxQL  The current object
+     * @deprecated Use $sq->create() instead to get an object without static SphinxQL connection. Easy to replace with a custom static method
      */
     public static function forge($connection = null)
+    {
+        $new = new SphinxQL($connection, true);
+
+        try {
+            $new->getConnection();
+        } catch (ConnectionException $e) {
+            $new->connect();
+        }
+
+        return $new;
+    }
+
+    /**
+     * Creates and setups a SphinxQL object
+     *
+     * @param  mixed  $connection
+     *
+     * @return  \Foolz\SphinxQL\SphinxQL  The current object
+     */
+    public static function create($connection)
     {
         $new = new SphinxQL($connection);
 
@@ -189,6 +221,10 @@ class SphinxQL
      */
     public function getConnection()
     {
+        if ($this->local_connection) {
+            return $this->local_connection;
+        }
+
         return static::$stored_connection;
     }
 

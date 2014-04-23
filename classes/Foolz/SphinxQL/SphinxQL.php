@@ -1262,6 +1262,10 @@ class SphinxQL
      */
     public function escapeMatch($string)
     {
+        if ($string instanceof Expression) {
+            return $string->value();
+        }
+
         $from = array('\\', '(', ')', '|', '-', '!', '@', '~', '"', '&', '/', '^', '$', '=');
         $to = array('\\\\', '\(', '\)', '\|', '\-', '\!', '\@', '\~', '\"', '\&', '\/', '\^', '\$', '\=');
 
@@ -1279,6 +1283,10 @@ class SphinxQL
      */
     public function halfEscapeMatch($string)
     {
+        if ($string instanceof Expression) {
+            return $string->value();
+        }
+
         $from_to = array(
             '\\' => '\\\\',
             '(' => '\(',

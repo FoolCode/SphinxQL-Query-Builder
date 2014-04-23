@@ -8,14 +8,15 @@ namespace Foolz\SphinxQL;
 class SphinxQL
 {
     /**
-     * The \MySQLi connection for this object.
+     * The \MySQLi connection for all SphinxQL objects
      *
      * @var  \Foolz\SphinxQL\Connection
+     * @deprecated
      */
     protected static $stored_connection = null;
 
     /**
-     * A dynamic connection for the current SphinxQL object
+     * A non-static connection for the current SphinxQL object
      *
      * @var  \Foolz\SphinxQL\Connection
      */
@@ -168,7 +169,7 @@ class SphinxQL
             if ($static) {
                 static::$stored_connection = $connection;
             } else {
-                $this->connection = $connection;
+                $this->local_connection = $connection;
             }
         }
     }
@@ -179,19 +180,11 @@ class SphinxQL
      * @param  mixed  $connection
      *
      * @return  \Foolz\SphinxQL\SphinxQL  The current object
-     * @deprecated Use $sq->create() instead to get an object without static SphinxQL connection. Easy to replace with a custom static method
+     * @deprecated  Use ::create instead, coupled with an own static method if static connection is necessary
      */
     public static function forge($connection = null)
     {
-        $new = new SphinxQL($connection, true);
-
-        try {
-            $new->getConnection();
-        } catch (ConnectionException $e) {
-            $new->connect();
-        }
-
-        return $new;
+        return new SphinxQL($connection, true);
     }
 
     /**
@@ -203,15 +196,7 @@ class SphinxQL
      */
     public static function create($connection)
     {
-        $new = new SphinxQL($connection);
-
-        try {
-            $new->getConnection();
-        } catch (ConnectionException $e) {
-            $new->connect();
-        }
-
-        return $new;
+        return new SphinxQL($connection);
     }
 
     /**

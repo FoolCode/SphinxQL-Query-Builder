@@ -7,6 +7,8 @@ There's a sphinx.conf file in this directory. It uses a single RT index. Check t
 
 The test should then just work: `phpunit -c phpunit.xml`
 
+Make sure there's a `data` directory under the `tests` directory.
+
 ##### Notes
 
 There are a few functions not comprehended in the unit testing.

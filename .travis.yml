@@ -19,7 +19,6 @@ before_install:
 before_script:
   - composer install
   - cd tests
-  - mkdir data
   - /usr/local/sphinx/bin/searchd -c sphinx.conf
 
 script: phpunit --configuration phpunit.xml --coverage-text

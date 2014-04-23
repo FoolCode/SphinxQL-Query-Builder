@@ -236,8 +236,7 @@ Will return an array with an `INT` as first member, the number of rows deleted.
 
 * __$sq->match($column, $value, $half = false)__
 
-	Search in full-text fields. Can be used multiple times in the same query. Column can be an array.
-
+	Search in full-text fields. Can be used multiple times in the same query. Column can be an array. Value can be an Expression to bypass escaping (and use your own custom solution).
 
     ```php
     <?php
@@ -256,7 +255,8 @@ Will return an array with an `INT` as first member, the number of rows deleted.
     {
         $result = SphinxQL::create($conn)->select()
             ->from('rt')
-            ->match('title', 'Sora no || Otoshimono')
+            ->match('title', 'Sora no || Otoshimono', true)
+            ->match('loves', SphinxQL:expr(custom_escaping_fn('(you | me)')));
             ->execute();
     }
     catch (\Foolz\SphinxQL\DatabaseException $e)

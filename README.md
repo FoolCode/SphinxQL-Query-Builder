@@ -3,11 +3,19 @@ Query Builder for SphinxQL
 
 ## About
 
-This is a SphinxQL Query Builder used to work with SphinxQL, a SQL dialect used with the Sphinx search engine. It maps every function listed in the [SphinxQL reference](http://sphinxsearch.com/docs/current.html#SphinxQL-reference) and is generally [faster](http://sphinxsearch.com/blog/2010/04/25/sphinxapi-vs-SphinxQL-benchmark/) than the available Sphinx API.
+This is a SphinxQL Query Builder used to work with SphinxQL, a SQL dialect used with the Sphinx search engine. It maps most of the functions listed in the [SphinxQL reference](http://sphinxsearch.com/docs/current.html#SphinxQL-reference) and is generally [faster](http://sphinxsearch.com/blog/2010/04/25/sphinxapi-vs-SphinxQL-benchmark/) than the available Sphinx API.
 
 This Query Builder has no dependencies besides PHP 5.3, `\MySQLi` extension, and [Sphinx](http://sphinxsearch.com).
 
 __This package is BETA QUALITY.__ It is recommended that you do extensive testing in development before using it in a production environment.
+
+### Missing methods?
+
+SphinxQL evolves very fast.
+
+Most of the new functions are static one liners like `SHOW PLUGINS`. We'll avoid trying to keep up with these methods, as they are easy to just call directly. You're free to submit pull requests to support these methods.
+
+If any feature is unreachable through this library, open a new issue or send a pull request.
 
 ## Code Quality
 
@@ -56,12 +64,9 @@ The following examples will omit the namespace.
 	$conn = new Connection();
 	$conn->setConnectionParams('domain.tld', 9306);
 
-	// use SphinxQL::forge($conn) to initialize and bind the connection to be used for future calls
-	SphinxQL::forge($conn);
-
-	$query = SphinxQL::forge()->select('column_one', 'colume_two')
+	$query = SphinxQL::create($conn)->select('column_one', 'colume_two')
 		->from('index_delta', 'index_main', 'index_ancient')
-		->match('comment', 'my opinion is better')
+		->match('comment', 'my opinion is superior to yours')
 		->where('banned', '=', 1);
 
 	$result = $query->execute();
@@ -90,7 +95,7 @@ _More methods are available in the Connection class, but usually not necessary a
 
 #### SphinxQL
 
-* __SphinxQL::forge($conn = null)__
+* __SphinxQL::create($conn)__
 
 	Creates a SphinxQL instance used for generating queries.
 
@@ -130,23 +135,23 @@ There are cases when an input __must__ be escaped in the SQL statement. The foll
 
 #### SET VARIABLE
 
-* __SphinxQL::forge()->setVariable($name, $value, $global = false)__
+* __SphinxQL::create($conn)->setVariable($name, $value, $global = false)__
 
 	Sets a variable server-side.
 
 #### SHOW
 
-* `SphinxQL::forge()->meta() => 'SHOW META'`
-* `SphinxQL::forge()->warnings() => 'SHOW WARNINGS'`
-* `SphinxQL::forge()->status() => 'SHOW STATUS'`
-* `SphinxQL::forge()->tables() => 'SHOW TABLES'`
-* `SphinxQL::forge()->variables() => 'SHOW VARIABLES'`
-* `SphinxQL::forge()->variablesSession() => 'SHOW SESSION VARIABLES'`
-* `SphinxQL::forge()->variablesGlobal() => 'SHOW GLOBAL VARIABLES'`
+* `SphinxQL::create($conn)->meta() => 'SHOW META'`
+* `SphinxQL::create($conn)->warnings() => 'SHOW WARNINGS'`
+* `SphinxQL::create($conn)->status() => 'SHOW STATUS'`
+* `SphinxQL::create($conn)->tables() => 'SHOW TABLES'`
+* `SphinxQL::create($conn)->variables() => 'SHOW VARIABLES'`
+* `SphinxQL::create($conn)->variablesSession() => 'SHOW SESSION VARIABLES'`
+* `SphinxQL::create($conn)->variablesGlobal() => 'SHOW GLOBAL VARIABLES'`
 
 #### SELECT
 
-* __$sq = SphinxQL::forge()->select($column1, $column2, ...)->from($index1, $index2, ...)__
+* __$sq = SphinxQL::create($conn)->select($column1, $column2, ...)->from($index1, $index2, ...)__
 
 	Begins a `SELECT` query statement. If no column is specified, the statement defaults to using `*`. Both `$column1` and `$index1` can be arrays.
 
@@ -154,11 +159,11 @@ There are cases when an input __must__ be escaped in the SQL statement. The foll
 
 This will return an `INT` with the number of rows affected.
 
-* __$sq = SphinxQL::forge()->insert()->into($index)__
+* __$sq = SphinxQL::create($conn)->insert()->into($index)__
 
 	Begins an `INSERT`.
 
-* __$sq = SphinxQL::forge()->replace()->into($index)__
+* __$sq = SphinxQL::create($conn)->replace()->into($index)__
 
 	Begins an `REPLACE`.
 
@@ -180,7 +185,7 @@ This will return an `INT` with the number of rows affected.
 
 This will return an `INT` with the number of rows affected.
 
-* __$sq = SphinxQL::forge()->update($index)__
+* __$sq = SphinxQL::create($conn)->update($index)__
 
 	Begins an `UPDATE`.
 
@@ -196,7 +201,7 @@ This will return an `INT` with the number of rows affected.
 
 Will return an array with an `INT` as first member, the number of rows deleted.
 
-* __$sq = SphinxQL::forge()->delete()->from($column)__
+* __$sq = SphinxQL::create($conn)->delete()->from($column)__
 
 	Begins a `DELETE`.
 
@@ -206,6 +211,8 @@ Will return an array with an `INT` as first member, the number of rows deleted.
 
 	Standard WHERE, extended to work with Sphinx filters and full-text.
 
+    ```php
+    <?php
 		// WHERE `column` = 'value'
 		$sq->where('column', 'value');
 
@@ -221,6 +228,7 @@ Will return an array with an `INT` as first member, the number of rows deleted.
 		// WHERE `column` BETWEEN 'value1' AND 'value2'
 		// WHERE `example` BETWEEN 10 AND 100
 		$sq->where('column', 'BETWEEN', array('value1', 'value2'))
+	```
 
 	_It should be noted that `OR` and parenthesis are not supported and implemented in the SphinxQL dialect yet._
 
@@ -237,9 +245,11 @@ Will return an array with an `INT` as first member, the number of rows deleted.
 
 	The `$half` argument, if set to `true`, will not escape and allow the usage of the following characters: `-`, `|`, `"`. If you plan to use this feature and expose it to public interfaces, it is __recommended__ that you wrap the query in a `try catch` block as the character order may `throw` a query error.
 
+    ```php
+    <?php
 		try
 		{
-			$result = SphinxQL::forge()->select()
+			$result = SphinxQL::create($conn)->select()
 				->from('rt')
 				->match('title', 'Sora no || Otoshimono')
 				->execute();
@@ -248,6 +258,7 @@ Will return an array with an `INT` as first member, the number of rows deleted.
 		{
 			// an error is thrown because two `|` one after the other aren't allowed
 		}
+	```
 
 #### GROUP, WITHIN GROUP, ORDER, OFFSET, LIMIT, OPTION
 
@@ -289,15 +300,15 @@ Will return an array with an `INT` as first member, the number of rows deleted.
 
 #### TRANSACTION
 
-* __SphinxQL::forge()->transactionBegin()__
+* __SphinxQL::create($conn)->transactionBegin()__
 
 	Begins a transaction.
 
-* __SphinxQL::forge()->transactionCommit()__
+* __SphinxQL::create($conn)->transactionCommit()__
 
 	Commits a transaction.
 
-* __SphinxQL::forge()->transactionRollback()__
+* __SphinxQL::create($conn)->transactionRollback()__
 
 	Rollbacks a transaction.
 
@@ -337,10 +348,10 @@ Will return an array with an `INT` as first member, the number of rows deleted.
 
 There's several more functions to complete the SphinxQL library:
 
-* `SphinxQL::forge()->callSnippets($data, $index, $extra = array())`
-* `SphinxQL::forge()->callKeywords($text, $index, $hits = null)`
-* `SphinxQL::forge()->describe($index)`
-* `SphinxQL::forge()->createFunction($udf_name, $returns, $soname)`
-* `SphinxQL::forge()->dropFunction($udf_name)`
-* `SphinxQL::forge()->attachIndex($disk_index, $rt_index)`
-* `SphinxQL::forge()->flushRtIndex($index)`
+* `SphinxQL::create($conn)->callSnippets($data, $index, $extra = array())`
+* `SphinxQL::create($conn)->callKeywords($text, $index, $hits = null)`
+* `SphinxQL::create($conn)->describe($index)`
+* `SphinxQL::create($conn)->createFunction($udf_name, $returns, $soname)`
+* `SphinxQL::create($conn)->dropFunction($udf_name)`
+* `SphinxQL::create($conn)->attachIndex($disk_index, $rt_index)`
+* `SphinxQL::create($conn)->flushRtIndex($index)`

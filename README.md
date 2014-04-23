@@ -47,6 +47,8 @@ This is a Composer package. You can install this package with the following comm
 
 The following examples will omit the namespace.
 
+```php
+<?php
 	use Foolz\SphinxQL\SphinxQL;
 	use Foolz\SphinxQL\Connection;
 
@@ -63,6 +65,7 @@ The following examples will omit the namespace.
 		->where('banned', '=', 1);
 
 	$result = $query->execute();
+```
 
 #### Connection
 

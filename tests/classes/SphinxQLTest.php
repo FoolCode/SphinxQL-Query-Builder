@@ -11,7 +11,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
     {
         $conn = new SphinxConnection();
         $conn->setConnectionParams('127.0.0.1', 9307);
-        $this->connection = $conn;
+        $this->conn = $conn;
 
         // empty that poor db. TRUNCATE is still in beta in Sphinxsearch 2.1.1-beta
         SphinxQL::create($this->conn)->delete()

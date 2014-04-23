@@ -57,19 +57,19 @@ The following examples will omit the namespace.
 
 ```php
 <?php
-	use Foolz\SphinxQL\SphinxQL;
-	use Foolz\SphinxQL\Connection;
+use Foolz\SphinxQL\SphinxQL;
+use Foolz\SphinxQL\Connection;
 
-	// create a SphinxQL Connection object to use with SphinxQL
-	$conn = new Connection();
-	$conn->setConnectionParams('domain.tld', 9306);
+// create a SphinxQL Connection object to use with SphinxQL
+$conn = new Connection();
+$conn->setConnectionParams('domain.tld', 9306);
 
-	$query = SphinxQL::create($conn)->select('column_one', 'colume_two')
-		->from('index_delta', 'index_main', 'index_ancient')
-		->match('comment', 'my opinion is superior to yours')
-		->where('banned', '=', 1);
+$query = SphinxQL::create($conn)->select('column_one', 'colume_two')
+    ->from('index_delta', 'index_main', 'index_ancient')
+    ->match('comment', 'my opinion is superior to yours')
+    ->where('banned', '=', 1);
 
-	$result = $query->execute();
+$result = $query->execute();
 ```
 
 #### Connection
@@ -213,21 +213,21 @@ Will return an array with an `INT` as first member, the number of rows deleted.
 
     ```php
     <?php
-		// WHERE `column` = 'value'
-		$sq->where('column', 'value');
+    // WHERE `column` = 'value'
+    $sq->where('column', 'value');
 
-		// WHERE `column` = 'value'
-		$sq->where('column', '=', 'value');
+    // WHERE `column` = 'value'
+    $sq->where('column', '=', 'value');
 
-		// WHERE `column` >= 'value'
-		$sq->where('column', '>=', 'value')
+    // WHERE `column` >= 'value'
+    $sq->where('column', '>=', 'value')
 
-		// WHERE `column` IN ('value1', 'value2', 'value3')
-		$sq->where('column', 'IN', array('value1', 'value2', 'value3'));
+    // WHERE `column` IN ('value1', 'value2', 'value3')
+    $sq->where('column', 'IN', array('value1', 'value2', 'value3'));
 
-		// WHERE `column` BETWEEN 'value1' AND 'value2'
-		// WHERE `example` BETWEEN 10 AND 100
-		$sq->where('column', 'BETWEEN', array('value1', 'value2'))
+    // WHERE `column` BETWEEN 'value1' AND 'value2'
+    // WHERE `example` BETWEEN 10 AND 100
+    $sq->where('column', 'BETWEEN', array('value1', 'value2'))
 	```
 
 	_It should be noted that `OR` and parenthesis are not supported and implemented in the SphinxQL dialect yet._
@@ -236,10 +236,15 @@ Will return an array with an `INT` as first member, the number of rows deleted.
 
 * __$sq->match($column, $value, $half = false)__
 
-	Search in full-text fields. Can be used multiple times in the same query.
+	Search in full-text fields. Can be used multiple times in the same query. Column can be an array.
 
-		$sq->match('title', 'Otoshimono')
-			->match('character', 'Nymph');
+
+    ```php
+    <?php
+    $sq->match('title', 'Otoshimono')
+        ->match('character', 'Nymph')
+        ->match(array('hates', 'despises'), 'Oregano');
+    ```
 
 	By default, all inputs are fully escaped. The usage of `SphinxQL::expr($value)` is required to bypass the statement escapes.
 
@@ -247,17 +252,17 @@ Will return an array with an `INT` as first member, the number of rows deleted.
 
     ```php
     <?php
-		try
-		{
-			$result = SphinxQL::create($conn)->select()
-				->from('rt')
-				->match('title', 'Sora no || Otoshimono')
-				->execute();
-		}
-		catch (\Foolz\SphinxQL\DatabaseException $e)
-		{
-			// an error is thrown because two `|` one after the other aren't allowed
-		}
+    try
+    {
+        $result = SphinxQL::create($conn)->select()
+            ->from('rt')
+            ->match('title', 'Sora no || Otoshimono')
+            ->execute();
+    }
+    catch (\Foolz\SphinxQL\DatabaseException $e)
+    {
+        // an error is thrown because two `|` one after the other aren't allowed
+    }
 	```
 
 #### GROUP, WITHIN GROUP, ORDER, OFFSET, LIMIT, OPTION

@@ -1367,7 +1367,6 @@ class SphinxQL
     public function reset()
     {
         $this->query = null;
-        $this->queue_prev = null;
         $this->select = array();
         $this->from = array();
         $this->where = array();

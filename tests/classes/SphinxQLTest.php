@@ -509,15 +509,15 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
         $result = SphinxQL::create($this->conn)
             ->select()
             ->from('rt')
-            ->where('gid', 304)
+            ->where('gid', 9003)
             ->enqueue()
             ->select()
             ->from('rt')
-            ->where('gid', 500)
+            ->where('gid', 201)
             ->enqueue()
             ->executeBatch();
 
-        $this->assertSame('13', $result[0][0]['id']);
-        $this->assertSame('16', $result[1][0]['id']);
+        $this->assertSame('10', $result[0][0]['id']);
+        $this->assertSame('11', $result[1][0]['id']);
     }
 }

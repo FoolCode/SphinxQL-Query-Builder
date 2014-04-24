@@ -375,6 +375,20 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
 
         $result = SphinxQL::create($this->conn)->select()
             ->from('rt')
+            ->match('*', 'directly')
+            ->execute();
+
+        $this->assertCount(1, $result);
+
+        $result = SphinxQL::create($this->conn)->select()
+            ->from('rt')
+            ->match(array('title', 'content'), 'to')
+            ->execute();
+
+        $this->assertCount(3, $result);
+
+        $result = SphinxQL::create($this->conn)->select()
+            ->from('rt')
             ->match('content', 'directly | lazy', true)
             ->execute();
 

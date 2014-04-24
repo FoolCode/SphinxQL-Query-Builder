@@ -62,20 +62,6 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('* \\ Ç"" \'', (string) $result);
     }
 
-    public function testSetVariable()
-    {
-        SphinxQL::create($this->conn)->setVariable('AUTOCOMMIT', 0);
-        $vars = SphinxQL::create($this->conn)->variables();
-        $this->assertEquals(0, $vars['autocommit']);
-
-        SphinxQL::create($this->conn)->setVariable('AUTOCOMMIT', 1);
-        $vars = SphinxQL::create($this->conn)->variables();
-        $this->assertEquals(1, $vars['autocommit']);
-
-        SphinxQL::create($this->conn)->setVariable('@foo', 1, true);
-        SphinxQL::create($this->conn)->setVariable('@foo', array(0), true);
-    }
-
     /**
      * @covers \Foolz\SphinxQL\SphinxQL::transactionBegin
      * @covers \Foolz\SphinxQL\SphinxQL::transactionCommit
@@ -87,29 +73,6 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
         SphinxQL::create($this->conn)->transactionRollback();
         SphinxQL::create($this->conn)->transactionBegin();
         SphinxQL::create($this->conn)->transactionCommit();
-    }
-
-    public function testShowTables()
-    {
-        $this->assertEquals(
-            array(array('Index' => 'rt', 'Type' => 'rt')),
-            SphinxQL::create($this->conn)->tables()
-        );
-    }
-
-    public function testDescribe()
-    {
-        $describe = SphinxQL::create($this->conn)->describe('rt');
-        array_shift($describe);
-        $this->assertSame(
-            array(
-            //	array('Field' => 'id', 'Type' => 'integer'), this can be bigint on id64 sphinx
-                array('Field' => 'title', 'Type' => 'field'),
-                array('Field' => 'content', 'Type' => 'field'),
-                array('Field' => 'gid', 'Type' => 'uint'),
-            ),
-            $describe
-        );
     }
 
     public function testQuery()

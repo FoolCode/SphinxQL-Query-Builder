@@ -1,3 +1,9 @@
+#### 0.9.1
+
+* deprecated SphinxQL::forge() with static Connection and implemented SphinxQL::create($conn)
+* added array and * support to MATCH columns (thanks to @FindTheBest)
+* added Expression support to MATCH value
+
 #### 0.9.0
 
 * refactored to be fully OOP

@@ -9,6 +9,7 @@ class SphinxQLException extends \Exception {};
 /**
  * SphinxQL connection class utilizing the MySQLi extension.
  * It also contains escaping and quoting functions.
+ * @package Foolz\SphinxQL
  */
 class Connection
 {

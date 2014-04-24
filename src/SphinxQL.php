@@ -4,6 +4,7 @@ namespace Foolz\SphinxQL;
 
 /**
  * Query Builder class for SphinxQL statements.
+ * @package Foolz\SphinxQL
  */
 class SphinxQL
 {
@@ -170,7 +171,7 @@ class SphinxQL
         'variablesGlobal' => 'SHOW GLOBAL VARIABLES',
     );
 
-    public function __construct($connection = null, $static = false)
+    public function __construct(Connection $connection = null, $static = false)
     {
         if ($connection instanceof \Foolz\SphinxQL\Connection) {
             if ($static) {
@@ -184,12 +185,12 @@ class SphinxQL
     /**
      * Forges a SphinxQL object with a Connection shared among all SphinxQL objects
      *
-     * @param mixed  $connection
+     * @param null|Connection $connection
      *
      * @return \Foolz\SphinxQL\SphinxQL The current object
      * @deprecated Use ::create instead, coupled with an own static method if static connection is necessary
      */
-    public static function forge($connection = null)
+    public static function forge(Connection $connection = null)
     {
         return new SphinxQL($connection, true);
     }
@@ -197,11 +198,11 @@ class SphinxQL
     /**
      * Creates and setups a SphinxQL object
      *
-     * @param mixed  $connection
+     * @param Connection $connection
      *
      * @return \Foolz\SphinxQL\SphinxQL The current object
      */
-    public static function create($connection)
+    public static function create(Connection $connection)
     {
         return new SphinxQL($connection);
     }
@@ -381,6 +382,7 @@ class SphinxQL
      * @param boolean $global True if the variable should be global, false otherwise
      *
      * @return array The result of the query
+     * @deprecated Use Helper::create($conn)->setVariable(...)->execute();
      */
     public function setVariable($name, $value, $global = false)
     {
@@ -443,6 +445,7 @@ class SphinxQL
      * @param array  $extra
      *
      * @return array The result of the query
+     * @deprecated Use Helper::create($conn)->callSnippets(...)->execute();
      */
     public function callSnippets($data, $index, $extra = array())
     {
@@ -460,6 +463,7 @@ class SphinxQL
      * @param null|string $hits
      *
      * @return array The result of the query
+     * @deprecated Use Helper::create($conn)->callKeywords(...)->execute();
      */
     public function callKeywords($text, $index, $hits = null)
     {
@@ -477,6 +481,7 @@ class SphinxQL
      * @param string $index The name of the index
      *
      * @return array The result of the query
+     * @deprecated Use Helper::create($conn)->describe(...)->execute();
      */
     public function describe($index)
     {
@@ -491,6 +496,7 @@ class SphinxQL
      * @param string $so_name
      *
      * @return array The result of the query
+     * @deprecated Use Helper::create($conn)->createFunction(...)->execute();
      */
     public function createFunction($udf_name, $returns, $so_name)
     {
@@ -504,6 +510,7 @@ class SphinxQL
      * @param string $udf_name
      *
      * @return array The result of the query
+     * @deprecated Use Helper::create($conn)->dropFunction(...)->execute();
      */
     public function dropFunction($udf_name)
     {
@@ -517,6 +524,7 @@ class SphinxQL
      * @param string $rt_index
      *
      * @return array The result of the query
+     * @deprecated Use Helper::create($conn)->attachIndex(...)->execute();
      */
     public function attachIndex($disk_index, $rt_index)
     {
@@ -530,6 +538,7 @@ class SphinxQL
      * @param string $index
      *
      * @return array The result of the query
+     * @deprecated Use Helper::create($conn)->flushRtIndex(...)->execute();
      */
     public function flushRtIndex($index)
     {

@@ -112,6 +112,24 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
         );
     }
 
+    public function testQuery()
+    {
+        $describe = SphinxQL::create($this->conn)
+            ->query('DESCRIBE rt')
+            ->execute();
+
+        array_shift($describe);
+        $this->assertSame(
+            array(
+                //	array('Field' => 'id', 'Type' => 'integer'), this can be bigint on id64 sphinx
+                array('Field' => 'title', 'Type' => 'field'),
+                array('Field' => 'content', 'Type' => 'field'),
+                array('Field' => 'gid', 'Type' => 'uint'),
+            ),
+            $describe
+        );
+    }
+
     /**
      * @covers \Foolz\SphinxQL\SphinxQL::compile
      * @covers \Foolz\SphinxQL\SphinxQL::compileInsert

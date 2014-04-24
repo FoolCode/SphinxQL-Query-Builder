@@ -44,6 +44,13 @@ class SphinxQL
     protected $type = null;
 
     /**
+     * An SQL query that is not yet executed or "compiled"
+     *
+     * @var string
+     */
+    protected $query = null;
+
+    /**
      * Array of select elements that will be comma separated.
      *
      * @var array
@@ -550,7 +557,17 @@ class SphinxQL
             case 'delete':
                 $this->compileDelete();
                 break;
+            case 'query':
+                $this->compileQuery();
+                break;
         }
+
+        return $this;
+    }
+
+    public function compileQuery()
+    {
+        $this->last_compiled = $this->query;
 
         return $this;
     }
@@ -847,6 +864,21 @@ class SphinxQL
         }
 
         $this->last_compiled = $query;
+
+        return $this;
+    }
+
+    /**
+     * Sets a query to be executed
+     *
+     * @param string $sql A SphinxQL query to execute
+     *
+     * @return \Foolz\SphinxQL\SphinxQL The current object
+     */
+    public function query($sql)
+    {
+        $this->type = 'query';
+        $this->query = $sql;
 
         return $this;
     }

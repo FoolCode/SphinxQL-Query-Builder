@@ -1,3 +1,10 @@
+#### 0.9.2
+
+* created `Helper` class to contain non-query-builder query methods, all returning `SphinxQL` objects
+* deprecated all non-query-builder query methods in `SphinxQL` class
+* improved `$sq->enqueue()` in `SphinxQL` class to have a parameter to append any custom `SphinxQL` objects
+* added `$sq->query()` method to `SphinxQL` to allow setting SQL queries without executing them
+
 #### 0.9.1
 
 * deprecated SphinxQL::forge() with static Connection and implemented SphinxQL::create($conn)

@@ -347,7 +347,7 @@ $result = SphinxQL::create($this->conn)
     ->executeBatch();
 ```
 
-`$result[0]` will contain the first select. `result[1]` will contain the META for the first query. `result[2]` will contain the second select.
+`$result[0]` will contain the first select. `$result[1]` will contain the META for the first query. `$result[2]` will contain the second select.
 
 ### Helper
 

@@ -13,7 +13,7 @@ __This package is BETA QUALITY.__ It is recommended that you do extensive testin
 
 SphinxQL evolves very fast.
 
-Most of the new functions are static one liners like `SHOW PLUGINS`. We'll avoid trying to keep up with these methods, as they are easy to just call directly. You're free to submit pull requests to support these methods.
+Most of the new functions are static one liners like `SHOW PLUGINS`. We'll avoid trying to keep up with these methods, as they are easy to just call directly (`SphinxQL::create($conn)->query($sql)->execute()`). You're free to submit pull requests to support these methods.
 
 If any feature is unreachable through this library, open a new issue or send a pull request.
 
@@ -72,7 +72,7 @@ $query = SphinxQL::create($conn)->select('column_one', 'colume_two')
 $result = $query->execute();
 ```
 
-#### Connection
+### Connection
 
 * __$conn = new Connection()__
 
@@ -93,7 +93,7 @@ $result = $query->execute();
 
 _More methods are available in the Connection class, but usually not necessary as these are handled automatically._
 
-#### SphinxQL
+### SphinxQL
 
 * __SphinxQL::create($conn)__
 
@@ -132,22 +132,6 @@ There are cases when an input __must__ be escaped in the SQL statement. The foll
 	Escapes the string to be used in `MATCH`. The following characters are allowed: `-`, `|`, and `"`.
 
 	_Refer to `$sq->match()` for more information._
-
-#### SET VARIABLE
-
-* __SphinxQL::create($conn)->setVariable($name, $value, $global = false)__
-
-	Sets a variable server-side.
-
-#### SHOW
-
-* `SphinxQL::create($conn)->meta() => 'SHOW META'`
-* `SphinxQL::create($conn)->warnings() => 'SHOW WARNINGS'`
-* `SphinxQL::create($conn)->status() => 'SHOW STATUS'`
-* `SphinxQL::create($conn)->tables() => 'SHOW TABLES'`
-* `SphinxQL::create($conn)->variables() => 'SHOW VARIABLES'`
-* `SphinxQL::create($conn)->variablesSession() => 'SHOW SESSION VARIABLES'`
-* `SphinxQL::create($conn)->variablesGlobal() => 'SHOW GLOBAL VARIABLES'`
 
 #### SELECT
 
@@ -341,22 +325,68 @@ Will return an array with an `INT` as first member, the number of rows deleted.
 
 #### Multi-Query
 
-* __$sq->enqueue()__
+* __$sq->enqueue(SphinxQL $next = null)__
 
-	Queues the query.
+	Queues the query. If a $next is provided, $next is appended and returned, otherwise a new SphinxQL object is returned.
 
 * __$sq->executeBatch()__
 
 	Returns an array of the results of all the queued queries.
 
-#### More
+```php
+<?php
+$result = SphinxQL::create($this->conn)
+    ->select()
+    ->from('rt')
+    ->match('title', 'sora')
+    ->enqueue(SphinxQL::create($this->conn)->query('SHOW META')) // this returns the object with SHOW META query
+    ->enqueue() // this returns a new object
+    ->select()
+    ->from('rt')
+    ->match('content', 'nymph')
+    ->executeBatch();
+```
 
-There's several more functions to complete the SphinxQL library:
+`$result[0]` will contain the first select. `result[1]` will contain the META for the first query. `result[2]` will contain the second select.
 
-* `SphinxQL::create($conn)->callSnippets($data, $index, $extra = array())`
-* `SphinxQL::create($conn)->callKeywords($text, $index, $hits = null)`
-* `SphinxQL::create($conn)->describe($index)`
-* `SphinxQL::create($conn)->createFunction($udf_name, $returns, $soname)`
-* `SphinxQL::create($conn)->dropFunction($udf_name)`
-* `SphinxQL::create($conn)->attachIndex($disk_index, $rt_index)`
-* `SphinxQL::create($conn)->flushRtIndex($index)`
+### Helper
+
+The `Helper` class contains useful methods that don't need "query building".
+
+Remember to `->execute()` to get a result.
+
+* __Helper::pairsToAssoc($result)__
+
+	Takes the pairs from a SHOW command and returns an associative array key=>value
+
+The following methods return a prepared `SphinxQL` object. You can also use `->enqueue($next_object)`:
+
+```php
+<?php
+$result = SphinxQL::create($this->conn)
+    ->select()
+    ->from('rt')
+    ->where('gid', 9003)
+    ->enqueue(Helper::create($this->conn)->showMeta()) // this returns the object with SHOW META query prepared
+    ->enqueue() // this returns a new object
+    ->select()
+    ->from('rt')
+    ->where('gid', 201)
+    ->executeBatch();
+```
+
+* `Helper::create($conn)->showMeta() => 'SHOW META'`
+* `Helper::create($conn)->showWarnings() => 'SHOW WARNINGS'`
+* `Helper::create($conn)->showStatus() => 'SHOW STATUS'`
+* `Helper::create($conn)->shotTables() => 'SHOW TABLES'`
+* `Helper::create($conn)->showVariables() => 'SHOW VARIABLES'`
+* `Helper::create($conn)->showSessionVariables() => 'SHOW SESSION VARIABLES'`
+* `Helper::create($conn)->showGlobalVariables() => 'SHOW GLOBAL VARIABLES'`
+* `Helper::create($conn)->setVariable($name, $value, $global = false)`
+* `Helper::create($conn)->callSnippets($data, $index, $extra = array())`
+* `Helper::create($conn)->callKeywords($text, $index, $hits = null)`
+* `Helper::create($conn)->describe($index)`
+* `Helper::create($conn)->createFunction($udf_name, $returns, $soname)`
+* `Helper::create($conn)->dropFunction($udf_name)`
+* `Helper::create($conn)->attachIndex($disk_index, $rt_index)`
+* `Helper::create($conn)->flushRtIndex($index)`

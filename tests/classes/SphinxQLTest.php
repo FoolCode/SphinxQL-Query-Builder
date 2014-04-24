@@ -1,5 +1,6 @@
 <?php
 
+use Foolz\SphinxQL\Helper;
 use Foolz\SphinxQL\SphinxQL;
 use Foolz\SphinxQL\Connection as SphinxConnection;
 
@@ -510,14 +511,15 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
             ->select()
             ->from('rt')
             ->where('gid', 9003)
+            ->enqueue(Helper::create($this->conn)->showMeta())
             ->enqueue()
             ->select()
             ->from('rt')
             ->where('gid', 201)
-            ->enqueue()
             ->executeBatch();
 
         $this->assertSame('10', $result[0][0]['id']);
-        $this->assertSame('11', $result[1][0]['id']);
+        $this->assertSame('1', $result[1][0]['Value']);
+        $this->assertSame('11', $result[2][0]['id']);
     }
 }

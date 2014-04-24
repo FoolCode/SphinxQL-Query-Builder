@@ -299,16 +299,21 @@ class SphinxQL
     }
 
     /**
-     * Enqueues the current object and returns a new one
+     * Enqueues the current object and returns a new one or the supplied one
+     *
+     * @param SphinxQL|null $next
      *
      * @return \Foolz\SphinxQL\SphinxQL A new SphinxQL object with the current object referenced
      */
-    public function enqueue()
+    public function enqueue(SphinxQL $next = null)
     {
-        $sq = new static($this->getConnection());
-        $sq->setQueuePrev($this);
+        if ($next === null) {
+            $next = new static($this->getConnection());
+        }
 
-        return $sq;
+        $next->setQueuePrev($this);
+
+        return $next;
     }
 
     /**

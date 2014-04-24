@@ -47,7 +47,7 @@
 
 <p>SphinxQL evolves very fast.</p>
 
-<p>Most of the new functions are static one liners like <code>SHOW PLUGINS</code>. We'll avoid trying to keep up with these methods, as they are easy to just call directly. You're free to submit pull requests to support these methods.</p>
+<p>Most of the new functions are static one liners like <code>SHOW PLUGINS</code>. We'll avoid trying to keep up with these methods, as they are easy to just call directly (<code>SphinxQL::create($conn)-&gt;query($sql)-&gt;execute()</code>). You're free to submit pull requests to support these methods.</p>
 
 <p>If any feature is unreachable through this library, open a new issue or send a pull request.</p>
 
@@ -112,8 +112,8 @@ request for each branch. This allows me to review and pull in new features or im
 <span class="nv">$result</span> <span class="o">=</span> <span class="nv">$query</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">();</span>
 </pre></div>
 
-<h4>
-<a name="connection" class="anchor" href="#connection"><span class="octicon octicon-link"></span></a>Connection</h4>
+<h3>
+<a name="connection" class="anchor" href="#connection"><span class="octicon octicon-link"></span></a>Connection</h3>
 
 <ul>
 <li>
@@ -139,8 +139,8 @@ request for each branch. This allows me to review and pull in new features or im
 </li>
 </ul><p><em>More methods are available in the Connection class, but usually not necessary as these are handled automatically.</em></p>
 
-<h4>
-<a name="sphinxql" class="anchor" href="#sphinxql"><span class="octicon octicon-link"></span></a>SphinxQL</h4>
+<h3>
+<a name="sphinxql" class="anchor" href="#sphinxql"><span class="octicon octicon-link"></span></a>SphinxQL</h3>
 
 <ul>
 <li>
@@ -192,26 +192,6 @@ request for each branch. This allows me to review and pull in new features or im
 
 <p><em>Refer to <code>$sq-&gt;match()</code> for more information.</em></p>
 </li>
-</ul><h4>
-<a name="set-variable" class="anchor" href="#set-variable"><span class="octicon octicon-link"></span></a>SET VARIABLE</h4>
-
-<ul>
-<li>
-<p><strong>SphinxQL::create($conn)-&gt;setVariable($name, $value, $global = false)</strong></p>
-
-<p>Sets a variable server-side.</p>
-</li>
-</ul><h4>
-<a name="show" class="anchor" href="#show"><span class="octicon octicon-link"></span></a>SHOW</h4>
-
-<ul>
-<li><code>SphinxQL::create($conn)-&gt;meta() =&gt; 'SHOW META'</code></li>
-<li><code>SphinxQL::create($conn)-&gt;warnings() =&gt; 'SHOW WARNINGS'</code></li>
-<li><code>SphinxQL::create($conn)-&gt;status() =&gt; 'SHOW STATUS'</code></li>
-<li><code>SphinxQL::create($conn)-&gt;tables() =&gt; 'SHOW TABLES'</code></li>
-<li><code>SphinxQL::create($conn)-&gt;variables() =&gt; 'SHOW VARIABLES'</code></li>
-<li><code>SphinxQL::create($conn)-&gt;variablesSession() =&gt; 'SHOW SESSION VARIABLES'</code></li>
-<li><code>SphinxQL::create($conn)-&gt;variablesGlobal() =&gt; 'SHOW GLOBAL VARIABLES'</code></li>
 </ul><h4>
 <a name="select" class="anchor" href="#select"><span class="octicon octicon-link"></span></a>SELECT</h4>
 
@@ -449,28 +429,74 @@ request for each branch. This allows me to review and pull in new features or im
 
 <ul>
 <li>
-<p><strong>$sq-&gt;enqueue()</strong></p>
+<p><strong>$sq-&gt;enqueue(SphinxQL $next = null)</strong></p>
 
-<p>Queues the query.</p>
+<p>Queues the query. If a $next is provided, $next is appended and returned, otherwise a new SphinxQL object is returned.</p>
 </li>
 <li>
 <p><strong>$sq-&gt;executeBatch()</strong></p>
 
 <p>Returns an array of the results of all the queued queries.</p>
 </li>
-</ul><h4>
-<a name="more" class="anchor" href="#more"><span class="octicon octicon-link"></span></a>More</h4>
+</ul><div class="highlight highlight-php"><pre><span class="o">&lt;?</span><span class="nx">php</span>
+<span class="nv">$result</span> <span class="o">=</span> <span class="nx">SphinxQL</span><span class="o">::</span><span class="na">create</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">conn</span><span class="p">)</span>
+    <span class="o">-&gt;</span><span class="na">select</span><span class="p">()</span>
+    <span class="o">-&gt;</span><span class="na">from</span><span class="p">(</span><span class="s1">'rt'</span><span class="p">)</span>
+    <span class="o">-&gt;</span><span class="na">match</span><span class="p">(</span><span class="s1">'title'</span><span class="p">,</span> <span class="s1">'sora'</span><span class="p">)</span>
+    <span class="o">-&gt;</span><span class="na">enqueue</span><span class="p">(</span><span class="nx">SphinxQL</span><span class="o">::</span><span class="na">create</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">conn</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">query</span><span class="p">(</span><span class="s1">'SHOW META'</span><span class="p">))</span> <span class="c1">// this returns the object with SHOW META query</span>
+    <span class="o">-&gt;</span><span class="na">enqueue</span><span class="p">()</span> <span class="c1">// this returns a new object</span>
+    <span class="o">-&gt;</span><span class="na">select</span><span class="p">()</span>
+    <span class="o">-&gt;</span><span class="na">from</span><span class="p">(</span><span class="s1">'rt'</span><span class="p">)</span>
+    <span class="o">-&gt;</span><span class="na">match</span><span class="p">(</span><span class="s1">'content'</span><span class="p">,</span> <span class="s1">'nymph'</span><span class="p">)</span>
+    <span class="o">-&gt;</span><span class="na">executeBatch</span><span class="p">();</span>
+</pre></div>
 
-<p>There's several more functions to complete the SphinxQL library:</p>
+<p><code>$result[0]</code> will contain the first select. <code>result[1]</code> will contain the META for the first query. <code>result[2]</code> will contain the second select.</p>
+
+<h3>
+<a name="helper" class="anchor" href="#helper"><span class="octicon octicon-link"></span></a>Helper</h3>
+
+<p>The <code>Helper</code> class contains useful methods that don't need "query building".</p>
+
+<p>Remember to <code>-&gt;execute()</code> to get a result.</p>
 
 <ul>
-<li><code>SphinxQL::create($conn)-&gt;callSnippets($data, $index, $extra = array())</code></li>
-<li><code>SphinxQL::create($conn)-&gt;callKeywords($text, $index, $hits = null)</code></li>
-<li><code>SphinxQL::create($conn)-&gt;describe($index)</code></li>
-<li><code>SphinxQL::create($conn)-&gt;createFunction($udf_name, $returns, $soname)</code></li>
-<li><code>SphinxQL::create($conn)-&gt;dropFunction($udf_name)</code></li>
-<li><code>SphinxQL::create($conn)-&gt;attachIndex($disk_index, $rt_index)</code></li>
-<li><code>SphinxQL::create($conn)-&gt;flushRtIndex($index)</code></li>
+<li>
+<p><strong>Helper::pairsToAssoc($result)</strong></p>
+
+<p>Takes the pairs from a SHOW command and returns an associative array key=&gt;value</p>
+</li>
+</ul><p>The following methods return a prepared <code>SphinxQL</code> object. You can also use <code>-&gt;enqueue($next_object)</code>:</p>
+
+<div class="highlight highlight-php"><pre><span class="o">&lt;?</span><span class="nx">php</span>
+<span class="nv">$result</span> <span class="o">=</span> <span class="nx">SphinxQL</span><span class="o">::</span><span class="na">create</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">conn</span><span class="p">)</span>
+    <span class="o">-&gt;</span><span class="na">select</span><span class="p">()</span>
+    <span class="o">-&gt;</span><span class="na">from</span><span class="p">(</span><span class="s1">'rt'</span><span class="p">)</span>
+    <span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">'gid'</span><span class="p">,</span> <span class="mi">9003</span><span class="p">)</span>
+    <span class="o">-&gt;</span><span class="na">enqueue</span><span class="p">(</span><span class="nx">Helper</span><span class="o">::</span><span class="na">create</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">conn</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">showMeta</span><span class="p">())</span> <span class="c1">// this returns the object with SHOW META query prepared</span>
+    <span class="o">-&gt;</span><span class="na">enqueue</span><span class="p">()</span> <span class="c1">// this returns a new object</span>
+    <span class="o">-&gt;</span><span class="na">select</span><span class="p">()</span>
+    <span class="o">-&gt;</span><span class="na">from</span><span class="p">(</span><span class="s1">'rt'</span><span class="p">)</span>
+    <span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">'gid'</span><span class="p">,</span> <span class="mi">201</span><span class="p">)</span>
+    <span class="o">-&gt;</span><span class="na">executeBatch</span><span class="p">();</span>
+</pre></div>
+
+<ul>
+<li><code>Helper::create($conn)-&gt;showMeta() =&gt; 'SHOW META'</code></li>
+<li><code>Helper::create($conn)-&gt;showWarnings() =&gt; 'SHOW WARNINGS'</code></li>
+<li><code>Helper::create($conn)-&gt;showStatus() =&gt; 'SHOW STATUS'</code></li>
+<li><code>Helper::create($conn)-&gt;shotTables() =&gt; 'SHOW TABLES'</code></li>
+<li><code>Helper::create($conn)-&gt;showVariables() =&gt; 'SHOW VARIABLES'</code></li>
+<li><code>Helper::create($conn)-&gt;showSessionVariables() =&gt; 'SHOW SESSION VARIABLES'</code></li>
+<li><code>Helper::create($conn)-&gt;showGlobalVariables() =&gt; 'SHOW GLOBAL VARIABLES'</code></li>
+<li><code>Helper::create($conn)-&gt;setVariable($name, $value, $global = false)</code></li>
+<li><code>Helper::create($conn)-&gt;callSnippets($data, $index, $extra = array())</code></li>
+<li><code>Helper::create($conn)-&gt;callKeywords($text, $index, $hits = null)</code></li>
+<li><code>Helper::create($conn)-&gt;describe($index)</code></li>
+<li><code>Helper::create($conn)-&gt;createFunction($udf_name, $returns, $soname)</code></li>
+<li><code>Helper::create($conn)-&gt;dropFunction($udf_name)</code></li>
+<li><code>Helper::create($conn)-&gt;attachIndex($disk_index, $rt_index)</code></li>
+<li><code>Helper::create($conn)-&gt;flushRtIndex($index)</code></li>
 </ul>
       </section>
       <footer>

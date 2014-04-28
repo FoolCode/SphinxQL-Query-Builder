@@ -99,9 +99,9 @@ class Connection
         $data = $this->getConnectionParams();
 
         if ( ! $suppress_error && ! $this->silence_connection_warning) {
-            $conn = new \MySQLi($data['host'], null, null, null, $data['port'], null);
+            $conn = new \MySQLi($data['host'], null, null, null, intval($data['port']), null);
         } else {
-            $conn = @ new \MySQLi($data['host'], null, null, null, $data['port'], null);
+            $conn = @ new \MySQLi($data['host'], null, null, null, intval($data['port']), null);
         }
 
         if ($conn->connect_error)

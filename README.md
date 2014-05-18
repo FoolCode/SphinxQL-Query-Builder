@@ -5,7 +5,7 @@ Query Builder for SphinxQL
 
 This is a SphinxQL Query Builder used to work with SphinxQL, a SQL dialect used with the Sphinx search engine. It maps most of the functions listed in the [SphinxQL reference](http://sphinxsearch.com/docs/current.html#SphinxQL-reference) and is generally [faster](http://sphinxsearch.com/blog/2010/04/25/sphinxapi-vs-SphinxQL-benchmark/) than the available Sphinx API.
 
-This Query Builder has no dependencies besides PHP 5.3, `\MySQLi` extension, and [Sphinx](http://sphinxsearch.com).
+This Query Builder has no dependencies except PHP 5.3, `\MySQLi` extension, and [Sphinx](http://sphinxsearch.com). It is also compatible with [HHVM](http://hhvm.com).
 
 __This package is BETA QUALITY.__ It is recommended that you do extensive testing in development before using it in a production environment.
 
@@ -19,9 +19,11 @@ If any feature is unreachable through this library, open a new issue or send a p
 
 ## Code Quality
 
-The majority of the methods in the package have been unit tested. The only methods that have not been tested are single queries such as `flushRtIndex`, but these are independent and should work fine.
+The majority of the methods in the package have been unit tested. The unit tests are run both in PHP and HHVM.
 
-We have tested our package locally and remotely with Travis-CI:
+The only methods that have not been fully tested are the Helpers, which are mostly simple shorthands for SQL strings.
+
+We test our package locally and remotely with Travis-CI:
 
 [![Build Status](https://travis-ci.org/FoolCode/SphinxQL-Query-Builder.png)](https://travis-ci.org/FoolCode/SphinxQL-Query-Builder)
 

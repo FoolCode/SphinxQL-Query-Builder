@@ -99,12 +99,12 @@ class Connection
         $data = $this->getConnectionParams();
 
         if ( ! $suppress_error && ! $this->silence_connection_warning) {
-            $conn = new \MySQLi($data['host'], null, null, null, intval($data['port']), null);
+            $conn = new \MySQLi($data['host'], null, null, null, (int) $data['port'], null);
         } else {
-            $conn = @ new \MySQLi($data['host'], null, null, null, intval($data['port']), null);
+            $conn = @ new \MySQLi($data['host'], null, null, null, (int) $data['port'], null);
         }
 
-        if ($conn->connect_error)
+        if ($conn->connect_errno)
         {
             throw new ConnectionException('Connection Error: ['.$conn->connect_errno.']'
                 .$conn->connect_error);

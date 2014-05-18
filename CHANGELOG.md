@@ -1,3 +1,8 @@
+#### 0.9.3
+
+* HHVM support
+* Added escaping of new MATCH features by lowercasing the search string
+
 #### 0.9.2
 
 * created `Helper` class to contain non-query-builder query methods, all returning `SphinxQL` objects

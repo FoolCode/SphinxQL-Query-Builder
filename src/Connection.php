@@ -104,7 +104,7 @@ class Connection
             $conn = @ new \MySQLi($data['host'], null, null, null, (int) $data['port'], null);
         }
 
-        if ($conn->connect_errno)
+        if ($conn->connect_error)
         {
             throw new ConnectionException('Connection Error: ['.$conn->connect_errno.']'
                 .$conn->connect_error);

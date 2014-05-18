@@ -27,8 +27,8 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
         $this->assertSame(array('host' => '127.0.0.1', 'port' => 9307), $this->connection->getConnectionParams());
 
         // create a new connection and get info
-        $this->connection->setConnectionParams('127.0.0.1', 93067);
-        $this->assertSame(array('host' => '127.0.0.1', 'port' => 93067), $this->connection->getConnectionParams());
+        $this->connection->setConnectionParams('127.0.0.1', 9308);
+        $this->assertSame(array('host' => '127.0.0.1', 'port' => 9308), $this->connection->getConnectionParams());
     }
 
     public function testGetConnection()
@@ -55,11 +55,7 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
      */
     public function testConnectThrowsPHPException()
     {
-        if (defined('HHVM_VERSION')) {
-            $this->markTestSkipped('HHVM won\'t throw a warning.');
-        }
-
-        $this->connection->setConnectionParams('127.0.0.1', 93067);
+        $this->connection->setConnectionParams('127.0.0.1', 9308);
         $this->connection->connect();
     }
 
@@ -68,7 +64,7 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
      */
     public function testConnectThrowsException()
     {
-        $this->connection->setConnectionParams('127.0.0.1', 93067);
+        $this->connection->setConnectionParams('127.0.0.1', 9308);
         $this->connection->silenceConnectionWarning(true);
         $this->connection->connect();
     }
@@ -126,12 +122,12 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Foolz\SphinxQL\ConnectionException
+     * @expectedException PHPUnit_Framework_Error_Warning
      */
     public function testEscapeThrowsException()
     {
         // or we get the wrong error popping up
-        $this->connection->setConnectionParams('127.0.0.1', 93067);
+        $this->connection->setConnectionParams('127.0.0.1', 9308);
         $this->connection->connect();
         $this->connection->escape('\' "" \'\' ');
     }

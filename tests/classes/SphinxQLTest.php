@@ -207,7 +207,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
             ->where('id', '=', 10)
             ->execute();
 
-        $this->assertSame('9002', $result[0]['gid']);
+        $this->assertEquals('9002', $result[0]['gid']);
 
         $result = SphinxQL::create($this->conn)->replace()
             ->into('rt')
@@ -223,8 +223,8 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
             ->where('id', 'IN', array(10, 11))
             ->execute();
 
-        $this->assertSame('9003', $result[0]['gid']);
-        $this->assertSame('300', $result[1]['gid']);
+        $this->assertEquals('9003', $result[0]['gid']);
+        $this->assertEquals('300', $result[1]['gid']);
 
         SphinxQL::create($this->conn)->replace()
             ->into('rt')
@@ -239,7 +239,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
             ->where('id', '=', 11)
             ->execute();
 
-        $this->assertSame('200', $result[0]['gid']);
+        $this->assertEquals('200', $result[0]['gid']);
     }
 
     /**
@@ -268,7 +268,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
             ->where('id', '=', 11)
             ->execute();
 
-        $this->assertSame('201', $result[0]['gid']);
+        $this->assertEquals('201', $result[0]['gid']);
 
         $result = SphinxQL::create($this->conn)->update('rt')
             ->where('gid', '=', 305)
@@ -400,7 +400,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
             ->execute();
 
         $this->assertCount(5, $result);
-        $this->assertSame('3', $result[3]['count(*)']);
+        $this->assertEquals('3', $result[3]['count(*)']);
     }
 
     public function testOrderBy()
@@ -412,14 +412,14 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
             ->orderBy('id', 'desc')
             ->execute();
 
-        $this->assertSame('17', $result[0]['id']);
+        $this->assertEquals('17', $result[0]['id']);
 
         $result = SphinxQL::create($this->conn)->select()
             ->from('rt')
             ->orderBy('id', 'asc')
             ->execute();
 
-        $this->assertSame('10', $result[0]['id']);
+        $this->assertEquals('10', $result[0]['id']);
     }
 
     public function testWithinGroupOrderBy()
@@ -433,7 +433,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
             ->withinGroupOrderBy('id', 'desc')
             ->execute();
 
-        $this->assertSame('17', $result[0]['id']);
+        $this->assertEquals('17', $result[0]['id']);
 
         $result = SphinxQL::create($this->conn)->select()
             ->from('rt')
@@ -442,7 +442,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
             ->withinGroupOrderBy('id', 'asc')
             ->execute();
 
-        $this->assertSame('16', $result[0]['id']);
+        $this->assertEquals('16', $result[0]['id']);
     }
 
     public function testOffset()
@@ -518,8 +518,8 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
             ->where('gid', 201)
             ->executeBatch();
 
-        $this->assertSame('10', $result[0][0]['id']);
-        $this->assertSame('1', $result[1][0]['Value']);
-        $this->assertSame('11', $result[2][0]['id']);
+        $this->assertEquals('10', $result[0][0]['id']);
+        $this->assertEquals('1', $result[1][0]['Value']);
+        $this->assertEquals('11', $result[2][0]['id']);
     }
 }

@@ -1315,7 +1315,7 @@ class SphinxQL
         $from = array('\\', '(', ')', '|', '-', '!', '@', '~', '"', '&', '/', '^', '$', '=');
         $to = array('\\\\', '\(', '\)', '\|', '\-', '\!', '\@', '\~', '\"', '\&', '\/', '\^', '\$', '\=');
 
-        return str_replace($from, $to, $string);
+        return mb_strtolower(str_replace($from, $to, $string));
     }
 
     /**
@@ -1359,7 +1359,7 @@ class SphinxQL
             "'([^\s]+)-([^\s]*)'" => "\"\\1\-\\2\""
         );
 
-        $string = preg_replace(array_keys($from_to_preg), array_values($from_to_preg), $string);
+        $string = mb_strtolower(preg_replace(array_keys($from_to_preg), array_values($from_to_preg), $string));
 
         return $string;
     }

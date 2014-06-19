@@ -1,22 +1,29 @@
 <?php
 
-use Foolz\SphinxQL\SphinxQL;
 use Foolz\SphinxQL\Connection as SphinxConnection;
+use Foolz\SphinxQL\SphinxQL;
 
 class SphinxQLTest extends PHPUnit_Framework_TestCase
 {
     public function __construct()
     {
         $conn = new SphinxConnection();
-        $conn->setConnectionParams('127.0.0.1', 9307);
+        $conn_params    = array(
+            'host'      => 'localhost',
+            'port'      => 9307,
+        );
+        $conn->setConnectionParams($conn_params);
 
         SphinxQL::forge($conn);
 
         // empty that poor db. TRUNCATE is still in beta in Sphinxsearch 2.1.1-beta
         SphinxQL::forge()->delete()
             ->from('rt')
-            ->where('id', 'IN', array(1, 10, 11, 12, 13, 14, 15, 16, 17))
-            ->execute();
+            ->where('id', 'IN', array(
+                    1, 10, 11, 12, 13, 14, 15, 16, 17,
+                    49, 50, 51
+                )
+            )->execute();
     }
 
     public function testExpr()
@@ -341,10 +348,39 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
 
         $result = SphinxQL::forge()->select()
             ->from('rt')
-            ->match('content', 'directly | lazy', true)
+            ->match('content', 'directly | lazy', SphinxQL::QUERY_ESCAPE_HALF)
             ->execute();
 
         $this->assertCount(2, $result);
+
+        /* Insert something random  */
+        SphinxQL::forge()->insert()
+            ->into('rt')
+            ->value('id', 49)
+            ->value('title', 'Lorem ipsum')
+            ->value('content', 'Lorem ipsum dolor sit amet')
+            ->execute();
+        SphinxQL::forge()->replace()
+            ->into('rt')
+            ->value('id', 50)
+            ->value('title', 'Praesent porta venenatis augue')
+            ->value('content', 'Mauris faucibus scelerisque dolor, ut lobortis nisl porttitor eu.')
+            ->execute();
+        SphinxQL::forge()->replace()
+            ->into('rt')
+            ->value('id', 51)
+            ->value('title', 'Vivamus pellentesque ipsum')
+            ->value('content', 'Mauris ipsum dolor sit amet, ut lobortis nisl porttitor eu.')
+            ->execute();
+
+        $result = SphinxQL::forge()->select()
+            ->from('rt')
+            ->match('content', '"dolor sit amet"/0.8', SphinxQL::QUERY_ESCAPE_NONE) // Match Quorum literarily
+            ->execute();
+        foreach ($result as $row) {
+            $this->assertTrue(in_array($row['id'], array(49,  51)), 'Invalid records matched');
+        }
+
     }
 
     public function testOption()
@@ -365,7 +401,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
             ->groupBy('gid')
             ->execute();
 
-        $this->assertCount(5, $result);
+        $this->assertCount(6, $result);
         $this->assertSame('3', $result[3]['count(*)']);
     }
 
@@ -376,7 +412,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
             ->orderBy('id', 'desc')
             ->execute();
 
-        $this->assertSame('17', $result[0]['id']);
+        $this->assertSame('51', $result[0]['id']);
 
         $result = SphinxQL::forge()->select()
             ->from('rt')
@@ -414,7 +450,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
             ->offset(4)
             ->execute();
 
-        $this->assertCount(4, $result);
+        $this->assertCount(4 + 3, $result); // Additional 3 items @see testMatch()
     }
 
     public function testLimit()
@@ -449,7 +485,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
             ->from('rt')
             ->execute();
 
-        $this->assertCount(5, $result);
+        $this->assertCount(5 + 3, $result); // Additional 3 items @see testMatch()
     }
 
     /**

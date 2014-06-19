@@ -2,9 +2,18 @@
 
 namespace Foolz\SphinxQL;
 
-class ConnectionException extends \Exception {};
-class DatabaseException extends \Exception {};
-class SphinxQLException extends \Exception {};
+class ConnectionException extends \Exception
+{
+
+};
+class DatabaseException extends \Exception
+{
+
+};
+class SphinxQLException extends \Exception
+{
+
+};
 
 /**
  * SphinxQL connection class utilizing the MySQLi extension.
@@ -31,7 +40,13 @@ class Connection
      *
      * @var  array
      */
-    protected $connection_params = array('host' => '127.0.0.1', 'port' => 9306);
+    protected $connection_params = array(
+        'host'      => '127.0.0.1',
+        'port'      => 9306,
+        'username'  => '',
+        'password'  => '',
+        'socket'    => '',
+    );
 
     /**
      * Forces the \MySQLi connection to suppress all errors returned. This should only be used
@@ -47,16 +62,25 @@ class Connection
     /**
      * Sets the connection parameters.
      *
-     * @param  string  $host  The hostname or IP
-     * @param  int     $port  The port to the host
+     * @param  array  $options  SphinxQL Connection Parameters
+     *              string  'host'      The hostname or IP
+     *              string  'username'  The Username
+     *              string  'password'  The Password
+     *              int     'port'      The port to the host
+     *              string  'socket'    The socket to connect from
      */
-    public function setConnectionParams($host = '127.0.0.1', $port = 9306)
+    public function setConnectionParams($options)
     {
+        $host   = isset($options['host']) ? $options['host'] : $this->connection_params['host'];
         if ($host === 'localhost') {
             $host = '127.0.0.1';
         }
 
-        $this->connection_params = array('host' => $host, 'port' => $port);
+        $this->connection_params = array_merge(
+            $this->connection_params,
+            $options,
+            array('host' => $host,)
+        );
     }
 
     /**
@@ -74,7 +98,7 @@ class Connection
      *
      *
      * @return  \MySQLi  MySQLi connection
-     * @throws  \Foolz\SphinxQL\ConnectionException  If no connection has been established or open
+     * @throws  ConnectionException  If no connection has been established or open
      */
     public function getConnection()
     {
@@ -88,25 +112,31 @@ class Connection
     /**
      * Establishes a connection to the Sphinx server with \MySQLi.
      *
-     * @param  boolean  $suppress_error  If the warnings on the connection should be suppressed
+     * @param  boolean  $suppressError  If the warnings on the connection should be suppressed
      *
      * @return  boolean  True if connected
-     * @throws  \Foolz\SphinxQL\ConnectionException  If a connection error was encountered
+     * @throws  ConnectionException  If a connection error was encountered
      */
-    public function connect($suppress_error = false)
+    public function connect($suppressError = false)
     {
         $data = $this->getConnectionParams();
 
-        if ( ! $suppress_error && ! $this->silence_connection_warning) {
-            $conn = new \MySQLi($data['host'], null, null, null, $data['port'], null);
+        /* SphinxQL has no concept of DB! */
+        if ( ! $suppressError && ! $this->silence_connection_warning) {
+            $conn = new \MySQLi(
+                $data['host'], $data['username'], $data['password'], null, $data['port'], $data['socket']
+            );
         } else {
-            $conn = @ new \MySQLi($data['host'], null, null, null, $data['port'], null);
+            $conn = @ new \MySQLi(
+                $data['host'], $data['username'], $data['password'], null, $data['port'], $data['socket']
+            );
         }
 
-        if ($conn->connect_error)
-        {
-            throw new ConnectionException('Connection Error: ['.$conn->connect_errno.']'
-                .$conn->connect_error);
+        if ($conn->connect_error) {
+            throw new ConnectionException(
+                'Connection Error: [' . $conn->connect_errno . ']' . $conn->connect_error,
+                $conn->connect_errno
+            );
         }
 
         $this->connection = $conn;
@@ -145,7 +175,7 @@ class Connection
      * @param  string  $query  The query string
      *
      * @return  array|int  The result array or number of rows affected
-     * @throws  \Foolz\SphinxQL\DatabaseException  If the executed query procduced an error
+     * @throws  DatabaseException  If the executed query procduced an error
      */
     public function query($query)
     {
@@ -154,8 +184,10 @@ class Connection
         $resource = $this->getConnection()->query($query);
 
         if ($this->getConnection()->error) {
-            throw new DatabaseException('['.$this->getConnection()->errno.'] '.
-                $this->getConnection()->error.' [ '.$query.']');
+            throw new DatabaseException(
+                '[' . $this->getConnection()->errno . '] ' . $this->getConnection()->error . ' [ ' . $query . ']',
+                $this->getConnection()->errno
+            );
         }
 
         if ($resource instanceof \mysqli_result) {
@@ -180,8 +212,8 @@ class Connection
      * @param  array  $queue  Queue holding all of the queries to be executed
      *
      * @return  array  The result array
-     * @throws  \Foolz\SphinxQL\DatabaseException  In case a query throws an error
-     * @throws  \Foolz\SphinxQL\SphinxQLException  In case the array passed is empty
+     * @throws  DatabaseException  In case a query throws an error
+     * @throws  SphinxQLException  In case the array passed is empty
      */
     public function multiQuery(Array $queue)
     {
@@ -194,8 +226,10 @@ class Connection
         $this->getConnection()->multi_query(implode(';', $queue));
 
         if ($this->getConnection()->error) {
-            throw new DatabaseException('['.$this->getConnection()->errno.'] '.
-                $this->getConnection()->error.' [ '.implode(';', $queue).']');
+            throw new DatabaseException(
+                '['. $this->getConnection()->errno . '] ' . $this->getConnection()->error . ' [ ' . implode(';', $queue) . ']',
+                $this->getConnection()->errno
+            );
         }
 
         $result = array();
@@ -231,7 +265,7 @@ class Connection
      * @param  string  $value  The string to escape
      *
      * @return  string  The escaped string
-     * @throws  \Foolz\SphinxQL\DatabaseException  If an error was encountered during server-side escape
+     * @throws  DatabaseException  If an error was encountered during server-side escape
      */
     public function escape($value)
     {
@@ -247,13 +281,13 @@ class Connection
     /**
      * Wraps the input with identifiers when necessary.
      *
-     * @param  \Foolz\SphinxQL\Expression|string  $value  The string to be quoted, or an Expression to leave it untouched
+     * @param  Expression|string  $value  The string to be quoted, or an Expression to leave it untouched
      *
-     * @return  \Foolz\SphinxQL\Expression|string  The untouched Expression or the quoted string
+     * @return  Expression|string  The untouched Expression or the quoted string
      */
     public function quoteIdentifier($value)
     {
-        if ($value instanceof \Foolz\SphinxQL\Expression) {
+        if ($value instanceof Expression) {
             return $value->value();
         }
 
@@ -292,9 +326,9 @@ class Connection
      * Adds quotes around values when necessary.
      * Based on FuelPHP's quoting function.
      *
-     * @param  \Foolz\SphinxQL\Expression|string  $value  The input string, eventually wrapped in an expression to leave it untouched
+     * @param  Expression|string  $value  The input string, eventually wrapped in an expression to leave it untouched
      *
-     * @return  \Foolz\SphinxQL\Expression|string  The untouched Expression or the quoted string
+     * @return  Expression|string  The untouched Expression or the quoted string
      */
     public function quote($value)
     {
@@ -312,7 +346,7 @@ class Connection
         } elseif (is_float($value)) {
             // Convert to non-locale aware float to prevent possible commas
             return sprintf('%F', $value);
-        }  elseif (is_array($value)) {
+        } elseif (is_array($value)) {
             // Supports MVA attributes
             return '('.implode(',', $this->quoteArr($value)).')';
         }

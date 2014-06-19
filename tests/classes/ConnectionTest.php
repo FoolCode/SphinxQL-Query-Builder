@@ -70,7 +70,7 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
     public function testConnectThrowsPHPException()
     {
         $conn_params    = array(
-            'host'      => 'localhost',
+            'host'      => '127.0.0.1',
             'port'      => 93067,
         );
         $this->connection->setConnectionParams($conn_params);
@@ -83,7 +83,7 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
     public function testConnectThrowsException()
     {
         $conn_params    = array(
-            'host'      => 'localhost',
+            'host'      => '127.0.0.1',
             'port'      => 93067,
         );
         $this->connection->setConnectionParams($conn_params);
@@ -149,7 +149,7 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
     public function testEscapeThrowsException()
     {
         $conn_params    = array(
-            'host'      => 'localhost',
+            'host'      => '127.0.0.1',
             'port'      => 93067,
         );
         // or we get the wrong error popping up

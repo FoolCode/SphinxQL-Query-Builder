@@ -5,12 +5,19 @@ use Foolz\SphinxQL\Expression;
 
 class ConnectionTest extends PHPUnit_Framework_TestCase
 {
+    private $conn_params    = array(
+        'host'      => '127.0.0.1',
+        'port'      => 9307,
+        'username'  => '',
+        'password'  => '',
+        'socket'    => '',
+    );
     private $connection = null;
 
     public function setUp()
     {
         $this->connection = new Connection();
-        $this->connection->setConnectionParams('127.0.0.1', 9307);
+        $this->connection->setConnectionParams($this->conn_params);
         $this->connection->silenceConnectionWarning(false);
     }
 
@@ -24,11 +31,18 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
      */
     public function testGetConnectionParams()
     {
-        $this->assertSame(array('host' => '127.0.0.1', 'port' => 9307), $this->connection->getConnectionParams());
+        $this->assertSame($this->conn_params, $this->connection->getConnectionParams());
 
         // create a new connection and get info
-        $this->connection->setConnectionParams('127.0.0.1', 93067);
-        $this->assertSame(array('host' => '127.0.0.1', 'port' => 93067), $this->connection->getConnectionParams());
+        $conn_params    = array(
+            'host'      => '127.0.0.1',
+            'port'      => 9307,
+            'username'  => '',
+            'password'  => '',
+            'socket'    => '',
+        );
+        $this->connection->setConnectionParams($conn_params);
+        $this->assertSame($conn_params, $this->connection->getConnectionParams());
     }
 
     public function testGetConnection()
@@ -55,7 +69,11 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
      */
     public function testConnectThrowsPHPException()
     {
-        $this->connection->setConnectionParams('127.0.0.1', 93067);
+        $conn_params    = array(
+            'host'      => 'localhost',
+            'port'      => 93067,
+        );
+        $this->connection->setConnectionParams($conn_params);
         $this->connection->connect();
     }
 
@@ -64,7 +82,11 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
      */
     public function testConnectThrowsException()
     {
-        $this->connection->setConnectionParams('127.0.0.1', 93067);
+        $conn_params    = array(
+            'host'      => 'localhost',
+            'port'      => 93067,
+        );
+        $this->connection->setConnectionParams($conn_params);
         $this->connection->silenceConnectionWarning(true);
         $this->connection->connect();
     }
@@ -126,8 +148,12 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
      */
     public function testEscapeThrowsException()
     {
+        $conn_params    = array(
+            'host'      => 'localhost',
+            'port'      => 93067,
+        );
         // or we get the wrong error popping up
-        $this->connection->setConnectionParams('127.0.0.1', 93067);
+        $this->connection->setConnectionParams($conn_params);
         $this->connection->connect();
         $this->connection->escape('\' "" \'\' ');
     }

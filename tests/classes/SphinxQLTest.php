@@ -1,14 +1,18 @@
 <?php
 
-use Foolz\SphinxQL\SphinxQL;
 use Foolz\SphinxQL\Connection as SphinxConnection;
+use Foolz\SphinxQL\SphinxQL;
 
 class SphinxQLTest extends PHPUnit_Framework_TestCase
 {
     public function __construct()
     {
         $conn = new SphinxConnection();
-        $conn->setConnectionParams('127.0.0.1', 9307);
+        $conn_params    = array(
+            'host'      => 'localhost',
+            'port'      => 9307,
+        );
+        $conn->setConnectionParams($conn_params);
 
         SphinxQL::forge($conn);
 

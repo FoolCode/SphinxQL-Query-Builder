@@ -94,7 +94,7 @@ $result = $query->execute();
 
 * __$conn->setConnectionParams($connection_params)__
 
-	`$connection_params` should an array of SphinxQL connection parameter as defined in sphinx configuration _(sphinx.conf)_.
+	`$connection_params` should be an array of SphinxQL connection parameter as defined in sphinx configuration _(sphinx.conf)_.
 	The default params is as follows
 	```php
 	$connection_params    = array(

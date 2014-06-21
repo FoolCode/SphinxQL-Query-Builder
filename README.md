@@ -64,9 +64,16 @@ use Foolz\SphinxQL\Connection;
 
 // create a SphinxQL Connection object to use with SphinxQL
 $conn = new Connection();
-$conn->setConnectionParams('domain.tld', 9306);
+$conn->setConnectionParams(array(
+        'host'      => '127.0.0.1',
+        'port'      => 9307,
+        'username'  => '',
+        'password'  => '',
+        'socket'    => '',
+    )
+);
 
-$query = SphinxQL::create($conn)->select('column_one', 'colume_two')
+$query = SphinxQL::create($conn)->select('column_one', 'column_two')
     ->from('index_delta', 'index_main', 'index_ancient')
     ->match('comment', 'my opinion is superior to yours')
     ->where('banned', '=', 1);
@@ -85,7 +92,19 @@ $result = $query->execute();
 	Suppresses any warnings and errors displayed by the `\MySQLi` extension upon connection failure.
 	_This is disabled by default._
 
-* __$conn->setConnectionParams($host = '127.0.0.1', $port = 9306)__
+* __$conn->setConnectionParams($connection_params)__
+
+	`$connection_params` should an array of SphinxQL connection parameter as defined in sphinx configuration _(sphinx.conf)_.
+	The default params is as follows
+	```php
+	$connection_params    = array(
+        'host'      => '127.0.0.1',
+        'port'      => 9307,
+        'username'  => '',
+        'password'  => '',
+        'socket'    => '',
+    );
+    ```
 
 	Sets the connection parameters used to establish a connection to the server.
 

@@ -2,9 +2,20 @@
 
 namespace Foolz\SphinxQL;
 
-class ConnectionException extends \Exception {};
-class DatabaseException extends \Exception {};
-class SphinxQLException extends \Exception {};
+class ConnectionException extends \Exception
+{
+
+};
+
+class DatabaseException extends \Exception
+{
+
+};
+
+class SphinxQLException extends \Exception
+{
+
+};
 
 /**
  * SphinxQL connection class utilizing the MySQLi extension.
@@ -32,7 +43,18 @@ class Connection
      *
      * @var array
      */
-    protected $connection_params = array('host' => '127.0.0.1', 'port' => 9306);
+    protected $connection_params = array(
+        'host'      => '127.0.0.1',
+        'port'      => 9306,
+        'username'  => '',
+        'password'  => '',
+        'socket'    => '',
+    );
+
+    /**
+     * Class constants
+     */
+    const ERROR_NO_SERVER_CONNECTION    = 10001; //The connection to the server has not been established yet.
 
     /**
      * Forces the \MySQLi connection to suppress all errors returned. This should only be used
@@ -48,16 +70,25 @@ class Connection
     /**
      * Sets the connection parameters.
      *
-     * @param string $host The hostname or IP
-     * @param int $port The port to the host
+     * @param  array  $options  SphinxQL Connection Parameters
+     *              string  'host'      The hostname or IP
+     *              string  'username'  The username
+     *              string  'password'  The password
+     *              int     'port'      The port to the host
+     *              string  'socket'    The socket to connect from
      */
-    public function setConnectionParams($host = '127.0.0.1', $port = 9306)
+    public function setConnectionParams($options)
     {
+        $host   = isset($options['host']) ? $options['host'] : $this->connection_params['host'];
         if ($host === 'localhost') {
             $host = '127.0.0.1';
         }
 
-        $this->connection_params = array('host' => $host, 'port' => $port);
+        $this->connection_params = array_merge(
+            $this->connection_params,
+            $options,
+            array('host' => $host,)
+        );
     }
 
     /**
@@ -83,7 +114,10 @@ class Connection
             return $this->connection;
         }
 
-        throw new ConnectionException('The connection to the server has not been established yet.');
+        throw new ConnectionException(
+            'The connection to the server has not been established yet.',
+            static::ERROR_NO_SERVER_CONNECTION
+        );
     }
 
     /**
@@ -98,16 +132,22 @@ class Connection
     {
         $data = $this->getConnectionParams();
 
+        /* SphinxQL has no concept of DB! */
         if ( ! $suppress_error && ! $this->silence_connection_warning) {
-            $conn = new \MySQLi($data['host'], null, null, null, (int) $data['port'], null);
+            $conn = new \MySQLi(
+                $data['host'], $data['username'], $data['password'], null, $data['port'], $data['socket']
+            );
         } else {
-            $conn = @ new \MySQLi($data['host'], null, null, null, (int) $data['port'], null);
+            $conn = @ new \MySQLi(
+                $data['host'], $data['username'], $data['password'], null, $data['port'], $data['socket']
+            );
         }
 
-        if ($conn->connect_error)
-        {
-            throw new ConnectionException('Connection Error: ['.$conn->connect_errno.']'
-                .$conn->connect_error);
+        if ($conn->connect_error) {
+            throw new ConnectionException(
+                'Connection Error: [' . $conn->connect_errno . ']' . $conn->connect_error,
+                $conn->connect_errno
+            );
         }
 
         $this->connection = $conn;
@@ -155,8 +195,10 @@ class Connection
         $resource = $this->getConnection()->query($query);
 
         if ($this->getConnection()->error) {
-            throw new DatabaseException('['.$this->getConnection()->errno.'] '.
-                $this->getConnection()->error.' [ '.$query.']');
+            throw new DatabaseException(
+                '[' . $this->getConnection()->errno . '] ' . $this->getConnection()->error . ' [ ' . $query . ']',
+                $this->getConnection()->errno
+            );
         }
 
         if ($resource instanceof \mysqli_result) {
@@ -197,6 +239,14 @@ class Connection
         if ($this->getConnection()->error) {
             throw new DatabaseException('['.$this->getConnection()->errno.'] '.
                 $this->getConnection()->error.' [ '.implode(';', $queue).']');
+        }
+
+        if ($this->getConnection()->error) {
+            throw new DatabaseException(
+                '['. $this->getConnection()->errno . '] ' . $this->getConnection()->error .
+                ' [ ' . implode(';', $queue) . ']',
+                $this->getConnection()->errno
+            );
         }
 
         $result = array();

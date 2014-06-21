@@ -5,12 +5,24 @@ use Foolz\SphinxQL\Expression;
 
 class ConnectionTest extends PHPUnit_Framework_TestCase
 {
+    /**
+     * connection parameter
+     * @var array
+     */
+    private $conn_params    = array(
+        'host'      => '127.0.0.1',
+        'port'      => 9307,
+        'username'  => '',
+        'password'  => '',
+        'socket'    => '',
+    );
+
     private $connection = null;
 
     public function setUp()
     {
         $this->connection = new Connection();
-        $this->connection->setConnectionParams('127.0.0.1', 9307);
+        $this->connection->setConnectionParams($this->conn_params);
         $this->connection->silenceConnectionWarning(false);
     }
 
@@ -24,11 +36,18 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
      */
     public function testGetConnectionParams()
     {
-        $this->assertSame(array('host' => '127.0.0.1', 'port' => 9307), $this->connection->getConnectionParams());
+        $this->assertSame($this->conn_params, $this->connection->getConnectionParams());
 
         // create a new connection and get info
-        $this->connection->setConnectionParams('127.0.0.1', 9308);
-        $this->assertSame(array('host' => '127.0.0.1', 'port' => 9308), $this->connection->getConnectionParams());
+        $test_connection_params  = array_merge(
+            $this->conn_params,
+            array(
+                'host'      => '127.0.0.1',
+                'port'      => 9308,
+            )
+        );
+        $this->connection->setConnectionParams($test_connection_params);
+        $this->assertSame($test_connection_params, $this->connection->getConnectionParams());
     }
 
     public function testGetConnection()
@@ -55,7 +74,11 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
      */
     public function testConnectThrowsPHPException()
     {
-        $this->connection->setConnectionParams('127.0.0.1', 9308);
+        $unreachable_port    = array(
+            'host'      => '127.0.0.1',
+            'port'      => 9308,
+        );
+        $this->connection->setConnectionParams($unreachable_port);
         $this->connection->connect();
     }
 
@@ -64,7 +87,11 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
      */
     public function testConnectThrowsException()
     {
-        $this->connection->setConnectionParams('127.0.0.1', 9308);
+        $unreachable_port    = array(
+            'host'      => '127.0.0.1',
+            'port'      => 9308,
+        );
+        $this->connection->setConnectionParams($unreachable_port);
         $this->connection->silenceConnectionWarning(true);
         $this->connection->connect();
     }
@@ -126,8 +153,12 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
      */
     public function testEscapeThrowsException()
     {
+        $unreachable_port    = array(
+            'host'      => '127.0.0.1',
+            'port'      => 9308,
+        );
         // or we get the wrong error popping up
-        $this->connection->setConnectionParams('127.0.0.1', 9308);
+        $this->connection->setConnectionParams($unreachable_port);
         $this->connection->connect();
         $this->connection->escape('\' "" \'\' ');
     }

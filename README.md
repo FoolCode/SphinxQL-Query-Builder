@@ -231,7 +231,7 @@ Will return an array with an `INT` as first member, the number of rows deleted.
         ->match(array('hates', 'despises'), 'Oregano');
     ```
 
-	By default, all inputs are fully escaped. The usage of `SphinxQL::expr($value)` is required to bypass the statement escapes.
+	By default, all inputs are escaped. The usage of `SphinxQL::expr($value)` is required to bypass the default escaping and quoting function.
 
 	The `$half` argument, if set to `true`, will not escape and allow the usage of the following characters: `-`, `|`, `"`. If you plan to use this feature and expose it to public interfaces, it is __recommended__ that you wrap the query in a `try catch` block as the character order may `throw` a query error.
 
@@ -242,7 +242,8 @@ Will return an array with an `INT` as first member, the number of rows deleted.
         $result = SphinxQL::create($conn)->select()
             ->from('rt')
             ->match('title', 'Sora no || Otoshimono', true)
-            ->match('loves', SphinxQL:expr(custom_escaping_fn('(you | me)')));
+            ->match('title', SphinxQL::expr('"Otoshimono"/3'))
+            ->match('loves', SphinxQL::expr(custom_escaping_fn('(you | me)')));
             ->execute();
     }
     catch (\Foolz\SphinxQL\DatabaseException $e)

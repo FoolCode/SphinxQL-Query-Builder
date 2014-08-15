@@ -773,7 +773,7 @@ class SphinxQL
 
             foreach ($this->options as $option) {
                 // do not quote named integer lists
-                if (in_array($option['name'], array('field_weights', 'index_weights')) === false) {
+                if (in_array($option['name'], array('field_weights', 'index_weights', 'max_matches')) === false) {
                     $option['value'] = $this->getConnection()->quote($option['value']);
                 }
 

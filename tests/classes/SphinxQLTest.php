@@ -30,7 +30,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
     public function __construct()
     {
         $conn = new SphinxConnection();
-        $conn->setConnectionParams('127.0.0.1', 9307);
+        $conn->setParam('port', 9307);
         $this->conn = $conn;
 
         SphinxQL::create($this->conn)->getConnection()->query('TRUNCATE RTINDEX rt');

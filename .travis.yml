@@ -5,14 +5,17 @@ php:
   - 5.4
   - 5.5
   - hhvm
+env:
+  - SPHINXSEARCH_VER=trunk
+  - SPHINXSEARCH_VER=branches/rel21
 
 notifications:
   email:
     - woxxy@foolrulez.org
 
 before_install:
-  - svn checkout http://sphinxsearch.googlecode.com/svn/trunk/ sphinxsearch-read-only
-  - cd sphinxsearch-read-only
+  - svn checkout http://sphinxsearch.googlecode.com/svn/${SPHINXSEARCH_VER}/sphinxsearch
+  - cd sphinxsearch
   - ./configure --prefix=/usr/local/sphinx
   - sudo make && sudo make install
   - cd ..

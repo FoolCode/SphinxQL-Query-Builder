@@ -14,7 +14,7 @@ notifications:
     - woxxy@foolrulez.org
 
 before_install:
-  - svn checkout http://sphinxsearch.googlecode.com/svn/${SPHINXSEARCH_VER}/sphinxsearch
+  - svn checkout http://sphinxsearch.googlecode.com/svn/${SPHINXSEARCH_VER}/ sphinxsearch
   - cd sphinxsearch
   - ./configure --prefix=/usr/local/sphinx
   - sudo make && sudo make install

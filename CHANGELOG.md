@@ -1,3 +1,8 @@
+#### 0.9.4
+* Replaced `getConnectionParams()` and `setConnectionParams()` with `getParam()`, `getParams()`, `setParam()`
+* Deprecated `getConnectionParams()` and `setConnectionParams()`
+* Added `ConnectionInterface`
+
 #### 0.9.3
 
 * HHVM support

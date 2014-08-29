@@ -9,10 +9,6 @@ env:
   - SPHINXSEARCH_VER=trunk
   - SPHINXSEARCH_VER=branches/rel21
 
-notifications:
-  email:
-    - woxxy@foolrulez.org
-
 before_install:
   - svn checkout http://sphinxsearch.googlecode.com/svn/${SPHINXSEARCH_VER}/ sphinxsearch
   - cd sphinxsearch

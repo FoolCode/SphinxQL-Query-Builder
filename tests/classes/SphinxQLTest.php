@@ -401,6 +401,14 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
 
         $result = SphinxQL::create($this->conn)->select()
             ->from('rt')
+            ->match('content', 'content')
+            ->option('max_matches', SphinxQL::expr('1'))
+            ->execute();
+
+        $this->assertCount(1, $result);
+
+        $result = SphinxQL::create($this->conn)->select()
+            ->from('rt')
             ->option('comment', 'this should be quoted')
             ->compile()
             ->getCompiled();

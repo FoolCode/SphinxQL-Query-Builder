@@ -772,8 +772,12 @@ class SphinxQL
             $options = array();
 
             foreach ($this->options as $option) {
-                // do not quote named integer lists
-                if (in_array($option['name'], array('field_weights', 'index_weights')) === false) {
+                if ($option['value'] instanceof Expression) {
+                    $option['value'] = $option['value']->value();
+
+                // support for the following else if has been deprecated,
+                // use expressions when using 'field_weights' and 'index_weights'
+                } else if (in_array($option['name'], array('field_weights', 'index_weights')) === false) {
                     $option['value'] = $this->getConnection()->quote($option['value']);
                 }
 

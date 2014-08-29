@@ -1,3 +1,6 @@
+#### 0.9.5
+* `Expression` support for `OPTION` value
+
 #### 0.9.4
 * Replaced `getConnectionParams()` and `setConnectionParams()` with `getParam()`, `getParams()`, `setParam()`
 * Deprecated `getConnectionParams()` and `setConnectionParams()`

@@ -9,7 +9,7 @@ namespace Foolz\SphinxQL;
 class SphinxQL
 {
     /**
-     * The \MySQLi connection for all SphinxQL objects
+     * The connection for all SphinxQL objects
      *
      * @var \Foolz\SphinxQL\Connection
      * @deprecated
@@ -280,7 +280,7 @@ class SphinxQL
     /**
      * Executes a batch of queued queries
      *
-     * @return array The array of results from MySQLi
+     * @return array The array of results
      * @throws SphinxQLException In case no query is in queue
      */
     public function executeBatch()

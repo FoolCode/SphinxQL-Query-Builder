@@ -11,7 +11,7 @@ class SphinxQLException extends \Exception {};
  * It also contains escaping and quoting functions.
  * @package Foolz\SphinxQL
  */
-class Connection
+class Connection implements ConnectionInterface
 {
     /**
      * The \MySQLi connection for this object.
@@ -192,7 +192,7 @@ class Connection
      * @param string $query The query string
      *
      * @return array|int The result array or number of rows affected
-     * @throws \Foolz\SphinxQL\DatabaseException If the executed query procduced an error
+     * @throws \Foolz\SphinxQL\DatabaseException If the executed query produced an error
      */
     public function query($query)
     {

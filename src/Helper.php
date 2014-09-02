@@ -82,71 +82,71 @@ class Helper
     /**
      * Runs query: SHOW META
      *
-     * @return SphinxQL A SphinxQL object ready to be ->execute();
+     * @return array
      */
     public function showMeta()
     {
-        return $this->query('SHOW META');
+        return self::pairsToAssoc($this->query('SHOW META'));
     }
 
     /**
      * Runs query: SHOW META
      *
-     * @return SphinxQL A SphinxQL object ready to be ->execute();
+     * @return array
      */
     public function showWarnings()
     {
-        return $this->query('SHOW WARNINGS');
+        return self::pairsToAssoc($this->query('SHOW WARNINGS'));
     }
 
     /**
      * Runs query: SHOW STATUS
      *
-     * @return SphinxQL A SphinxQL object ready to be ->execute();
+     * @return array
      */
     public function showStatus()
     {
-        return $this->query('SHOW STATUS');
+        return self::pairsToAssoc($this->query('SHOW STATUS'));
     }
 
     /**
      * Runs query: SHOW TABLES
      *
-     * @return SphinxQL A SphinxQL object ready to be ->execute();
+     * @return array
      */
     public function showTables()
     {
-        return $this->query('SHOW TABLES');
+        return self::pairsToAssoc($this->query('SHOW TABLES'));
     }
 
     /**
      * Runs query: SHOW VARIABLES
      *
-     * @return SphinxQL A SphinxQL object ready to be ->execute();
+     * @return array
      */
     public function showVariables()
     {
-        return $this->query('SHOW VARIABLES');
+        return self::pairsToAssoc($this->query('SHOW VARIABLES'));
     }
 
     /**
      * Runs query: SHOW SESSION VARIABLES
      *
-     * @return SphinxQL A SphinxQL object ready to be ->execute();
+     * @return array
      */
     public function showSessionVariables()
     {
-        return $this->query('SHOW SESSION VARIABLES');
+        return self::pairsToAssoc($this->query('SHOW SESSION VARIABLES'));
     }
 
     /**
      * Runs query: SHOW GLOBAL VARIABLES
      *
-     * @return SphinxQL
+     * @return array
      */
     public function showGlobalVariables()
     {
-        return $this->query('SHOW GLOBAL VARIABLES');
+        return self::pairsToAssoc($this->query('SHOW GLOBAL VARIABLES'));
     }
 
     /**

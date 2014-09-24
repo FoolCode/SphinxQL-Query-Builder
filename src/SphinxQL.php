@@ -1001,7 +1001,7 @@ class SphinxQL
     /**
      * MATCH clause (Sphinx-specific)
      *
-     * @param string   $column The column name
+     * @param mixed    $column The column name (can be an array or a string)
      * @param string   $value  The value
      * @param boolean  $half  Exclude ", |, - control characters from being escaped
      *

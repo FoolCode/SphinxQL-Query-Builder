@@ -425,11 +425,11 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
 
         $result = SphinxQL::create($this->conn)->select()
             ->from('rt')
-            ->option('field_weights', [
+            ->option('field_weights', array(
                 'title'   => 80,
                 'content' => 35,
                 'tags'    => 92,
-            ])
+            ))
             ->compile()
             ->getCompiled();
 

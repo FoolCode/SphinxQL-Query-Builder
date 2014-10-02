@@ -1405,7 +1405,7 @@ class SphinxQL
 
     public function resetOrderBy()
     {
-        $this->group_by = array();
+        $this->order_by = array();
         return $this;
     }
 

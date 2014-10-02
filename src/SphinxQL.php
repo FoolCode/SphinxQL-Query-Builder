@@ -606,7 +606,7 @@ class SphinxQL
 
                 if (empty($match['column'])) {
                     $pre .= '';
-                } else if (is_array($match['column'])) {
+                } elseif (is_array($match['column'])) {
                     $pre .= '@('.implode(',',$match['column']).') ';
                 } else {
                     $pre .= '@'.$match['column'].' ';
@@ -774,8 +774,13 @@ class SphinxQL
             foreach ($this->options as $option) {
                 if ($option['value'] instanceof Expression) {
                     $option['value'] = $option['value']->value();
-                } else if (is_array($option['value'])) {
-                    array_walk($option['value'], function(&$itm, $key){$itm="$key=$itm";});
+                } elseif (is_array($option['value'])) {
+                    array_walk(
+                        $option['value'],
+                        function (&$val, $key) {
+                            $val = $key.'='.$val;
+                        }
+                    );
                     $option['value'] = '('.implode(', ', $option['value']).')';
                 } else {
                     $option['value'] = $this->getConnection()->quote($option['value']);

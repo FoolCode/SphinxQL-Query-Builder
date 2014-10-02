@@ -1,3 +1,8 @@
+#### 0.9.6
+* added named integer lists support to `OPTION` with associative array (@alpha0010)
+* deprecated special case `OPTION` for `field_weights` and `index_weights`
+* forced `Connection` to use utf8 charset (@t1gor)
+
 #### 0.9.5
 * `Expression` support for `OPTION` value
 

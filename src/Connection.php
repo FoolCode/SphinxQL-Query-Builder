@@ -155,13 +155,8 @@ class Connection implements ConnectionInterface
             throw new ConnectionException('Connection Error: ['.$conn->connect_errno.']'
                 .$conn->connect_error);
         }
-        
-        /**
-         * Add charset so that real_excape_string could work
-         * 
-         * @link http://php.net/manual/en/mysqli.real-escape-string.php
-         */
-        $conn->set_charset("utf8");
+
+        $conn->set_charset('utf8');
 
         $this->connection = $conn;
 

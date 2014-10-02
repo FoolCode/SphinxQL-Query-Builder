@@ -774,10 +774,10 @@ class SphinxQL
             foreach ($this->options as $option) {
                 if ($option['value'] instanceof Expression) {
                     $option['value'] = $option['value']->value();
-
-                // support for the following else if has been deprecated,
-                // use expressions when using 'field_weights' and 'index_weights'
-                } else if (in_array($option['name'], array('field_weights', 'index_weights')) === false) {
+                } else if (is_array($option['value'])) {
+                    array_walk($option['value'], function(&$itm, $key){$itm="$key=$itm";});
+                    $option['value'] = '('.implode(', ', $option['value']).')';
+                } else {
                     $option['value'] = $this->getConnection()->quote($option['value']);
                 }
 

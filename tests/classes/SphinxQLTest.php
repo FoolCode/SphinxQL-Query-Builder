@@ -422,6 +422,18 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
             ->getCompiled();
 
         $this->assertEquals('SELECT * FROM `rt` OPTION `field_weights` = (content=50)', $result);
+
+        $result = SphinxQL::create($this->conn)->select()
+            ->from('rt')
+            ->option('field_weights', array(
+                'title'   => 80,
+                'content' => 35,
+                'tags'    => 92,
+            ))
+            ->compile()
+            ->getCompiled();
+
+        $this->assertEquals('SELECT * FROM `rt` OPTION `field_weights` = (title=80, content=35, tags=92)', $result);
     }
 
     public function testGroupBy()

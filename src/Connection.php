@@ -74,10 +74,12 @@ class Connection implements ConnectionInterface
                 $value = '127.0.0.1';
             } elseif (stripos($value, 'unix:') === 0) {
                 $param = 'socket';
-                $value = substr($value, 5);
             }
         }
         if ($param === 'socket') {
+            if (stripos($value, 'unix:') === 0) {
+                $value = substr($value, 5);
+            }
             $this->connection_params['host'] = null;
         }
 

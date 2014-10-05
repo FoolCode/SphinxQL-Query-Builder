@@ -32,7 +32,7 @@ class Connection implements ConnectionInterface
      *
      * @var array
      */
-    protected $connection_params = array('host' => '127.0.0.1', 'port' => 9306);
+    protected $connection_params = array('host' => '127.0.0.1', 'port' => 9306, 'socket' => null);
 
     /**
      * Forces the \MySQLi connection to suppress all errors returned. This should only be used

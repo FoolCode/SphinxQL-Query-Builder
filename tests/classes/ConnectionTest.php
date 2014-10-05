@@ -26,7 +26,7 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
     public function testGetParams()
     {
         $this->assertSame(
-            array('host' => '127.0.0.1', 'port' => 9307),
+            array('host' => '127.0.0.1', 'port' => 9307, 'socket' => null),
             $this->connection->getParams()
         );
 
@@ -34,7 +34,7 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
         $this->connection->setParams(array('host' => '127.0.0.2'));
         $this->connection->setParam('port', 9308);
         $this->assertSame(
-            array('host' => '127.0.0.2', 'port' => 9308),
+            array('host' => '127.0.0.2', 'port' => 9308, 'socket' => null),
             $this->connection->getParams()
         );
 
@@ -60,11 +60,11 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
     public function testGetConnectionParams()
     {
         // verify that (deprecated) getConnectionParams continues to work
-        $this->assertSame(array('host' => '127.0.0.1', 'port' => 9307), $this->connection->getConnectionParams());
+        $this->assertSame(array('host' => '127.0.0.1', 'port' => 9307, 'socket' => null), $this->connection->getConnectionParams());
 
         // create a new connection and get info
         $this->connection->setConnectionParams('127.0.0.1', 9308);
-        $this->assertSame(array('host' => '127.0.0.1', 'port' => 9308), $this->connection->getConnectionParams());
+        $this->assertSame(array('host' => '127.0.0.1', 'port' => 9308, 'socket' => null), $this->connection->getConnectionParams());
     }
 
     public function testGetConnection()

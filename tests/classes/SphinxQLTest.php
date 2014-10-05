@@ -310,7 +310,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
             ->where('id', 'NOT IN', array(11, 12))
             ->execute();
 
-        $this->assertCount(4, $result);
+        $this->assertCount(6, $result);
 
         $result = SphinxQL::create($this->conn)->select()
             ->from('rt')

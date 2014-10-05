@@ -60,7 +60,7 @@ class Connection implements ConnectionInterface
     /**
      * Set a single connection parameter. Valid parameters include:
      *
-     * * string host - The hostname or IP
+     * * string host - The hostname, IP address, or unix socket
      * * int port - The port to the host
      * * array options - MySQLi options/values, as an associative array. Example: array(MYSQLI_OPT_CONNECT_TIMEOUT => 2)
      *
@@ -69,8 +69,16 @@ class Connection implements ConnectionInterface
      */
     public function setParam($param, $value)
     {
-        if ($param === 'host' && $value === 'localhost') {
-            $value = '127.0.0.1';
+        if ($param === 'host') {
+            if ($value === 'localhost') {
+                $value = '127.0.0.1';
+            } elseif (stripos($value, 'unix:') === 0) {
+                $param = 'socket';
+                $value = substr($value, 5);
+            }
+        }
+        if ($param === 'socket') {
+            $this->connection_params['host'] = null;
         }
 
         $this->connection_params[$param] = $value;
@@ -146,9 +154,9 @@ class Connection implements ConnectionInterface
         }
 
         if ( ! $suppress_error && ! $this->silence_connection_warning) {
-            $conn->real_connect($data['host'], null, null, null, (int) $data['port'], null);
+            $conn->real_connect($data['host'], null, null, null, (int) $data['port'], $data['socket']);
         } else {
-            @ $conn->real_connect($data['host'], null, null, null, (int) $data['port'], null);
+            @ $conn->real_connect($data['host'], null, null, null, (int) $data['port'], $data['socket']);
         }
 
         if ($conn->connect_error) {

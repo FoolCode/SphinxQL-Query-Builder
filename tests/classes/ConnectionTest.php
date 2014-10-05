@@ -37,6 +37,21 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
             array('host' => '127.0.0.2', 'port' => 9308),
             $this->connection->getParams()
         );
+
+        // create a unix socket connection with host param
+        $this->connection->setParam('host', 'unix:/var/run/sphinx.sock');
+        $this->assertSame(
+            array('host' => null, 'port' => 9308, 'socket' => '/var/run/sphinx.sock'),
+            $this->connection->getParams()
+        );
+
+        // create unix socket connection with socket param
+        $this->connection->setParam('host', '127.0.0.1');
+        $this->connection->setParam('socket', '/var/run/sphinx.sock');
+        $this->assertSame(
+            array('host' => null, 'port' => 9308, 'socket' => '/var/run/sphinx.sock'),
+            $this->connection->getParams()
+        );
     }
 
     /**

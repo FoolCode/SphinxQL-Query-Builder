@@ -87,7 +87,7 @@ $result = $query->execute();
 
 * __$conn->setParams($params = array('host' => '127.0.0.1', 'port' => 9306))__
 
-	Sets the connection parameters used to establish a connection to the server. Supported parameters: 'host', 'port', 'options'.
+	Sets the connection parameters used to establish a connection to the server. Supported parameters: 'host', 'port', 'socket', 'options'.
 
 * __$conn->query($query)__
 
@@ -210,6 +210,9 @@ Will return an array with an `INT` as first member, the number of rows deleted.
 
     // WHERE `column` IN ('value1', 'value2', 'value3')
     $sq->where('column', 'IN', array('value1', 'value2', 'value3'));
+
+    // WHERE `column` NOT IN ('value1', 'value2', 'value3')
+    $sq->where('column', 'NOT IN', array('value1', 'value2', 'value3'));
 
     // WHERE `column` BETWEEN 'value1' AND 'value2'
     // WHERE `example` BETWEEN 10 AND 100

@@ -1,3 +1,7 @@
+#### 0.9.7
+* added support for unix sockets
+* added `NOT IN` condition in `WHERE` statements
+
 #### 0.9.6
 * added named integer lists support to `OPTION` with associative array (@alpha0010)
 * deprecated special case `OPTION` for `field_weights` and `index_weights`

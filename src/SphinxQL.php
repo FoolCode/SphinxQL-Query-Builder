@@ -679,8 +679,8 @@ class SphinxQL
                         $query .= $this->getConnection()->quoteIdentifier($where['column']).' ';
                     }
 
-                    if (strtoupper($where['operator']) === 'IN') {
-                        $query .= 'IN ('.implode(', ', $this->getConnection()->quoteArr($where['value'])).') ';
+                    if (in_array(strtoupper($where['operator']), array('IN', 'NOT IN'), true)) {
+                        $query .= strtoupper($where['operator']).' ('.implode(', ', $this->getConnection()->quoteArr($where['value'])).') ';
                     } else {
                         $query .= $where['operator'].' '.$this->getConnection()->quote($where['value']).' ';
                     }

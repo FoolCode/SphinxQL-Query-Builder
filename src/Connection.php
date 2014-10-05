@@ -32,7 +32,7 @@ class Connection implements ConnectionInterface
      *
      * @var array
      */
-    protected $connection_params = array('host' => '127.0.0.1', 'port' => 9306);
+    protected $connection_params = array('host' => '127.0.0.1', 'port' => 9306, 'socket' => null);
 
     /**
      * Forces the \MySQLi connection to suppress all errors returned. This should only be used
@@ -60,8 +60,9 @@ class Connection implements ConnectionInterface
     /**
      * Set a single connection parameter. Valid parameters include:
      *
-     * * string host - The hostname or IP
+     * * string host - The hostname, IP, or socket
      * * int port - The port to the host
+     * * string socket - The Unix socket file
      * * array options - MySQLi options/values, as an associative array. Example: array(MYSQLI_OPT_CONNECT_TIMEOUT => 2)
      *
      * @param string $param Name of the parameter to modify.
@@ -69,8 +70,15 @@ class Connection implements ConnectionInterface
      */
     public function setParam($param, $value)
     {
-        if ($param === 'host' && $value === 'localhost') {
-            $value = '127.0.0.1';
+        if ($param === 'host') {
+            if ($value === 'localhost') {
+                $value = '127.0.0.1';
+            } elseif ($value[0] === '/') {
+                $param = 'socket';
+            }
+        }
+        if ($param === 'socket') {                   // the reverse is not needed since real_connect()
+            $this->connection_params['host'] = null; // determines type via the 'host' parameter
         }
 
         $this->connection_params[$param] = $value;
@@ -79,7 +87,7 @@ class Connection implements ConnectionInterface
     /**
      * Sets the connection parameters.
      *
-     * @param string $host The hostname or IP
+     * @param string $host The hostname, IP, or socket
      * @param int $port The port to the host
      * @deprecated Use ::setParams(array $params) or ::setParam($param, $value) instead. (deprecated August 2014)
      */
@@ -146,9 +154,9 @@ class Connection implements ConnectionInterface
         }
 
         if ( ! $suppress_error && ! $this->silence_connection_warning) {
-            $conn->real_connect($data['host'], null, null, null, (int) $data['port'], null);
+            $conn->real_connect($data['host'], null, null, null, (int) $data['port'], $data['socket']);
         } else {
-            @ $conn->real_connect($data['host'], null, null, null, (int) $data['port'], null);
+            @ $conn->real_connect($data['host'], null, null, null, (int) $data['port'], $data['socket']);
         }
 
         if ($conn->connect_error) {

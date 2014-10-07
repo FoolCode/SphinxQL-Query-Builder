@@ -187,7 +187,7 @@ This will return an `INT` with the number of rows affected.
 
 Will return an array with an `INT` as first member, the number of rows deleted.
 
-* __$sq = SphinxQL::create($conn)->delete()->from($column)__
+* __$sq = SphinxQL::create($conn)->delete()->from($index)->where(...)__
 
 	Begins a `DELETE`.
 

@@ -537,16 +537,12 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
     {
         $this->refill();
 
-        SphinxQL::create($this->conn)->delete()
+        $result = SphinxQL::create($this->conn)->delete()
             ->from('rt')
             ->where('id', 'IN', array(10, 11, 12))
             ->execute();
 
-        $result = SphinxQL::create($this->conn)->select()
-            ->from('rt')
-            ->execute();
-
-        $this->assertCount(5, $result);
+        $this->assertCount(3, $result);
     }
 
     /**

@@ -542,7 +542,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
             ->where('id', 'IN', array(10, 11, 12))
             ->execute();
 
-        $this->assertCount(3, $result);
+        $this->assertSame(3, $result);
     }
 
     /**

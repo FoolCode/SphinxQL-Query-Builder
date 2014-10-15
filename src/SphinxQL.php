@@ -171,14 +171,12 @@ class SphinxQL
         'variablesGlobal' => 'SHOW GLOBAL VARIABLES',
     );
 
-    public function __construct(Connection $connection = null, $static = false)
+    public function __construct(ConnectionInterface $connection = null, $static = false)
     {
-        if ($connection instanceof \Foolz\SphinxQL\Connection) {
-            if ($static) {
-                static::$stored_connection = $connection;
-            } else {
-                $this->local_connection = $connection;
-            }
+        if ($static) {
+            static::$stored_connection = $connection;
+        } else {
+            $this->local_connection = $connection;
         }
     }
 
@@ -190,7 +188,7 @@ class SphinxQL
      * @return \Foolz\SphinxQL\SphinxQL The current object
      * @deprecated Use ::create instead, coupled with an own static method if static connection is necessary
      */
-    public static function forge(Connection $connection = null)
+    public static function forge(ConnectionInterface $connection = null)
     {
         return new SphinxQL($connection, true);
     }
@@ -202,7 +200,7 @@ class SphinxQL
      *
      * @return \Foolz\SphinxQL\SphinxQL The current object
      */
-    public static function create(Connection $connection)
+    public static function create(ConnectionInterface $connection)
     {
         return new SphinxQL($connection);
     }
@@ -603,7 +601,6 @@ class SphinxQL
 
             foreach ($this->match as $match) {
                 $pre = '';
-
                 if (empty($match['column'])) {
                     $pre .= '';
                 } elseif (is_array($match['column'])) {
@@ -624,7 +621,6 @@ class SphinxQL
             $matched = implode(' ', $matched);
             $query .= $this->getConnection()->escape(trim($matched)).') ';
         }
-
         return $query;
     }
 

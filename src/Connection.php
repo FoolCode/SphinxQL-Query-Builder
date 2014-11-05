@@ -217,11 +217,11 @@ class Connection implements ConnectionInterface
      */
     public function close()
     {
-        $this->getConnection()->close();
-        $this->connection = null;
-
 	    // restore encoding
 	    mb_internal_encoding($this->internal_encoding);
+
+        $this->getConnection()->close();
+        $this->connection = null;
     }
 
     /**

@@ -73,8 +73,8 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
 	 */
 	public function testConnect()
 	{
+		// change internal encoding
 		mb_internal_encoding("KOI8-R");
-		$this->connection->connect();
 
 		$this->assertEquals(true, $this->connection->connect());
 		$this->assertEquals("UTF-8", mb_internal_encoding());
@@ -85,6 +85,9 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
 
 		$this->connection->close();
 		$this->assertEquals("KOI8-R", mb_internal_encoding());
+
+		$this->setExpectedException('ConnectionException');
+		$this->connection->getConnection();
 	}
 
     /**

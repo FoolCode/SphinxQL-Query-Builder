@@ -20,6 +20,13 @@ class Connection implements ConnectionInterface
      */
     protected $connection = null;
 
+	/**
+	 * Internal encoding
+	 *
+	 * @var string
+	 */
+	protected $internal_encoding = null;
+
     /**
      * Disables any warning outputs returned on the \MySQLi connection with @ prefix.
      *
@@ -157,9 +164,37 @@ class Connection implements ConnectionInterface
         }
 
         $this->connection = $conn;
+	    $this->setEncoding();
 
         return true;
     }
+
+	/**
+     * Set connection encoding and mb encoding for multi-byte chars support
+	 * @return void
+     */
+	public function setEncoding()
+	{
+		// remember for restoring
+		$this->internal_encoding = mb_internal_encoding();
+
+		// set internal multi-byte encoding to UTF-8
+		mb_internal_encoding("UTF-8");
+
+		/**
+		 * @link http://php.net/manual/en/mysqli.real-escape-string.php
+		 */
+		$this->connection->set_charset("utf8");
+	}
+
+	/**
+	 * Return current connection encoding
+	 * @return string
+	 */
+	public function getEncoding()
+	{
+		return $this->connection->character_set_name();
+	}
 
     /**
      * Pings the Sphinx server.
@@ -184,6 +219,9 @@ class Connection implements ConnectionInterface
     {
         $this->getConnection()->close();
         $this->connection = null;
+
+	    // restore encoding
+	    mb_internal_encoding($this->internal_encoding);
     }
 
     /**

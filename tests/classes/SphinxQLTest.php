@@ -382,9 +382,13 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
         $this->assertSame('this maybe that\^32 and \| hi', SphinxQL::create($this->conn)->escapeMatch('this MAYBE that^32 and | hi'));
     }
 
+	/**
+	 * @link https://github.com/FoolCode/SphinxQL-Query-Builder/issues/33
+	 */
     public function testHalfEscapeMatch()
     {
         $this->assertSame('this maybe that\^32 and | hi', SphinxQL::create($this->conn)->halfEscapeMatch('this MAYBE that^32 and | hi'));
+	    $this->assertSame('stärkergradig', SphinxQL::create($this->conn)->halfEscapeMatch('stärkergradig'));
     }
 
     public function testOption()

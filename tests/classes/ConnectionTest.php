@@ -14,12 +14,6 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
         $this->connection->silenceConnectionWarning(false);
     }
 
-	public function tearDown()
-	{
-		$this->connection->close();
-		$this->connection = null;
-	}
-
     public function test()
     {
         new Connection();
@@ -79,11 +73,18 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
 	 */
 	public function testConnect()
 	{
+		mb_internal_encoding("KOI8-R");
+		$this->connection->connect();
+
 		$this->assertEquals(true, $this->connection->connect());
+		$this->assertEquals("UTF-8", mb_internal_encoding());
 
 		// and that encoding was set
 		// somehow it fails on my instance, but doesn't throw an error
 		$this->assertEquals('utf8', $this->connection->getEncoding());
+
+		$this->connection->close();
+		$this->assertEquals("KOI8-R", mb_internal_encoding());
 	}
 
     /**
@@ -209,17 +210,4 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
             $this->connection->quoteArr(array(null, true, false, new Expression("fo'o'bar"), 123, 12.3, '12.3', '12'))
         );
     }
-
-	/**
-	 * @covers \Foolz\SphinxQL\Connection::setEncoding
-	 */
-	public function testSetEncoding()
-	{
-		mb_internal_encoding("KOI8-R");
-		$this->connection->connect();
-		$this->assertEquals("UTF-8", mb_internal_encoding());
-
-		$this->connection->close();
-		$this->assertEquals("KOI8-R", mb_internal_encoding());
-	}
 }

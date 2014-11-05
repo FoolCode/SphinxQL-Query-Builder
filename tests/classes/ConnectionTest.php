@@ -14,6 +14,12 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
         $this->connection->silenceConnectionWarning(false);
     }
 
+	public function tearDown()
+	{
+		$this->connection->close();
+		$this->connection = null;
+	}
+
     public function test()
     {
         new Connection();

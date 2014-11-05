@@ -86,7 +86,7 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
 		$this->connection->close();
 		$this->assertEquals("KOI8-R", mb_internal_encoding());
 
-		$this->setExpectedException('ConnectionException');
+		$this->setExpectedException('Foolz\SphinxQL\ConnectionException');
 		$this->connection->getConnection();
 	}
 

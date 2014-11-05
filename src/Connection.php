@@ -11,7 +11,7 @@ class SphinxQLException extends \Exception {};
  * It also contains escaping and quoting functions.
  * @package Foolz\SphinxQL
  */
-class Connection
+class Connection implements ConnectionInterface
 {
     /**
      * The \MySQLi connection for this object.
@@ -19,6 +19,13 @@ class Connection
      * @var \MySQLi
      */
     protected $connection = null;
+
+	/**
+	 * Internal encoding
+	 *
+	 * @var string
+	 */
+	protected $internal_encoding = null;
 
     /**
      * Disables any warning outputs returned on the \MySQLi connection with @ prefix.
@@ -46,28 +53,68 @@ class Connection
     }
 
     /**
+     * Sets one or more connection parameters.
+     *
+     * @param array $params Associative array of parameters and values.
+     */
+    public function setParams(Array $params)
+    {
+        foreach ($params as $param => $value) {
+            $this->setParam($param, $value);
+        }
+    }
+
+    /**
+     * Set a single connection parameter. Valid parameters include:
+     *
+     * * string host - The hostname or IP
+     * * int port - The port to the host
+     * * array options - MySQLi options/values, as an associative array. Example: array(MYSQLI_OPT_CONNECT_TIMEOUT => 2)
+     *
+     * @param string $param Name of the parameter to modify.
+     * @param mixed $value Value to which the parameter will be set.
+     */
+    public function setParam($param, $value)
+    {
+        if ($param === 'host' && $value === 'localhost') {
+            $value = '127.0.0.1';
+        }
+
+        $this->connection_params[$param] = $value;
+    }
+
+    /**
      * Sets the connection parameters.
      *
      * @param string $host The hostname or IP
      * @param int $port The port to the host
+     * @deprecated Use ::setParams(array $params) or ::setParam($param, $value) instead. (deprecated August 2014)
      */
     public function setConnectionParams($host = '127.0.0.1', $port = 9306)
     {
-        if ($host === 'localhost') {
-            $host = '127.0.0.1';
-        }
+        $this->setParam('host', $host);
+        $this->setParam('port', $port);
+    }
 
-        $this->connection_params = array('host' => $host, 'port' => $port);
+    /**
+     * Returns the connection parameters (host, port, connection timeout) for the current instance.
+     *
+     * @return array $params The current connection parameters
+     */
+    public function getParams()
+    {
+        return $this->connection_params;
     }
 
     /**
      * Returns the connection parameters (host, port) for the current instance.
      *
      * @return array The current connection parameters
+     * @deprecated Use ::getParams() instead. (deprecated August 2014)
      */
     public function getConnectionParams()
     {
-        return $this->connection_params;
+        return $this->getParams();
     }
 
     /**
@@ -96,24 +143,58 @@ class Connection
      */
     public function connect($suppress_error = false)
     {
-        $data = $this->getConnectionParams();
+        $data = $this->getParams();
+        $conn = mysqli_init();
 
-        if ( ! $suppress_error && ! $this->silence_connection_warning) {
-            $conn = new \MySQLi($data['host'], null, null, null, (int) $data['port'], null);
-        } else {
-            $conn = @ new \MySQLi($data['host'], null, null, null, (int) $data['port'], null);
+        if ( ! empty($data['options'])) {
+            foreach ($data['options'] as $option => $value) {
+                $conn->options($option, $value);
+            }
         }
 
-        if ($conn->connect_error)
-        {
+        if ( ! $suppress_error && ! $this->silence_connection_warning) {
+            $conn->real_connect($data['host'], null, null, null, (int) $data['port'], null);
+        } else {
+            @ $conn->real_connect($data['host'], null, null, null, (int) $data['port'], null);
+        }
+
+        if ($conn->connect_error) {
             throw new ConnectionException('Connection Error: ['.$conn->connect_errno.']'
                 .$conn->connect_error);
         }
 
         $this->connection = $conn;
+	    $this->setEncoding();
 
         return true;
     }
+
+	/**
+     * Set connection encoding and mb encoding for multi-byte chars support
+	 * @return void
+     */
+	public function setEncoding()
+	{
+		// remember for restoring
+		$this->internal_encoding = mb_internal_encoding();
+
+		// set internal multi-byte encoding to UTF-8
+		mb_internal_encoding("UTF-8");
+
+		/**
+		 * @link http://php.net/manual/en/mysqli.real-escape-string.php
+		 */
+		$this->connection->set_charset("utf8");
+	}
+
+	/**
+	 * Return current connection encoding
+	 * @return string
+	 */
+	public function getEncoding()
+	{
+		return $this->connection->character_set_name();
+	}
 
     /**
      * Pings the Sphinx server.
@@ -136,6 +217,9 @@ class Connection
      */
     public function close()
     {
+	    // restore encoding
+	    mb_internal_encoding($this->internal_encoding);
+
         $this->getConnection()->close();
         $this->connection = null;
     }
@@ -146,7 +230,7 @@ class Connection
      * @param string $query The query string
      *
      * @return array|int The result array or number of rows affected
-     * @throws \Foolz\SphinxQL\DatabaseException If the executed query procduced an error
+     * @throws \Foolz\SphinxQL\DatabaseException If the executed query produced an error
      */
     public function query($query)
     {

@@ -30,7 +30,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
     public function __construct()
     {
         $conn = new SphinxConnection();
-        $conn->setConnectionParams('127.0.0.1', 9307);
+        $conn->setParam('port', 9307);
         $this->conn = $conn;
 
         SphinxQL::create($this->conn)->getConnection()->query('TRUNCATE RTINDEX rt');
@@ -382,9 +382,13 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
         $this->assertSame('this maybe that\^32 and \| hi', SphinxQL::create($this->conn)->escapeMatch('this MAYBE that^32 and | hi'));
     }
 
+	/**
+	 * @link https://github.com/FoolCode/SphinxQL-Query-Builder/issues/33
+	 */
     public function testHalfEscapeMatch()
     {
         $this->assertSame('this maybe that\^32 and | hi', SphinxQL::create($this->conn)->halfEscapeMatch('this MAYBE that^32 and | hi'));
+	    $this->assertSame('stärkergradig', SphinxQL::create($this->conn)->halfEscapeMatch('stärkergradig'));
     }
 
     public function testOption()
@@ -401,6 +405,14 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
 
         $result = SphinxQL::create($this->conn)->select()
             ->from('rt')
+            ->match('content', 'content')
+            ->option('max_matches', SphinxQL::expr('1'))
+            ->execute();
+
+        $this->assertCount(1, $result);
+
+        $result = SphinxQL::create($this->conn)->select()
+            ->from('rt')
             ->option('comment', 'this should be quoted')
             ->compile()
             ->getCompiled();
@@ -409,7 +421,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
 
         $result = SphinxQL::create($this->conn)->select()
             ->from('rt')
-            ->option('field_weights', '(content=50)')
+            ->option('field_weights', SphinxQL::expr('(content=50)'))
             ->compile()
             ->getCompiled();
 

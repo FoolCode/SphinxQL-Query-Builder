@@ -9,7 +9,7 @@ namespace Foolz\SphinxQL;
 class SphinxQL
 {
     /**
-     * The \MySQLi connection for all SphinxQL objects
+     * The connection for all SphinxQL objects
      *
      * @var \Foolz\SphinxQL\Connection
      * @deprecated
@@ -280,7 +280,7 @@ class SphinxQL
     /**
      * Executes a batch of queued queries
      *
-     * @return array The array of results from MySQLi
+     * @return array The array of results
      * @throws SphinxQLException In case no query is in queue
      */
     public function executeBatch()
@@ -772,8 +772,12 @@ class SphinxQL
             $options = array();
 
             foreach ($this->options as $option) {
-                // do not quote named integer lists
-                if (in_array($option['name'], array('field_weights', 'index_weights')) === false) {
+                if ($option['value'] instanceof Expression) {
+                    $option['value'] = $option['value']->value();
+
+                // support for the following else if has been deprecated,
+                // use expressions when using 'field_weights' and 'index_weights'
+                } else if (in_array($option['name'], array('field_weights', 'index_weights')) === false) {
                     $option['value'] = $this->getConnection()->quote($option['value']);
                 }
 

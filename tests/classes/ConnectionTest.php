@@ -10,7 +10,7 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->connection = new Connection();
-        $this->connection->setConnectionParams('127.0.0.1', 9307);
+        $this->connection->setParams(array('host' => '127.0.0.1', 'port' => 9307));
         $this->connection->silenceConnectionWarning(false);
     }
 
@@ -20,10 +20,31 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers \Foolz\SphinxQL\Connection::setParam
+     * @covers \Foolz\SphinxQL\Connection::setParams
+     */
+    public function testGetParams()
+    {
+        $this->assertSame(
+            array('host' => '127.0.0.1', 'port' => 9307),
+            $this->connection->getParams()
+        );
+
+        // create a new connection and get info
+        $this->connection->setParams(array('host' => '127.0.0.2'));
+        $this->connection->setParam('port', 9308);
+        $this->assertSame(
+            array('host' => '127.0.0.2', 'port' => 9308),
+            $this->connection->getParams()
+        );
+    }
+
+    /**
      * @covers \Foolz\SphinxQL\Connection::setConnectionParams
      */
     public function testGetConnectionParams()
     {
+        // verify that (deprecated) getConnectionParams continues to work
         $this->assertSame(array('host' => '127.0.0.1', 'port' => 9307), $this->connection->getConnectionParams());
 
         // create a new connection and get info
@@ -45,17 +66,36 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
         $this->connection->getConnection();
     }
 
-    public function testConnect()
-    {
-        $this->connection->connect();
-    }
+	/**
+	 * @covers \Foolz\SphinxQL\Connection::connect
+	 * @covers \Foolz\SphinxQL\Connection::setEncoding
+	 * @covers \Foolz\SphinxQL\Connection::getEncoding
+	 */
+	public function testConnect()
+	{
+		// change internal encoding
+		mb_internal_encoding("KOI8-R");
+
+		$this->assertEquals(true, $this->connection->connect());
+		$this->assertEquals("UTF-8", mb_internal_encoding());
+
+		// and that encoding was set
+		// somehow it fails on my instance, but doesn't throw an error
+		$this->assertEquals('utf8', $this->connection->getEncoding());
+
+		$this->connection->close();
+		$this->assertEquals("KOI8-R", mb_internal_encoding());
+
+		$this->setExpectedException('Foolz\SphinxQL\ConnectionException');
+		$this->connection->getConnection();
+	}
 
     /**
      * @expectedException PHPUnit_Framework_Error_Warning
      */
     public function testConnectThrowsPHPException()
     {
-        $this->connection->setConnectionParams('127.0.0.1', 9308);
+        $this->connection->setParam('port', 9308);
         $this->connection->connect();
     }
 
@@ -64,7 +104,7 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
      */
     public function testConnectThrowsException()
     {
-        $this->connection->setConnectionParams('127.0.0.1', 9308);
+        $this->connection->setParam('port', 9308);
         $this->connection->silenceConnectionWarning(true);
         $this->connection->connect();
     }
@@ -127,7 +167,7 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
     public function testEscapeThrowsException()
     {
         // or we get the wrong error popping up
-        $this->connection->setConnectionParams('127.0.0.1', 9308);
+        $this->connection->setParam('port', 9308);
         $this->connection->connect();
         $this->connection->escape('\' "" \'\' ');
     }

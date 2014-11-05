@@ -12,7 +12,8 @@
         "irc": "irc://irc.irchighway.net/fooldriver"
     },
     "require": {
-        "php": ">=5.3.0"
+        "php": ">=5.3.0",
+        "ext-mysqli": "*"
     },
     "autoload": {
         "psr-4": {

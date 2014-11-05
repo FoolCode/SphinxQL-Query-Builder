@@ -14,7 +14,7 @@ class HelperTest extends PHPUnit_Framework_TestCase
     public function __construct()
     {
         $conn = new Connection();
-        $conn->setConnectionParams('127.0.0.1', 9307);
+        $conn->setParam('port', 9307);
         $this->conn = $conn;
 
         SphinxQL::create($this->conn)->query('TRUNCATE RTINDEX rt')->execute();

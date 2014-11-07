@@ -1398,4 +1398,34 @@ class SphinxQL
 
         return $this;
     }
+
+    public function resetOrderBy()
+    {
+        $this->order_by = array();
+        return $this;
+    }
+
+    public function resetWhere()
+    {
+        $this->where = array();
+        return $this;
+    }
+
+    public function resetMatch()
+    {
+        $this->match = array();
+        return $this;
+    }
+
+    public function resetGroupBy()
+    {
+        $this->group_by = array();
+        return $this;
+    }
+
+    public function resetOptions()
+    {
+        $this->options = array();
+        return $this;
+    }
 }

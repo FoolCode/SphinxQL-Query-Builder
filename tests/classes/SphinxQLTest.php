@@ -387,11 +387,13 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
     public function testEscapeMatch()
     {
         $this->assertSame('this maybe that\^32 and \| hi', SphinxQL::create($this->conn)->escapeMatch('this MAYBE that^32 and | hi'));
+        $this->assertSame('stärkergradig \| mb', SphinxQL::create($this->conn)->escapeMatch('stärkergradig | mb'));
     }
 
     public function testHalfEscapeMatch()
     {
         $this->assertSame('this maybe that\^32 and | hi', SphinxQL::create($this->conn)->halfEscapeMatch('this MAYBE that^32 and | hi'));
+        $this->assertSame('stärkergradig | mb', SphinxQL::create($this->conn)->halfEscapeMatch('stärkergradig | mb'));
     }
 
     public function testOption()

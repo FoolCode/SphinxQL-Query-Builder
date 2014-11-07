@@ -21,18 +21,25 @@ class Connection implements ConnectionInterface
     protected $connection = null;
 
     /**
-     * Disables any warning outputs returned on the \MySQLi connection with @ prefix.
-     *
-     * @var boolean
-     */
-    protected $silence_connection_warning = false;
-
-    /**
      * The connection parameters for the database server.
      *
      * @var array
      */
     protected $connection_params = array('host' => '127.0.0.1', 'port' => 9306, 'socket' => null);
+
+    /**
+     * Internal Encoding
+     *
+     * @var string
+     */
+    protected $internal_encoding = null;
+
+    /**
+     * Disables any warning outputs returned on the \MySQLi connection with @ prefix.
+     *
+     * @var boolean
+     */
+    protected $silence_connection_warning = false;
 
     /**
      * Forces the \MySQLi connection to suppress all errors returned. This should only be used
@@ -169,6 +176,7 @@ class Connection implements ConnectionInterface
         $conn->set_charset('utf8');
 
         $this->connection = $conn;
+        $this->mbPush();
 
         return true;
     }
@@ -194,6 +202,7 @@ class Connection implements ConnectionInterface
      */
     public function close()
     {
+        $this->mbPop();
         $this->getConnection()->close();
         $this->connection = null;
     }
@@ -395,5 +404,23 @@ class Connection implements ConnectionInterface
         }
 
         return $result;
+    }
+
+    /**
+     * Enter UTF-8 multi-byte workaround mode.
+     */
+    public function mbPush()
+    {
+        $this->internal_encoding = mb_internal_encoding();
+        mb_internal_encoding('UTF-8');
+    }
+
+    /**
+     * Exit UTF-8 multi-byte workaround mode.
+     */
+    public function mbPop()
+    {
+        mb_internal_encoding($this->internal_encoding);
+        $this->internal_encoding = null;
     }
 }

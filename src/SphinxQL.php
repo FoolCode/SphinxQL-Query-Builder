@@ -1360,7 +1360,7 @@ class SphinxQL
         $string = str_replace(array_keys($from_to), array_values($from_to), $string);
 
         // this manages to lower the error rate by a lot
-        if (substr_count($string, '"') % 2 !== 0) {
+        if (mb_substr_count($string, '"') % 2 !== 0) {
             $string .= '"';
         }
 

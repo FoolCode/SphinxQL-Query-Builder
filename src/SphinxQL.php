@@ -789,6 +789,7 @@ class SphinxQL
             $query .= 'OPTION '.implode(', ', $options);
         }
 
+        $query = trim($query);
         $this->last_compiled = $query;
 
         return $this;
@@ -826,6 +827,7 @@ class SphinxQL
             $query .= implode(', ', $query_sub);
         }
 
+        $query = trim($query);
         $this->last_compiled = $query;
 
         return $this;
@@ -865,6 +867,7 @@ class SphinxQL
 
         $query .= $this->compileMatch().$this->compileWhere();
 
+        $query = trim($query);
         $this->last_compiled = $query;
 
         return $this;
@@ -887,6 +890,7 @@ class SphinxQL
             $query .= $this->compileWhere();
         }
 
+        $query = trim($query);
         $this->last_compiled = $query;
 
         return $this;
@@ -1399,13 +1403,6 @@ class SphinxQL
         return $this;
     }
 
-    public function resetOrderBy()
-    {
-        $this->order_by = array();
-
-        return $this;
-    }
-
     public function resetWhere()
     {
         $this->where = array();
@@ -1430,6 +1427,13 @@ class SphinxQL
     public function resetWithinGroupOrderBy()
     {
         $this->within_group_order_by = array();
+
+        return $this;
+    }
+
+    public function resetOrderBy()
+    {
+        $this->order_by = array();
 
         return $this;
     }

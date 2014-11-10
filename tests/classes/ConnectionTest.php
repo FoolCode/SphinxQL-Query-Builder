@@ -14,6 +14,11 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
         $this->connection->silenceConnectionWarning(false);
     }
 
+    public function tearDown()
+    {
+        $this->connection = null;
+    }
+
     public function test()
     {
         new Connection();
@@ -208,5 +213,17 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
             array('null', "'1'", "'0'", "fo'o'bar", "123", "12.3", "'12.3'", "'12'"),
             $this->connection->quoteArr(array(null, true, false, new Expression("fo'o'bar"), 123, 12.3, '12.3', '12'))
         );
+    }
+
+    public function testMbPush()
+    {
+        $this->connection->mbPush();
+        $this->assertEquals('UTF-8', $this->connection->getInternalEncoding());
+    }
+
+    public function testMbPop()
+    {
+        $this->connection->mbPush()->mbPop();
+        $this->assertEquals(null, $this->connection->getInternalEncoding());
     }
 }

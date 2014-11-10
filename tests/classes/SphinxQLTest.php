@@ -573,4 +573,31 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('1', $result[1][0]['Value']);
         $this->assertEquals('11', $result[2][0]['id']);
     }
+
+    /**
+     * @covers \Foolz\SphinxQL\SphinxQL::resetWhere
+     * @covers \Foolz\SphinxQL\SphinxQL::resetMatch
+     * @covers \Foolz\SphinxQL\SphinxQL::resetGroupBy
+     * @covers \Foolz\SphinxQL\SphinxQL::resetWithinGroupOrderBy
+     * @covers \Foolz\SphinxQL\SphinxQL::resetOptions
+     */
+    public function testResetMethods()
+    {
+        $result = SphinxQL::create($this->conn)->select()
+            ->from('rt')
+            ->where('id', 'IN', array(10, 11))
+            ->resetWhere()
+            ->match('title', 'value')
+            ->resetMatch()
+            ->groupBy('gid')
+            ->resetGroupBy()
+            ->withinGroupOrderBy('id', 'desc')
+            ->resetWithinGroupOrderBy()
+            ->option('comment', 'this should be quoted')
+            ->resetOptions()
+            ->compile()
+            ->getCompiled();
+
+        $this->assertEquals('SELECT * FROM `rt`', $result);
+    }
 }

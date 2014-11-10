@@ -117,6 +117,16 @@ class Connection implements ConnectionInterface
     }
 
     /**
+     * Returns the internal encoding.
+     *
+     * @return string current multibyte internal encoding
+     */
+    public function getInternalEncoding()
+    {
+        return $this->internal_encoding;
+    }
+
+    /**
      * Returns the connection parameters (host, port) for the current instance.
      *
      * @return array The current connection parameters
@@ -156,13 +166,13 @@ class Connection implements ConnectionInterface
         $data = $this->getParams();
         $conn = mysqli_init();
 
-        if ( ! empty($data['options'])) {
+        if (!empty($data['options'])) {
             foreach ($data['options'] as $option => $value) {
                 $conn->options($option, $value);
             }
         }
 
-        if ( ! $suppress_error && ! $this->silence_connection_warning) {
+        if (!$suppress_error && ! $this->silence_connection_warning) {
             $conn->real_connect($data['host'], null, null, null, (int) $data['port'], $data['socket']);
         } else {
             @ $conn->real_connect($data['host'], null, null, null, (int) $data['port'], $data['socket']);
@@ -174,7 +184,6 @@ class Connection implements ConnectionInterface
         }
 
         $conn->set_charset('utf8');
-
         $this->connection = $conn;
         $this->mbPush();
 
@@ -413,6 +422,8 @@ class Connection implements ConnectionInterface
     {
         $this->internal_encoding = mb_internal_encoding();
         mb_internal_encoding('UTF-8');
+
+        return $this;
     }
 
     /**
@@ -422,5 +433,7 @@ class Connection implements ConnectionInterface
     {
         mb_internal_encoding($this->internal_encoding);
         $this->internal_encoding = null;
+
+        return $this;
     }
 }

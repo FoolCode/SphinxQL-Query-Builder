@@ -34,7 +34,6 @@ class HelperTest extends PHPUnit_Framework_TestCase
         array_shift($describe);
         $this->assertSame(
             array(
-                //	array('Field' => 'id', 'Type' => 'integer'), this can be bigint on id64 sphinx
                 array('Field' => 'title', 'Type' => 'field'),
                 array('Field' => 'content', 'Type' => 'field'),
                 array('Field' => 'gid', 'Type' => 'uint'),

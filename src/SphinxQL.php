@@ -1368,9 +1368,15 @@ class SphinxQL
             $string .= '"';
         }
 
+        $string = preg_replace('/-[\s-]*-/u', '-', $string);
+
         $from_to_preg = array(
-            "'\"([^\s]+)-([^\s]*)\"'" => "\\1\-\\2",
-            "'([^\s]+)-([^\s]*)'" => "\"\\1\-\\2\""
+            '/([-|])\s*$/u' => '\\\\\1',
+            '/\|[\s|]*\|/u' => '|',
+
+            // prevent accidental negation in natural language
+            '/(\S+)-(\S+)/u'       => '\1\-\2',
+            '/(\S+)\s+-\s+(\S+)/u' => '\1 \- \2',
         );
 
         $string = mb_strtolower(preg_replace(array_keys($from_to_preg), array_values($from_to_preg), $string));

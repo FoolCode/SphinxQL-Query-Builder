@@ -67,7 +67,7 @@ $conn = new Connection();
 $conn->setParams(array('host' => 'domain.tld', 'port' => 9306));
 
 $query = SphinxQL::create($conn)->select('column_one', 'colume_two')
-    ->from('index_delta', 'index_main', 'index_ancient')
+    ->from('index_ancient', 'index_main', 'index_delta')
     ->match('comment', 'my opinion is superior to yours')
     ->where('banned', '=', 1);
 

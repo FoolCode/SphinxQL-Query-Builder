@@ -157,6 +157,45 @@ class SphinxQL
     protected $queue_prev = null;
 
     /**
+     * An array of escaped characters for escapeMatch()
+     * @var array
+     */
+    protected $escape_full_chars = array(
+        '\\' => '\\\\',
+        '(' => '\(',
+        ')' => '\)',
+        '|' => '\|',
+        '-' => '\-',
+        '!' => '\!',
+        '@' => '\@',
+        '~' => '\~',
+        '"' => '\"',
+        '&' => '\&',
+        '/' => '\/',
+        '^' => '\^',
+        '$' => '\$',
+        '=' => '\=',
+    );
+
+    /**
+     * An array of escaped characters for fullEcapeMatch()
+     * @var array
+     */
+    protected $escape_half_chars = array(
+        '\\' => '\\\\',
+        '(' => '\(',
+        ')' => '\)',
+        '!' => '\!',
+        '@' => '\@',
+        '~' => '\~',
+        '&' => '\&',
+        '/' => '\/',
+        '^' => '\^',
+        '$' => '\$',
+        '=' => '\=',
+    );
+
+    /**
      * Ready for use queries
      *
      * @var array
@@ -1314,6 +1353,59 @@ class SphinxQL
     }
 
     /**
+     * Sets the characters used for escapeMatch().
+     *
+     * @param array $array The array of characters to escape
+     *
+     * @return array The escaped characters
+     */
+    public function setFullEacapeChars($array = array())
+    {
+        if (!empty($array)) {
+            $this->escape_full_chars = $this->compileEscapeChars($array);
+        }
+
+        return $this;
+    }
+
+    /**
+    * Sets the characters used for halfEscapeMatch().
+    *
+    * @param array $array The array of characters to escape
+    *
+    * @return array The escaped characters
+    */
+    public function setHalfEscapeChars($array = array())
+    {
+        if (!empty($array)) {
+            $this->escape_half_chars = $this->compileEscapeChars($array);
+        }
+
+        return $this;
+    }
+
+    /**
+    * Compiles an array containing the characters and escaped characters into a key/value configuration.
+    *
+    * @param array $array The array of characters to escape
+    *
+    * @return array An array of the characters and it's escaped counterpart
+    */
+    public function compileEscapeChars($array = array())
+    {
+        $result = array();
+        foreach ($array as $character) {
+            if ($character === '\\') {
+                $result[$character] = '\\\\';
+            } else {
+                $result[$character] = '\\'.$character;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * Escapes the query for the MATCH() function
      *
      * @param string $string The string to escape for the MATCH
@@ -1326,10 +1418,7 @@ class SphinxQL
             return $string->value();
         }
 
-        $from = array('\\', '(', ')', '|', '-', '!', '@', '~', '"', '&', '/', '^', '$', '=');
-        $to = array('\\\\', '\(', '\)', '\|', '\-', '\!', '\@', '\~', '\"', '\&', '\/', '\^', '\$', '\=');
-
-        return mb_strtolower(str_replace($from, $to, $string));
+        return mb_strtolower(str_replace(array_keys($this->escape_full_chars), array_values($this->escape_full_chars), $string));
     }
 
     /**
@@ -1361,7 +1450,7 @@ class SphinxQL
             '=' => '\=',
         );
 
-        $string = str_replace(array_keys($from_to), array_values($from_to), $string);
+        $string = str_replace(array_keys($this->escape_half_chars), array_values($this->escape_half_chars), $string);
 
         // this manages to lower the error rate by a lot
         if (mb_substr_count($string, '"') % 2 !== 0) {
@@ -1371,10 +1460,8 @@ class SphinxQL
         $string = preg_replace('/-[\s-]*-/u', '-', $string);
 
         $from_to_preg = array(
-            '/([-|])\s*$/u' => '\\\\\1',
-            '/\|[\s|]*\|/u' => '|',
-
-            // prevent accidental negation in natural language
+            '/([-|])\s*$/u'        => '\\\\\1',
+            '/\|[\s|]*\|/u'        => '|',
             '/(\S+)-(\S+)/u'       => '\1\-\2',
             '/(\S+)\s+-\s+(\S+)/u' => '\1 \- \2',
         );
@@ -1447,7 +1534,7 @@ class SphinxQL
     public function resetOptions()
     {
         $this->options = array();
-        
+
         return $this;
     }
 }

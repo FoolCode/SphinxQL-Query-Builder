@@ -397,6 +397,17 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
         $this->assertSame('stärkergradig | mb', SphinxQL::create($this->conn)->halfEscapeMatch('stärkergradig | mb'));
     }
 
+    /**
+    * @covers \Foolz\SphinxQL\SphinxQ::setFullEscapeChars
+    * @covers \Foolz\SphinxQL\SphinxQ::setHalfEscapeChars
+    * @covers \Foolz\SphinxQL\SphinxQ::compileEscapeChars
+    */
+    public function testEscapeChars()
+    {
+        $this->assertEquals(array('%' => '\%'), SphinxQL::create($this->conn)->compileEscapeChars(array('%')));
+        $this->assertEquals(array('@' => '\@'), SphinxQL::create($this->conn)->compileEscapeChars(array('@')));
+    }
+
     public function testOption()
     {
         $this->refill();

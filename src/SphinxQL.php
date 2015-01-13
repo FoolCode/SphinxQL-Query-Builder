@@ -1436,20 +1436,6 @@ class SphinxQL
             return $string->value();
         }
 
-        $from_to = array(
-            '\\' => '\\\\',
-            '(' => '\(',
-            ')' => '\)',
-            '!' => '\!',
-            '@' => '\@',
-            '~' => '\~',
-            '&' => '\&',
-            '/' => '\/',
-            '^' => '\^',
-            '$' => '\$',
-            '=' => '\=',
-        );
-
         $string = str_replace(array_keys($this->escape_half_chars), array_values($this->escape_half_chars), $string);
 
         // this manages to lower the error rate by a lot

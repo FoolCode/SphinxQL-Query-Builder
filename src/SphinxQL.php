@@ -1359,7 +1359,7 @@ class SphinxQL
      *
      * @return array The escaped characters
      */
-    public function setFullEacapeChars($array = array())
+    public function setFullEscapeChars($array = array())
     {
         if (!empty($array)) {
             $this->escape_full_chars = $this->compileEscapeChars($array);

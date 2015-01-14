@@ -398,9 +398,9 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-    * @covers \Foolz\SphinxQL\SphinxQ::setFullEscapeChars
-    * @covers \Foolz\SphinxQL\SphinxQ::setHalfEscapeChars
-    * @covers \Foolz\SphinxQL\SphinxQ::compileEscapeChars
+    * @covers \Foolz\SphinxQL\SphinxQL::setFullEscapeChars
+    * @covers \Foolz\SphinxQL\SphinxQL::setHalfEscapeChars
+    * @covers \Foolz\SphinxQL\SphinxQL::compileEscapeChars
     */
     public function testEscapeChars()
     {

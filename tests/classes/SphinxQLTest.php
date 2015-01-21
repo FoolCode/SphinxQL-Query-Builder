@@ -612,4 +612,45 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals('SELECT * FROM `rt`', $result);
     }
+
+    /**
+     * @covers \Foolz\SphinxQL\SphinxQL::select
+     */
+    public function testSelect()
+    {
+        $this->refill();
+        $result = SphinxQL::create($this->conn)
+            ->select(['id', 'gid'])
+            ->from('rt')
+            ->execute();
+        $this->assertArrayHasKey('id', $result[0]);
+        $this->assertArrayHasKey('gid', $result[0]);
+        $this->assertEquals('10', $result[0]['id']);
+        $this->assertEquals('9003', $result[0]['gid']);
+
+        $result = SphinxQL::create($this->conn)
+            ->select('id', 'gid')
+            ->from('rt')
+            ->execute();
+        $this->assertArrayHasKey('id', $result[0]);
+        $this->assertArrayHasKey('gid', $result[0]);
+        $this->assertEquals('10', $result[0]['id']);
+        $this->assertEquals('9003', $result[0]['gid']);
+
+        $result = SphinxQL::create($this->conn)
+            ->select(['id'])
+            ->from('rt')
+            ->execute();
+        $this->assertArrayHasKey('id', $result[0]);
+        $this->assertArrayNotHasKey('gid', $result[0]);
+        $this->assertEquals('10', $result[0]['id']);
+
+        $result = SphinxQL::create($this->conn)
+            ->select('id')
+            ->from('rt')
+            ->execute();
+        $this->assertArrayHasKey('id', $result[0]);
+        $this->assertArrayNotHasKey('gid', $result[0]);
+        $this->assertEquals('10', $result[0]['id']);
+    }
 }

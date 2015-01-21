@@ -952,16 +952,35 @@ class SphinxQL
 
     /**
      * Select the columns
+     *
      * Gets the arguments passed as $sphinxql->select('one', 'two')
      * Using it without arguments equals to having '*' as argument
+     * Using it with array maps values as column names
+     *
+     * Examples:
+     * ->select('title');
+     *    // SELECT title
+     *
+     * ->select('title', 'author', 'date');
+     *    // SELECT title, author, date
+
+     * ->select(['id', 'title']);
+     *    // SELECT id, title
+     *
+     * @param array|string $columns Array or multiple string arguments containing column names
      *
      * @return \Foolz\SphinxQL\SphinxQL The current object
      */
-    public function select()
+    public function select($columns = null)
     {
         $this->reset();
         $this->type = 'select';
-        $this->select = \func_get_args();
+
+        if (is_array($columns)) {
+            $this->select = $columns;
+        } else {
+            $this->select = \func_get_args();
+        }
 
         return $this;
     }

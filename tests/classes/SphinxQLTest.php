@@ -620,7 +620,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
     {
         $this->refill();
         $result = SphinxQL::create($this->conn)
-            ->select(['id', 'gid'])
+            ->select(array('id', 'gid'))
             ->from('rt')
             ->execute();
         $this->assertArrayHasKey('id', $result[0]);
@@ -638,7 +638,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('9003', $result[0]['gid']);
 
         $result = SphinxQL::create($this->conn)
-            ->select(['id'])
+            ->select(array('id'))
             ->from('rt')
             ->execute();
         $this->assertArrayHasKey('id', $result[0]);

@@ -33,7 +33,7 @@ We test our package locally and remotely with Travis-CI:
 
 1. Fork the SphinxQL Query Builder repository
 2. Create a new branch for each feature or improvement
-3. Submit a pull request from each branch to the **dev** branch
+3. Submit a pull request from each branch to the **master** branch
 
 It is very important to separate new features or improvements into separate feature branches, and to send a pull
 request for each branch. This allows me to review and pull in new features or improvements individually.

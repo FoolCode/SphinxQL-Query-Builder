@@ -22,4 +22,4 @@ before_script:
   - cd tests
   - /usr/local/sphinx/bin/searchd -c sphinx.conf
 
-script: vendor/bin/phpunit --configuration phpunit.xml --coverage-text
+script: ../vendor/bin/phpunit --configuration phpunit.xml --coverage-text

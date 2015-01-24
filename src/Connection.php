@@ -41,6 +41,16 @@ class Connection implements ConnectionInterface
      */
     protected $silence_connection_warning = false;
 
+    private static function deprecated($old, $use = null) {
+        $string = 'The method '.$old.' was deprecated and will not be available in version 1.0.0 of SphinxQL Query Builder.';
+        if ($use !== null) {
+            $string .= ' Use the method '.$use.' instead.';
+        }
+        $string .= ' Refer to the SphinxQL Query Builder README for more information.';
+
+        trigger_error($string, E_USER_DEPRECATED);
+    }
+
     /**
      * Forces the \MySQLi connection to suppress all errors returned. This should only be used
      * when the production server is running with high error reporting settings.
@@ -102,6 +112,8 @@ class Connection implements ConnectionInterface
      */
     public function setConnectionParams($host = '127.0.0.1', $port = 9306)
     {
+        static::deprecated('Connection::setConnectionparams()', 'Connection::setParams()');
+
         $this->setParam('host', $host);
         $this->setParam('port', $port);
     }
@@ -134,6 +146,8 @@ class Connection implements ConnectionInterface
      */
     public function getConnectionParams()
     {
+        static::deprecated('Connection::getConnectionParams()', 'Connection::getParams()');
+
         return $this->getParams();
     }
 

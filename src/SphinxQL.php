@@ -219,23 +219,34 @@ class SphinxQL
         }
     }
 
+    private static function deprecated($old, $use = null) {
+        $string = 'The method '.$old.' was deprecated and will not be available in version 1.0.0 of SphinxQL Query Builder.';
+        if ($use !== null) {
+            $string .= ' Use the method '.$use.' instead.';
+        }
+        $string .= ' Refer to the SphinxQL Query Builder README for more information.';
+
+        trigger_error($string, E_USER_DEPRECATED);
+    }
+
     /**
      * Forges a SphinxQL object with a Connection shared among all SphinxQL objects
      *
-     * @param null|Connection $connection
+     * @param null|ConnectionInterface $connection
      *
      * @return \Foolz\SphinxQL\SphinxQL The current object
      * @deprecated Use ::create instead, coupled with an own static method if static connection is necessary
      */
     public static function forge(ConnectionInterface $connection = null)
     {
+        static::deprecated('SphinxQL::forge()', 'SphinxQL::create()');
         return new SphinxQL($connection, true);
     }
 
     /**
      * Creates and setups a SphinxQL object
      *
-     * @param Connection $connection
+     * @param ConnectionInterface $connection
      *
      * @return \Foolz\SphinxQL\SphinxQL The current object
      */
@@ -428,6 +439,8 @@ class SphinxQL
      */
     public function setVariable($name, $value, $global = false)
     {
+        static::deprecated('SphinxQL::setVariable()', 'Helper::create()');
+
         $query = 'SET ';
 
         if ($global) {
@@ -491,6 +504,8 @@ class SphinxQL
      */
     public function callSnippets($data, $index, $extra = array())
     {
+        static::deprecated('SphinxQL::callSnippets()', 'Helper::callSnippets()');
+
         array_unshift($extra, $index);
         array_unshift($extra, $data);
 
@@ -509,6 +524,8 @@ class SphinxQL
      */
     public function callKeywords($text, $index, $hits = null)
     {
+        static::deprecated('SphinxQL::callKeywords()', 'Helper::callKeywords()');
+
         $arr = array($text, $index);
         if ($hits !== null) {
             $arr[] = $hits;
@@ -527,6 +544,8 @@ class SphinxQL
      */
     public function describe($index)
     {
+        static::deprecated('SphinxQL::describe()', 'Helper::describe()');
+
         return $this->getConnection()->query('DESCRIBE '.$this->getConnection()->quoteIdentifier($index));
     }
 
@@ -542,6 +561,8 @@ class SphinxQL
      */
     public function createFunction($udf_name, $returns, $so_name)
     {
+        static::deprecated('SphinxQL::createFunction()', 'Helper::createFunction()');
+
         return $this->getConnection()->query('CREATE FUNCTION '.$this->getConnection()->quoteIdentifier($udf_name).
             ' RETURNS '.$returns.' SONAME '.$this->getConnection()->quote($so_name));
     }
@@ -556,6 +577,8 @@ class SphinxQL
      */
     public function dropFunction($udf_name)
     {
+        static::deprecated('SphinxQL::dropFunction()', 'Helper::dropFunction()');
+
         return $this->getConnection()->query('DROP FUNCTION '.$this->getConnection()->quoteIdentifier($udf_name));
     }
 
@@ -570,6 +593,8 @@ class SphinxQL
      */
     public function attachIndex($disk_index, $rt_index)
     {
+        static::deprecated('SphinxQL::attachIndex()', 'Helper::attachIndex()');
+
         return $this->getConnection()->query('ATTACH INDEX '.$this->getConnection()->quoteIdentifier($disk_index).
             ' TO RTINDEX '. $this->getConnection()->quoteIdentifier($rt_index));
     }
@@ -584,6 +609,8 @@ class SphinxQL
      */
     public function flushRtIndex($index)
     {
+        static::deprecated('SphinxQL::flushRtIndex()', 'Helper::flushRtIndex()');
+
         return $this->getConnection()->query('FLUSH RTINDEX '.$this->getConnection()->quoteIdentifier($index));
     }
 

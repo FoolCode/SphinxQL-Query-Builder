@@ -1,6 +1,8 @@
 <?php
 
 namespace Foolz\SphinxQL;
+use Foolz\SphinxQL\Drivers\ConnectionInterface;
+use Foolz\SphinxQL\Drivers\SphinxQLException;
 
 /**
  * Query Builder class for SphinxQL statements.

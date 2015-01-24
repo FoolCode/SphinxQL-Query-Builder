@@ -83,7 +83,7 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Foolz\SphinxQL\ConnectionException
+     * @expectedException Foolz\SphinxQL\Drivers\ConnectionException
      */
     public function testGetConnectionThrowsException()
     {
@@ -105,7 +105,7 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Foolz\SphinxQL\ConnectionException
+     * @expectedException Foolz\SphinxQL\Drivers\ConnectionException
      */
     public function testConnectThrowsException()
     {
@@ -122,7 +122,7 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Foolz\SphinxQL\ConnectionException
+     * @expectedException Foolz\SphinxQL\Drivers\ConnectionException
      */
     public function testClose()
     {
@@ -152,7 +152,7 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Foolz\SphinxQL\DatabaseException
+     * @expectedException Foolz\SphinxQL\Drivers\ConnectionException
      */
     public function testQueryThrowsException()
     {

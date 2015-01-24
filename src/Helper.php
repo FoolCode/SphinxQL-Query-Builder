@@ -1,6 +1,7 @@
 <?php
 
 namespace Foolz\SphinxQL;
+use Foolz\SphinxQL\Drivers\ConnectionInterface;
 
 /**
  * SQL queries that don't require "query building"
@@ -10,21 +11,21 @@ namespace Foolz\SphinxQL;
 class Helper
 {
     /**
-     * @var Connection
+     * @var ConnectionInterface
      */
     public $connection;
 
-    protected function __construct(Connection $connection)
+    protected function __construct(ConnectionInterface $connection)
     {
         $this->connection = $connection;
     }
 
     /**
-     * @param Connection $connection
+     * @param ConnectionInterface $connection
      *
      * @return Helper
      */
-    public static function create(Connection $connection)
+    public static function create(ConnectionInterface $connection)
     {
         return new static($connection);
     }
@@ -32,7 +33,7 @@ class Helper
     /**
      * Returns a Connection object setup in the construct
      *
-     * @return Connection
+     * @return ConnectionInterface
      */
     protected function getConnection()
     {

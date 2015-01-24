@@ -1,6 +1,7 @@
 <?php
 
-namespace Foolz\SphinxQL;
+namespace Foolz\SphinxQL\Drivers;
+use Foolz\SphinxQL\Expression;
 
 /**
  * Interface ConnectionInterface

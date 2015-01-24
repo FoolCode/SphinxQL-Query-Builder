@@ -18,8 +18,8 @@ before_install:
   - cd ..
 
 before_script:
-  - composer install
+  - composer install --dev
   - cd tests
   - /usr/local/sphinx/bin/searchd -c sphinx.conf
 
-script: phpunit --configuration phpunit.xml --coverage-text
+script: vendor/bin/phpunit --configuration phpunit.xml --coverage-text

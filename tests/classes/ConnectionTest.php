@@ -152,7 +152,7 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Foolz\SphinxQL\Drivers\ConnectionException
+     * @expectedException Foolz\SphinxQL\Drivers\DatabaseException
      */
     public function testQueryThrowsException()
     {

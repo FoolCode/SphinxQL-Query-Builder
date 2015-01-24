@@ -5,6 +5,9 @@ use Foolz\SphinxQL\Expression;
 
 class ConnectionTest extends PHPUnit_Framework_TestCase
 {
+    /**
+     * @var Connection
+     */
     private $connection = null;
 
     public function setUp()
@@ -65,11 +68,11 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
     public function testGetConnectionParams()
     {
         // verify that (deprecated) getConnectionParams continues to work
-        $this->assertSame(array('host' => '127.0.0.1', 'port' => 9307, 'socket' => null), $this->connection->getConnectionParams());
+        $this->assertSame(array('host' => '127.0.0.1', 'port' => 9307, 'socket' => null), $this->connection->getParams());
 
         // create a new connection and get info
-        $this->connection->setConnectionParams('127.0.0.1', 9308);
-        $this->assertSame(array('host' => '127.0.0.1', 'port' => 9308, 'socket' => null), $this->connection->getConnectionParams());
+        $this->connection->setParams(array('host' => '127.0.0.1', 'port' => 9308));
+        $this->assertSame(array('host' => '127.0.0.1', 'port' => 9308, 'socket' => null), $this->connection->getParams());
     }
 
     public function testGetConnection()

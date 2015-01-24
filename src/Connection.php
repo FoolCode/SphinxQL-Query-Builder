@@ -94,19 +94,6 @@ class Connection implements ConnectionInterface
     }
 
     /**
-     * Sets the connection parameters.
-     *
-     * @param string $host The hostname or IP
-     * @param int $port The port to the host
-     * @deprecated Use ::setParams(array $params) or ::setParam($param, $value) instead. (deprecated August 2014)
-     */
-    public function setConnectionParams($host = '127.0.0.1', $port = 9306)
-    {
-        $this->setParam('host', $host);
-        $this->setParam('port', $port);
-    }
-
-    /**
      * Returns the connection parameters (host, port, connection timeout) for the current instance.
      *
      * @return array $params The current connection parameters
@@ -124,17 +111,6 @@ class Connection implements ConnectionInterface
     public function getInternalEncoding()
     {
         return $this->internal_encoding;
-    }
-
-    /**
-     * Returns the connection parameters (host, port) for the current instance.
-     *
-     * @return array The current connection parameters
-     * @deprecated Use ::getParams() instead. (deprecated August 2014)
-     */
-    public function getConnectionParams()
-    {
-        return $this->getParams();
     }
 
     /**

@@ -9,19 +9,11 @@ namespace Foolz\SphinxQL;
 class SphinxQL
 {
     /**
-     * The connection for all SphinxQL objects
-     *
-     * @var \Foolz\SphinxQL\Connection
-     * @deprecated
-     */
-    protected static $stored_connection = null;
-
-    /**
      * A non-static connection for the current SphinxQL object
      *
      * @var \Foolz\SphinxQL\Connection
      */
-    protected $local_connection = null;
+    protected $connection = null;
 
     /**
      * The last result object.
@@ -195,41 +187,9 @@ class SphinxQL
         '=' => '\=',
     );
 
-    /**
-     * Ready for use queries
-     *
-     * @var array
-     */
-    protected static $show_queries = array(
-        'meta' => 'SHOW META',
-        'warnings' => 'SHOW WARNINGS',
-        'status' => 'SHOW STATUS',
-        'tables' => 'SHOW TABLES',
-        'variables' => 'SHOW VARIABLES',
-        'variablesSession' => 'SHOW SESSION VARIABLES',
-        'variablesGlobal' => 'SHOW GLOBAL VARIABLES',
-    );
-
     public function __construct(ConnectionInterface $connection = null, $static = false)
     {
-        if ($static) {
-            static::$stored_connection = $connection;
-        } else {
-            $this->local_connection = $connection;
-        }
-    }
-
-    /**
-     * Forges a SphinxQL object with a Connection shared among all SphinxQL objects
-     *
-     * @param null|Connection $connection
-     *
-     * @return \Foolz\SphinxQL\SphinxQL The current object
-     * @deprecated Use ::create instead, coupled with an own static method if static connection is necessary
-     */
-    public static function forge(ConnectionInterface $connection = null)
-    {
-        return new SphinxQL($connection, true);
+        $this->connection = $connection;
     }
 
     /**
@@ -251,40 +211,7 @@ class SphinxQL
      */
     public function getConnection()
     {
-        if ($this->local_connection) {
-            return $this->local_connection;
-        }
-
-        return static::$stored_connection;
-    }
-
-    /**
-     * Used for the SHOW queries
-     *
-     * @param string $method      The method
-     * @param array  $parameters  The parameters
-     *
-     * @return array The result of the SHOW query
-     * @throws \BadMethodCallException If there's no such a method
-     */
-    public function __call($method, $parameters)
-    {
-        if (isset(static::$show_queries[$method])) {
-            $ordered = array();
-            $result = $this->getConnection()->query(static::$show_queries[$method]);
-
-            if ($method === 'tables') {
-                return $result;
-            }
-
-            foreach ($result as $item) {
-                $ordered[$item['Variable_name']] = $item['Value'];
-            }
-
-            return $ordered;
-        }
-
-        throw new \BadMethodCallException($method);
+        return $this->connection;
     }
 
     /**
@@ -417,45 +344,6 @@ class SphinxQL
     }
 
     /**
-     * SET syntax
-     *
-     * @param string  $name   The name of the variable
-     * @param mixed   $value  The value o the variable
-     * @param boolean $global True if the variable should be global, false otherwise
-     *
-     * @return array The result of the query
-     * @deprecated Use Helper::create($conn)->setVariable(...)->execute();
-     */
-    public function setVariable($name, $value, $global = false)
-    {
-        $query = 'SET ';
-
-        if ($global) {
-            $query .= 'GLOBAL ';
-        }
-
-        $user_var = strpos($name, '@') === 0;
-
-        // if it has an @ it's a user variable and we can't wrap it
-        if ($user_var) {
-            $query .= $name.' ';
-        } else {
-            $query .= $this->getConnection()->quoteIdentifier($name).' ';
-        }
-
-        // user variables must always be processed as arrays
-        if ($user_var && ! is_array($value)) {
-            $query .= '= ('.$this->getConnection()->quote($value).')';
-        } elseif (is_array($value)) {
-            $query .= '= ('.implode(', ', $this->getConnection()->quoteArr($value)).')';
-        } else {
-            $query .= '= '.$this->getConnection()->quote($value);
-        }
-
-        $this->getConnection()->query($query);
-    }
-
-    /**
      * Begins transaction
      */
     public function transactionBegin()
@@ -477,114 +365,6 @@ class SphinxQL
     public function transactionRollback()
     {
         $this->getConnection()->query('ROLLBACK');
-    }
-
-    /**
-     * CALL SNIPPETS syntax
-     *
-     * @param string $data
-     * @param string $index
-     * @param array  $extra
-     *
-     * @return array The result of the query
-     * @deprecated Use Helper::create($conn)->callSnippets(...)->execute();
-     */
-    public function callSnippets($data, $index, $extra = array())
-    {
-        array_unshift($extra, $index);
-        array_unshift($extra, $data);
-
-        return $this->getConnection()->query('CALL SNIPPETS('.implode(', ', $this->getConnection()->quoteArr($extra)).')');
-    }
-
-    /**
-     * CALL KEYWORDS syntax
-     *
-     * @param string      $text
-     * @param string      $index
-     * @param null|string $hits
-     *
-     * @return array The result of the query
-     * @deprecated Use Helper::create($conn)->callKeywords(...)->execute();
-     */
-    public function callKeywords($text, $index, $hits = null)
-    {
-        $arr = array($text, $index);
-        if ($hits !== null) {
-            $arr[] = $hits;
-        }
-
-        return $this->getConnection()->query('CALL KEYWORDS('.implode(', ', $this->getConnection()->quoteArr($arr)).')');
-    }
-
-    /**
-     * DESCRIBE syntax
-     *
-     * @param string $index The name of the index
-     *
-     * @return array The result of the query
-     * @deprecated Use Helper::create($conn)->describe(...)->execute();
-     */
-    public function describe($index)
-    {
-        return $this->getConnection()->query('DESCRIBE '.$this->getConnection()->quoteIdentifier($index));
-    }
-
-    /**
-     * CREATE FUNCTION syntax
-     *
-     * @param string $udf_name
-     * @param string $returns  Whether INT|BIGINT|FLOAT
-     * @param string $so_name
-     *
-     * @return array The result of the query
-     * @deprecated Use Helper::create($conn)->createFunction(...)->execute();
-     */
-    public function createFunction($udf_name, $returns, $so_name)
-    {
-        return $this->getConnection()->query('CREATE FUNCTION '.$this->getConnection()->quoteIdentifier($udf_name).
-            ' RETURNS '.$returns.' SONAME '.$this->getConnection()->quote($so_name));
-    }
-
-    /**
-     * DROP FUNCTION syntax
-     *
-     * @param string $udf_name
-     *
-     * @return array The result of the query
-     * @deprecated Use Helper::create($conn)->dropFunction(...)->execute();
-     */
-    public function dropFunction($udf_name)
-    {
-        return $this->getConnection()->query('DROP FUNCTION '.$this->getConnection()->quoteIdentifier($udf_name));
-    }
-
-    /**
-     * ATTACH INDEX * TO RTINDEX * syntax
-     *
-     * @param string $disk_index
-     * @param string $rt_index
-     *
-     * @return array The result of the query
-     * @deprecated Use Helper::create($conn)->attachIndex(...)->execute();
-     */
-    public function attachIndex($disk_index, $rt_index)
-    {
-        return $this->getConnection()->query('ATTACH INDEX '.$this->getConnection()->quoteIdentifier($disk_index).
-            ' TO RTINDEX '. $this->getConnection()->quoteIdentifier($rt_index));
-    }
-
-    /**
-     * FLUSH RTINDEX syntax
-     *
-     * @param string $index
-     *
-     * @return array The result of the query
-     * @deprecated Use Helper::create($conn)->flushRtIndex(...)->execute();
-     */
-    public function flushRtIndex($index)
-    {
-        return $this->getConnection()->query('FLUSH RTINDEX '.$this->getConnection()->quoteIdentifier($index));
     }
 
     /**

@@ -63,7 +63,8 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \Foolz\SphinxQL\Connection::setConnectionParams
+     * @covers \Foolz\SphinxQL\Connection::setParams
+     * @covers \Foolz\SphinxQL\Connection::getParams
      */
     public function testGetConnectionParams()
     {

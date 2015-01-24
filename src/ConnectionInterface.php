@@ -63,7 +63,7 @@ interface ConnectionInterface
      *
      * @param Expression|string $value The input string, eventually wrapped in an expression to leave it untouched
      *
-     * @return Expression|string The untouched Expression or the quoted string
+     * @return Expression|string|int The untouched Expression or the quoted string
      */
     public function quote($value);
 

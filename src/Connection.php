@@ -14,9 +14,9 @@ class SphinxQLException extends \Exception {};
 class Connection implements ConnectionInterface
 {
     /**
-     * The \MySQLi connection for this object.
+     * The \mysqli connection for this object.
      *
-     * @var \MySQLi
+     * @var \mysqli
      */
     protected $connection = null;
 
@@ -114,10 +114,10 @@ class Connection implements ConnectionInterface
     }
 
     /**
-     * Returns the current \MySQLi connection established.
+     * Returns the current \mysqli connection established.
      *
      *
-     * @return \MySQLi MySQLi connection
+     * @return \mysqli MySQLi connection
      * @throws ConnectionException If no connection has been established or open
      */
     public function getConnection()
@@ -347,7 +347,7 @@ class Connection implements ConnectionInterface
      *
      * @param Expression|string $value The input string, eventually wrapped in an expression to leave it untouched
      *
-     * @return Expression|string The untouched Expression or the quoted string
+     * @return Expression|string|int The untouched Expression or the quoted string
      */
     public function quote($value)
     {

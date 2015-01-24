@@ -15,7 +15,7 @@ interface ConnectionInterface
      * @param string $query The query string
      *
      * @return array|int The result array or number of rows affected
-     * @throws \Foolz\SphinxQL\DatabaseException If the executed query produced an error
+     * @throws DatabaseException If the executed query produced an error
      */
     public function query($query);
 
@@ -25,8 +25,8 @@ interface ConnectionInterface
      * @param array $queue Queue holding all of the queries to be executed
      *
      * @return array The result array
-     * @throws \Foolz\SphinxQL\DatabaseException In case a query throws an error
-     * @throws \Foolz\SphinxQL\SphinxQLException In case the array passed is empty
+     * @throws DatabaseException In case a query throws an error
+     * @throws SphinxQLException In case the array passed is empty
      */
     public function multiQuery(Array $queue);
 
@@ -36,16 +36,16 @@ interface ConnectionInterface
      * @param string $value The string to escape
      *
      * @return string The escaped string
-     * @throws \Foolz\SphinxQL\DatabaseException If an error was encountered during server-side escape
+     * @throws DatabaseException If an error was encountered during server-side escape
      */
     public function escape($value);
 
     /**
      * Wraps the input with identifiers when necessary.
      *
-     * @param \Foolz\SphinxQL\Expression|string $value The string to be quoted, or an Expression to leave it untouched
+     * @param Expression|string $value The string to be quoted, or an Expression to leave it untouched
      *
-     * @return \Foolz\SphinxQL\Expression|string The untouched Expression or the quoted string
+     * @return Expression|string The untouched Expression or the quoted string
      */
     public function quoteIdentifier($value);
 
@@ -61,9 +61,9 @@ interface ConnectionInterface
     /**
      * Adds quotes around values when necessary.
      *
-     * @param \Foolz\SphinxQL\Expression|string $value The input string, eventually wrapped in an expression to leave it untouched
+     * @param Expression|string $value The input string, eventually wrapped in an expression to leave it untouched
      *
-     * @return \Foolz\SphinxQL\Expression|string The untouched Expression or the quoted string
+     * @return Expression|string The untouched Expression or the quoted string
      */
     public function quote($value);
 

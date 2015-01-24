@@ -118,7 +118,7 @@ class Connection implements ConnectionInterface
      *
      *
      * @return \MySQLi MySQLi connection
-     * @throws \Foolz\SphinxQL\ConnectionException If no connection has been established or open
+     * @throws ConnectionException If no connection has been established or open
      */
     public function getConnection()
     {
@@ -135,7 +135,7 @@ class Connection implements ConnectionInterface
      * @param boolean $suppress_error If the warnings on the connection should be suppressed
      *
      * @return boolean True if connected
-     * @throws \Foolz\SphinxQL\ConnectionException If a connection error was encountered
+     * @throws ConnectionException If a connection error was encountered
      */
     public function connect($suppress_error = false)
     {
@@ -198,7 +198,7 @@ class Connection implements ConnectionInterface
      * @param string $query The query string
      *
      * @return array|int The result array or number of rows affected
-     * @throws \Foolz\SphinxQL\DatabaseException If the executed query produced an error
+     * @throws DatabaseException If the executed query produced an error
      */
     public function query($query)
     {
@@ -233,8 +233,8 @@ class Connection implements ConnectionInterface
      * @param array $queue Queue holding all of the queries to be executed
      *
      * @return array The result array
-     * @throws \Foolz\SphinxQL\DatabaseException In case a query throws an error
-     * @throws \Foolz\SphinxQL\SphinxQLException In case the array passed is empty
+     * @throws DatabaseException In case a query throws an error
+     * @throws SphinxQLException In case the array passed is empty
      */
     public function multiQuery(Array $queue)
     {
@@ -284,7 +284,7 @@ class Connection implements ConnectionInterface
      * @param string $value The string to escape
      *
      * @return string The escaped string
-     * @throws \Foolz\SphinxQL\DatabaseException If an error was encountered during server-side escape
+     * @throws DatabaseException If an error was encountered during server-side escape
      */
     public function escape($value)
     {
@@ -300,13 +300,13 @@ class Connection implements ConnectionInterface
     /**
      * Wraps the input with identifiers when necessary.
      *
-     * @param \Foolz\SphinxQL\Expression|string $value The string to be quoted, or an Expression to leave it untouched
+     * @param Expression|string $value The string to be quoted, or an Expression to leave it untouched
      *
-     * @return \Foolz\SphinxQL\Expression|string The untouched Expression or the quoted string
+     * @return Expression|string The untouched Expression or the quoted string
      */
     public function quoteIdentifier($value)
     {
-        if ($value instanceof \Foolz\SphinxQL\Expression) {
+        if ($value instanceof Expression) {
             return $value->value();
         }
 
@@ -345,9 +345,9 @@ class Connection implements ConnectionInterface
      * Adds quotes around values when necessary.
      * Based on FuelPHP's quoting function.
      *
-     * @param \Foolz\SphinxQL\Expression|string $value The input string, eventually wrapped in an expression to leave it untouched
+     * @param Expression|string $value The input string, eventually wrapped in an expression to leave it untouched
      *
-     * @return \Foolz\SphinxQL\Expression|string The untouched Expression or the quoted string
+     * @return Expression|string The untouched Expression or the quoted string
      */
     public function quote($value)
     {

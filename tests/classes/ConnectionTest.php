@@ -219,15 +219,4 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
         );
     }
 
-    public function testMbPush()
-    {
-        $this->connection->mbPush();
-        $this->assertEquals('UTF-8', $this->connection->getInternalEncoding());
-    }
-
-    public function testMbPop()
-    {
-        $this->connection->mbPush()->mbPop();
-        $this->assertEquals(null, $this->connection->getInternalEncoding());
-    }
 }

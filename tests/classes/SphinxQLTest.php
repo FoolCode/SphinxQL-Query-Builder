@@ -29,7 +29,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
 
     public function __construct()
     {
-        $conn = new SphinxConnection();
+        $conn = new Connection();
         $conn->setParam('port', 9307);
         $this->conn = $conn;
 

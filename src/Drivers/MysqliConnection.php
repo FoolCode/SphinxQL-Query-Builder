@@ -2,18 +2,17 @@
 
 namespace Foolz\SphinxQL\Drivers;
 
+use Foolz\SphinxQL\Exception\ConnectionException;
+use Foolz\SphinxQL\Exception\DatabaseException;
+use Foolz\SphinxQL\Exception\SphinxQLException;
 use Foolz\SphinxQL\Expression;
-
-class ConnectionException extends \Exception {};
-class DatabaseException extends \Exception {};
-class SphinxQLException extends \Exception {};
 
 /**
  * SphinxQL connection class utilizing the MySQLi extension.
  * It also contains escaping and quoting functions.
  * @package Foolz\SphinxQL
  */
-class SimpleConnection implements ConnectionInterface
+class MysqliConnection implements ConnectionInterface
 {
     /**
      * The \mysqli connection for this object.
@@ -151,7 +150,13 @@ class SimpleConnection implements ConnectionInterface
         }
 
         if (!$suppress_error && ! $this->silence_connection_warning) {
-            $conn->real_connect($data['host'], null, null, null, (int) $data['port'], $data['socket']);
+            try{
+                $conn->real_connect($data['host'], null, null, null, (int) $data['port'], $data['socket']);
+            }
+            catch(\Exception $exception){
+                throw new ConnectionException($exception->getMessage());
+            }
+
         } else {
             @ $conn->real_connect($data['host'], null, null, null, (int) $data['port'], $data['socket']);
         }
@@ -163,16 +168,15 @@ class SimpleConnection implements ConnectionInterface
 
         $conn->set_charset('utf8');
         $this->connection = $conn;
-        $this->mbPush();
 
         return true;
     }
 
     /**
-     * Pings the Sphinx server.
-     *
-     * @return boolean True if connected, false otherwise
-     */
+ * Pings the Sphinx server.
+ *
+ * @return boolean True if connected, false otherwise
+ */
     public function ping()
     {
         try {
@@ -189,7 +193,6 @@ class SimpleConnection implements ConnectionInterface
      */
     public function close()
     {
-        $this->mbPop();
         $this->getConnection()->close();
         $this->connection = null;
     }
@@ -393,25 +396,4 @@ class SimpleConnection implements ConnectionInterface
         return $result;
     }
 
-    /**
-     * Enter UTF-8 multi-byte workaround mode.
-     */
-    public function mbPush()
-    {
-        $this->internal_encoding = mb_internal_encoding();
-        mb_internal_encoding('UTF-8');
-
-        return $this;
-    }
-
-    /**
-     * Exit UTF-8 multi-byte workaround mode.
-     */
-    public function mbPop()
-    {
-        mb_internal_encoding($this->internal_encoding);
-        $this->internal_encoding = null;
-
-        return $this;
-    }
 }

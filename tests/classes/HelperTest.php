@@ -51,8 +51,10 @@ class HelperTest extends PHPUnit_Framework_TestCase
         Helper::create($this->conn)->setVariable('AUTOCOMMIT', 1)->execute();
         $vars = Helper::pairsToAssoc(Helper::create($this->conn)->showVariables()->execute());
         $this->assertEquals(1, $vars['autocommit']);
-
+/*
         Helper::create($this->conn)->setVariable('@foo', 1, true);
         Helper::create($this->conn)->setVariable('@foo', array(0), true);
+*/
     }
+
 }

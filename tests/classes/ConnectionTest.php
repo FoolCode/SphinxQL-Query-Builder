@@ -79,11 +79,11 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
     public function testGetConnection()
     {
         $this->connection->connect();
-        $this->assertInstanceOf('MySQLi', $this->connection->getConnection());
+        $this->assertNotNull($this->connection->getConnection());
     }
 
     /**
-     * @expectedException Foolz\SphinxQL\Drivers\ConnectionException
+     * @expectedException Foolz\SphinxQL\Exception\ConnectionException
      */
     public function testGetConnectionThrowsException()
     {
@@ -96,7 +96,7 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException PHPUnit_Framework_Error_Warning
+     * @expectedException Foolz\SphinxQL\Exception\ConnectionException
      */
     public function testConnectThrowsPHPException()
     {
@@ -105,7 +105,7 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Foolz\SphinxQL\Drivers\ConnectionException
+     * @expectedException Foolz\SphinxQL\Exception\ConnectionException
      */
     public function testConnectThrowsException()
     {
@@ -122,7 +122,7 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Foolz\SphinxQL\Drivers\ConnectionException
+     * @expectedException Foolz\SphinxQL\Exception\ConnectionException
      */
     public function testClose()
     {
@@ -152,7 +152,7 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Foolz\SphinxQL\Drivers\DatabaseException
+     * @expectedException Foolz\SphinxQL\Exception\DatabaseException
      */
     public function testQueryThrowsException()
     {
@@ -167,7 +167,7 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException PHPUnit_Framework_Error_Warning
+     * @expectedException Foolz\SphinxQL\Exception\ConnectionException
      */
     public function testEscapeThrowsException()
     {

@@ -2,7 +2,7 @@
 
 namespace Foolz\SphinxQL;
 use Foolz\SphinxQL\Drivers\ConnectionInterface;
-use Foolz\SphinxQL\Drivers\SphinxQLException;
+use Foolz\SphinxQL\Exception\SphinxQLException;
 
 /**
  * Query Builder class for SphinxQL statements.
@@ -246,8 +246,8 @@ class SphinxQL
     /**
      * Executes a batch of queued queries
      *
+     * @throws SphinxQLException
      * @return array The array of results
-     * @throws SphinxQLException In case no query is in queue
      */
     public function executeBatch()
     {

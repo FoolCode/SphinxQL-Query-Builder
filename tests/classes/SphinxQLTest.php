@@ -2,7 +2,7 @@
 
 use Foolz\SphinxQL\Helper;
 use Foolz\SphinxQL\SphinxQL;
-use Foolz\SphinxQL\Connection as SphinxConnection;
+use Foolz\SphinxQL\Connection;
 
 class SphinxQLTest extends PHPUnit_Framework_TestCase
 {

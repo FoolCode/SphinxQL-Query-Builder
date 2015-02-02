@@ -79,7 +79,7 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
     public function testGetConnection()
     {
         $this->connection->connect();
-        $this->assertInstanceOf('MySQLi', $this->connection->getConnection());
+        $this->assertNotNull($this->connection->getConnection());
     }
 
     /**

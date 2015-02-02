@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<phpunit colors="true" stopOnFailure="false" bootstrap="../bootstrap.php">
+    <php>
+        <var name="driver" value="SimpleConnection"/>
+    </php>
+    <testsuites>
+        <testsuite name="SphinxQL Query Builder Test Suite">
+            <directory suffix=".php">../SphinxQL</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>

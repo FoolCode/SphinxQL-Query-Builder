@@ -21,5 +21,10 @@
         "psr-4": {
             "Foolz\\SphinxQL\\": "src/"
         }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Foolz\\SphinxQL\\Tests\\": "tests/SphinxQL"
+        }
     }
 }

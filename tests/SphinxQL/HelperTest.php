@@ -1,4 +1,4 @@
-it <?php
+<?php
 
 use Foolz\SphinxQL\SphinxQL;
 use Foolz\SphinxQL\Helper;
@@ -54,7 +54,5 @@ class HelperTest extends PHPUnit_Framework_TestCase
 
         Helper::create($this->conn)->setVariable('@foo', 1, true);
         Helper::create($this->conn)->setVariable('@foo', array(0), true);
-
     }
-
 }

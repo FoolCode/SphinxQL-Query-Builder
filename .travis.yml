@@ -11,6 +11,8 @@ php:
 env:
   - DRIVER=simple SPHINXSEARCH_VER=trunk
   - DRIVER=simple SPHINXSEARCH_VER=branches/rel21
+  - DRIVER=pdo SPHINXSEARCH_VER=trunk
+  - DRIVER=pdo SPHINXSEARCH_VER=branches/rel21
 
 before_install:
   - svn checkout http://sphinxsearch.googlecode.com/svn/${SPHINXSEARCH_VER}/ sphinxsearch

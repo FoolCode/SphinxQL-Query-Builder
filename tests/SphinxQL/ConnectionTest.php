@@ -1,7 +1,7 @@
 <?php
 
-use Foolz\SphinxQL\Connection;
 use Foolz\SphinxQL\Expression;
+use Foolz\SphinxQL\Tests\TestUtil;
 
 class ConnectionTest extends PHPUnit_Framework_TestCase
 {
@@ -12,7 +12,7 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->connection = new Connection();
+        $this->connection = TestUtil::getConnectionDriver();
         $this->connection->setParams(array('host' => '127.0.0.1', 'port' => 9307));
         $this->connection->silenceConnectionWarning(false);
     }
@@ -24,7 +24,7 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
 
     public function test()
     {
-        new Connection();
+        TestUtil::getConnectionDriver();
     }
 
     /**

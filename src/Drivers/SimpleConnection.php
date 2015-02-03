@@ -2,11 +2,10 @@
 
 namespace Foolz\SphinxQL\Drivers;
 
+use Foolz\SphinxQL\Exception\ConnectionException;
+use Foolz\SphinxQL\Exception\DatabaseException;
+use Foolz\SphinxQL\Exception\SphinxQLException;
 use Foolz\SphinxQL\Expression;
-
-class ConnectionException extends \Exception {};
-class DatabaseException extends \Exception {};
-class SphinxQLException extends \Exception {};
 
 /**
  * SphinxQL connection class utilizing the MySQLi extension.

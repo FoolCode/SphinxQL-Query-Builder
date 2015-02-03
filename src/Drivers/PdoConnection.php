@@ -197,7 +197,7 @@ class PdoConnection implements ConnectionInterface
      * @throws DatabaseException
      * @throws SphinxQLException
      */
-    public function multiQuery(Array $queue)
+        public function multiQuery(Array $queue)
     {
         $this->ping();
 
@@ -208,23 +208,33 @@ class PdoConnection implements ConnectionInterface
         $result = array();
         $count = 0;
 
-        try {
-            $statement = $this->connection->query(implode(';', $queue));
-        } catch (\PDOException $exception) {
-            throw new DatabaseException($exception->getMessage() .' [ '.implode(';', $queue).']');
-        }
-
-        while ($rowset = $statement->fetchAll(\PDO::FETCH_ASSOC)) {
-
-            $result[$count] = $rowset;
-
+        if(version_compare(PHP_VERSION, '5.4.0', '>='))
+        {
             try {
-                $statement->nextRowset();
+                $statement = $this->connection->query(implode(';', $queue));
             } catch (\PDOException $exception) {
                 throw new DatabaseException($exception->getMessage() .' [ '.implode(';', $queue).']');
             }
-
-            $count++;
+            do {
+                $rowset = $statement->fetchAll(\PDO::FETCH_ASSOC);
+                if ($rowset)
+                    $result[$count] = $rowset;
+                $count++;
+            } while ($statement->nextRowset());
+        }
+        else
+        {
+            foreach($queue as $sql)
+            {
+                try {
+                    $statement = $this->connection->query($sql);
+                } catch (\PDOException $exception) {
+                    throw new DatabaseException($exception->getMessage() .' [ '.implode(';', $queue).']');
+                }
+                $rowset = $statement->fetchAll(\PDO::FETCH_ASSOC);
+                $result[$count] = $rowset;
+                $count++;
+            }
         }
 
         return $result;

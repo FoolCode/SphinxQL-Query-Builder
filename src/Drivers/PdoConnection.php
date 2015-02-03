@@ -197,7 +197,7 @@ class PdoConnection implements ConnectionInterface
      * @throws DatabaseException
      * @throws SphinxQLException
      */
-        public function multiQuery(Array $queue)
+    public function multiQuery(Array $queue)
     {
         $this->ping();
 

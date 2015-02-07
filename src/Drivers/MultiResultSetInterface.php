@@ -7,7 +7,7 @@ interface MultiResultSetInterface extends \ArrayAccess
     /**
      * Stores all the data in PHP and frees the data on the server
      *
-     * @return void
+     * @return static
      */
     public function store();
 
@@ -42,7 +42,7 @@ interface MultiResultSetInterface extends \ArrayAccess
     /**
      * Flushes the pending results that otherwise would appear in the next query
      *
-     * @return void
+     * @return static
      */
     public function flush();
 }

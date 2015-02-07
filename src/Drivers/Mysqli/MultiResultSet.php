@@ -67,12 +67,13 @@ class MultiResultSet implements MultiResultSetInterface
     /**
      * Stores all the data of the query in this object and frees the resources
      *
+     * @return static $this
      * @throws DatabaseException Thrown when the method getNextSet() has already been called (server can't return all the data twice)
      */
     public function store()
     {
         if ($this->stored !== null) {
-            return;
+            return $this;
         }
 
         // don't let users mix storage and mysqli cursors
@@ -85,6 +86,8 @@ class MultiResultSet implements MultiResultSetInterface
             // getStored also frees the set
             $this->stored[] = $this->getNextSet()->getStored();
         }
+
+        return $this;
     }
 
     /**
@@ -147,7 +150,7 @@ class MultiResultSet implements MultiResultSetInterface
     /**
      * Call this to make sure there isn't pending results (else they'd appear in the next query)
      *
-     * @return $this
+     * @return static $this
      * @throws DatabaseException
      */
     public function flush()

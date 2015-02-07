@@ -2,7 +2,8 @@
 
 namespace Foolz\SphinxQL\Drivers;
 
+class ResultSetException extends \Exception {}
+
 interface ResultSetInterface
 {
-    public function getStored();
 }

@@ -80,7 +80,7 @@ class MultiResultSet implements MultiResultSetInterface
             throw new DatabaseException('The MultiResultSet is using the mysqli cursors, store() can\'t fetch all the data');
         }
 
-        $this->stored = [];
+        $this->stored = array();
         while ($this->hasNextSet()) {
             // getStored also frees the set
             $this->stored[] = $this->getNextSet()->getStored();

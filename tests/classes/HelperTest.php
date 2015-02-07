@@ -1,6 +1,6 @@
 <?php
 
-use Foolz\SphinxQL\Connection;
+use Foolz\SphinxQL\Drivers\Mysqli\Connection as Connection;
 use Foolz\SphinxQL\Helper;
 use Foolz\SphinxQL\SphinxQL;
 
@@ -24,13 +24,13 @@ class HelperTest extends PHPUnit_Framework_TestCase
     {
         $this->assertEquals(
             array(array('Index' => 'rt', 'Type' => 'rt')),
-            Helper::create($this->conn)->showTables()->execute()
+            Helper::create($this->conn)->showTables()->execute()->getStored()
         );
     }
 
     public function testDescribe()
     {
-        $describe = Helper::create($this->conn)->describe('rt')->execute();
+        $describe = Helper::create($this->conn)->describe('rt')->execute()->getStored();
         array_shift($describe);
         $this->assertSame(
             array(
@@ -45,11 +45,11 @@ class HelperTest extends PHPUnit_Framework_TestCase
     public function testSetVariable()
     {
         Helper::create($this->conn)->setVariable('AUTOCOMMIT', 0)->execute();
-        $vars = Helper::pairsToAssoc(Helper::create($this->conn)->showVariables()->execute());
+        $vars = Helper::pairsToAssoc(Helper::create($this->conn)->showVariables()->execute()->getStored());
         $this->assertEquals(0, $vars['autocommit']);
 
         Helper::create($this->conn)->setVariable('AUTOCOMMIT', 1)->execute();
-        $vars = Helper::pairsToAssoc(Helper::create($this->conn)->showVariables()->execute());
+        $vars = Helper::pairsToAssoc(Helper::create($this->conn)->showVariables()->execute()->getStored());
         $this->assertEquals(1, $vars['autocommit']);
 
         Helper::create($this->conn)->setVariable('@foo', 1, true);

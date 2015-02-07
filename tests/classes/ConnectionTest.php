@@ -1,6 +1,6 @@
 <?php
 
-use Foolz\SphinxQL\Connection;
+use Foolz\SphinxQL\Drivers\Mysqli\Connection as Connection;
 use Foolz\SphinxQL\Expression;
 
 class ConnectionTest extends PHPUnit_Framework_TestCase
@@ -138,7 +138,7 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
             array('Variable_name' => 'total', 'Value' => '0'),
             array('Variable_name' => 'total_found', 'Value' => '0'),
             array('Variable_name' => 'time', 'Value' => '0.000'),
-        ), $this->connection->query('SHOW META'));
+        ), $this->connection->query('SHOW META')->getStored());
     }
 
     public function testMultiQuery()
@@ -148,7 +148,7 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
             array('Variable_name' => 'total', 'Value' => '0'),
             array('Variable_name' => 'total_found', 'Value' => '0'),
             array('Variable_name' => 'time', 'Value' => '0.000'),
-        )), $this->connection->multiQuery(array('SHOW META')));
+        )), $this->connection->multiQuery(array('SHOW META'))->getStored());
     }
 
     /**

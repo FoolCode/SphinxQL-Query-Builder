@@ -1,15 +1,15 @@
 <?php
 
-namespace Foolz\SphinxQL\Drivers;
+namespace Foolz\SphinxQL\Drivers\Mysqli;
 
+
+use Foolz\SphinxQL\Drivers\DatabaseException;
+use Foolz\SphinxQL\Drivers\SphinxQLException;
 use Foolz\SphinxQL\Expression;
+use Foolz\SphinxQL\Drivers\ConnectionException;
+use Foolz\SphinxQL\Drivers\ConnectionInterface;
 
-/**
- * SphinxQL connection class utilizing the MySQLi extension.
- * It also contains escaping and quoting functions.
- * @package Foolz\SphinxQL
- */
-class SimpleConnection implements ConnectionInterface
+class Connection implements ConnectionInterface
 {
     /**
      * The \mysqli connection for this object.
@@ -209,20 +209,7 @@ class SimpleConnection implements ConnectionInterface
                 $this->getConnection()->error.' [ '.$query.']');
         }
 
-        if ($resource instanceof \mysqli_result) {
-            $result = array();
-
-            while ($row = $resource->fetch_assoc()) {
-                $result[] = $row;
-            }
-
-            $resource->free_result();
-
-            return $result;
-        }
-
-        // Sphinx doesn't return insert_id and only the number of rows affected.
-        return $this->getConnection()->affected_rows;
+        return new ResultSet($this, $resource);
     }
 
     /**
@@ -230,13 +217,15 @@ class SimpleConnection implements ConnectionInterface
      *
      * @param array $queue Queue holding all of the queries to be executed
      *
-     * @return array The result array
+     * @return MultiResultSet The result array
      * @throws DatabaseException In case a query throws an error
      * @throws SphinxQLException In case the array passed is empty
      */
     public function multiQuery(Array $queue)
     {
-        if (count($queue) === 0) {
+        $count = count($queue);
+
+        if ($count === 0) {
             throw new SphinxQLException('The Queue is empty.');
         }
 
@@ -249,30 +238,7 @@ class SimpleConnection implements ConnectionInterface
                 $this->getConnection()->error.' [ '.implode(';', $queue).']');
         }
 
-        $result = array();
-        $count = 0;
-
-        do {
-            if ($resource = $this->getConnection()->store_result()) {
-                $result[$count] = array();
-
-                while ($row = $resource->fetch_assoc()) {
-                    $result[$count][] = $row;
-                }
-
-                $resource->free_result();
-            }
-
-            $continue = false;
-
-            if ($this->getConnection()->more_results()) {
-                $this->getConnection()->next_result();
-                $continue = true;
-                $count++;
-            }
-        } while ($continue);
-
-        return $result;
+        return new MultiResultSet($this, $count);
     }
 
     /**

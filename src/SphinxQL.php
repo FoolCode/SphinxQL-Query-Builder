@@ -3,6 +3,8 @@
 namespace Foolz\SphinxQL;
 use Foolz\SphinxQL\Drivers\ConnectionInterface;
 use Foolz\SphinxQL\Drivers\SphinxQLException;
+use Foolz\SphinxQL\ResultHandlers\MultiResultSetInterface;
+use Foolz\SphinxQL\ResultHandlers\ResultSetInterface;
 
 /**
  * Query Builder class for SphinxQL statements.
@@ -172,7 +174,7 @@ class SphinxQL
     );
 
     /**
-     * An array of escaped characters for fullEcapeMatch()
+     * An array of escaped characters for fullEscapeMatch()
      * @var array
      */
     protected $escape_half_chars = array(
@@ -235,7 +237,7 @@ class SphinxQL
     /**
      * Runs the query built
      *
-     * @return array The result of the query
+     * @return ResultSetInterface The result of the query
      */
     public function execute()
     {
@@ -246,7 +248,7 @@ class SphinxQL
     /**
      * Executes a batch of queued queries
      *
-     * @return array The array of results
+     * @return MultiResultSetInterface The array of results
      * @throws SphinxQLException In case no query is in queue
      */
     public function executeBatch()

@@ -3,6 +3,10 @@
 namespace Foolz\SphinxQL\Drivers;
 use Foolz\SphinxQL\Expression;
 
+class ConnectionException extends \Exception {};
+class DatabaseException extends \Exception {};
+class SphinxQLException extends \Exception {};
+
 /**
  * Interface ConnectionInterface
  *

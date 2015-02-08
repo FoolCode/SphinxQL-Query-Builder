@@ -38,7 +38,7 @@ class ResultSet implements ResultSetInterface
     protected $affected_rows = 0; // leave to 0 so SELECT etc. will be coherent
 
     /**
-     * @var null|array
+     * @var null|int
      */
     protected $current_row = null;
 
@@ -357,7 +357,7 @@ class ResultSet implements ResultSetInterface
      */
     public function current()
     {
-        // TODO: Implement current() method.
+        return $this->fetchAssoc();
     }
 
     /**
@@ -368,7 +368,12 @@ class ResultSet implements ResultSetInterface
      */
     public function next()
     {
-        // TODO: Implement next() method.
+        if ($this->hasNextRow()) {
+            $this->toNextRow();
+        } else {
+            $this->current_row++;
+        }
+
     }
 
     /**
@@ -379,7 +384,7 @@ class ResultSet implements ResultSetInterface
      */
     public function key()
     {
-        // TODO: Implement key() method.
+        return (int) $this->current_row;
     }
 
     /**
@@ -391,7 +396,7 @@ class ResultSet implements ResultSetInterface
      */
     public function valid()
     {
-        // TODO: Implement valid() method.
+        return $this->hasRow($this->current_row);
     }
 
     /**
@@ -402,6 +407,20 @@ class ResultSet implements ResultSetInterface
      */
     public function rewind()
     {
-        // TODO: Implement rewind() method.
+        $this->toRow(0);
+    }
+
+    /**
+     * (PHP 5 &gt;= 5.1.0)<br/>
+     * Count elements of an object
+     * @link http://php.net/manual/en/countable.count.php
+     * @return int The custom count as an integer.
+     * </p>
+     * <p>
+     * The return value is cast to an integer.
+     */
+    public function count()
+    {
+        return $this->getCount();
     }
 }

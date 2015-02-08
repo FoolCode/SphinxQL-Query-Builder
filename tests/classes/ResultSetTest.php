@@ -99,6 +99,13 @@ class ResultSetTest extends PHPUnit_Framework_TestCase
         $res->freeResult();
     }
 
+    public function testGetCount()
+    {
+        $this->refill();
+        $res = self::$conn->query('SELECT * FROM rt');
+        $this->assertEquals(8, $res->getCount());
+    }
+
     public function testFetchAllAssoc()
     {
         $expect = array(
@@ -186,5 +193,54 @@ class ResultSetTest extends PHPUnit_Framework_TestCase
         $this->assertSame(8, $res->getAffectedRows());
     }
 
+    public function testArrayAccess()
+    {
+        $expect = array(
+            0 => array(
+                'id' => '10',
+                'gid' => '9003'
+            ),
+            1 => array(
+                'id' => '11',
+                'gid' => '201'
+            )
+        );
 
+
+        $this->refill();
+        $res = self::$conn->query('SELECT * FROM rt');
+        $this->assertSame($expect[0], $res[0]);
+        $this->assertSame($expect[1], $res[1]);
+    }
+
+    public function testCountable()
+    {
+        $this->refill();
+        $res = self::$conn->query('SELECT * FROM rt');
+        $this->assertEquals($res->getCount(), $res->count());
+    }
+
+    public function testIterator()
+    {
+        $expect = array(
+            0 => array(
+                'id' => '10',
+                'gid' => '9003'
+            ),
+            1 => array(
+                'id' => '11',
+                'gid' => '201'
+            )
+        );
+
+        $this->refill();
+        $res = self::$conn->query('SELECT * FROM rt');
+        $array = array();
+        foreach ($res as $key => $value) {
+            $array[$key] = $value;
+        }
+
+        $this->assertSame($expect[0], $array[0]);
+        $this->assertSame($expect[1], $array[1]);
+    }
 }

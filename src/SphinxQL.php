@@ -3,8 +3,8 @@
 namespace Foolz\SphinxQL;
 use Foolz\SphinxQL\Drivers\ConnectionInterface;
 use Foolz\SphinxQL\Drivers\SphinxQLException;
-use Foolz\SphinxQL\ResultHandlers\MultiResultSetInterface;
-use Foolz\SphinxQL\ResultHandlers\ResultSetInterface;
+use Foolz\SphinxQL\Drivers\MultiResultSetInterface;
+use Foolz\SphinxQL\Drivers\ResultSetInterface;
 
 /**
  * Query Builder class for SphinxQL statements.

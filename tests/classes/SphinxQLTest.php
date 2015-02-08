@@ -2,11 +2,11 @@
 
 use Foolz\SphinxQL\Helper;
 use Foolz\SphinxQL\SphinxQL;
-use Foolz\SphinxQL\Drivers\Mysqli\Connection as SphinxConnection;
+use Foolz\SphinxQL\Drivers\Mysqli\Connection;
 
 class SphinxQLTest extends PHPUnit_Framework_TestCase
 {
-    public $conn = null;
+    public static $conn = null;
 
     public static $data = array (
         0 => array('id' => '10', 'gid' => '9003',
@@ -27,19 +27,19 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
             'title' => 'what is there to do', 'content' => 'we need to create dummy data for tests'),
     );
 
-    public function __construct()
+    public static function setUpBeforeClass()
     {
-        $conn = new SphinxConnection();
+        $conn = new Connection();
         $conn->setParam('port', 9307);
-        $this->conn = $conn;
+        self::$conn = $conn;
 
-        SphinxQL::create($this->conn)->getConnection()->query('TRUNCATE RTINDEX rt');
+        SphinxQL::create(self::$conn)->getConnection()->query('TRUNCATE RTINDEX rt');
     }
 
     public function refill() {
-        SphinxQL::create($this->conn)->getConnection()->query('TRUNCATE RTINDEX rt');
+        SphinxQL::create(self::$conn)->getConnection()->query('TRUNCATE RTINDEX rt');
 
-        $sq = SphinxQL::create($this->conn)->insert()
+        $sq = SphinxQL::create(self::$conn)->insert()
             ->into('rt')
             ->columns('id', 'gid', 'title', 'content');
 
@@ -70,15 +70,15 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
      */
     public function testTransactions()
     {
-        SphinxQL::create($this->conn)->transactionBegin();
-        SphinxQL::create($this->conn)->transactionRollback();
-        SphinxQL::create($this->conn)->transactionBegin();
-        SphinxQL::create($this->conn)->transactionCommit();
+        SphinxQL::create(self::$conn)->transactionBegin();
+        SphinxQL::create(self::$conn)->transactionRollback();
+        SphinxQL::create(self::$conn)->transactionBegin();
+        SphinxQL::create(self::$conn)->transactionCommit();
     }
 
     public function testQuery()
     {
-        $describe = SphinxQL::create($this->conn)
+        $describe = SphinxQL::create(self::$conn)
             ->query('DESCRIBE rt')
             ->execute()
             ->getStored();
@@ -108,7 +108,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
      */
     public function testInsert()
     {
-        SphinxQL::create($this->conn)->insert()
+        SphinxQL::create(self::$conn)->insert()
             ->into('rt')
             ->set(array(
                 'id' => 10,
@@ -118,27 +118,27 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
             ))
             ->execute();
 
-        $result = SphinxQL::create($this->conn)->select()
+        $result = SphinxQL::create(self::$conn)->select()
             ->from('rt')
             ->execute()
             ->getStored();
 
         $this->assertCount(1, $result);
 
-        SphinxQL::create($this->conn)->insert()
+        SphinxQL::create(self::$conn)->insert()
             ->into('rt')
             ->columns('id', 'title', 'content', 'gid')
             ->values(11, 'this is a title', 'this is the content', 100)
             ->execute();
 
-        $result = SphinxQL::create($this->conn)->select()
+        $result = SphinxQL::create(self::$conn)->select()
             ->from('rt')
             ->execute()
             ->getStored();
 
         $this->assertCount(2, $result);
 
-        SphinxQL::create($this->conn)->insert()
+        SphinxQL::create(self::$conn)->insert()
             ->into('rt')
             ->value('id', 12)
             ->value('title', 'simple logic')
@@ -146,14 +146,14 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
             ->value('gid', 200)
             ->execute();
 
-        $result = SphinxQL::create($this->conn)->select()
+        $result = SphinxQL::create(self::$conn)->select()
             ->from('rt')
             ->execute()
             ->getStored();
 
         $this->assertCount(3, $result);
 
-        SphinxQL::create($this->conn)->insert()
+        SphinxQL::create(self::$conn)->insert()
             ->into('rt')
             ->columns('id', 'title', 'content', 'gid')
             ->values(13, 'i am getting bored', 'with all this CONTENT', 300)
@@ -161,21 +161,21 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
             ->values(15, 'there\'s no hope in this class', 'just give up', 300)
             ->execute();
 
-        $result = SphinxQL::create($this->conn)->select()
+        $result = SphinxQL::create(self::$conn)->select()
             ->from('rt')
             ->execute()
             ->getStored();
 
         $this->assertCount(6, $result);
 
-        SphinxQL::create($this->conn)->insert()
+        SphinxQL::create(self::$conn)->insert()
             ->into('rt')
             ->columns('id', 'title', 'content', 'gid')
             ->values(16, 'we need to test', 'selecting the best result in groups', 500)
             ->values(17, 'what is there to do', 'we need to create dummy data for tests', 500)
             ->execute();
 
-        $result = SphinxQL::create($this->conn)->select()
+        $result = SphinxQL::create(self::$conn)->select()
             ->from('rt')
             ->execute()
             ->getStored();
@@ -196,7 +196,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
      */
     public function testReplace()
     {
-        $result = SphinxQL::create($this->conn)->replace()
+        $result = SphinxQL::create(self::$conn)->replace()
             ->into('rt')
             ->set(array(
                 'id' => 10,
@@ -209,7 +209,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
 
         $this->assertSame(1, $result);
 
-        $result = SphinxQL::create($this->conn)->select()
+        $result = SphinxQL::create(self::$conn)->select()
             ->from('rt')
             ->where('id', '=', 10)
             ->execute()
@@ -217,7 +217,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals('9002', $result[0]['gid']);
 
-        $result = SphinxQL::create($this->conn)->replace()
+        $result = SphinxQL::create(self::$conn)->replace()
             ->into('rt')
             ->columns('id', 'title', 'content', 'gid')
             ->values(10, 'modifying the same line again', 'because i am that lazy', 9003)
@@ -227,7 +227,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
 
         $this->assertSame(2, $result);
 
-        $result = SphinxQL::create($this->conn)->select()
+        $result = SphinxQL::create(self::$conn)->select()
             ->from('rt')
             ->where('id', 'IN', array(10, 11))
             ->execute()
@@ -236,7 +236,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('9003', $result[0]['gid']);
         $this->assertEquals('300', $result[1]['gid']);
 
-        SphinxQL::create($this->conn)->replace()
+        SphinxQL::create(self::$conn)->replace()
             ->into('rt')
             ->value('id', 11)
             ->value('title', 'replacing value by value')
@@ -244,7 +244,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
             ->value('gid', 200)
             ->execute();
 
-        $result = SphinxQL::create($this->conn)->select()
+        $result = SphinxQL::create(self::$conn)->select()
             ->from('rt')
             ->where('id', '=', 11)
             ->execute()
@@ -260,7 +260,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
      */
     public function testUpdate()
     {
-        $result = SphinxQL::create($this->conn)->update('rt')
+        $result = SphinxQL::create(self::$conn)->update('rt')
             ->where('id', '=', 11)
             ->value('gid', 201)
             ->execute()
@@ -268,7 +268,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
 
         $this->assertSame(1, $result);
 
-        $result = SphinxQL::create($this->conn)->update('rt')
+        $result = SphinxQL::create(self::$conn)->update('rt')
             ->where('gid', '=', 300)
             ->value('gid', 305)
             ->execute()
@@ -276,7 +276,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
 
         $this->assertSame(3, $result);
 
-        $result = SphinxQL::create($this->conn)->select()
+        $result = SphinxQL::create(self::$conn)->select()
             ->from('rt')
             ->where('id', '=', 11)
             ->execute()
@@ -284,13 +284,13 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals('201', $result[0]['gid']);
 
-        $result = SphinxQL::create($this->conn)->update('rt')
+        $result = SphinxQL::create(self::$conn)->update('rt')
             ->where('gid', '=', 305)
             ->set(array('gid' => 304))
             ->execute()
             ->getStored();
 
-        $result = SphinxQL::create($this->conn)->select()
+        $result = SphinxQL::create(self::$conn)->select()
             ->from('rt')
             ->where('gid', '=', 304)
             ->execute()
@@ -307,7 +307,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
     {
         $this->refill();
 
-        $result = SphinxQL::create($this->conn)->select()
+        $result = SphinxQL::create(self::$conn)->select()
             ->from('rt')
             ->where('gid', 'BETWEEN', array(300, 400))
             ->execute()
@@ -315,7 +315,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
 
         $this->assertCount(3, $result);
 
-        $result = SphinxQL::create($this->conn)->select()
+        $result = SphinxQL::create(self::$conn)->select()
             ->from('rt')
             ->where('id', 'IN', array(11, 12, 13))
             ->execute()
@@ -323,7 +323,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
 
         $this->assertCount(3, $result);
 
-        $result = SphinxQL::create($this->conn)->select()
+        $result = SphinxQL::create(self::$conn)->select()
             ->from('rt')
             ->where('id', 'NOT IN', array(11, 12))
             ->execute()
@@ -331,7 +331,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
 
         $this->assertCount(6, $result);
 
-        $result = SphinxQL::create($this->conn)->select()
+        $result = SphinxQL::create(self::$conn)->select()
             ->from('rt')
             ->where('gid', '>', 300)
             ->execute()
@@ -339,13 +339,13 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
 
         $this->assertCount(6, $result);
 
-        $result = SphinxQL::create($this->conn)->select()
+        $result = SphinxQL::create(self::$conn)->select()
             ->from('rt')
             ->where('gid', 304)
             ->execute()
             ->getStored();
 
-        $result = SphinxQL::create($this->conn)->select()
+        $result = SphinxQL::create(self::$conn)->select()
             ->from('rt')
             ->where('gid', '>', 300)
             ->execute()
@@ -362,7 +362,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
     {
         $this->refill();
 
-        $result = SphinxQL::create($this->conn)->select()
+        $result = SphinxQL::create(self::$conn)->select()
             ->from('rt')
             ->match('content', 'content')
             ->execute()
@@ -370,7 +370,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
 
         $this->assertCount(2, $result);
 
-        $result = SphinxQL::create($this->conn)->select()
+        $result = SphinxQL::create(self::$conn)->select()
             ->from('rt')
             ->match('title', 'value')
             ->execute()
@@ -378,7 +378,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
 
         $this->assertCount(1, $result);
 
-        $result = SphinxQL::create($this->conn)->select()
+        $result = SphinxQL::create(self::$conn)->select()
             ->from('rt')
             ->match('title', 'value')
             ->match('content', 'directly')
@@ -387,7 +387,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
 
         $this->assertCount(1, $result);
 
-        $result = SphinxQL::create($this->conn)->select()
+        $result = SphinxQL::create(self::$conn)->select()
             ->from('rt')
             ->match('*', 'directly')
             ->execute()
@@ -395,7 +395,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
 
         $this->assertCount(1, $result);
 
-        $result = SphinxQL::create($this->conn)->select()
+        $result = SphinxQL::create(self::$conn)->select()
             ->from('rt')
             ->match(array('title', 'content'), 'to')
             ->execute()
@@ -403,7 +403,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
 
         $this->assertCount(3, $result);
 
-        $result = SphinxQL::create($this->conn)->select()
+        $result = SphinxQL::create(self::$conn)->select()
             ->from('rt')
             ->match('content', 'directly | lazy', true)
             ->execute()
@@ -414,15 +414,15 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
 
     public function testEscapeMatch()
     {
-        $this->assertSame('this maybe that\^32 and \| hi', SphinxQL::create($this->conn)->escapeMatch('this MAYBE that^32 and | hi'));
-        $this->assertSame('stärkergradig \| mb', SphinxQL::create($this->conn)->escapeMatch('stärkergradig | mb'));
+        $this->assertSame('this maybe that\^32 and \| hi', SphinxQL::create(self::$conn)->escapeMatch('this MAYBE that^32 and | hi'));
+        $this->assertSame('stärkergradig \| mb', SphinxQL::create(self::$conn)->escapeMatch('stärkergradig | mb'));
     }
 
     public function testHalfEscapeMatch()
     {
-        $this->assertSame('this maybe that\^32 and | hi', SphinxQL::create($this->conn)->halfEscapeMatch('this MAYBE that^32 and | hi'));
-        $this->assertSame('this \- not -that | hi \-', SphinxQL::create($this->conn)->halfEscapeMatch('this -- not -that | | hi -'));
-        $this->assertSame('stärkergradig | mb', SphinxQL::create($this->conn)->halfEscapeMatch('stärkergradig | mb'));
+        $this->assertSame('this maybe that\^32 and | hi', SphinxQL::create(self::$conn)->halfEscapeMatch('this MAYBE that^32 and | hi'));
+        $this->assertSame('this \- not -that | hi \-', SphinxQL::create(self::$conn)->halfEscapeMatch('this -- not -that | | hi -'));
+        $this->assertSame('stärkergradig | mb', SphinxQL::create(self::$conn)->halfEscapeMatch('stärkergradig | mb'));
     }
 
     /**
@@ -432,15 +432,15 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
     */
     public function testEscapeChars()
     {
-        $this->assertEquals(array('%' => '\%'), SphinxQL::create($this->conn)->compileEscapeChars(array('%')));
-        $this->assertEquals(array('@' => '\@'), SphinxQL::create($this->conn)->compileEscapeChars(array('@')));
+        $this->assertEquals(array('%' => '\%'), SphinxQL::create(self::$conn)->compileEscapeChars(array('%')));
+        $this->assertEquals(array('@' => '\@'), SphinxQL::create(self::$conn)->compileEscapeChars(array('@')));
     }
 
     public function testOption()
     {
         $this->refill();
 
-        $result = SphinxQL::create($this->conn)->select()
+        $result = SphinxQL::create(self::$conn)->select()
             ->from('rt')
             ->match('content', 'content')
             ->option('max_matches', 1)
@@ -449,7 +449,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
 
         $this->assertCount(1, $result);
 
-        $result = SphinxQL::create($this->conn)->select()
+        $result = SphinxQL::create(self::$conn)->select()
             ->from('rt')
             ->match('content', 'content')
             ->option('max_matches', SphinxQL::expr('1'))
@@ -458,7 +458,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
 
         $this->assertCount(1, $result);
 
-        $result = SphinxQL::create($this->conn)->select()
+        $result = SphinxQL::create(self::$conn)->select()
             ->from('rt')
             ->option('comment', 'this should be quoted')
             ->compile()
@@ -466,7 +466,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals('SELECT * FROM `rt` OPTION `comment` = \'this should be quoted\'', $result);
 
-        $result = SphinxQL::create($this->conn)->select()
+        $result = SphinxQL::create(self::$conn)->select()
             ->from('rt')
             ->option('field_weights', SphinxQL::expr('(content=50)'))
             ->compile()
@@ -474,7 +474,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals('SELECT * FROM `rt` OPTION `field_weights` = (content=50)', $result);
 
-        $result = SphinxQL::create($this->conn)->select()
+        $result = SphinxQL::create(self::$conn)->select()
             ->from('rt')
             ->option('field_weights', array(
                 'title'   => 80,
@@ -491,7 +491,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
     {
         $this->refill();
 
-        $result = SphinxQL::create($this->conn)->select(SphinxQL::expr('count(*)'))
+        $result = SphinxQL::create(self::$conn)->select(SphinxQL::expr('count(*)'))
             ->from('rt')
             ->groupBy('gid')
             ->execute()
@@ -505,7 +505,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
     {
         $this->refill();
 
-        $result = SphinxQL::create($this->conn)->select()
+        $result = SphinxQL::create(self::$conn)->select()
             ->from('rt')
             ->orderBy('id', 'desc')
             ->execute()
@@ -513,7 +513,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals('17', $result[0]['id']);
 
-        $result = SphinxQL::create($this->conn)->select()
+        $result = SphinxQL::create(self::$conn)->select()
             ->from('rt')
             ->orderBy('id', 'asc')
             ->execute()
@@ -526,7 +526,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
     {
         $this->refill();
 
-        $result = SphinxQL::create($this->conn)->select()
+        $result = SphinxQL::create(self::$conn)->select()
             ->from('rt')
             ->where('gid', 500)
             ->groupBy('gid')
@@ -536,7 +536,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals('17', $result[0]['id']);
 
-        $result = SphinxQL::create($this->conn)->select()
+        $result = SphinxQL::create(self::$conn)->select()
             ->from('rt')
             ->where('gid', 500)
             ->groupBy('gid')
@@ -551,7 +551,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
     {
         $this->refill();
 
-        $result = SphinxQL::create($this->conn)->select()
+        $result = SphinxQL::create(self::$conn)->select()
             ->from('rt')
             ->offset(4)
             ->execute()
@@ -564,7 +564,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
     {
         $this->refill();
 
-        $result = SphinxQL::create($this->conn)->select()
+        $result = SphinxQL::create(self::$conn)->select()
             ->from('rt')
             ->limit(3)
             ->execute()
@@ -572,7 +572,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
 
         $this->assertCount(3, $result);
 
-        $result = SphinxQL::create($this->conn)->select()
+        $result = SphinxQL::create(self::$conn)->select()
             ->from('rt')
             ->limit(2, 3)
             ->execute()
@@ -589,7 +589,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
     {
         $this->refill();
 
-        $result = SphinxQL::create($this->conn)->delete()
+        $result = SphinxQL::create(self::$conn)->delete()
             ->from('rt')
             ->where('id', 'IN', array(10, 11, 12))
             ->execute()
@@ -609,11 +609,11 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
     {
         $this->refill();
 
-        $result = SphinxQL::create($this->conn)
+        $result = SphinxQL::create(self::$conn)
             ->select()
             ->from('rt')
             ->where('gid', 9003)
-            ->enqueue(Helper::create($this->conn)->showMeta())
+            ->enqueue(Helper::create(self::$conn)->showMeta())
             ->enqueue()
             ->select()
             ->from('rt')
@@ -635,7 +635,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
      */
     public function testResetMethods()
     {
-        $result = SphinxQL::create($this->conn)->select()
+        $result = SphinxQL::create(self::$conn)->select()
             ->from('rt')
             ->where('id', 'IN', array(10, 11))
             ->resetWhere()
@@ -659,7 +659,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
     public function testSelect()
     {
         $this->refill();
-        $result = SphinxQL::create($this->conn)
+        $result = SphinxQL::create(self::$conn)
             ->select(array('id', 'gid'))
             ->from('rt')
             ->execute()
@@ -669,7 +669,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('10', $result[0]['id']);
         $this->assertEquals('9003', $result[0]['gid']);
 
-        $result = SphinxQL::create($this->conn)
+        $result = SphinxQL::create(self::$conn)
             ->select('id', 'gid')
             ->from('rt')
             ->execute()
@@ -679,7 +679,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('10', $result[0]['id']);
         $this->assertEquals('9003', $result[0]['gid']);
 
-        $result = SphinxQL::create($this->conn)
+        $result = SphinxQL::create(self::$conn)
             ->select(array('id'))
             ->from('rt')
             ->execute()
@@ -688,7 +688,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
         $this->assertArrayNotHasKey('gid', $result[0]);
         $this->assertEquals('10', $result[0]['id']);
 
-        $result = SphinxQL::create($this->conn)
+        $result = SphinxQL::create(self::$conn)
             ->select('id')
             ->from('rt')
             ->execute()

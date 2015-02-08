@@ -2,7 +2,7 @@
 namespace Foolz\SphinxQL\Drivers;
 
 
-interface MultiResultSetInterface extends \ArrayAccess
+interface MultiResultSetInterface extends \ArrayAccess, \Iterator, \Countable
 {
     /**
      * Stores all the data in PHP and frees the data on the server
@@ -14,7 +14,7 @@ interface MultiResultSetInterface extends \ArrayAccess
     /**
      * Returns the stored data as an array (results) of arrays (rows)
      *
-     * @return array
+     * @return ResultSetInterface[]
      */
     public function getStored();
 
@@ -33,11 +33,18 @@ interface MultiResultSetInterface extends \ArrayAccess
     public function hasNextSet();
 
     /**
-     * Returns the next result set
+     * Moves the cursor to the next result set
      *
-     * @return ResultSetInterface The next result set
+     * @return self
      */
-    public function getNextSet();
+    public function toNextSet();
+
+    /**
+     * Returns the current result set
+     *
+     * @return ResultSetInterface The result set pointed by the cursor
+     */
+    public function getSet();
 
     /**
      * Flushes the pending results that otherwise would appear in the next query

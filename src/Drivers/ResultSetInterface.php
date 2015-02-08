@@ -4,6 +4,7 @@ namespace Foolz\SphinxQL\Drivers;
 
 class ResultSetException extends \Exception {}
 
-interface ResultSetInterface
+interface ResultSetInterface extends \ArrayAccess, \Iterator
 {
+
 }

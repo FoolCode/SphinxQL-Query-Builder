@@ -5,6 +5,7 @@ namespace Foolz\SphinxQL\Drivers\Mysqli;
 
 use Foolz\SphinxQL\Drivers\DatabaseException;
 use Foolz\SphinxQL\Drivers\MultiResultSetInterface;
+use Foolz\SphinxQL\Drivers\ResultSetException;
 
 class MultiResultSet implements MultiResultSetInterface
 {
@@ -26,7 +27,7 @@ class MultiResultSet implements MultiResultSetInterface
     /**
      * @var int
      */
-    public $cursor = 0;
+    public $cursor = null;
 
     /**
      * @var \mysqli_result
@@ -81,11 +82,14 @@ class MultiResultSet implements MultiResultSetInterface
             throw new DatabaseException('The MultiResultSet is using the mysqli cursors, store() can\'t fetch all the data');
         }
 
-        $this->stored = array();
+        $store = array();
         while ($this->hasNextSet()) {
-            // getStored also frees the set
-            $this->stored[] = $this->getNextSet()->getStored();
+            // this relies on stored being null!
+            $store[] = $this->toNextSet()->getSet()->store();
         }
+
+        // if we write the array straight to $this->stored it won't be null anymore and functions relying on null will break
+        $this->stored = $store;
 
         return $this;
     }
@@ -93,7 +97,7 @@ class MultiResultSet implements MultiResultSetInterface
     /**
      * Returns the stored result data
      *
-     * @return array|null
+     * @return ResultSet[]
      * @throws DatabaseException
      */
     public function getStored()
@@ -113,50 +117,74 @@ class MultiResultSet implements MultiResultSetInterface
     }
 
     /**
-     * Returns the next result
-     *
-     * @return ResultSet The next result
-     * @throws DatabaseException If there isn't more results, use hasNextSet() to avoid this
-     */
-    public function getNextSet()
-    {
-        if (!$this->hasNextSet()) {
-            throw new DatabaseException('There\'s no more results in this multiquery object.');
-        }
-
-        // the first result is always already loaded
-        if ($this->cursor > 0) {
-            $this->getMysqliConnection()->next_result();
-        }
-
-        $this->cursor++;
-
-        return new ResultSet(
-            $this->getConnection(),
-            $this->getMysqliConnection()->store_result()
-        );
-    }
-
-    /**
      * Tells if we have more results
      *
      * @return bool
      */
     public function hasNextSet()
     {
-        return $this->cursor < $this->count;
+        // if the cursor hasn't been used yet and there's at least a result
+        // or if we haven't reached the last element yet
+        return $this->cursor === null && $this->count > 0
+            || $this->cursor < $this->count - 1;
+    }
+
+    public function toNextSet()
+    {
+        if (!$this->hasNextSet()) {
+            throw new ResultSetException('There\'s no more results in this multiquery object.');
+        }
+
+        if ($this->stored !== null) {
+            if ($this->cursor === null) {
+                $this->cursor = 0;
+            } else {
+                $this->cursor++;
+            }
+
+            $this->current_set = $this->stored[$this->cursor];
+        } else {
+            // the first result is always already loaded
+            if ($this->cursor === null) {
+                $this->cursor = 0;
+            } else {
+                $this->cursor++;
+                $this->getMysqliConnection()->next_result();
+            }
+
+            $this->current_set = new ResultSet(
+                $this->getConnection(),
+                $this->getMysqliConnection()->store_result()
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * Returns the currently pointed result
+     *
+     * @return ResultSet The next result
+     * @throws ResultSetException If there isn't more results, use hasNextSet() to avoid this
+     */
+    public function getSet()
+    {
+        return $this->current_set;
     }
 
     /**
      * Call this to make sure there isn't pending results (else they'd appear in the next query)
      *
      * @return static $this
-     * @throws DatabaseException
      */
     public function flush()
     {
+        if ($this->stored !== null) {
+            return $this;
+        }
+
         while ($this->hasNextSet()) {
-            $this->getNextSet()->freeResult();
+            $this->toNextSet()->getSet()->freeResult();
         }
 
         return $this;
@@ -176,7 +204,7 @@ class MultiResultSet implements MultiResultSetInterface
      */
     public function offsetExists($offset)
     {
-        return $offset >= 0 && $this->hasNextSet();
+        return $this->cursor >= 0 && $this->cursor < $this->getCount();
     }
 
     /**
@@ -223,5 +251,81 @@ class MultiResultSet implements MultiResultSetInterface
     public function offsetUnset($offset)
     {
         throw new \BadMethodCallException('Not implemented');
+    }
+
+    /**
+     * (PHP 5 &gt;= 5.0.0)<br/>
+     * Return the current element
+     * @link http://php.net/manual/en/iterator.current.php
+     * @return mixed Can return any type.
+     */
+    public function current()
+    {
+        return $this->getSet();
+    }
+
+    /**
+     * (PHP 5 &gt;= 5.0.0)<br/>
+     * Move forward to next element
+     * @link http://php.net/manual/en/iterator.next.php
+     * @return void Any returned value is ignored.
+     */
+    public function next()
+    {
+        if ($this->hasNextSet()) {
+            $this->toNextSet();
+        } else {
+            $this->cursor++;
+        }
+    }
+
+    /**
+     * (PHP 5 &gt;= 5.0.0)<br/>
+     * Return the key of the current element
+     * @link http://php.net/manual/en/iterator.key.php
+     * @return mixed scalar on success, or null on failure.
+     */
+    public function key()
+    {
+        return (int) $this->cursor;
+    }
+
+    /**
+     * (PHP 5 &gt;= 5.0.0)<br/>
+     * Checks if current position is valid
+     * @link http://php.net/manual/en/iterator.valid.php
+     * @return boolean The return value will be casted to boolean and then evaluated.
+     * Returns true on success or false on failure.
+     */
+    public function valid()
+    {
+        return $this->cursor >= 0 && $this->cursor < $this->getCount();
+    }
+
+    /**
+     * (PHP 5 &gt;= 5.0.0)<br/>
+     * Rewind the Iterator to the first element
+     * @link http://php.net/manual/en/iterator.rewind.php
+     * @return void Any returned value is ignored.
+     */
+    public function rewind()
+    {
+        // we actually can't roll this back unless it was stored first
+        $this->cursor = null;
+        $this->toNextSet();
+    }
+
+    /**
+     * (PHP 5 &gt;= 5.1.0)<br/>
+     * Count elements of an object
+     * @link http://php.net/manual/en/countable.count.php
+     * @return int The custom count as an integer.
+     * </p>
+     * <p>
+     * The return value is cast to an integer.
+     */
+    public function count()
+    {
+        return $this->getCount();
     }
 }

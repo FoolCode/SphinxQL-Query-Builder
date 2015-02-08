@@ -144,11 +144,12 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
     public function testMultiQuery()
     {
         $this->connection->connect();
-        $this->assertSame(array(array(
+        $query = $this->connection->multiQuery(array('SHOW META'));
+        $this->assertSame(array(
             array('Variable_name' => 'total', 'Value' => '0'),
             array('Variable_name' => 'total_found', 'Value' => '0'),
             array('Variable_name' => 'time', 'Value' => '0.000'),
-        )), $this->connection->multiQuery(array('SHOW META'))->getStored());
+        ), $query->toNextSet()->getSet()->fetchAllAssoc());
     }
 
     /**

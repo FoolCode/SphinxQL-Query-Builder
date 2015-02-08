@@ -272,6 +272,11 @@ class ResultSet implements ResultSetInterface
         return $this->affected_rows;
     }
 
+    /**
+     * Returns the number of rows in the result set
+     *
+     * @return int The number of rows in the result set
+     */
     public function getCount()
     {
         return $this->num_rows;
@@ -280,6 +285,8 @@ class ResultSet implements ResultSetInterface
     /**
      * Frees the memory from the result
      * Call it after you're done with a result set
+     *
+     * @return static
      */
     public function freeResult()
     {

@@ -195,7 +195,7 @@ class Connection implements ConnectionInterface
      *
      * @param string $query The query string
      *
-     * @return array|int The result array or number of rows affected
+     * @return ResultSet The result array or number of rows affected
      * @throws DatabaseException If the executed query produced an error
      */
     public function query($query)

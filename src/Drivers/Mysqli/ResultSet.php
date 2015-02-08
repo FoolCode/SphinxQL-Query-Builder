@@ -58,7 +58,7 @@ class ResultSet implements ResultSetInterface
         if ($result instanceof \mysqli_result) {
             $this->result = $result;
             $this->num_rows = $this->result->num_rows;
-
+            $this->fields = $this->result->fetch_fields();
         } else {
             $this->affected_rows = $this->getMysqliConnection()->affected_rows;
         }
@@ -76,7 +76,6 @@ class ResultSet implements ResultSetInterface
         }
 
         if ($this->result instanceof \mysqli_result) {
-            $this->fields = $this->result->fetch_fields();
             $result = $this->result->fetch_all(MYSQLI_NUM);
             $this->stored = $result;
         } else {
@@ -302,7 +301,7 @@ class ResultSet implements ResultSetInterface
      */
     public function offsetExists($offset)
     {
-        return $offset >= 0 && ($this->num_rows - 1) < $offset;
+        return $this->hasRow($offset);
     }
 
     /**

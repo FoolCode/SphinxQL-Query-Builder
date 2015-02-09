@@ -9,8 +9,8 @@ php:
   - hhvm-nightly
 
 env:
-  - DRIVER=simple SPHINXSEARCH_VER=trunk
-  - DRIVER=simple SPHINXSEARCH_VER=branches/rel21
+  - DRIVER=mysqli SPHINXSEARCH_VER=trunk
+  - DRIVER=mysqli SPHINXSEARCH_VER=branches/rel21
   - DRIVER=pdo SPHINXSEARCH_VER=trunk
   - DRIVER=pdo SPHINXSEARCH_VER=branches/rel21
 

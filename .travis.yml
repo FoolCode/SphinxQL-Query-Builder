@@ -6,9 +6,13 @@ php:
   - 5.5
   - 5.6
   - hhvm
+  - hhvm-nightly
+
 env:
-  - SPHINXSEARCH_VER=trunk
-  - SPHINXSEARCH_VER=branches/rel21
+  - DRIVER=simple SPHINXSEARCH_VER=trunk
+  - DRIVER=simple SPHINXSEARCH_VER=branches/rel21
+  - DRIVER=pdo SPHINXSEARCH_VER=trunk
+  - DRIVER=pdo SPHINXSEARCH_VER=branches/rel21
 
 before_install:
   - svn checkout http://sphinxsearch.googlecode.com/svn/${SPHINXSEARCH_VER}/ sphinxsearch
@@ -22,4 +26,4 @@ before_script:
   - cd tests
   - /usr/local/sphinx/bin/searchd -c sphinx.conf
 
-script: ../vendor/bin/phpunit --configuration phpunit.xml --coverage-text
+script: ../vendor/bin/phpunit --configuration travis/$DRIVER.phpunit.xml --coverage-text

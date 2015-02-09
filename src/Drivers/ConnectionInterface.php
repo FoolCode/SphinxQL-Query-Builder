@@ -1,11 +1,9 @@
 <?php
 
 namespace Foolz\SphinxQL\Drivers;
+use Foolz\SphinxQL\Exception\DatabaseException;
+use Foolz\SphinxQL\Exception\SphinxQLException;
 use Foolz\SphinxQL\Expression;
-
-class ConnectionException extends \Exception {};
-class DatabaseException extends \Exception {};
-class SphinxQLException extends \Exception {};
 
 /**
  * Interface ConnectionInterface
@@ -19,7 +17,7 @@ interface ConnectionInterface
      *
      * @param string $query The query string
      *
-     * @return array|int The result array or number of rows affected
+     * @return ResultSetInterface The result array or number of rows affected
      * @throws DatabaseException If the executed query produced an error
      */
     public function query($query);
@@ -29,7 +27,7 @@ interface ConnectionInterface
      *
      * @param array $queue Queue holding all of the queries to be executed
      *
-     * @return array The result array
+     * @return MultiResultSetInterface The result array
      * @throws DatabaseException In case a query throws an error
      * @throws SphinxQLException In case the array passed is empty
      */

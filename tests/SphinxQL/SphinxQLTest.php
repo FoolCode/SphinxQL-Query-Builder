@@ -1,8 +1,8 @@
 <?php
 
-use Foolz\SphinxQL\Helper;
 use Foolz\SphinxQL\SphinxQL;
-use Foolz\SphinxQL\Drivers\Mysqli\Connection;
+use Foolz\SphinxQL\Helper;
+use Foolz\SphinxQL\Tests\TestUtil;
 
 class SphinxQLTest extends PHPUnit_Framework_TestCase
 {
@@ -29,7 +29,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
 
     public static function setUpBeforeClass()
     {
-        $conn = new Connection();
+        $conn = TestUtil::getConnectionDriver();
         $conn->setParam('port', 9307);
         self::$conn = $conn;
 

@@ -2,6 +2,9 @@
 
 namespace Foolz\SphinxQL\Drivers;
 
+use Foolz\SphinxQL\Exception\ConnectionException;
+use Foolz\SphinxQL\Exception\DatabaseException;
+use Foolz\SphinxQL\Exception\SphinxQLException;
 use Foolz\SphinxQL\Expression;
 
 /**
@@ -24,13 +27,6 @@ class SimpleConnection implements ConnectionInterface
      * @var array
      */
     protected $connection_params = array('host' => '127.0.0.1', 'port' => 9306, 'socket' => null);
-
-    /**
-     * Internal Encoding
-     *
-     * @var string
-     */
-    protected $internal_encoding = null;
 
     /**
      * Disables any warning outputs returned on the \MySQLi connection with @ prefix.
@@ -102,16 +98,6 @@ class SimpleConnection implements ConnectionInterface
     }
 
     /**
-     * Returns the internal encoding.
-     *
-     * @return string current multibyte internal encoding
-     */
-    public function getInternalEncoding()
-    {
-        return $this->internal_encoding;
-    }
-
-    /**
      * Returns the current \mysqli connection established.
      *
      *
@@ -159,7 +145,6 @@ class SimpleConnection implements ConnectionInterface
 
         $conn->set_charset('utf8');
         $this->connection = $conn;
-        $this->mbPush();
 
         return true;
     }
@@ -185,7 +170,6 @@ class SimpleConnection implements ConnectionInterface
      */
     public function close()
     {
-        $this->mbPop();
         $this->getConnection()->close();
         $this->connection = null;
     }
@@ -389,25 +373,4 @@ class SimpleConnection implements ConnectionInterface
         return $result;
     }
 
-    /**
-     * Enter UTF-8 multi-byte workaround mode.
-     */
-    public function mbPush()
-    {
-        $this->internal_encoding = mb_internal_encoding();
-        mb_internal_encoding('UTF-8');
-
-        return $this;
-    }
-
-    /**
-     * Exit UTF-8 multi-byte workaround mode.
-     */
-    public function mbPop()
-    {
-        mb_internal_encoding($this->internal_encoding);
-        $this->internal_encoding = null;
-
-        return $this;
-    }
 }

@@ -218,6 +218,7 @@ class ResultSetTest extends PHPUnit_Framework_TestCase
         $this->refill();
         $res = self::$conn->query('SELECT * FROM rt');
         $this->assertEquals($res->getCount(), $res->count());
+        $this->assertEquals($res->getCount(), count($res));
     }
 
     public function testIterator()

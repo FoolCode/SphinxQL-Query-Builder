@@ -2,7 +2,8 @@
 
 namespace Foolz\SphinxQL\Drivers\Mysqli;
 
-use Foolz\SphinxQL\Drivers\ResultSetException;
+use Foolz\SphinxQL\Exception\ConnectionException;
+use Foolz\SphinxQL\Exception\ResultSetException;
 use Foolz\SphinxQL\Drivers\ResultSetInterface;
 
 class ResultSet implements ResultSetInterface
@@ -254,7 +255,7 @@ class ResultSet implements ResultSetInterface
      * Get the PHP MySQLi object
      *
      * @return \mysqli
-     * @throws \Foolz\SphinxQL\Drivers\ConnectionException
+     * @throws ConnectionException
      */
     public function getMysqliConnection()
     {

@@ -1,19 +1,20 @@
 <?php
 
-use Foolz\SphinxQL\Drivers\Mysqli\Connection as Connection;
-use Foolz\SphinxQL\Helper;
+use Foolz\SphinxQL\Drivers\ConnectionInterface;
 use Foolz\SphinxQL\SphinxQL;
+use Foolz\SphinxQL\Helper;
+use Foolz\SphinxQL\Tests\TestUtil;
 
 class HelperTest extends PHPUnit_Framework_TestCase
 {
     /**
-     * @var Foolz\SphinxQL\Connection
+     * @var ConnectionInterface
      */
     public $conn;
 
     public function __construct()
     {
-        $conn = new Connection();
+        $conn = TestUtil::getConnectionDriver();
         $conn->setParam('port', 9307);
         $this->conn = $conn;
 

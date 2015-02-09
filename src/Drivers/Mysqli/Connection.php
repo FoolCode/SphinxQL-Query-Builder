@@ -3,10 +3,10 @@
 namespace Foolz\SphinxQL\Drivers\Mysqli;
 
 
-use Foolz\SphinxQL\Drivers\DatabaseException;
-use Foolz\SphinxQL\Drivers\SphinxQLException;
+use Foolz\SphinxQL\Exception\ConnectionException;
+use Foolz\SphinxQL\Exception\DatabaseException;
+use Foolz\SphinxQL\Exception\SphinxQLException;
 use Foolz\SphinxQL\Expression;
-use Foolz\SphinxQL\Drivers\ConnectionException;
 use Foolz\SphinxQL\Drivers\ConnectionInterface;
 
 class Connection implements ConnectionInterface

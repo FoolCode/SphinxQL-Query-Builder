@@ -1,18 +1,19 @@
 <?php
 
-use Foolz\SphinxQL\Drivers\Mysqli\Connection as Connection;
+use Foolz\SphinxQL\Drivers\ConnectionInterface;
 use Foolz\SphinxQL\Expression;
+use Foolz\SphinxQL\Tests\TestUtil;
 
 class ConnectionTest extends PHPUnit_Framework_TestCase
 {
     /**
-     * @var Connection
+     * @var ConnectionInterface
      */
     private $connection = null;
 
     public function setUp()
     {
-        $this->connection = new Connection();
+        $this->connection = TestUtil::getConnectionDriver();
         $this->connection->setParams(array('host' => '127.0.0.1', 'port' => 9307));
         $this->connection->silenceConnectionWarning(false);
     }
@@ -24,7 +25,7 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
 
     public function test()
     {
-        new Connection();
+        TestUtil::getConnectionDriver();
     }
 
     /**
@@ -79,11 +80,11 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
     public function testGetConnection()
     {
         $this->connection->connect();
-        $this->assertInstanceOf('MySQLi', $this->connection->getConnection());
+        $this->assertNotNull($this->connection->getConnection());
     }
 
     /**
-     * @expectedException Foolz\SphinxQL\Drivers\ConnectionException
+     * @expectedException Foolz\SphinxQL\Exception\ConnectionException
      */
     public function testGetConnectionThrowsException()
     {
@@ -105,7 +106,7 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Foolz\SphinxQL\Drivers\ConnectionException
+     * @expectedException Foolz\SphinxQL\Exception\ConnectionException
      */
     public function testConnectThrowsException()
     {
@@ -122,7 +123,7 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Foolz\SphinxQL\Drivers\ConnectionException
+     * @expectedException Foolz\SphinxQL\Exception\ConnectionException
      */
     public function testClose()
     {
@@ -153,7 +154,7 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Foolz\SphinxQL\Drivers\DatabaseException
+     * @expectedException Foolz\SphinxQL\Exception\DatabaseException
      */
     public function testQueryThrowsException()
     {
@@ -220,15 +221,4 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
         );
     }
 
-    public function testMbPush()
-    {
-        $this->connection->mbPush();
-        $this->assertEquals('UTF-8', $this->connection->getInternalEncoding());
-    }
-
-    public function testMbPop()
-    {
-        $this->connection->mbPush()->mbPop();
-        $this->assertEquals(null, $this->connection->getInternalEncoding());
-    }
 }

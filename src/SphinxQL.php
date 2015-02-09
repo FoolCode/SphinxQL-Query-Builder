@@ -1221,7 +1221,7 @@ class SphinxQL
             return $string->value();
         }
 
-        return mb_strtolower(str_replace(array_keys($this->escape_full_chars), array_values($this->escape_full_chars), $string));
+        return mb_strtolower(str_replace(array_keys($this->escape_full_chars), array_values($this->escape_full_chars), $string), 'utf8');
     }
 
     /**
@@ -1242,7 +1242,7 @@ class SphinxQL
         $string = str_replace(array_keys($this->escape_half_chars), array_values($this->escape_half_chars), $string);
 
         // this manages to lower the error rate by a lot
-        if (mb_substr_count($string, '"') % 2 !== 0) {
+        if (mb_substr_count($string, '"', 'utf8') % 2 !== 0) {
             $string .= '"';
         }
 
@@ -1255,7 +1255,7 @@ class SphinxQL
             '/(\S+)\s+-\s+(\S+)/u' => '\1 \- \2',
         );
 
-        $string = mb_strtolower(preg_replace(array_keys($from_to_preg), array_values($from_to_preg), $string));
+        $string = mb_strtolower(preg_replace(array_keys($from_to_preg), array_values($from_to_preg), $string), 'utf8');
 
         return $string;
     }

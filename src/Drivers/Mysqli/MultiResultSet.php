@@ -3,9 +3,10 @@
 namespace Foolz\SphinxQL\Drivers\Mysqli;
 
 
-use Foolz\SphinxQL\Drivers\DatabaseException;
 use Foolz\SphinxQL\Drivers\MultiResultSetInterface;
 use Foolz\SphinxQL\Drivers\ResultSetException;
+use Foolz\SphinxQL\Exception\ConnectionException;
+use Foolz\SphinxQL\Exception\DatabaseException;
 
 class MultiResultSet implements MultiResultSetInterface
 {
@@ -58,7 +59,7 @@ class MultiResultSet implements MultiResultSetInterface
      * Returns the actual mysqli connection
      *
      * @return \mysqli
-     * @throws \Foolz\SphinxQL\Drivers\ConnectionException
+     * @throws ConnectionException
      */
     public function getMysqliConnection()
     {

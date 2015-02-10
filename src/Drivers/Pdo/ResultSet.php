@@ -1,10 +1,12 @@
 <?php
 
-namespace Foolz\SphinxQL\Drivers\Mysqli;
+namespace Foolz\SphinxQL\Drivers\Pdo;
 
 use Foolz\SphinxQL\Exception\ConnectionException;
 use Foolz\SphinxQL\Exception\ResultSetException;
 use Foolz\SphinxQL\Drivers\ResultSetInterface;
+use PDO;
+use PDOStatement;
 
 class ResultSet implements ResultSetInterface
 {
@@ -19,9 +21,9 @@ class ResultSet implements ResultSetInterface
     protected $result;
 
     /**
-     * @var array
+     * @var null|array
      */
-    protected $fields;
+    protected $fields = array();
 
     /**
      * @var int
@@ -50,18 +52,26 @@ class ResultSet implements ResultSetInterface
 
     /**
      * @param Connection $connection
-     * @param null|\mysqli_result $result
+     * @param PDOStatement $statement
      */
-    public function __construct(Connection $connection, $result = null)
+    public function __construct(Connection $connection, PDOStatement $statement)
     {
         $this->connection = $connection;
+        $this->statement = $statement;
 
-        if ($result instanceof \mysqli_result) {
-            $this->result = $result;
-            $this->num_rows = $this->result->num_rows;
-            $this->fields = $this->result->fetch_fields();
+        if ($this->statement->columnCount() > 0) {
+            $this->num_rows = $this->statement->rowCount();
+
+            for ($i = 0; $i < $this->statement->columnCount(); $i++) {
+                $this->fields[] = $this->statement->getColumnMeta($i);
+            }
+
+            $this->store();
+
         } else {
-            $this->affected_rows = $this->getMysqliConnection()->affected_rows;
+            $this->affected_rows = $this->statement->rowCount();
+            $this->store();
+
         }
     }
 
@@ -76,9 +86,8 @@ class ResultSet implements ResultSetInterface
             return $this;
         }
 
-        if ($this->result instanceof \mysqli_result) {
-            $result = $this->result->fetch_all(MYSQLI_NUM);
-            $this->stored = $result;
+        if ($this->statement->columnCount() > 0) {
+            $this->stored = $this->statement->fetchAll(PDO::FETCH_NUM);
         } else {
             $this->stored = $this->affected_rows;
         }
@@ -94,7 +103,7 @@ class ResultSet implements ResultSetInterface
      */
     public function getStored()
     {
-        if (!($this->result instanceof \mysqli_result)) {
+        if ($this->statement->columnCount() === 0) {
             return $this->getAffectedRows();
         }
 
@@ -126,8 +135,8 @@ class ResultSet implements ResultSetInterface
         }
 
         $this->current_row = $num;
-        $this->result->data_seek($num);
-        $this->fetched = $this->result->fetch_row();
+        //$this->result->data_seek($num);
+        $this->fetched = $this->statement->fetch(PDO::FETCH_NUM);
 
         return $this;
     }
@@ -160,7 +169,7 @@ class ResultSet implements ResultSetInterface
             $this->current_row++;
         }
 
-        $this->fetched = $this->result->fetch_row();
+        $this->fetched = $this->statement->fetch(PDO::FETCH_NUM);
 
         return $this;
     }
@@ -175,14 +184,14 @@ class ResultSet implements ResultSetInterface
             $result = array();
             foreach ($this->stored as $row_key => $row_value) {
                 foreach ($row_value as $col_key => $col_value) {
-                    $result[$row_key][$this->fields[$col_key]->name] = $col_value;
+                    $result[$row_key][$this->fields[$col_key]['name']] = $col_value;
                 }
             }
 
             return $result;
         }
 
-        return $this->result->fetch_all(MYSQLI_ASSOC);
+        return $this->statement->fetchAll(PDO::FETCH_ASSOC);
     }
 
     /**
@@ -195,7 +204,7 @@ class ResultSet implements ResultSetInterface
             return $this->stored;
         }
 
-        return $this->result->fetch_all(MYSQLI_NUM);
+        return $this->statement->fetchAll(PDO::FETCH_NUM);
     }
 
     /**
@@ -212,7 +221,7 @@ class ResultSet implements ResultSetInterface
 
         $result = array();
         foreach ($row as $col_key => $col_value) {
-            $result[$this->fields[$col_key]->name] = $col_value;
+            $result[$this->fields[$col_key]['name']] = $col_value;
         }
 
         return $result;
@@ -257,7 +266,7 @@ class ResultSet implements ResultSetInterface
      * @return \mysqli
      * @throws ConnectionException
      */
-    public function getMysqliConnection()
+    public function getPdoConnection()
     {
         return $this->connection->getConnection();
     }
@@ -291,7 +300,7 @@ class ResultSet implements ResultSetInterface
      */
     public function freeResult()
     {
-        $this->result->free_result();
+        $this->statement->closeCursor();
         return $this;
     }
 

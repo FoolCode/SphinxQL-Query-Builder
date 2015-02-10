@@ -1,7 +1,8 @@
 <?php
 
-namespace Foolz\SphinxQL\Drivers;
+namespace Foolz\SphinxQL\Drivers\Pdo;
 
+use Foolz\SphinxQL\Drivers\ConnectionInterface;
 use Foolz\SphinxQL\Exception\ConnectionException;
 use Foolz\SphinxQL\Exception\DatabaseException;
 use Foolz\SphinxQL\Exception\SphinxQLException;
@@ -11,7 +12,7 @@ use Foolz\SphinxQL\Expression;
  * Class PdoConnection
  * @package Foolz\SphinxQL\Drivers
  */
-class PdoConnection implements ConnectionInterface
+class Connection implements ConnectionInterface
 {
 
     /**
@@ -108,7 +109,7 @@ class PdoConnection implements ConnectionInterface
             throw new DatabaseException($exception->getMessage() . ' [' . $query . ']');
         }
 
-        return ($stm->columnCount() == 0) ? $stm->rowCount() : $stm->fetchAll(\Pdo::FETCH_ASSOC);
+        return new ResultSet($this, $stm);
     }
 
     /**
@@ -215,13 +216,10 @@ class PdoConnection implements ConnectionInterface
             } catch (\PDOException $exception) {
                 throw new DatabaseException($exception->getMessage() .' [ '.implode(';', $queue).']');
             }
-            do {
-                $rowset = $statement->fetchAll(\PDO::FETCH_ASSOC);
-                if ($rowset)
-                    $result[$count] = $rowset;
-                $count++;
-            } while ($statement->nextRowset());
+
+            return new MultiResultSet($this, $statement, count($queue));
         }
+        /*
         else
         {
             foreach($queue as $sql)
@@ -236,6 +234,7 @@ class PdoConnection implements ConnectionInterface
                 $count++;
             }
         }
+        */
 
         return $result;
     }

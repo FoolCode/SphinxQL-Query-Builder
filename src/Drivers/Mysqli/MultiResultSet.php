@@ -88,6 +88,7 @@ class MultiResultSet implements MultiResultSetInterface
             // this relies on stored being null!
             $store[] = $this->toNextSet()->getSet()->store();
         }
+        $this->cursor = null;
 
         // if we write the array straight to $this->stored it won't be null anymore and functions relying on null will break
         $this->stored = $store;

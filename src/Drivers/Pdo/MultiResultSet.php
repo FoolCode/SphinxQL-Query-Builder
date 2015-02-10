@@ -1,12 +1,13 @@
 <?php
 
-namespace Foolz\SphinxQL\Drivers\Mysqli;
+namespace Foolz\SphinxQL\Drivers\Pdo;
 
 
 use Foolz\SphinxQL\Drivers\MultiResultSetInterface;
 use Foolz\SphinxQL\Drivers\ResultSetException;
 use Foolz\SphinxQL\Exception\ConnectionException;
 use Foolz\SphinxQL\Exception\DatabaseException;
+use PDOStatement;
 
 class MultiResultSet implements MultiResultSetInterface
 {
@@ -14,6 +15,11 @@ class MultiResultSet implements MultiResultSetInterface
      * @var Connection
      */
     public $connection;
+
+    /**
+     * @var PDOStatement
+     */
+    public $statement;
 
     /**
      * @var int
@@ -37,12 +43,16 @@ class MultiResultSet implements MultiResultSetInterface
 
     /**
      * @param Connection $connection
+     * @param PDOStatement $statement
      * @param int $count
      */
-    public function __construct(Connection $connection, $count)
+    public function __construct(Connection $connection, PDOStatement $statement, $count)
     {
         $this->connection = $connection;
+        $this->statement = $statement;
         $this->count = $count;
+
+        $this->store();
     }
 
     /**
@@ -61,7 +71,7 @@ class MultiResultSet implements MultiResultSetInterface
      * @return \mysqli
      * @throws ConnectionException
      */
-    public function getMysqliConnection()
+    public function getPdoConnection()
     {
         return $this->connection->getConnection();
     }
@@ -88,6 +98,7 @@ class MultiResultSet implements MultiResultSetInterface
             // this relies on stored being null!
             $store[] = $this->toNextSet()->getSet()->store();
         }
+        $this->cursor = null;
 
         // if we write the array straight to $this->stored it won't be null anymore and functions relying on null will break
         $this->stored = $store;
@@ -150,12 +161,12 @@ class MultiResultSet implements MultiResultSetInterface
                 $this->cursor = 0;
             } else {
                 $this->cursor++;
-                $this->getMysqliConnection()->next_result();
+                $this->statement->nextRowset();
             }
 
             $this->current_set = new ResultSet(
                 $this->getConnection(),
-                $this->getMysqliConnection()->store_result()
+                $this->statement
             );
         }
 
@@ -185,7 +196,7 @@ class MultiResultSet implements MultiResultSetInterface
         }
 
         while ($this->hasNextSet()) {
-            $this->toNextSet()->getSet()->freeResult();
+            $this->toNextSet()->getSet()->closeCursor();
         }
 
         return $this;

@@ -219,7 +219,6 @@ class Connection implements ConnectionInterface
 
             return new MultiResultSet($this, $statement, count($queue));
         }
-        /*
         else
         {
             foreach($queue as $sql)
@@ -229,12 +228,18 @@ class Connection implements ConnectionInterface
                 } catch (\PDOException $exception) {
                     throw new DatabaseException($exception->getMessage() .' [ '.implode(';', $queue).']');
                 }
-                $rowset = $statement->fetchAll(\PDO::FETCH_ASSOC);
+                if ($statement->columnCount()) {
+                    $rowset = new ResultSet($this, $statement);
+                } else {
+                    $rowset = $statement->rowCount();
+                }
+
                 $result[$count] = $rowset;
                 $count++;
             }
+
+            return new MultiResultSet($this, $result, count($queue));
         }
-        */
 
         return $result;
     }

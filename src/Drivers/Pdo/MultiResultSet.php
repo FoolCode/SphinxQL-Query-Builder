@@ -43,13 +43,17 @@ class MultiResultSet implements MultiResultSetInterface
 
     /**
      * @param Connection $connection
-     * @param PDOStatement $statement
+     * @param PDOStatement|array|int $statement
      * @param int $count
      */
-    public function __construct(Connection $connection, PDOStatement $statement, $count)
+    public function __construct(Connection $connection, $statement, $count)
     {
         $this->connection = $connection;
-        $this->statement = $statement;
+        if ($statement instanceof PDOStatement) {
+            $this->statement = $statement;
+        } else {
+            $this->stored = $statement;
+        }
         $this->count = $count;
 
         $this->store();

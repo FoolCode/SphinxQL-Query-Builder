@@ -109,7 +109,7 @@ class Connection implements ConnectionInterface
             throw new DatabaseException($exception->getMessage() . ' [' . $query . ']');
         }
 
-        return new ResultSet($this, $stm);
+        return new ResultSet($stm);
     }
 
     /**
@@ -217,7 +217,7 @@ class Connection implements ConnectionInterface
                 throw new DatabaseException($exception->getMessage() .' [ '.implode(';', $queue).']');
             }
 
-            return new MultiResultSet($this, $statement, count($queue));
+            return new MultiResultSet($statement);
         }
         else
         {
@@ -229,7 +229,7 @@ class Connection implements ConnectionInterface
                     throw new DatabaseException($exception->getMessage() .' [ '.implode(';', $queue).']');
                 }
                 if ($statement->columnCount()) {
-                    $rowset = new ResultSet($this, $statement);
+                    $rowset = new ResultSet($statement);
                 } else {
                     $rowset = $statement->rowCount();
                 }
@@ -240,8 +240,6 @@ class Connection implements ConnectionInterface
 
             return new MultiResultSet($this, $result, count($queue));
         }
-
-        return $result;
     }
 
     /**

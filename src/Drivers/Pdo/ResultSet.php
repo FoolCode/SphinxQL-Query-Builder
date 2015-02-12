@@ -51,12 +51,10 @@ class ResultSet implements ResultSetInterface
     protected $fetched = null;
 
     /**
-     * @param Connection $connection
      * @param PDOStatement $statement
      */
-    public function __construct(Connection $connection, PDOStatement $statement)
+    public function __construct(PDOStatement $statement)
     {
-        $this->connection = $connection;
         $this->statement = $statement;
 
         if ($this->statement->columnCount() > 0) {
@@ -243,32 +241,11 @@ class ResultSet implements ResultSetInterface
     /**
      * Get the result object returned by PHP's MySQLi
      *
-     * @return \mysqli_result
+     * @return \Pdostatement
      */
     public function getResultObject()
     {
         return $this->result;
-    }
-
-    /**
-     * Get the MySQLi connection wrapper object
-     *
-     * @return Connection
-     */
-    public function getConnection()
-    {
-        return $this->connection;
-    }
-
-    /**
-     * Get the PHP MySQLi object
-     *
-     * @return \mysqli
-     * @throws ConnectionException
-     */
-    public function getPdoConnection()
-    {
-        return $this->connection->getConnection();
     }
 
     /**

@@ -146,6 +146,13 @@ class SphinxQL
     protected $options = array();
 
     /**
+     * Array of FACETs
+     *
+     * @var array
+     */
+    protected $facets = array();
+
+    /**
      * The reference to the object that queued itself and created this object
      *
      * @var null|SphinxQL
@@ -609,7 +616,17 @@ class SphinxQL
                     .' = '.$option['value'];
             }
 
-            $query .= 'OPTION '.implode(', ', $options);
+            $query .= 'OPTION '.implode(', ', $options).' ';
+        }
+
+        if (!empty($this->facets)) {
+            foreach($this->facets as $facet) {
+                $query .= ' FACET '.$facet['facet'].' ';
+                if ($facet['as'] !== null) {
+                    $query .= 'AS '.$facet['as'];
+                }
+            }
+
         }
 
         $query = trim($query);
@@ -1151,6 +1168,21 @@ class SphinxQL
         {
             $this->value($key, $item);
         }
+
+        return $this;
+    }
+
+    /**
+     * Allows passing an array with the key as column and value as value
+     * Used in: INSERT, REPLACE, UPDATE
+     *
+     * @param string $facet
+     * @param string $as
+     * @return SphinxQL The current object
+     */
+    public function facet($facet, $as)
+    {
+        $this->facets[] = array('facet' => $facet, 'as' => $as);
 
         return $this;
     }

@@ -2,6 +2,7 @@
 
 use Foolz\SphinxQL\SphinxQL;
 use Foolz\SphinxQL\Drivers\Mysqli\Connection;
+use Foolz\SphinxQL\Tests\TestUtil;
 
 class ResultSetTest extends PHPUnit_Framework_TestCase
 {
@@ -31,7 +32,7 @@ class ResultSetTest extends PHPUnit_Framework_TestCase
 
     public static function setUpBeforeClass()
     {
-        $conn = new Connection();
+        $conn = TestUtil::getConnectionDriver();
         $conn->setParam('port', 9307);
         self::$conn = $conn;
 

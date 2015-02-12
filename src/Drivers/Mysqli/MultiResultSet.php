@@ -4,8 +4,6 @@ namespace Foolz\SphinxQL\Drivers\Mysqli;
 
 
 use Foolz\SphinxQL\Drivers\MultiResultSetInterface;
-use Foolz\SphinxQL\Drivers\ResultSetException;
-use Foolz\SphinxQL\Exception\ConnectionException;
 use Foolz\SphinxQL\Exception\DatabaseException;
 
 class MultiResultSet implements MultiResultSetInterface
@@ -14,11 +12,6 @@ class MultiResultSet implements MultiResultSetInterface
      * @var Connection
      */
     public $connection;
-
-    /**
-     * @var int
-     */
-    public $count;
 
     /**
      * @var null|array
@@ -30,48 +23,15 @@ class MultiResultSet implements MultiResultSetInterface
      */
     public $cursor = null;
 
-    /**
-     * @var \mysqli_result
-     */
-    public $current_set = null;
 
     /**
      * @param Connection $connection
-     * @param int $count
      */
-    public function __construct(Connection $connection, $count)
+    public function __construct(Connection $connection)
     {
         $this->connection = $connection;
-        $this->count = $count;
     }
 
-    /**
-     * Returns the Mysqli\Connection wrapper
-     *
-     * @return Connection
-     */
-    public function getConnection()
-    {
-        return $this->connection;
-    }
-
-    /**
-     * Returns the actual mysqli connection
-     *
-     * @return \mysqli
-     * @throws ConnectionException
-     */
-    public function getMysqliConnection()
-    {
-        return $this->connection->getConnection();
-    }
-
-    /**
-     * Stores all the data of the query in this object and frees the resources
-     *
-     * @return static $this
-     * @throws DatabaseException Thrown when the method getNextSet() has already been called (server can't return all the data twice)
-     */
     public function store()
     {
         if ($this->stored !== null) {
@@ -84,9 +44,9 @@ class MultiResultSet implements MultiResultSetInterface
         }
 
         $store = array();
-        while ($this->hasNextSet()) {
+        while ($set = $this->getNext()) {
             // this relies on stored being null!
-            $store[] = $this->toNextSet()->getSet()->store();
+            $store[] = $set->store();
         }
         $this->cursor = null;
 
@@ -96,100 +56,46 @@ class MultiResultSet implements MultiResultSetInterface
         return $this;
     }
 
-    /**
-     * Returns the stored result data
-     *
-     * @return ResultSet[]
-     * @throws DatabaseException
-     */
     public function getStored()
     {
         $this->store();
         return $this->stored;
     }
 
-    /**
-     * The number of results
-     *
-     * @return int
-     */
-    public function getCount()
+    public function getNext()
     {
-        return $this->count;
-    }
-
-    /**
-     * Tells if we have more results
-     *
-     * @return bool
-     */
-    public function hasNextSet()
-    {
-        // if the cursor hasn't been used yet and there's at least a result
-        // or if we haven't reached the last element yet
-        return $this->cursor === null && $this->count > 0
-            || $this->cursor < $this->count - 1;
-    }
-
-    public function toNextSet()
-    {
-        if (!$this->hasNextSet()) {
-            throw new ResultSetException('There\'s no more results in this multiquery object.');
-        }
-
         if ($this->stored !== null) {
+            if ($this->cursor >= count($this->stored)) {
+                return false;
+            }
+
             if ($this->cursor === null) {
                 $this->cursor = 0;
             } else {
                 $this->cursor++;
             }
 
-            $this->current_set = $this->stored[$this->cursor];
+            return $this->stored[$this->cursor];
         } else {
             // the first result is always already loaded
             if ($this->cursor === null) {
                 $this->cursor = 0;
             } else {
                 $this->cursor++;
-                $this->getMysqliConnection()->next_result();
+                if (!$this->connection->getConnection()->more_results()) {
+                    echo 'here';
+                    return false;
+                }
+
+                $this->connection->getConnection()->next_result();
             }
 
-            $this->current_set = new ResultSet(
-                $this->getConnection(),
-                $this->getMysqliConnection()->store_result()
+            return new ResultSet(
+                $this->connection,
+                $this->connection->getConnection()->store_result()
             );
         }
 
-        return $this;
-    }
-
-    /**
-     * Returns the currently pointed result
-     *
-     * @return ResultSet The next result
-     * @throws ResultSetException If there isn't more results, use hasNextSet() to avoid this
-     */
-    public function getSet()
-    {
-        return $this->current_set;
-    }
-
-    /**
-     * Call this to make sure there isn't pending results (else they'd appear in the next query)
-     *
-     * @return static $this
-     */
-    public function flush()
-    {
-        if ($this->stored !== null) {
-            return $this;
-        }
-
-        while ($this->hasNextSet()) {
-            $this->toNextSet()->getSet()->freeResult();
-        }
-
-        return $this;
     }
 
     /**
@@ -206,7 +112,8 @@ class MultiResultSet implements MultiResultSetInterface
      */
     public function offsetExists($offset)
     {
-        return $this->cursor >= 0 && $this->cursor < $this->getCount();
+        $this->store();
+        return $offset >= 0 && $offset < count($this->stored);
     }
 
     /**
@@ -263,7 +170,10 @@ class MultiResultSet implements MultiResultSetInterface
      */
     public function current()
     {
-        return $this->getSet();
+        if ($this->stored !== null) {
+            return $this->stored[(int) $this->cursor];
+        }
+        return $this->getNext();
     }
 
     /**
@@ -274,10 +184,12 @@ class MultiResultSet implements MultiResultSetInterface
      */
     public function next()
     {
-        if ($this->hasNextSet()) {
-            $this->toNextSet();
-        } else {
-            $this->cursor++;
+        if ($this->stored !== null) {
+            if ($this->cursor === null) {
+                $this->cursor = 0;
+            } else {
+                $this->cursor++;
+            }
         }
     }
 
@@ -301,7 +213,11 @@ class MultiResultSet implements MultiResultSetInterface
      */
     public function valid()
     {
-        return $this->cursor >= 0 && $this->cursor < $this->getCount();
+        if ($this->stored !== null) {
+            return $this->cursor >= 0 && $this->cursor < count($this->stored);
+        }
+
+        return $this->cursor >= 0 && $this->connection->getConnection()->more_results();
     }
 
     /**
@@ -314,7 +230,6 @@ class MultiResultSet implements MultiResultSetInterface
     {
         // we actually can't roll this back unless it was stored first
         $this->cursor = null;
-        $this->toNextSet();
     }
 
     /**
@@ -328,6 +243,7 @@ class MultiResultSet implements MultiResultSetInterface
      */
     public function count()
     {
-        return $this->getCount();
+        $this->store();
+        return count($this->stored);
     }
 }

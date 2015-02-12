@@ -1,7 +1,7 @@
 <?php
 
 use Foolz\SphinxQL\SphinxQL;
-use Foolz\SphinxQL\Drivers\Mysqli\Connection;
+use Foolz\SphinxQL\Tests\TestUtil;
 
 class MultiResultSetTest extends PHPUnit_Framework_TestCase
 {
@@ -31,7 +31,7 @@ class MultiResultSetTest extends PHPUnit_Framework_TestCase
 
     public static function setUpBeforeClass()
     {
-        $conn = new Connection();
+        $conn = TestUtil::getConnectionDriver();
         $conn->setParam('port', 9307);
         self::$conn = $conn;
 
@@ -57,7 +57,8 @@ class MultiResultSetTest extends PHPUnit_Framework_TestCase
     {
         $res = self::$conn->multiQuery(array('SELECT COUNT(*) FROM rt', 'SHOW META'));
         $this->assertInstanceOf('\Foolz\Sphinxql\Drivers\MultiResultSetInterface', $res);
-        $res->flush();
+        $res->getNext();
+        $res->getNext();
     }
 
     public function testGetNextSet()
@@ -66,53 +67,21 @@ class MultiResultSetTest extends PHPUnit_Framework_TestCase
 
         $res = self::$conn->multiQuery(array('SELECT COUNT(*) FROM rt', 'SHOW META'));
 
-        $set = $res->toNextSet()->getSet();
+        $set = $res->getNext();
         $this->assertInstanceOf('\Foolz\Sphinxql\Drivers\ResultSetInterface', $set);
-        $set = $res->toNextSet()->getSet();
+        $set = $res->getNext();
         $this->assertInstanceOf('\Foolz\Sphinxql\Drivers\ResultSetInterface', $set);
     }
 
-    /**
-     * @expectedException \Foolz\SphinxQL\Drivers\ResultSetException
-     */
-    public function testGetNextSetException()
+
+    public function testGetNextSetFalse()
     {
         $this->refill();
 
         $res = self::$conn->multiQuery(array('SELECT COUNT(*) FROM rt', 'SHOW META'));
-        $res->toNextSet();
-        $res->toNextSet();
-        $res->toNextSet();
-    }
-
-    public function testHasNextSet()
-    {
-        $this->refill();
-
-        $res = self::$conn->multiQuery(array('SELECT COUNT(*) FROM rt', 'SHOW META'));
-        $res->toNextSet();
-        $this->assertTrue($res->hasNextSet());
-        $res->toNextSet();
-        $this->assertFalse($res->hasNextSet());
-    }
-
-    public function testCount()
-    {
-        $this->refill();
-
-        $res = self::$conn->multiQuery(array('SELECT COUNT(*) FROM rt', 'SHOW META'));
-        $this->assertSame(2, $res->getCount());
-        $res->flush();
-    }
-
-    public function testFlush()
-    {
-        $this->refill();
-
-        $res = self::$conn->multiQuery(array('SELECT COUNT(*) FROM rt', 'SHOW META'));
-        $res->flush();
-        $res = self::$conn->multiQuery(array('SELECT COUNT(*) FROM rt', 'SHOW META'));
-        $res->flush();
+        $res->getNext();
+        $res->getNext();
+        $this->assertFalse($res->getNext());
     }
 
     public function testStore()
@@ -126,7 +95,6 @@ class MultiResultSetTest extends PHPUnit_Framework_TestCase
         $this->assertInstanceOf('\Foolz\SphinxQL\Drivers\ResultSetInterface', $stored[0]);
         $all = $stored[0]->fetchAllAssoc();
         $this->assertEquals(8, $all[0]['count(*)']);
-        $res->flush();
     }
 
     public function testArrayAccess()
@@ -136,9 +104,6 @@ class MultiResultSetTest extends PHPUnit_Framework_TestCase
         $res = self::$conn->multiQuery(array('SELECT COUNT(*) FROM rt', 'SHOW META'));
 
         $this->assertEquals(8, $res[0][0]['count(*)']);
-        $this->assertCount(2, $res);
-
-        $res->flush();
     }
 
     public function testIterator()

@@ -150,7 +150,7 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
             array('Variable_name' => 'total', 'Value' => '0'),
             array('Variable_name' => 'total_found', 'Value' => '0'),
             array('Variable_name' => 'time', 'Value' => '0.000'),
-        ), $query->toNextSet()->getSet()->fetchAllAssoc());
+        ), $query->getNext()->fetchAllAssoc());
     }
 
     /**

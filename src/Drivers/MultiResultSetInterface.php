@@ -19,37 +19,9 @@ interface MultiResultSetInterface extends \ArrayAccess, \Iterator, \Countable
     public function getStored();
 
     /**
-     * Returns the total number of result sets
+     * Returns the next result set, or false if there's no more results
      *
-     * @return mixed
+     * @return ResultSetInterface|false
      */
-    public function getCount();
-
-    /**
-     * Tells whether there's more result sets
-     *
-     * @return bool True when there's more results, false otherwise
-     */
-    public function hasNextSet();
-
-    /**
-     * Moves the cursor to the next result set
-     *
-     * @return self
-     */
-    public function toNextSet();
-
-    /**
-     * Returns the current result set
-     *
-     * @return ResultSetInterface The result set pointed by the cursor
-     */
-    public function getSet();
-
-    /**
-     * Flushes the pending results that otherwise would appear in the next query
-     *
-     * @return static
-     */
-    public function flush();
+    public function getNext();
 }

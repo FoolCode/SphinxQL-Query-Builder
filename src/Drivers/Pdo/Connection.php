@@ -238,7 +238,7 @@ class Connection implements ConnectionInterface
                 $count++;
             }
 
-            return new MultiResultSet($this, $result, count($queue));
+            return new MultiResultSet($result);
         }
     }
 

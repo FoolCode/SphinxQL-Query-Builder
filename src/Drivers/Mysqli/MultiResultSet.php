@@ -83,7 +83,6 @@ class MultiResultSet implements MultiResultSetInterface
             } else {
                 $this->cursor++;
                 if (!$this->connection->getConnection()->more_results()) {
-                    echo 'here';
                     return false;
                 }
 

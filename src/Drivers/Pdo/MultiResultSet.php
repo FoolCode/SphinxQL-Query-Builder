@@ -70,14 +70,14 @@ class MultiResultSet implements MultiResultSetInterface
     public function getNext()
     {
         if ($this->stored !== null) {
-            if ($this->cursor >= count($this->stored)) {
-                return false;
-            }
-
             if ($this->cursor === null) {
                 $this->cursor = 0;
             } else {
                 $this->cursor++;
+            }
+
+            if ($this->cursor >= count($this->stored)) {
+                return false;
             }
 
             return $this->stored[$this->cursor];

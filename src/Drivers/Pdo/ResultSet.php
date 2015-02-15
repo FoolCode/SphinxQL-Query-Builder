@@ -69,7 +69,6 @@ class ResultSet implements ResultSetInterface
         } else {
             $this->affected_rows = $this->statement->rowCount();
             $this->store();
-
         }
     }
 
@@ -133,8 +132,8 @@ class ResultSet implements ResultSetInterface
         }
 
         $this->current_row = $num;
-        //$this->result->data_seek($num);
-        $this->fetched = $this->statement->fetch(PDO::FETCH_NUM);
+        // $this->result->data_seek($num);
+        // $this->fetched = $this->statement->fetch(PDO::FETCH_NUM);
 
         return $this;
     }

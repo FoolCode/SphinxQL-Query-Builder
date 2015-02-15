@@ -209,7 +209,7 @@ class Connection implements ConnectionInterface
         $result = array();
         $count = 0;
 
-        if(version_compare(PHP_VERSION, '5.4.0', '>='))
+        if(version_compare(PHP_VERSION, '5.4.0', '>=') || defined('HHVM_VERSION'))
         {
             try {
                 $statement = $this->connection->query(implode(';', $queue));

@@ -621,10 +621,7 @@ class SphinxQL
 
         if (!empty($this->facets)) {
             foreach($this->facets as $facet) {
-                $query .= ' FACET '.$facet['facet'].' ';
-                if ($facet['as'] !== null) {
-                    $query .= 'AS '.$facet['as'];
-                }
+                $query .= $facet->getFacet();
             }
 
         }
@@ -1176,13 +1173,12 @@ class SphinxQL
      * Allows passing an array with the key as column and value as value
      * Used in: INSERT, REPLACE, UPDATE
      *
-     * @param string $facet
-     * @param string $as
+     * @param Facet $facet
      * @return SphinxQL The current object
      */
-    public function facet($facet, $as)
+    public function facet($facet)
     {
-        $this->facets[] = array('facet' => $facet, 'as' => $as);
+        $this->facets[] = $facet;
 
         return $this;
     }

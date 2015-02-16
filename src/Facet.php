@@ -114,7 +114,7 @@ class Facet {
                 if (is_int($key)) {
                     $this->facet[] = $column;
                 } elseif (is_string($key)) {
-                    $asFacet = $this->getConnection()->quoteIdentifier($columns) . ' AS ' . $key . ' ';
+                    $asFacet = $this->getConnection()->quoteIdentifier($column) . ' AS ' . $key . ' ';
                     $this->facet[] = new Expression($asFacet);
                 }
             }
@@ -189,19 +189,22 @@ class Facet {
      * Examples:
      * ->facetFunction('category');
      *
-     * @param string       $function Function name
-     * @param array|string $params   Array or multiple string arguments containing column names
+     * @param string       $function  Function name
+     * @param array|string $params    Array or multiple string arguments containing column names
+     * @param string       $direction The ordering direction (asc/desc)
      *
      * @return Facet The current object
      */
-    public function orderByFunction($function, $params = null)
+    public function orderByFunction($function, $params = null, $direction)
     {
         $orderFunc = $function . '(';
         if (is_array($params)) {
             $orderFunc .= implode(',', $params);
+        } elseif(is_string($params)) {
+            $orderFunc .= $params;
         }
         $orderFunc .= ')';
-        $this->facet[] = new Expression($orderFunc);
+        $this->facet[] = array('column' => new Expression($orderFunc), 'direction' => $direction);
 
         return $this;
     }

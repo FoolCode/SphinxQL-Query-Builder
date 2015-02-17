@@ -86,7 +86,7 @@ class FacetTest  extends PHPUnit_Framework_TestCase
 
     public function testBy()
     {
-        $facet = Facet::create(self::$conn)->facet('gid', 'title', 'content')->By('gid');
+        $facet = Facet::create(self::$conn)->facet(array('gid', 'title', 'content'))->By('gid');
 
         $strFacet = $facet->getFacet();
 
@@ -95,7 +95,7 @@ class FacetTest  extends PHPUnit_Framework_TestCase
 
     public function testOrderBy()
     {
-        $facet = Facet::create(self::$conn)->facet('gid', 'title')->orderBy('gid', 'DESC');
+        $facet = Facet::create(self::$conn)->facet(array('gid', 'title'))->orderBy('gid', 'DESC');
 
         $strFacet = $facet->getFacet();
 
@@ -104,7 +104,7 @@ class FacetTest  extends PHPUnit_Framework_TestCase
 
     public function testOrderBy2()
     {
-        $facet = Facet::create(self::$conn)->facet('gid', 'content')->orderBy('gid', 'ASC')
+        $facet = Facet::create(self::$conn)->facet(array('gid', 'content'))->orderBy('gid', 'ASC')
             ->orderBy('content', 'DESC');
 
         $strFacet = $facet->getFacet();
@@ -115,7 +115,7 @@ class FacetTest  extends PHPUnit_Framework_TestCase
 
     public function testOrderByFunction()
     {
-        $facet = Facet::create(self::$conn)->facet('gid', 'title')->orderByFunction('COUNT', array('*'), 'DESC');
+        $facet = Facet::create(self::$conn)->facet(array('gid', 'title'))->orderByFunction('COUNT', array('*'), 'DESC');
 
         $strFacet = $facet->getFacet();
 
@@ -125,7 +125,7 @@ class FacetTest  extends PHPUnit_Framework_TestCase
 
     public function testLimit()
     {
-        $facet = Facet::create(self::$conn)->facet('gid', 'title')->orderByFunction('COUNT', array('*'), 'DESC')
+        $facet = Facet::create(self::$conn)->facet(array('gid', 'title'))->orderByFunction('COUNT', array('*'), 'DESC')
             ->limit(5,5);
 
         $strFacet = $facet->getFacet();

@@ -70,7 +70,7 @@ class Facet {
      *
      * @param ConnectionInterface $connection
      *
-     * @return SphinxQL The current object
+     * @return Facet The current object
      */
     public static function create(ConnectionInterface $connection)
     {
@@ -190,7 +190,7 @@ class Facet {
      * ->facetFunction('category');
      *
      * @param string       $function  Function name
-     * @param array|string $params    Array or multiple string arguments containing column names
+     * @param array        $params    Array  string arguments containing column names
      * @param string       $direction The ordering direction (asc/desc)
      *
      * @return Facet The current object

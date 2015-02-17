@@ -41,15 +41,6 @@ class FacetTest  extends PHPUnit_Framework_TestCase
 
     public function testFacet()
     {
-        $facet = Facet::create(self::$conn)->facet('gid');
-
-        $strFacet = $facet->getFacet();
-
-        $this->assertEquals('FACET `gid`', (string) $strFacet);
-    }
-
-    public function testFacet2()
-    {
         $facet = Facet::create(self::$conn)->facet(array('gid'));
 
         $strFacet = $facet->getFacet();
@@ -58,15 +49,6 @@ class FacetTest  extends PHPUnit_Framework_TestCase
     }
 
     public function testMultiFacet()
-    {
-        $facet = Facet::create(self::$conn)->facet('gid', 'title', 'content');
-
-        $strFacet = $facet->getFacet();
-
-        $this->assertEquals('FACET `gid`, `title`, `content`', (string) $strFacet);
-    }
-
-    public function testMultiFacet2()
     {
         $facet = Facet::create(self::$conn)->facet(array('gid', 'title', 'content'));
 

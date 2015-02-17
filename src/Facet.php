@@ -259,7 +259,7 @@ class Facet {
         $query = 'FACET ';
 
         if ( ! empty($this->facet)) {
-            $query .= implode(', ', $this->getConnection()->quoteIdentifierArr($this->select)).' ';
+            $query .= implode(', ', $this->getConnection()->quoteIdentifierArr($this->facet)).' ';
         } else {
             throw new SphinxQLException('There is no column in facet.');
         }

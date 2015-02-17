@@ -9,6 +9,8 @@
 namespace Foolz\SphinxQL;
 
 
+use Foolz\SphinxQL\Drivers\ConnectionInterface;
+
 class Facet {
 
     /**

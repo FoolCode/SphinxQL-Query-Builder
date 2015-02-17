@@ -7,6 +7,7 @@
  */
 
 use Foolz\SphinxQL\Facet;
+use Foolz\SphinxQL\Tests\TestUtil;
 
 class FacetTest  extends PHPUnit_Framework_TestCase
 {

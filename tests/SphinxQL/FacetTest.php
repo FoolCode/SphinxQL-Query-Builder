@@ -7,7 +7,7 @@
  */
 
 use Foolz\SphinxQL\Facet;
-use Foolz\SphinxQL\Tests\TestUtil;
+use Foolz\SphinxQL\Drivers\Connection;
 
 class FacetTest  extends PHPUnit_Framework_TestCase
 {
@@ -34,9 +34,7 @@ class FacetTest  extends PHPUnit_Framework_TestCase
 
     public static function setUpBeforeClass()
     {
-        $conn = TestUtil::getConnectionDriver();
-        $conn->setParam('port', 9307);
-        self::$conn = $conn;
+        self::$conn = new Connection('127.0.0.1', 9307);
     }
 
     public function testFacet()

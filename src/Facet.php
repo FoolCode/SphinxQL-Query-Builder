@@ -10,6 +10,7 @@ namespace Foolz\SphinxQL;
 
 
 use Foolz\SphinxQL\Drivers\ConnectionInterface;
+use Foolz\SphinxQL\Exception\SphinxQLException;
 
 class Facet {
 

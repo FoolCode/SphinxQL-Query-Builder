@@ -117,7 +117,7 @@ class Facet {
                 if (is_int($key)) {
                     $this->facet[] = $column;
                 } elseif (is_string($key)) {
-                    $asFacet = $this->getConnection()->quoteIdentifier($column) . ' AS ' . $key . ' ';
+                    $asFacet = $this->getConnection()->quoteIdentifier($column) . ' AS ' . $key;
                     $this->facet[] = new Expression($asFacet);
                 }
             }
@@ -146,6 +146,8 @@ class Facet {
         $facetFunc = $function . '(';
         if (is_array($params)) {
             $facetFunc .= implode(',', $params);
+        } elseif (is_string($params)) {
+            $facetFunc .= $params;
         }
         $facetFunc .= ')';
         $this->facet[] = new Expression($facetFunc);
@@ -161,7 +163,7 @@ class Facet {
      *
      * @return SphinxQL The current object
      */
-    public function By($column)
+    public function by($column)
     {
         $this->by = $column;
 
@@ -203,11 +205,11 @@ class Facet {
         $orderFunc = $function . '(';
         if (is_array($params)) {
             $orderFunc .= implode(',', $params);
-        } elseif(is_string($params)) {
+        } elseif (is_string($params)) {
             $orderFunc .= $params;
         }
         $orderFunc .= ')';
-        $this->facet[] = array('column' => new Expression($orderFunc), 'direction' => $direction);
+        $this->order_by[] = array('column' => new Expression($orderFunc), 'direction' => $direction);
 
         return $this;
     }

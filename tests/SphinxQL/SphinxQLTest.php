@@ -727,7 +727,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
             ->select()
             ->from('rt')
             ->facet(Facet::create(self::$conn)
-                ->facet('gid')
+                ->facet(array('gid'))
                 ->orderBy('gid', 'ASC'))
             ->executeBatch()
             ->getStored();

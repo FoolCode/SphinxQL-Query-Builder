@@ -621,7 +621,7 @@ class SphinxQL
 
         if (!empty($this->facets)) {
             foreach($this->facets as $facet) {
-                $query .= $facet->getFacet();
+                $query .= $facet->getFacet() . ' ';
             }
 
         }

@@ -712,7 +712,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
             ->facet(Facet::create(self::$conn)
                 ->facetFunction('INTERVAL', array('gid', 300, 600))
                 ->orderByFunction('FACET', '', 'ASC'))
-            ->execute()
+            ->executeBatch()
             ->getStored();
 
         $this->assertArrayHasKey('id', $result[0][0]);
@@ -729,7 +729,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
             ->facet(Facet::create(self::$conn)
                 ->facet('gid')
                 ->orderBy('gid', 'ASC'))
-            ->execute()
+            ->executeBatch()
             ->getStored();
 
         $this->assertArrayHasKey('id', $result[0][0]);

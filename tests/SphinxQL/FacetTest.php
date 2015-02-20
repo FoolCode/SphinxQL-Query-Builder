@@ -57,6 +57,15 @@ class FacetTest  extends PHPUnit_Framework_TestCase
         $this->assertEquals('FACET `gid`, `title`, `content`', (string) $strFacet);
     }
 
+    public function testMultiFacet2()
+    {
+        $facet = Facet::create(self::$conn)->facet('gid', 'title', 'content');
+
+        $strFacet = $facet->getFacet();
+
+        $this->assertEquals('FACET `gid`, `title`, `content`', (string) $strFacet);
+    }
+
     public function testFacetAs()
     {
         $facet = Facet::create(self::$conn)->facet(array('aliAS' => 'gid'));
@@ -69,6 +78,15 @@ class FacetTest  extends PHPUnit_Framework_TestCase
     public function testMultiFacetAs()
     {
         $facet = Facet::create(self::$conn)->facet(array('gid', 'name' => 'title', 'content'));
+
+        $strFacet = $facet->getFacet();
+
+        $this->assertEquals('FACET `gid`, `title` AS name, `content`', (string) $strFacet);
+    }
+
+    public function testMultiFacetAs2()
+    {
+        $facet = Facet::create(self::$conn)->facet('gid', array('name' => 'title'), 'content');
 
         $strFacet = $facet->getFacet();
 

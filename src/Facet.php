@@ -112,17 +112,21 @@ class Facet {
      */
     public function facet($columns = null)
     {
-        if (is_array($columns)) {
-            foreach ($columns as $key => $column) {
-                if (is_int($key)) {
+        if (!is_array($columns)) {
+            $columns = \func_get_args();
+        }
+
+        foreach ($columns as $key => $column) {
+            if (is_int($key)) {
+                if (is_array($column)) {
+                    $this->facet($column);
+                } else {
                     $this->facet[] = $column;
-                } elseif (is_string($key)) {
-                    $asFacet = $this->getConnection()->quoteIdentifier($column) . ' AS ' . $key;
-                    $this->facet[] = new Expression($asFacet);
                 }
+            } elseif (is_string($key)) {
+                $asFacet = $this->getConnection()->quoteIdentifier($column) . ' AS ' . $key;
+                $this->facet[] = new Expression($asFacet);
             }
-        } else {
-            throw new SphinxQLException('There is no column in facet.');
         }
 
         return $this;

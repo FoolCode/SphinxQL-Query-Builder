@@ -9,7 +9,9 @@ php:
 
 env:
   - DRIVER=mysqli SPHINXSEARCH_VER=trunk
+  - DRIVER=mysqli SPHINXSEARCH_VER=branches/rel22
   - DRIVER=pdo SPHINXSEARCH_VER=trunk
+  - DRIVER=pdo SPHINXSEARCH_VER=branches/rel22
 
 before_install:
   - svn checkout http://sphinxsearch.googlecode.com/svn/${SPHINXSEARCH_VER}/ sphinxsearch

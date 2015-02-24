@@ -117,7 +117,7 @@ class Facet
         foreach ($columns as $key => $column) {
             if (is_int($key)) {
                 if (is_array($column)) {
-                    $this->facet($column)
+                    $this->facet($column);
                 } else {
                     $this->facet[] = $column;
                 }

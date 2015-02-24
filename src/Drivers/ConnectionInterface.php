@@ -1,6 +1,7 @@
 <?php
 
 namespace Foolz\SphinxQL\Drivers;
+
 use Foolz\SphinxQL\Exception\DatabaseException;
 use Foolz\SphinxQL\Exception\SphinxQLException;
 use Foolz\SphinxQL\Expression;

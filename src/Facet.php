@@ -1,21 +1,19 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Vizzent
- * Date: 16/02/15
- * Time: 9:04
- */
 
 namespace Foolz\SphinxQL;
-
 
 use Foolz\SphinxQL\Drivers\ConnectionInterface;
 use Foolz\SphinxQL\Exception\SphinxQLException;
 
-class Facet {
-
+/**
+ * Query Builder class for Facet statements.
+ * @package Foolz\SphinxQL
+ * @author Vicent Valls
+ */
+class Facet
+{
     /**
-     * A non-static connection for the current SphinxQL object
+     * A non-static connection for the current Facet object
      *
      * @var ConnectionInterface
      */
@@ -69,11 +67,11 @@ class Facet {
     }
 
     /**
-     * Creates and setups a SphinxQL object
+     * Creates and setups a Facet object
      *
      * @param ConnectionInterface $connection
      *
-     * @return Facet The current object
+     * @return Facet
      */
     public static function create(ConnectionInterface $connection)
     {
@@ -97,18 +95,18 @@ class Facet {
      * Using it with array maps values as column names
      *
      * Examples:
-     * ->facet('idCategory');
+     *    $query->facet('idCategory');
+     *    // FACET idCategory
      *
-     * ->facet('idCategory', 'year');
+     *    $query->facet('idCategory', 'year');
      *    // FACET idCategory, year
      *
-     * ->facet(array('categories' => 'idCategory', 'year', 'type' => 'idType'));
+     *    $query->facet(array('categories' => 'idCategory', 'year', 'type' => 'idType'));
      *    // FACET idCategory AS categories, year, idType AS type
      *
      * @param array|string $columns Array or multiple string arguments containing column names
      *
-     * @return Facet The current object
-     * @throws SphinxQLException In case no column in facet
+     * @return Facet
      */
     public function facet($columns = null)
     {
@@ -119,13 +117,13 @@ class Facet {
         foreach ($columns as $key => $column) {
             if (is_int($key)) {
                 if (is_array($column)) {
-                    $this->facet($column);
+                    $this->facet($column)
                 } else {
                     $this->facet[] = $column;
                 }
-            } elseif (is_string($key)) {
-                $asFacet = $this->getConnection()->quoteIdentifier($column) . ' AS ' . $key;
-                $this->facet[] = new Expression($asFacet);
+            } else {
+                $aliasFacet = $this->getConnection()->quoteIdentifier($column).' AS '.$key;
+                $this->facet[] = new Expression($aliasFacet);
             }
         }
 
@@ -138,23 +136,20 @@ class Facet {
      * Gets the function passed as $facet->facetFunction('FUNCTION', array('param1', 'param2', ...))
      *
      * Examples:
-     * ->facetFunction('category');
+     *    $query->facetFunction('category');
      *
      * @param string       $function Function name
      * @param array|string $params   Array or multiple string arguments containing column names
      *
-     * @return Facet The current object
+     * @return Facet
      */
     public function facetFunction($function, $params = null)
     {
-        $facetFunc = $function . '(';
         if (is_array($params)) {
-            $facetFunc .= implode(',', $params);
-        } elseif (is_string($params)) {
-            $facetFunc .= $params;
+            $params = implode(',', $params);
         }
-        $facetFunc .= ')';
-        $this->facet[] = new Expression($facetFunc);
+
+        $this->facet[] = new Expression($function.'('.$params.')');
 
         return $this;
     }
@@ -165,7 +160,7 @@ class Facet {
      *
      * @param string $column A column to group by
      *
-     * @return SphinxQL The current object
+     * @return Facet
      */
     public function by($column)
     {
@@ -181,7 +176,7 @@ class Facet {
      * @param string $column    The column to order on
      * @param string $direction The ordering direction (asc/desc)
      *
-     * @return SphinxQL The current object
+     * @return Facet
      */
     public function orderBy($column, $direction = null)
     {
@@ -196,24 +191,21 @@ class Facet {
      * Gets the function passed as $facet->facetFunction('FUNCTION', array('param1', 'param2', ...))
      *
      * Examples:
-     * ->facetFunction('category');
+     *    $query->facetFunction('category');
      *
      * @param string       $function  Function name
      * @param array        $params    Array  string arguments containing column names
      * @param string       $direction The ordering direction (asc/desc)
      *
-     * @return Facet The current object
+     * @return Facet
      */
-    public function orderByFunction($function, $params = null, $direction)
+    public function orderByFunction($function, $params = null, $direction = null)
     {
-        $orderFunc = $function . '(';
         if (is_array($params)) {
-            $orderFunc .= implode(',', $params);
-        } elseif (is_string($params)) {
-            $orderFunc .= $params;
+            $params = implode(',', $params);
         }
-        $orderFunc .= ')';
-        $this->order_by[] = array('column' => new Expression($orderFunc), 'direction' => $direction);
+
+        $this->order_by[] = array('column' => new Expression($function.'('.$params.')'), 'direction' => $direction);
 
         return $this;
     }
@@ -225,7 +217,7 @@ class Facet {
      * @param int      $offset Offset if $limit is specified, else limit
      * @param null|int $limit  The limit to set, null for no limit
      *
-     * @return SphinxQL The current object
+     * @return Facet
      */
     public function limit($offset, $limit = null)
     {
@@ -245,7 +237,7 @@ class Facet {
      *
      * @param int $offset The offset
      *
-     * @return SphinxQL The current object
+     * @return Facet
      */
     public function offset($offset)
     {
@@ -257,24 +249,24 @@ class Facet {
     /**
      * Compiles the statements for FACET
      *
-     * @return facet The current object
+     * @return Facet
      * @throws SphinxQLException In case no column in facet
      */
     public function compileFacet()
     {
         $query = 'FACET ';
 
-        if ( ! empty($this->facet)) {
+        if (!empty($this->facet)) {
             $query .= implode(', ', $this->getConnection()->quoteIdentifierArr($this->facet)).' ';
         } else {
             throw new SphinxQLException('There is no column in facet.');
         }
 
-        if ( ! empty($this->by)) {
-            $query .= 'BY '. $this->getConnection()->quoteIdentifier($this->by) . ' ';
+        if (!empty($this->by)) {
+            $query .= 'BY '.$this->getConnection()->quoteIdentifier($this->by).' ';
         }
 
-        if ( ! empty($this->order_by)) {
+        if (!empty($this->order_by)) {
             $query .= 'ORDER BY ';
 
             $order_arr = array();
@@ -313,11 +305,9 @@ class Facet {
      * Get String with SQL facet
      *
      * @return string
-     * @throws SphinxQLException
      */
     public function getFacet()
     {
         return $this->compileFacet()->query;
     }
-
 }

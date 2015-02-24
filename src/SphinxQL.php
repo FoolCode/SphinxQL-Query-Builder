@@ -208,7 +208,7 @@ class SphinxQL
      *
      * @param ConnectionInterface $connection
      *
-     * @return SphinxQL The current object
+     * @return SphinxQL
      */
     public static function create(ConnectionInterface $connection)
     {
@@ -228,8 +228,8 @@ class SphinxQL
     /**
      * Avoids having the expressions escaped
      *
-     * Example
-     *    $sq->where('time', '>', SphinxQL::expr('CURRENT_TIMESTAMP'));
+     * Examples:
+     *    $query->where('time', '>', SphinxQL::expr('CURRENT_TIMESTAMP'));
      *    // WHERE `time` > CURRENT_TIMESTAMP
      *
      * @param string $string The string to keep unaltered
@@ -266,8 +266,8 @@ class SphinxQL
 
         $queue = array();
 
-        foreach ($this->getQueue() as $sq) {
-            $queue[] = $sq->compile()->getCompiled();
+        foreach ($this->getQueue() as $query) {
+            $queue[] = $query->compile()->getCompiled();
         }
 
         return $this->last_result = $this->getConnection()->multiQuery($queue);
@@ -323,13 +323,13 @@ class SphinxQL
     /**
      * Sets the reference to the enqueued object
      *
-     * @param $sq SphinxQL The object to set as previous
+     * @param $query SphinxQL The object to set as previous
      *
-     * @return SphinxQL The current object
+     * @return SphinxQL
      */
-    public function setQueuePrev($sq)
+    public function setQueuePrev($query)
     {
-        $this->queue_prev = $sq;
+        $this->queue_prev = $query;
 
         return $this;
     }
@@ -381,7 +381,7 @@ class SphinxQL
     /**
      * Runs the compile function
      *
-     * @return SphinxQL The current object
+     * @return SphinxQL
      */
     public function compile()
     {
@@ -424,7 +424,7 @@ class SphinxQL
     {
         $query = '';
 
-        if ( ! empty($this->match)) {
+        if (!empty($this->match)) {
             $query .= 'WHERE MATCH(';
 
             $matched = array();
@@ -469,7 +469,7 @@ class SphinxQL
             $query .= 'WHERE ';
         }
 
-        if ( ! empty($this->where)) {
+        if (!empty($this->where)) {
             $just_opened = false;
 
             foreach ($this->where as $key => $where) {
@@ -520,7 +520,7 @@ class SphinxQL
     /**
      * Compiles the statements for SELECT
      *
-     * @return SphinxQL The current object
+     * @return SphinxQL
      */
     public function compileSelect()
     {
@@ -529,24 +529,24 @@ class SphinxQL
         if ($this->type == 'select') {
             $query .= 'SELECT ';
 
-            if ( ! empty($this->select)) {
+            if (!empty($this->select)) {
                 $query .= implode(', ', $this->getConnection()->quoteIdentifierArr($this->select)).' ';
             } else {
                 $query .= '* ';
             }
         }
 
-        if ( ! empty($this->from)) {
+        if (!empty($this->from)) {
             $query .= 'FROM '.implode(', ', $this->getConnection()->quoteIdentifierArr($this->from)).' ';
         }
 
         $query .= $this->compileMatch().$this->compileWhere();
 
-        if ( ! empty($this->group_by)) {
+        if (!empty($this->group_by)) {
             $query .= 'GROUP BY '.implode(', ', $this->getConnection()->quoteIdentifierArr($this->group_by)).' ';
         }
 
-        if ( ! empty($this->within_group_order_by)) {
+        if (!empty($this->within_group_order_by)) {
             $query .= 'WITHIN GROUP ORDER BY ';
 
             $order_arr = array();
@@ -564,7 +564,7 @@ class SphinxQL
             $query .= implode(', ', $order_arr).' ';
         }
 
-        if ( ! empty($this->order_by)) {
+        if (!empty($this->order_by)) {
             $query .= 'ORDER BY ';
 
             $order_arr = array();
@@ -620,10 +620,13 @@ class SphinxQL
         }
 
         if (!empty($this->facets)) {
+            $facets = array();
+
             foreach($this->facets as $facet) {
-                $query .= $facet->getFacet() . ' ';
+                $facets[] = $facet->getFacet();
             }
 
+            $query .= implode(' ', $facets);
         }
 
         $query = trim($query);
@@ -635,7 +638,7 @@ class SphinxQL
     /**
      * Compiles the statements for INSERT or REPLACE
      *
-     * @return SphinxQL The current object
+     * @return SphinxQL
      */
     public function compileInsert()
     {
@@ -649,11 +652,11 @@ class SphinxQL
             $query .= 'INTO '.$this->into.' ';
         }
 
-        if ( ! empty ($this->columns)) {
+        if (!empty($this->columns)) {
             $query .= '('.implode(', ', $this->getConnection()->quoteIdentifierArr($this->columns)).') ';
         }
 
-        if ( ! empty ($this->values)) {
+        if (!empty($this->values)) {
             $query .= 'VALUES ';
             $query_sub = '';
 
@@ -673,7 +676,7 @@ class SphinxQL
     /**
      * Compiles the statements for UPDATE
      *
-     * @return SphinxQL The current object
+     * @return SphinxQL
      */
     public function compileUpdate()
     {
@@ -683,7 +686,7 @@ class SphinxQL
             $query .= $this->into.' ';
         }
 
-        if ( ! empty($this->set)) {
+        if (!empty($this->set)) {
             $query .= 'SET ';
 
             $query_sub = array();
@@ -713,17 +716,17 @@ class SphinxQL
     /**
      * Compiles the statements for DELETE
      *
-     * @return SphinxQL The current object
+     * @return SphinxQL
      */
     public function compileDelete()
     {
         $query = 'DELETE ';
 
-        if ( ! empty($this->from)) {
+        if (!empty($this->from)) {
             $query .= 'FROM '.$this->from[0].' ';
         }
 
-        if ( ! empty($this->where)) {
+        if (!empty($this->where)) {
             $query .= $this->compileWhere();
         }
 
@@ -738,7 +741,7 @@ class SphinxQL
      *
      * @param string $sql A SphinxQL query to execute
      *
-     * @return SphinxQL The current object
+     * @return SphinxQL
      */
     public function query($sql)
     {
@@ -756,18 +759,18 @@ class SphinxQL
      * Using it with array maps values as column names
      *
      * Examples:
-     * ->select('title');
+     *    $query->select('title');
      *    // SELECT title
      *
-     * ->select('title', 'author', 'date');
+     *    $query->select('title', 'author', 'date');
      *    // SELECT title, author, date
 
-     * ->select(['id', 'title']);
+     *    $query->select(['id', 'title']);
      *    // SELECT id, title
      *
      * @param array|string $columns Array or multiple string arguments containing column names
      *
-     * @return SphinxQL The current object
+     * @return SphinxQL
      */
     public function select($columns = null)
     {
@@ -786,7 +789,7 @@ class SphinxQL
     /**
      * Activates the INSERT mode
      *
-     * @return SphinxQL The current object
+     * @return SphinxQL
      */
     public function insert()
     {
@@ -799,7 +802,7 @@ class SphinxQL
     /**
      * Activates the REPLACE mode
      *
-     * @return SphinxQL The current object
+     * @return SphinxQL
      */
     public function replace()
     {
@@ -814,7 +817,7 @@ class SphinxQL
      *
      * @param string $index The index to update into
      *
-     * @return SphinxQL The current object
+     * @return SphinxQL
      */
     public function update($index)
     {
@@ -828,7 +831,7 @@ class SphinxQL
     /**
      * Activates the DELETE mode
      *
-     * @return SphinxQL The current object
+     * @return SphinxQL
      */
     public function delete()
     {
@@ -844,7 +847,7 @@ class SphinxQL
      *
      * @param array $array An array of indexes to use
      *
-     * @return SphinxQL The current object
+     * @return SphinxQL
      */
     public function from($array = null)
     {
@@ -866,7 +869,7 @@ class SphinxQL
      * @param string   $value  The value
      * @param boolean  $half  Exclude ", |, - control characters from being escaped
      *
-     * @return SphinxQL The current object
+     * @return SphinxQL
      */
     public function match($column, $value, $half = false)
     {
@@ -883,19 +886,19 @@ class SphinxQL
      * WHERE clause
      *
      * Examples:
-     *    $sq->where('column', 'value');
+     *    $query->where('column', 'value');
      *    // WHERE `column` = 'value'
      *
-     *    $sq->where('column', '=', 'value');
+     *    $query->where('column', '=', 'value');
      *    // WHERE `column` = 'value'
      *
-     *    $sq->where('column', '>=', 'value')
+     *    $query->where('column', '>=', 'value')
      *    // WHERE `column` >= 'value'
      *
-     *    $sq->where('column', 'IN', array('value1', 'value2', 'value3'));
+     *    $query->where('column', 'IN', array('value1', 'value2', 'value3'));
      *    // WHERE `column` IN ('value1', 'value2', 'value3')
      *
-     *    $sq->where('column', 'BETWEEN', array('value1', 'value2'))
+     *    $query->where('column', 'BETWEEN', array('value1', 'value2'))
      *    // WHERE `column` BETWEEN 'value1' AND 'value2'
      *    // WHERE `example` BETWEEN 10 AND 100
      *
@@ -904,7 +907,7 @@ class SphinxQL
      * @param string   $value    The value to check against
      * @param boolean  $or      If it should be prepended with OR (true) or AND (false) - not available as for Sphinx 2.0.2
      *
-     * @return SphinxQL The current object
+     * @return SphinxQL
      */
     public function where($column, $operator, $value = null, $or = false)
     {
@@ -930,7 +933,7 @@ class SphinxQL
      * @param string $operator  The operator to use
      * @param mixed   $value     The value to compare against
      *
-     * @return SphinxQL The current object
+     * @return SphinxQL
      */
     public function orWhere($column, $operator, $value = null)
     {
@@ -942,7 +945,7 @@ class SphinxQL
     /**
      * Opens a parenthesis prepended with AND (where necessary)
      *
-     * @return SphinxQL The current object
+     * @return SphinxQL
      */
     public function whereOpen()
     {
@@ -954,7 +957,7 @@ class SphinxQL
     /**
      * Opens a parenthesis prepended with OR (where necessary)
      *
-     * @return SphinxQL The current object
+     * @return SphinxQL
      */
     public function orWhereOpen()
     {
@@ -966,7 +969,7 @@ class SphinxQL
     /**
      * Closes a parenthesis in WHERE
      *
-     * @return SphinxQL The current object
+     * @return SphinxQL
      */
     public function whereClose()
     {
@@ -981,7 +984,7 @@ class SphinxQL
      *
      * @param string $column A column to group by
      *
-     * @return SphinxQL The current object
+     * @return SphinxQL
      */
     public function groupBy($column)
     {
@@ -998,7 +1001,7 @@ class SphinxQL
      * @param string $column    The column to group by
      * @param string $direction The group by direction (asc/desc)
      *
-     * @return SphinxQL The current object
+     * @return SphinxQL
      */
     public function withinGroupOrderBy($column, $direction = null)
     {
@@ -1014,7 +1017,7 @@ class SphinxQL
      * @param string $column    The column to order on
      * @param string $direction The ordering direction (asc/desc)
      *
-     * @return SphinxQL The current object
+     * @return SphinxQL
      */
     public function orderBy($column, $direction = null)
     {
@@ -1030,7 +1033,7 @@ class SphinxQL
      * @param int      $offset Offset if $limit is specified, else limit
      * @param null|int $limit  The limit to set, null for no limit
      *
-     * @return SphinxQL The current object
+     * @return SphinxQL
      */
     public function limit($offset, $limit = null)
     {
@@ -1050,7 +1053,7 @@ class SphinxQL
      *
      * @param int $offset The offset
      *
-     * @return SphinxQL The current object
+     * @return SphinxQL
      */
     public function offset($offset)
     {
@@ -1066,7 +1069,7 @@ class SphinxQL
      * @param string $name  Option name
      * @param string $value Option value
      *
-     * @return SphinxQL The current object
+     * @return SphinxQL
      */
     public function option($name, $value)
     {
@@ -1081,7 +1084,7 @@ class SphinxQL
      *
      * @param string $index The index to insert/replace into
      *
-     * @return SphinxQL The current object
+     * @return SphinxQL
      */
     public function into($index)
     {
@@ -1097,7 +1100,7 @@ class SphinxQL
      *
      * @param array $array The array of columns
      *
-     * @return SphinxQL The current object
+     * @return SphinxQL
      */
     public function columns($array = array())
     {
@@ -1117,7 +1120,7 @@ class SphinxQL
      *
      * @param array $array The array of values matching the columns from $this->columns()
      *
-     * @return SphinxQL The current object
+     * @return SphinxQL
      */
     public function values($array)
     {
@@ -1137,7 +1140,7 @@ class SphinxQL
      * @param string $column The column name
      * @param string $value  The value
      *
-     * @return SphinxQL The current object
+     * @return SphinxQL
      */
     public function value($column, $value)
     {
@@ -1157,12 +1160,11 @@ class SphinxQL
      *
      * @param array $array Array of key-values
      *
-     * @return SphinxQL The current object
+     * @return SphinxQL
      */
     public function set($array)
     {
-        foreach ($array as $key => $item)
-        {
+        foreach ($array as $key => $item) {
             $this->value($key, $item);
         }
 
@@ -1174,7 +1176,7 @@ class SphinxQL
      * Used in: INSERT, REPLACE, UPDATE
      *
      * @param Facet $facet
-     * @return SphinxQL The current object
+     * @return SphinxQL
      */
     public function facet($facet)
     {
@@ -1291,7 +1293,7 @@ class SphinxQL
     /**
      * Clears the existing query build for new query when using the same SphinxQL instance.
      *
-     * @return SphinxQL The current object
+     * @return SphinxQL
      */
     public function reset()
     {

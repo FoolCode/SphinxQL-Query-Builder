@@ -1,14 +1,12 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: vicent
- * Date: 17/02/15
- * Time: 11:42
- */
 
 use Foolz\SphinxQL\Facet;
 use Foolz\SphinxQL\Tests\TestUtil;
 
+/**
+ * @package Foolz\SphinxQL
+ * @author Vicent Valls
+ */
 class FacetTest  extends PHPUnit_Framework_TestCase
 {
     public static $conn = null;
@@ -41,123 +39,104 @@ class FacetTest  extends PHPUnit_Framework_TestCase
 
     public function testFacet()
     {
-        $facet = Facet::create(self::$conn)->facet(array('gid'));
+        $facet = Facet::create(self::$conn)
+            ->facet(array('gid'))
+            ->getFacet();
 
-        $strFacet = $facet->getFacet();
+        $this->assertEquals('FACET `gid`', $facet);
 
-        $this->assertEquals('FACET `gid`', (string) $strFacet);
-    }
+        $facet = Facet::create(self::$conn)
+            ->facet(array('gid', 'title', 'content'))
+            ->getFacet();
 
-    public function testMultiFacet()
-    {
-        $facet = Facet::create(self::$conn)->facet(array('gid', 'title', 'content'));
+        $this->assertEquals('FACET `gid`, `title`, `content`', $facet);
 
-        $strFacet = $facet->getFacet();
+        $facet = Facet::create(self::$conn)
+            ->facet('gid', 'title', 'content')
+            ->getFacet();
 
-        $this->assertEquals('FACET `gid`, `title`, `content`', (string) $strFacet);
-    }
+        $this->assertEquals('FACET `gid`, `title`, `content`', $facet);
 
-    public function testMultiFacet2()
-    {
-        $facet = Facet::create(self::$conn)->facet('gid', 'title', 'content');
+        $facet = Facet::create(self::$conn)
+            ->facet(array('aliAS' => 'gid'))
+            ->getFacet();
 
-        $strFacet = $facet->getFacet();
+        $this->assertEquals('FACET `gid` AS aliAS', $facet);
 
-        $this->assertEquals('FACET `gid`, `title`, `content`', (string) $strFacet);
-    }
+        $facet = Facet::create(self::$conn)
+            ->facet(array('gid', 'name' => 'title', 'content'))
+            ->getFacet();
 
-    public function testFacetAs()
-    {
-        $facet = Facet::create(self::$conn)->facet(array('aliAS' => 'gid'));
+        $this->assertEquals('FACET `gid`, `title` AS name, `content`', $facet);
 
-        $strFacet = $facet->getFacet();
+        $facet = Facet::create(self::$conn)
+            ->facet('gid', array('name' => 'title'), 'content')
+            ->getFacet();
 
-        $this->assertEquals('FACET `gid` AS aliAS', (string) $strFacet);
-    }
-
-    public function testMultiFacetAs()
-    {
-        $facet = Facet::create(self::$conn)->facet(array('gid', 'name' => 'title', 'content'));
-
-        $strFacet = $facet->getFacet();
-
-        $this->assertEquals('FACET `gid`, `title` AS name, `content`', (string) $strFacet);
-    }
-
-    public function testMultiFacetAs2()
-    {
-        $facet = Facet::create(self::$conn)->facet('gid', array('name' => 'title'), 'content');
-
-        $strFacet = $facet->getFacet();
-
-        $this->assertEquals('FACET `gid`, `title` AS name, `content`', (string) $strFacet);
+        $this->assertEquals('FACET `gid`, `title` AS name, `content`', $facet);
     }
 
     public function testFacetFunction()
     {
-        $facet = Facet::create(self::$conn)->facetFunction('INTERVAL', array('price', 200, 400, 600, 800));
+        $facet = Facet::create(self::$conn)
+            ->facetFunction('INTERVAL', array('price', 200, 400, 600, 800))
+            ->getFacet();
 
-        $strFacet = $facet->getFacet();
+        $this->assertEquals('FACET INTERVAL(price,200,400,600,800)', $facet);
 
-        $this->assertEquals('FACET INTERVAL(price,200,400,600,800)', (string) $strFacet);
-    }
+        $facet = Facet::create(self::$conn)
+            ->facetFunction('COUNT', 'gid')
+            ->getFacet();
 
-    public function testFacetFunction2()
-    {
-        $facet = Facet::create(self::$conn)->facetFunction('COUNT', 'gid');
-
-        $strFacet = $facet->getFacet();
-
-        $this->assertEquals('FACET COUNT(gid)', (string) $strFacet);
+        $this->assertEquals('FACET COUNT(gid)', $facet);
     }
 
     public function testBy()
     {
-        $facet = Facet::create(self::$conn)->facet(array('gid', 'title', 'content'))->by('gid');
+        $facet = Facet::create(self::$conn)
+            ->facet(array('gid', 'title', 'content'))
+            ->by('gid')
+            ->getFacet();
 
-        $strFacet = $facet->getFacet();
-
-        $this->assertEquals('FACET `gid`, `title`, `content` BY `gid`', (string) $strFacet);
+        $this->assertEquals('FACET `gid`, `title`, `content` BY `gid`', $facet);
     }
 
     public function testOrderBy()
     {
-        $facet = Facet::create(self::$conn)->facet(array('gid', 'title'))->orderBy('gid', 'DESC');
+        $facet = Facet::create(self::$conn)
+            ->facet(array('gid', 'title'))
+            ->orderBy('gid', 'DESC')
+            ->getFacet();
 
-        $strFacet = $facet->getFacet();
+        $this->assertEquals('FACET `gid`, `title` ORDER BY `gid` DESC', $facet);
 
-        $this->assertEquals('FACET `gid`, `title` ORDER BY `gid` DESC', (string) $strFacet);
+        $facet = Facet::create(self::$conn)
+            ->facet(array('gid', 'content'))
+            ->orderBy('gid', 'ASC')
+            ->orderBy('content', 'DESC')
+            ->getFacet();
+
+        $this->assertEquals('FACET `gid`, `content` ORDER BY `gid` ASC, `content` DESC', $facet);
     }
-
-    public function testOrderBy2()
-    {
-        $facet = Facet::create(self::$conn)->facet(array('gid', 'content'))->orderBy('gid', 'ASC')
-            ->orderBy('content', 'DESC');
-
-        $strFacet = $facet->getFacet();
-
-        $this->assertEquals('FACET `gid`, `content` ORDER BY `gid` ASC, `content` DESC', (string) $strFacet);
-    }
-
 
     public function testOrderByFunction()
     {
-        $facet = Facet::create(self::$conn)->facet(array('gid', 'title'))->orderByFunction('COUNT','*', 'DESC');
+        $facet = Facet::create(self::$conn)
+            ->facet(array('gid', 'title'))
+            ->orderByFunction('COUNT','*', 'DESC')
+            ->getFacet();
 
-        $strFacet = $facet->getFacet();
-
-        $this->assertEquals('FACET `gid`, `title` ORDER BY COUNT(*) DESC', (string) $strFacet);
+        $this->assertEquals('FACET `gid`, `title` ORDER BY COUNT(*) DESC', $facet);
     }
-
 
     public function testLimit()
     {
-        $facet = Facet::create(self::$conn)->facet(array('gid', 'title'))->orderByFunction('COUNT', '*', 'DESC')
-            ->limit(5,5);
+        $facet = Facet::create(self::$conn)
+            ->facet(array('gid', 'title'))
+            ->orderByFunction('COUNT', '*', 'DESC')
+            ->limit(5, 5)
+            ->getFacet();
 
-        $strFacet = $facet->getFacet();
-
-        $this->assertEquals('FACET `gid`, `title` ORDER BY COUNT(*) DESC LIMIT 5, 5', (string) $strFacet);
+        $this->assertEquals('FACET `gid`, `title` ORDER BY COUNT(*) DESC LIMIT 5, 5', $facet);
     }
-
 }

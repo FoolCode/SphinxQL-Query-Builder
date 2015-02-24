@@ -1,9 +1,9 @@
 <?php
 
 use Foolz\SphinxQL\SphinxQL;
+use Foolz\SphinxQL\Facet;
 use Foolz\SphinxQL\Helper;
 use Foolz\SphinxQL\Tests\TestUtil;
-use Foolz\SphinxQL\Facet;
 
 class SphinxQLTest extends PHPUnit_Framework_TestCase
 {

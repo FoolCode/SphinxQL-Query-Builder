@@ -1,7 +1,6 @@
 language: php
 
 php:
-  - 5.3
   - 5.4
   - 5.5
   - 5.6
@@ -10,9 +9,9 @@ php:
 
 env:
   - DRIVER=mysqli SPHINXSEARCH_VER=trunk
-  - DRIVER=mysqli SPHINXSEARCH_VER=branches/rel21
+  - DRIVER=mysqli SPHINXSEARCH_VER=branches/rel22
   - DRIVER=pdo SPHINXSEARCH_VER=trunk
-  - DRIVER=pdo SPHINXSEARCH_VER=branches/rel21
+  - DRIVER=pdo SPHINXSEARCH_VER=branches/rel22
 
 before_install:
   - svn checkout http://sphinxsearch.googlecode.com/svn/${SPHINXSEARCH_VER}/ sphinxsearch

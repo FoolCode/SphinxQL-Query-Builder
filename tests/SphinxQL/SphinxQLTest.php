@@ -3,6 +3,7 @@
 use Foolz\SphinxQL\SphinxQL;
 use Foolz\SphinxQL\Helper;
 use Foolz\SphinxQL\Tests\TestUtil;
+use Foolz\SphinxQL\Facet;
 
 class SphinxQLTest extends PHPUnit_Framework_TestCase
 {
@@ -696,5 +697,48 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('id', $result[0]);
         $this->assertArrayNotHasKey('gid', $result[0]);
         $this->assertEquals('10', $result[0]['id']);
+    }
+
+    /**
+     * @covers \Foolz\SphinxQL\SphinxQL::facet
+     */
+    public function testFacet()
+    {
+        $this->refill();
+
+        $result = SphinxQL::create(self::$conn)
+            ->select()
+            ->from('rt')
+            ->facet(Facet::create(self::$conn)
+                ->facetFunction('INTERVAL', array('gid', 300, 600))
+                ->orderByFunction('FACET', '', 'ASC'))
+            ->executeBatch()
+            ->getStored();
+
+        $this->assertArrayHasKey('id', $result[0][0]);
+        $this->assertArrayHasKey('interval(gid,300,600)', $result[1][0]);
+        $this->assertArrayHasKey('count(*)', $result[1][0]);
+
+        $this->assertEquals('2', $result[1][0]['count(*)']);
+        $this->assertEquals('5', $result[1][1]['count(*)']);
+        $this->assertEquals('1', $result[1][2]['count(*)']);
+
+        $result = SphinxQL::create(self::$conn)
+            ->select()
+            ->from('rt')
+            ->facet(Facet::create(self::$conn)
+                ->facet(array('gid'))
+                ->orderBy('gid', 'ASC'))
+            ->executeBatch()
+            ->getStored();
+
+        $this->assertArrayHasKey('id', $result[0][0]);
+        $this->assertArrayHasKey('gid', $result[1][0]);
+        $this->assertArrayHasKey('count(*)', $result[1][0]);
+
+        $this->assertEquals('1', $result[1][0]['count(*)']);
+        $this->assertEquals('200', $result[1][0]['gid']);
+        $this->assertEquals('3', $result[1][2]['count(*)']);
+        $this->assertEquals('2', $result[1][3]['count(*)']);
     }
 }

@@ -706,39 +706,42 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
     {
         $this->refill();
 
-        $result = SphinxQL::create(self::$conn)
-            ->select()
-            ->from('rt')
-            ->facet(Facet::create(self::$conn)
-                ->facetFunction('INTERVAL', array('gid', 300, 600))
-                ->orderByFunction('FACET', '', 'ASC'))
-            ->executeBatch()
-            ->getStored();
+        // test both setting and not setting the connection
+        foreach (array(self::$conn, null) as $conn) {
+            $result = SphinxQL::create(self::$conn)
+                ->select()
+                ->from('rt')
+                ->facet(Facet::create($conn)
+                    ->facetFunction('INTERVAL', array('gid', 300, 600))
+                    ->orderByFunction('FACET', '', 'ASC'))
+                ->executeBatch()
+                ->getStored();
 
-        $this->assertArrayHasKey('id', $result[0][0]);
-        $this->assertArrayHasKey('interval(gid,300,600)', $result[1][0]);
-        $this->assertArrayHasKey('count(*)', $result[1][0]);
+            $this->assertArrayHasKey('id', $result[0][0]);
+            $this->assertArrayHasKey('interval(gid,300,600)', $result[1][0]);
+            $this->assertArrayHasKey('count(*)', $result[1][0]);
 
-        $this->assertEquals('2', $result[1][0]['count(*)']);
-        $this->assertEquals('5', $result[1][1]['count(*)']);
-        $this->assertEquals('1', $result[1][2]['count(*)']);
+            $this->assertEquals('2', $result[1][0]['count(*)']);
+            $this->assertEquals('5', $result[1][1]['count(*)']);
+            $this->assertEquals('1', $result[1][2]['count(*)']);
 
-        $result = SphinxQL::create(self::$conn)
-            ->select()
-            ->from('rt')
-            ->facet(Facet::create(self::$conn)
-                ->facet(array('gid'))
-                ->orderBy('gid', 'ASC'))
-            ->executeBatch()
-            ->getStored();
+            $result = SphinxQL::create(self::$conn)
+                ->select()
+                ->from('rt')
+                ->facet(Facet::create($conn)
+                    ->facet(array('gid'))
+                    ->orderBy('gid', 'ASC'))
+                ->executeBatch()
+                ->getStored();
 
-        $this->assertArrayHasKey('id', $result[0][0]);
-        $this->assertArrayHasKey('gid', $result[1][0]);
-        $this->assertArrayHasKey('count(*)', $result[1][0]);
+            $this->assertArrayHasKey('id', $result[0][0]);
+            $this->assertArrayHasKey('gid', $result[1][0]);
+            $this->assertArrayHasKey('count(*)', $result[1][0]);
 
-        $this->assertEquals('1', $result[1][0]['count(*)']);
-        $this->assertEquals('200', $result[1][0]['gid']);
-        $this->assertEquals('3', $result[1][2]['count(*)']);
-        $this->assertEquals('2', $result[1][3]['count(*)']);
+            $this->assertEquals('1', $result[1][0]['count(*)']);
+            $this->assertEquals('200', $result[1][0]['gid']);
+            $this->assertEquals('3', $result[1][2]['count(*)']);
+            $this->assertEquals('2', $result[1][3]['count(*)']);
+        }
     }
 }

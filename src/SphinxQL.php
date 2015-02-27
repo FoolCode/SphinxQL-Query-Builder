@@ -148,7 +148,7 @@ class SphinxQL
     /**
      * Array of FACETs
      *
-     * @var array
+     * @var Facet[]
      */
     protected $facets = array();
 
@@ -623,7 +623,15 @@ class SphinxQL
             $facets = array();
 
             foreach($this->facets as $facet) {
-                $facets[] = $facet->getFacet();
+                // dynamically set the own SphinxQL connection if the Facet doesn't own one
+                if ($facet->getConnection() === null) {
+                    $facet->setConnection($this->getConnection());
+                    $facets[] = $facet->getFacet();
+                    // go back to the status quo for reuse
+                    $facet->setConnection();
+                } else {
+                    $facets[] = $facet->getFacet();
+                }
             }
 
             $query .= implode(' ', $facets);

@@ -68,12 +68,13 @@ class Facet
 
     /**
      * Creates and setups a Facet object
+     * The connection is required only in case this is not to be passed to a SphinxQL object via $sq->facet()
      *
-     * @param ConnectionInterface $connection
+     * @param ConnectionInterface|null $connection
      *
      * @return Facet
      */
-    public static function create(ConnectionInterface $connection)
+    public static function create(ConnectionInterface $connection = null)
     {
         return new Facet($connection);
     }
@@ -81,11 +82,23 @@ class Facet
     /**
      * Returns the currently attached connection
      *
-     * @returns ConnectionInterface
+     * @returns ConnectionInterface|null
      */
     public function getConnection()
     {
         return $this->connection;
+    }
+
+    /**
+     * Sets the connection to be used
+     *
+     * @param ConnectionInterface $connection
+     * @return Facet
+     */
+    public function setConnection(ConnectionInterface $connection = null)
+    {
+        $this->connection = $connection;
+        return $this;
     }
 
     /**
@@ -119,11 +132,10 @@ class Facet
                 if (is_array($column)) {
                     $this->facet($column);
                 } else {
-                    $this->facet[] = $column;
+                    $this->facet[] = array($column, null);
                 }
             } else {
-                $aliasFacet = $this->getConnection()->quoteIdentifier($column).' AS '.$key;
-                $this->facet[] = new Expression($aliasFacet);
+                $this->facet[] = array($column, $key);
             }
         }
 
@@ -257,7 +269,17 @@ class Facet
         $query = 'FACET ';
 
         if (!empty($this->facet)) {
-            $query .= implode(', ', $this->getConnection()->quoteIdentifierArr($this->facet)).' ';
+            $facets = array();
+            foreach ($this->facet as $array) {
+                if ($array instanceof Expression) {
+                    $facets[] = $array;
+                } else if ($array[1] === null) {
+                    $facets[] = $this->getConnection()->quoteIdentifier($array[0]);
+                } else {
+                    $facets[] = $this->getConnection()->quoteIdentifier($array[0]).' AS '.$array[1];
+                }
+            }
+            $query .= implode(', ', $facets).' ';
         } else {
             throw new SphinxQLException('There is no column in facet.');
         }

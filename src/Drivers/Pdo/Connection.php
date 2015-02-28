@@ -229,7 +229,8 @@ class Connection implements ConnectionInterface
                     throw new DatabaseException($exception->getMessage() .' [ '.implode(';', $queue).']');
                 }
                 if ($statement->columnCount()) {
-                    $rowset = new ResultSet($statement);
+                    $set = new ResultSet($statement);
+                    $rowset = $set->store();
                 } else {
                     $rowset = $statement->rowCount();
                 }

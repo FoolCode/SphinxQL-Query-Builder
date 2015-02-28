@@ -230,7 +230,7 @@ class Connection implements ConnectionInterface
                 }
                 if ($statement->columnCount()) {
                     $set = new ResultSet($statement);
-                    $rowset = $set->store();
+                    $rowset = $set->getStored();
                 } else {
                     $rowset = $statement->rowCount();
                 }

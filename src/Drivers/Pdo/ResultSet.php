@@ -96,7 +96,6 @@ class ResultSet implements ResultSetInterface
      * Returns the array as in version 0.9.x
      *
      * @return array|int|mixed
-     * @deprecated Commodity method for simple transition to version 1.0.0
      */
     public function getStored()
     {

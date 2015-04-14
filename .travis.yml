@@ -14,6 +14,11 @@ env:
   - DRIVER=pdo SPHINXSEARCH_VER=trunk
   - DRIVER=pdo SPHINXSEARCH_VER=branches/rel22
 
+matrix:
+  allow_failures:
+    - env: DRIVER=pdo SPHINXSEARCH_VER=trunk
+    - env: DRIVER=pdo SPHINXSEARCH_VER=branches/rel22
+
 before_install:
   - svn checkout http://sphinxsearch.googlecode.com/svn/${SPHINXSEARCH_VER}/ sphinxsearch
   - cd sphinxsearch

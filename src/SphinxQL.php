@@ -90,6 +90,13 @@ class SphinxQL
     protected $within_group_order_by = array();
 
     /**
+     * The list of where and parenthesis, must be inserted in order
+     *
+     * @var array
+     */
+    protected $having = array();
+
+    /**
      * ORDER BY array
      *
      * @var array
@@ -492,24 +499,35 @@ class SphinxQL
 
                 $just_opened = false;
 
-                if (strtoupper($where['operator']) === 'BETWEEN') {
-                    $query .= $this->getConnection()->quoteIdentifier($where['column']);
-                    $query .=' BETWEEN ';
-                    $query .= $this->getConnection()->quote($where['value'][0]).' AND '
-                        .$this->getConnection()->quote($where['value'][1]).' ';
-                } else {
-                    // id can't be quoted!
-                    if ($where['column'] === 'id') {
-                        $query .= 'id ';
-                    } else {
-                        $query .= $this->getConnection()->quoteIdentifier($where['column']).' ';
-                    }
+                $query .= $this->compileFilterCondition($where);
+            }
+        }
 
-                    if (in_array(strtoupper($where['operator']), array('IN', 'NOT IN'), true)) {
-                        $query .= strtoupper($where['operator']).' ('.implode(', ', $this->getConnection()->quoteArr($where['value'])).') ';
-                    } else {
-                        $query .= $where['operator'].' '.$this->getConnection()->quote($where['value']).' ';
-                    }
+        return $query;
+    }
+
+    public function compileFilterCondition($filter)
+    {
+        $query = '';
+
+        if (!empty($filter)) {
+            if (strtoupper($filter['operator']) === 'BETWEEN') {
+                $query .= $this->getConnection()->quoteIdentifier($filter['column']);
+                $query .=' BETWEEN ';
+                $query .= $this->getConnection()->quote($filter['value'][0]).' AND '
+                    .$this->getConnection()->quote($filter['value'][1]).' ';
+            } else {
+                // id can't be quoted!
+                if ($filter['column'] === 'id') {
+                    $query .= 'id ';
+                } else {
+                    $query .= $this->getConnection()->quoteIdentifier($filter['column']).' ';
+                }
+
+                if (in_array(strtoupper($filter['operator']), array('IN', 'NOT IN'), true)) {
+                    $query .= strtoupper($filter['operator']).' ('.implode(', ', $this->getConnection()->quoteArr($filter['value'])).') ';
+                } else {
+                    $query .= $filter['operator'].' '.$this->getConnection()->quote($filter['value']).' ';
                 }
             }
         }
@@ -562,6 +580,10 @@ class SphinxQL
             }
 
             $query .= implode(', ', $order_arr).' ';
+        }
+
+        if (!empty($this->having)) {
+            $query .= 'HAVING '.$this->compileFilterCondition($this->having);
         }
 
         if (!empty($this->order_by)) {
@@ -772,7 +794,7 @@ class SphinxQL
      *
      *    $query->select('title', 'author', 'date');
      *    // SELECT title, author, date
-
+     *
      *    $query->select(['id', 'title']);
      *    // SELECT id, title
      *
@@ -1019,6 +1041,48 @@ class SphinxQL
     }
 
     /**
+     * HAVING clause
+     *
+     * Examples:
+     *    $sq->having('column', 'value');
+     *    // HAVING `column` = 'value'
+     *
+     *    $sq->having('column', '=', 'value');
+     *    // HAVING `column` = 'value'
+     *
+     *    $sq->having('column', '>=', 'value')
+     *    // HAVING `column` >= 'value'
+     *
+     *    $sq->having('column', 'IN', array('value1', 'value2', 'value3'));
+     *    // HAVING `column` IN ('value1', 'value2', 'value3')
+     *
+     *    $sq->having('column', 'BETWEEN', array('value1', 'value2'))
+     *    // HAVING `column` BETWEEN 'value1' AND 'value2'
+     *    // HAVING `example` BETWEEN 10 AND 100
+     *
+     * @param string   $column   The column name
+     * @param string   $operator The operator to use
+     * @param string   $value    The value to check against
+     *
+     * @return SphinxQL The current object
+     */
+    public function having($column, $operator, $value = null)
+    {
+        if ($value === null) {
+            $value = $operator;
+            $operator = '=';
+        }
+
+        $this->having = array(
+            'column' => $column,
+            'operator' => $operator,
+            'value' => $value
+        );
+
+        return $this;
+    }
+
+    /**
      * ORDER BY clause
      * Adds to the previously added columns
      *
@@ -1210,12 +1274,12 @@ class SphinxQL
     }
 
     /**
-    * Sets the characters used for halfEscapeMatch().
-    *
-    * @param array $array The array of characters to escape
-    *
-    * @return array The escaped characters
-    */
+     * Sets the characters used for halfEscapeMatch().
+     *
+     * @param array $array The array of characters to escape
+     *
+     * @return array The escaped characters
+     */
     public function setHalfEscapeChars($array = array())
     {
         if (!empty($array)) {
@@ -1226,12 +1290,12 @@ class SphinxQL
     }
 
     /**
-    * Compiles an array containing the characters and escaped characters into a key/value configuration.
-    *
-    * @param array $array The array of characters to escape
-    *
-    * @return array An array of the characters and it's escaped counterpart
-    */
+     * Compiles an array containing the characters and escaped characters into a key/value configuration.
+     *
+     * @param array $array The array of characters to escape
+     *
+     * @return array An array of the characters and it's escaped counterpart
+     */
     public function compileEscapeChars($array = array())
     {
         $result = array();
@@ -1312,6 +1376,7 @@ class SphinxQL
         $this->match = array();
         $this->group_by = array();
         $this->within_group_order_by = array();
+        $this->having = array();
         $this->order_by = array();
         $this->offset = null;
         $this->into = null;
@@ -1347,6 +1412,13 @@ class SphinxQL
     public function resetWithinGroupOrderBy()
     {
         $this->within_group_order_by = array();
+
+        return $this;
+    }
+
+    public function resetHaving()
+    {
+        $this->having = array();
 
         return $this;
     }

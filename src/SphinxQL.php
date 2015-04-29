@@ -1385,6 +1385,7 @@ class SphinxQL
         $this->match = array();
         $this->group_by = array();
         $this->within_group_order_by = array();
+        $this->having = array();
         $this->order_by = array();
         $this->offset = null;
         $this->into = null;
@@ -1420,6 +1421,13 @@ class SphinxQL
     public function resetWithinGroupOrderBy()
     {
         $this->within_group_order_by = array();
+
+        return $this;
+    }
+
+    public function resetHaving()
+    {
+        $this->having = array();
 
         return $this;
     }

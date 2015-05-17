@@ -16,41 +16,6 @@ You can create an instance by using the following code and passing a configured 
     $conn = new Connection();
     $queryBuilder = SphinxQL::create($conn);
 
-Security: Bypass Query Escaping
--------------------------------
-
-.. code-block:: php
-
-    SphinxQL::expr($string)
-
-Security: Query Escaping
-------------------------
-
-.. code-block:: php
-
-    $queryBuilder
-      ->escape($value);
-
-.. code-block:: php
-
-    $queryBuilder
-      ->quoteIdentifier($value);
-
-.. code-block:: php
-
-    $queryBuilder
-      ->quote($value);
-
-.. code-block:: php
-
-    $queryBuilder
-      ->escapeMatch($value);
-
-.. code-block:: php
-
-    $queryBuilder
-      ->halfEscapeMatch($value);
-
 Building a Query
 ----------------
 
@@ -83,6 +48,41 @@ For `INSERT`, `REPLACE`, `UPDATE` and `DELETE` queries, you can pass the index a
 .. note::
 
     You can convert the query builder into its compiled SphinxQL dialect string representation by calling `$queryBuilder->compile()->getCompiled()`.
+
+Security: Bypass Query Escaping
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: php
+
+    SphinxQL::expr($string)
+
+Security: Query Escaping
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: php
+
+    $queryBuilder
+      ->escape($value);
+
+.. code-block:: php
+
+    $queryBuilder
+      ->quoteIdentifier($value);
+
+.. code-block:: php
+
+    $queryBuilder
+      ->quote($value);
+
+.. code-block:: php
+
+    $queryBuilder
+      ->escapeMatch($value);
+
+.. code-block:: php
+
+    $queryBuilder
+      ->halfEscapeMatch($value);
 
 WHERE Clause
 ^^^^^^^^^^^^

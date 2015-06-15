@@ -617,6 +617,8 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
             ->resetMatch()
             ->groupBy('gid')
             ->resetGroupBy()
+            ->having('gid', '=', '304')
+            ->resetHaving()
             ->withinGroupOrderBy('id', 'desc')
             ->resetWithinGroupOrderBy()
             ->option('comment', 'this should be quoted')

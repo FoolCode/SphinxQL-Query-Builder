@@ -90,6 +90,13 @@ class SphinxQL
     protected $within_group_order_by = array();
 
     /**
+     * The list of where and parenthesis, must be inserted in order
+     *
+     * @var array
+     */
+    protected $having = array();
+
+    /**
      * ORDER BY array
      *
      * @var array
@@ -564,6 +571,30 @@ class SphinxQL
             $query .= implode(', ', $order_arr).' ';
         }
 
+        if (!empty($this->having)) {
+            $having = $this->having;
+            $query .= 'HAVING ';
+            if (strtoupper($having['operator']) === 'BETWEEN') {
+                $query .= $this->getConnection()->quoteIdentifier($having['column']);
+                $query .=' BETWEEN ';
+                $query .= $this->getConnection()->quote($having['value'][0]).' AND '
+                    .$this->getConnection()->quote($having['value'][1]).' ';
+            } else {
+                // id can't be quoted!
+                if ($having['column'] === 'id') {
+                    $query .= 'id ';
+                } else {
+                    $query .= $this->getConnection()->quoteIdentifier($having['column']).' ';
+                }
+
+                if (in_array(strtoupper($having['operator']), array('IN', 'NOT IN'), true)) {
+                    $query .= strtoupper($having['operator']).' ('.implode(', ', $this->getConnection()->quoteArr($having['value'])).') ';
+                } else {
+                    $query .= $having['operator'].' '.$this->getConnection()->quote($having['value']).' ';
+                }
+            }
+        }
+
         if (!empty($this->order_by)) {
             $query .= 'ORDER BY ';
 
@@ -1019,6 +1050,48 @@ class SphinxQL
     }
 
     /**
+     * HAVING clause
+     *
+     * Examples:
+     *    $sq->where('column', 'value');
+     *    // HAVING `column` = 'value'
+     *
+     *    $sq->where('column', '=', 'value');
+     *    // HAVING `column` = 'value'
+     *
+     *    $sq->where('column', '>=', 'value')
+     *    // HAVING `column` >= 'value'
+     *
+     *    $sq->where('column', 'IN', array('value1', 'value2', 'value3'));
+     *    // HAVING `column` IN ('value1', 'value2', 'value3')
+     *
+     *    $sq->where('column', 'BETWEEN', array('value1', 'value2'))
+     *    // HAVING `column` BETWEEN 'value1' AND 'value2'
+     *    // HAVING `example` BETWEEN 10 AND 100
+     *
+     * @param string   $column   The column name
+     * @param string   $operator The operator to use
+     * @param string   $value    The value to check against
+     *
+     * @return SphinxQL The current object
+     */
+    public function having($column, $operator, $value = null)
+    {
+        if ($value === null) {
+            $value = $operator;
+            $operator = '=';
+        }
+
+        $this->having = array(
+            'column' => $column,
+            'operator' => $operator,
+            'value' => $value
+        );
+
+        return $this;
+    }
+
+    /**
      * ORDER BY clause
      * Adds to the previously added columns
      *
@@ -1210,12 +1283,12 @@ class SphinxQL
     }
 
     /**
-    * Sets the characters used for halfEscapeMatch().
-    *
-    * @param array $array The array of characters to escape
-    *
-    * @return array The escaped characters
-    */
+     * Sets the characters used for halfEscapeMatch().
+     *
+     * @param array $array The array of characters to escape
+     *
+     * @return array The escaped characters
+     */
     public function setHalfEscapeChars($array = array())
     {
         if (!empty($array)) {
@@ -1226,12 +1299,12 @@ class SphinxQL
     }
 
     /**
-    * Compiles an array containing the characters and escaped characters into a key/value configuration.
-    *
-    * @param array $array The array of characters to escape
-    *
-    * @return array An array of the characters and it's escaped counterpart
-    */
+     * Compiles an array containing the characters and escaped characters into a key/value configuration.
+     *
+     * @param array $array The array of characters to escape
+     *
+     * @return array An array of the characters and it's escaped counterpart
+     */
     public function compileEscapeChars($array = array())
     {
         $result = array();
@@ -1312,6 +1385,7 @@ class SphinxQL
         $this->match = array();
         $this->group_by = array();
         $this->within_group_order_by = array();
+        $this->having = array();
         $this->order_by = array();
         $this->offset = null;
         $this->into = null;
@@ -1347,6 +1421,13 @@ class SphinxQL
     public function resetWithinGroupOrderBy()
     {
         $this->within_group_order_by = array();
+
+        return $this;
+    }
+
+    public function resetHaving()
+    {
+        $this->having = array();
 
         return $this;
     }

@@ -502,6 +502,20 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('3', $result[3]['count(*)']);
     }
 
+    public function testHaving()
+    {
+        $this->refill();
+
+        $result = SphinxQL::create(self::$conn)->select(SphinxQL::expr('count(*) as cnt'))
+            ->from('rt')
+            ->groupBy('gid')
+            ->having('cnt', '>', 1)
+            ->execute();
+
+        $this->assertCount(2, $result);
+        $this->assertEquals('2', $result[1]['cnt']);
+    }
+
     public function testOrderBy()
     {
         $this->refill();
@@ -644,6 +658,8 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
             ->resetMatch()
             ->groupBy('gid')
             ->resetGroupBy()
+            ->having('gid', '=', '304')
+            ->resetHaving()
             ->withinGroupOrderBy('id', 'desc')
             ->resetWithinGroupOrderBy()
             ->option('comment', 'this should be quoted')

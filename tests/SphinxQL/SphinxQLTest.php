@@ -506,7 +506,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
     {
         $this->refill();
 
-        $result = SphinxQL::create($this->conn)->select(SphinxQL::expr('count(*) as cnt'))
+        $result = SphinxQL::create(self::$conn)->select(SphinxQL::expr('count(*) as cnt'))
             ->from('rt')
             ->groupBy('gid')
             ->having('cnt', '>', 1)

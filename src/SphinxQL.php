@@ -1283,12 +1283,12 @@ class SphinxQL
     }
 
     /**
-    * Sets the characters used for halfEscapeMatch().
-    *
-    * @param array $array The array of characters to escape
-    *
-    * @return array The escaped characters
-    */
+     * Sets the characters used for halfEscapeMatch().
+     *
+     * @param array $array The array of characters to escape
+     *
+     * @return array The escaped characters
+     */
     public function setHalfEscapeChars($array = array())
     {
         if (!empty($array)) {
@@ -1299,12 +1299,12 @@ class SphinxQL
     }
 
     /**
-    * Compiles an array containing the characters and escaped characters into a key/value configuration.
-    *
-    * @param array $array The array of characters to escape
-    *
-    * @return array An array of the characters and it's escaped counterpart
-    */
+     * Compiles an array containing the characters and escaped characters into a key/value configuration.
+     *
+     * @param array $array The array of characters to escape
+     *
+     * @return array An array of the characters and it's escaped counterpart
+     */
     public function compileEscapeChars($array = array())
     {
         $result = array();

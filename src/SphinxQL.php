@@ -330,7 +330,7 @@ class SphinxQL
     /**
      * Sets the reference to the enqueued object
      *
-     * @param $query SphinxQL The object to set as previous
+     * @param SphinxQL $query The object to set as previous
      *
      * @return SphinxQL
      */
@@ -441,7 +441,7 @@ class SphinxQL
                 if (empty($match['column'])) {
                     $pre .= '';
                 } elseif (is_array($match['column'])) {
-                    $pre .= '@('.implode(',',$match['column']).') ';
+                    $pre .= '@('.implode(',', $match['column']).') ';
                 } else {
                     $pre .= '@'.$match['column'].' ';
                 }
@@ -472,7 +472,7 @@ class SphinxQL
     {
         $query = '';
 
-        if (empty($this->match) && ! empty($this->where)) {
+        if (empty($this->match) && !empty($this->where)) {
             $query .= 'WHERE ';
         }
 
@@ -493,7 +493,7 @@ class SphinxQL
                     continue;
                 }
 
-                if ($key > 0 && ! $just_opened || ! empty($this->match)) {
+                if ($key > 0 && !$just_opened || !empty($this->match)) {
                     $query .= $where['ext_operator'].' '; // AND/OR
                 }
 
@@ -513,7 +513,7 @@ class SphinxQL
         if (!empty($filter)) {
             if (strtoupper($filter['operator']) === 'BETWEEN') {
                 $query .= $this->getConnection()->quoteIdentifier($filter['column']);
-                $query .=' BETWEEN ';
+                $query .= ' BETWEEN ';
                 $query .= $this->getConnection()->quote($filter['value'][0]).' AND '
                     .$this->getConnection()->quote($filter['value'][1]).' ';
             } else {
@@ -644,7 +644,7 @@ class SphinxQL
         if (!empty($this->facets)) {
             $facets = array();
 
-            foreach($this->facets as $facet) {
+            foreach ($this->facets as $facet) {
                 // dynamically set the own SphinxQL connection if the Facet doesn't own one
                 if ($facet->getConnection() === null) {
                     $facet->setConnection($this->getConnection());
@@ -1262,7 +1262,7 @@ class SphinxQL
      *
      * @param array $array The array of characters to escape
      *
-     * @return array The escaped characters
+     * @return SphinxQL The escaped characters
      */
     public function setFullEscapeChars($array = array())
     {
@@ -1278,7 +1278,7 @@ class SphinxQL
      *
      * @param array $array The array of characters to escape
      *
-     * @return array The escaped characters
+     * @return SphinxQL The escaped characters
      */
     public function setHalfEscapeChars($array = array())
     {

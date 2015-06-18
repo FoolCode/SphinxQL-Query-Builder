@@ -200,9 +200,7 @@ class Helper
      */
     public function callSnippets($data, $index, $query, $options = array())
     {
-        array_unshift($options, $query);
-        array_unshift($options, $index);
-        array_unshift($options, $data);
+        array_unshift($options, $data, $index, $query);
 
         $arr = $this->getConnection()->quoteArr($options);
         array_walk(

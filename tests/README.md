@@ -13,7 +13,6 @@ Make sure there's a `data` directory under the `tests` directory.
 
 There are a few functions not comprehended in the unit testing.
 
-* `callSnippets`
 * `callKeywords`
 * `createFunction`
 * `dropFunction`

@@ -56,4 +56,46 @@ class HelperTest extends PHPUnit_Framework_TestCase
         Helper::create($this->conn)->setVariable('@foo', 1, true);
         Helper::create($this->conn)->setVariable('@foo', array(0), true);
     }
+
+    public function testCallSnippets()
+    {
+        $snippets = Helper::create($this->conn)->callSnippets(
+            'this is my document text',
+            'rt',
+            'is'
+        )->execute()->getStored();
+        $this->assertEquals(
+            array(array('snippet' => 'this <b>is</b> my document text')),
+            $snippets
+        );
+
+        $snippets = Helper::create($this->conn)->callSnippets(
+            'this is my document text',
+            'rt',
+            'is',
+            array(
+                'query_mode'   => 1,
+                'before_match' => '<em>',
+                'after_match'  => '</em>',
+            )
+        )->execute()->getStored();
+        $this->assertEquals(
+            array(array('snippet' => 'this <em>is</em> my document text')),
+            $snippets
+        );
+
+        $snippets = Helper::create($this->conn)->callSnippets(
+            array('this is my document text', 'another document'),
+            'rt',
+            'is',
+            array('allow_empty' => 1)
+        )->execute()->getStored();
+        $this->assertEquals(
+            array(
+                array('snippet' => 'this <b>is</b> my document text'),
+                array('snippet' => ''),
+            ),
+            $snippets
+        );
+    }
 }

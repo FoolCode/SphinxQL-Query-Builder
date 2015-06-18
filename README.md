@@ -389,7 +389,7 @@ $result = SphinxQL::create($this->conn)
 * `Helper::create($conn)->showSessionVariables() => 'SHOW SESSION VARIABLES'`
 * `Helper::create($conn)->showGlobalVariables() => 'SHOW GLOBAL VARIABLES'`
 * `Helper::create($conn)->setVariable($name, $value, $global = false)`
-* `Helper::create($conn)->callSnippets($data, $index, $extra = array())`
+* `Helper::create($conn)->callSnippets($data, $index, $query, $options = array())`
 * `Helper::create($conn)->callKeywords($text, $index, $hits = null)`
 * `Helper::create($conn)->describe($index)`
 * `Helper::create($conn)->createFunction($udf_name, $returns, $soname)`

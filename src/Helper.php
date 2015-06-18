@@ -154,7 +154,7 @@ class Helper
      * SET syntax
      *
      * @param string  $name   The name of the variable
-     * @param mixed   $value  The value o the variable
+     * @param mixed   $value  The value of the variable
      * @param boolean $global True if the variable should be global, false otherwise
      *
      * @return SphinxQL A SphinxQL object ready to be ->execute();
@@ -191,18 +191,28 @@ class Helper
     /**
      * CALL SNIPPETS syntax
      *
-     * @param string $data
+     * @param string $data    The document text (or documents) to search
      * @param string $index
-     * @param array  $extra
+     * @param string $query   Search query used for highlighting
+     * @param array  $options Associative array of additional options
      *
      * @return SphinxQL A SphinxQL object ready to be ->execute();
      */
-    public function callSnippets($data, $index, $extra = array())
+    public function callSnippets($data, $index, $query, $options = array())
     {
-        array_unshift($extra, $index);
-        array_unshift($extra, $data);
+        array_unshift($options, $data, $index, $query);
 
-        return $this->query('CALL SNIPPETS('.implode(', ', $this->getConnection()->quoteArr($extra)).')');
+        $arr = $this->getConnection()->quoteArr($options);
+        array_walk(
+            $arr,
+            function (&$val, $key) {
+                if (is_string($key)) {
+                    $val = $val.' AS '.$key;
+                }
+            }
+        );
+
+        return $this->query('CALL SNIPPETS('.implode(', ', $arr).')');
     }
 
     /**

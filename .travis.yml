@@ -8,10 +8,10 @@ php:
   - hhvm
 
 env:
-  - DRIVER=mysqli SPHINXSEARCH_BUILD=rel21
   - DRIVER=mysqli SPHINXSEARCH_BUILD=rel22
-  - DRIVER=pdo SPHINXSEARCH_BUILD=rel21
+  - DRIVER=mysqli SPHINXSEARCH_BUILD=beta
   - DRIVER=pdo SPHINXSEARCH_BUILD=rel22
+  - DRIVER=pdo SPHINXSEARCH_BUILD=beta
 
 matrix:
   allow_failures:

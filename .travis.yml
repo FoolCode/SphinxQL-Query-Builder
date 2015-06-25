@@ -24,6 +24,7 @@ before_install:
   - sudo apt-get install sphinxsearch
 
 before_script:
+  - sudo service sphinxsearch stop
   - composer install --dev
   - cd tests
   - /usr/bin/searchd -c sphinx.conf

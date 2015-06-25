@@ -8,26 +8,24 @@ php:
   - hhvm
 
 env:
-  - DRIVER=mysqli SPHINXSEARCH_VER=trunk
-  - DRIVER=mysqli SPHINXSEARCH_VER=branches/rel22
-  - DRIVER=pdo SPHINXSEARCH_VER=trunk
-  - DRIVER=pdo SPHINXSEARCH_VER=branches/rel22
+  - DRIVER=mysqli SPHINXSEARCH_BUILD=rel21
+  - DRIVER=mysqli SPHINXSEARCH_BUILD=rel22
+  - DRIVER=pdo SPHINXSEARCH_BUILD=rel21
+  - DRIVER=pdo SPHINXSEARCH_BUILD=rel22
 
 matrix:
   allow_failures:
-    - env: DRIVER=pdo SPHINXSEARCH_VER=trunk
-    - env: DRIVER=pdo SPHINXSEARCH_VER=branches/rel22
+    - env: DRIVER=pdo SPHINXSEARCH_BUILD=rel21
+    - env: DRIVER=pdo SPHINXSEARCH_BUILD=rel22
 
 before_install:
-  - svn checkout http://sphinxsearch.googlecode.com/svn/${SPHINXSEARCH_VER}/ sphinxsearch
-  - cd sphinxsearch
-  - ./configure --prefix=/usr/local/sphinx
-  - sudo make && sudo make install
-  - cd ..
+  - sudo add-apt-repository ppa:builds/sphinxsearch-${SPHINXSEARCH_BUILD} -y
+  - sudo apt-get update -q
+  - sudo apt-get install sphinxsearch
 
 before_script:
   - composer install --dev
   - cd tests
-  - /usr/local/sphinx/bin/searchd -c sphinx.conf
+  - /usr/bin/searchd -c sphinx.conf
 
 script: ../vendor/bin/phpunit --configuration travis/$DRIVER.phpunit.xml --coverage-text

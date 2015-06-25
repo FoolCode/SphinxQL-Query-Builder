@@ -15,8 +15,8 @@ env:
 
 matrix:
   allow_failures:
-    - env: DRIVER=pdo SPHINXSEARCH_BUILD=rel21
     - env: DRIVER=pdo SPHINXSEARCH_BUILD=rel22
+    - env: DRIVER=pdo SPHINXSEARCH_BUILD=beta
 
 before_install:
   - sudo add-apt-repository ppa:builds/sphinxsearch-${SPHINXSEARCH_BUILD} -y

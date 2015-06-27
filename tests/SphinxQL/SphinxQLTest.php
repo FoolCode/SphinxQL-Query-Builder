@@ -738,26 +738,26 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('10', $result[0]['id']);
 
         $subquery = SphinxQL::create(self::$conn)
-            ->select()
+            ->select('id')
             ->from('rt')
             ->orderBy('id', 'DESC');
         $query = SphinxQL::create(self::$conn)
-            ->select('id')
+            ->select()
             ->from($subquery)
             ->orderBy('id', 'ASC');
         $this->assertEquals(
-            'SELECT * FROM `rt` ORDER BY `id` DESC',
+            'SELECT `id` FROM `rt` ORDER BY `id` DESC',
             $subquery->compile()->getCompiled()
         );
         $this->assertEquals(
-            'SELECT `id` FROM (SELECT * FROM `rt` ORDER BY `id` DESC) ORDER BY `id` ASC',
+            'SELECT * FROM (SELECT `id` FROM `rt` ORDER BY `id` DESC) ORDER BY `id` ASC',
             $query->compile()->getCompiled()
         );
         $result = $subquery
             ->execute()
             ->getStored();
         $this->assertArrayHasKey('id', $result[0]);
-        $this->assertArrayHasKey('gid', $result[0]);
+        $this->assertArrayNotHasKey('gid', $result[0]);
         $this->assertEquals('17', $result[0]['id']);
         $result = $query
             ->execute()

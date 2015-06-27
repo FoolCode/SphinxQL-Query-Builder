@@ -555,7 +555,15 @@ class SphinxQL
         }
 
         if (!empty($this->from)) {
-            $query .= 'FROM '.implode(', ', $this->getConnection()->quoteIdentifierArr($this->from)).' ';
+            if (is_callable($this->from)) {
+                $sub = new static($this->getConnection());
+                call_user_func($this->from, $sub);
+                $query .= 'FROM ('.$sub->compile()->getCompiled().') ';
+            } elseif ($this->from instanceof SphinxQL) {
+                $query .= 'FROM ('.$this->from->compile()->getCompiled().') ';
+            } else {
+                $query .= 'FROM '.implode(', ', $this->getConnection()->quoteIdentifierArr($this->from)).' ';
+            }
         }
 
         $query .= $this->compileMatch().$this->compileWhere();
@@ -885,7 +893,7 @@ class SphinxQL
             $this->from = \func_get_args();
         }
 
-        if (is_array($array)) {
+        if (is_array($array) || is_callable($array) || $array instanceof SphinxQL) {
             $this->from = $array;
         }
 

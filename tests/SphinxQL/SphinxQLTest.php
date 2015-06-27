@@ -715,6 +715,58 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('10', $result[0]['id']);
     }
 
+    public function testSubselect()
+    {
+        $this->refill();
+        $query = SphinxQL::create(self::$conn)
+            ->select()
+            ->from(function ($q) {
+                $q->select('id')
+                    ->from('rt')
+                    ->orderBy('id', 'DESC');
+            })
+            ->orderBy('id', 'ASC');
+        $this->assertEquals(
+            'SELECT * FROM (SELECT `id` FROM `rt` ORDER BY `id` DESC) ORDER BY `id` ASC',
+            $query->compile()->getCompiled()
+        );
+        $result = $query
+            ->execute()
+            ->getStored();
+        $this->assertArrayHasKey('id', $result[0]);
+        $this->assertArrayNotHasKey('gid', $result[0]);
+        $this->assertEquals('10', $result[0]['id']);
+
+        $subquery = SphinxQL::create(self::$conn)
+            ->select('id')
+            ->from('rt')
+            ->orderBy('id', 'DESC');
+        $query = SphinxQL::create(self::$conn)
+            ->select()
+            ->from($subquery)
+            ->orderBy('id', 'ASC');
+        $this->assertEquals(
+            'SELECT `id` FROM `rt` ORDER BY `id` DESC',
+            $subquery->compile()->getCompiled()
+        );
+        $this->assertEquals(
+            'SELECT * FROM (SELECT `id` FROM `rt` ORDER BY `id` DESC) ORDER BY `id` ASC',
+            $query->compile()->getCompiled()
+        );
+        $result = $subquery
+            ->execute()
+            ->getStored();
+        $this->assertArrayHasKey('id', $result[0]);
+        $this->assertArrayNotHasKey('gid', $result[0]);
+        $this->assertEquals('17', $result[0]['id']);
+        $result = $query
+            ->execute()
+            ->getStored();
+        $this->assertArrayHasKey('id', $result[0]);
+        $this->assertArrayNotHasKey('gid', $result[0]);
+        $this->assertEquals('10', $result[0]['id']);
+    }
+
     /**
      * @covers \Foolz\SphinxQL\SphinxQL::facet
      */

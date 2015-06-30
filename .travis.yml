@@ -14,6 +14,7 @@ env:
   - DRIVER=pdo SPHINXSEARCH_BUILD=beta
 
 matrix:
+  fast_finish: true
   allow_failures:
     - env: DRIVER=pdo SPHINXSEARCH_BUILD=rel22
     - env: DRIVER=pdo SPHINXSEARCH_BUILD=beta

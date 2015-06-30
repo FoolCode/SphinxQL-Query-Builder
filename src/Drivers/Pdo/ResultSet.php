@@ -399,7 +399,9 @@ class ResultSet implements ResultSetInterface
      */
     public function rewind()
     {
-        $this->toRow(0);
+        if ($this->getCount()) {
+            $this->toRow(0);
+        }
     }
 
     /**

@@ -244,5 +244,12 @@ class ResultSetTest extends PHPUnit_Framework_TestCase
 
         $this->assertSame($expect[0], $array[0]);
         $this->assertSame($expect[1], $array[1]);
+
+        $res = self::$conn->query('SELECT * FROM rt WHERE id = 404');
+        $array = array();
+        foreach ($res as $key => $value) {
+            $array[$key] = $value;
+        }
+        $this->assertEmpty($array);
     }
 }

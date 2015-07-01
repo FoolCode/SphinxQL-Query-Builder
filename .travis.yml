@@ -1,5 +1,7 @@
 language: php
 
+sudo: false
+
 php:
   - 5.3
   - 5.4
@@ -9,25 +11,35 @@ php:
 
 env:
   - DRIVER=mysqli SPHINXSEARCH_BUILD=rel22
-  - DRIVER=mysqli SPHINXSEARCH_BUILD=beta
+  - DRIVER=mysqli SPHINXSEARCH_BUILD=master
   - DRIVER=pdo SPHINXSEARCH_BUILD=rel22
-  - DRIVER=pdo SPHINXSEARCH_BUILD=beta
+  - DRIVER=pdo SPHINXSEARCH_BUILD=master
 
 matrix:
   fast_finish: true
   allow_failures:
     - env: DRIVER=pdo SPHINXSEARCH_BUILD=rel22
-    - env: DRIVER=pdo SPHINXSEARCH_BUILD=beta
+    - env: DRIVER=pdo SPHINXSEARCH_BUILD=master
+
+cache:
+  directories:
+    - $HOME/.ccache
+    - $HOME/sphinx
 
 before_install:
-  - sudo add-apt-repository ppa:builds/sphinxsearch-${SPHINXSEARCH_BUILD} -y
-  - sudo apt-get update -q
-  - sudo apt-get install sphinxsearch
+  - export CC="ccache gcc"
+  - export CXX="ccache g++"
+  - test -d $HOME/sphinx || mkdir $HOME/sphinx
+  - test -d $HOME/sphinx/${SPHINXSEARCH_BUILD} || git clone --depth=1 --branch=${SPHINXSEARCH_BUILD} https://github.com/sphinxsearch/sphinx.git $HOME/sphinx/${SPHINXSEARCH_BUILD}
+  - pushd $HOME/sphinx/${SPHINXSEARCH_BUILD}
+  - git pull origin ${SPHINXSEARCH_BUILD}
+  - test -f config.status && ./config.status || ./configure --prefix=`pwd`/out
+  - make && make install
+  - popd
 
 before_script:
-  - sudo service sphinxsearch stop
   - composer dump-autoload
   - cd tests
-  - /usr/bin/searchd -c sphinx.conf
+  - $HOME/sphinx/${SPHINXSEARCH_BUILD}/out/bin/searchd -c sphinx.conf
 
 script: phpunit --configuration travis/$DRIVER.phpunit.xml --coverage-text

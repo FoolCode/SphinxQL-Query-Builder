@@ -26,8 +26,8 @@ before_install:
 
 before_script:
   - sudo service sphinxsearch stop
-  - composer install --dev
+  - composer dump-autoload
   - cd tests
   - /usr/bin/searchd -c sphinx.conf
 
-script: ../vendor/bin/phpunit --configuration travis/$DRIVER.phpunit.xml --coverage-text
+script: phpunit --configuration travis/$DRIVER.phpunit.xml --coverage-text

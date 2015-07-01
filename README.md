@@ -23,7 +23,7 @@ The majority of the methods in the package have been unit tested. The unit tests
 
 The only methods that have not been fully tested are the Helpers, which are mostly simple shorthands for SQL strings.
 
-We test our package locally and remotely with Travis-CI (is it faster now?):
+We test our package locally and remotely with Travis-CI:
 
 [![Build Status](https://travis-ci.org/FoolCode/SphinxQL-Query-Builder.png)](https://travis-ci.org/FoolCode/SphinxQL-Query-Builder)
 

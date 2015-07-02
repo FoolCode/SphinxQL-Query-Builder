@@ -1,5 +1,7 @@
 language: php
 
+sudo: false
+
 php:
   - 5.3
   - 5.4
@@ -20,14 +22,17 @@ matrix:
     - env: DRIVER=pdo SPHINXSEARCH_BUILD=beta
 
 before_install:
-  - sudo add-apt-repository ppa:builds/sphinxsearch-${SPHINXSEARCH_BUILD} -y
-  - sudo apt-get update -q
-  - sudo apt-get install sphinxsearch
+  - mkdir $HOME/sphinx
+  - pushd $HOME/sphinx
+  - wget --quiet http://ppa.launchpad.net/builds/sphinxsearch-${SPHINXSEARCH_BUILD}/ubuntu/dists/`lsb_release -cs`/main/binary-amd64/Packages
+  - SPHINX_DEB=`grep -m1 Filename Packages | cut -f2 -d' '`
+  - wget --quiet -O sphinxsearch.deb http://ppa.launchpad.net/builds/sphinxsearch-${SPHINXSEARCH_BUILD}/ubuntu/${SPHINX_DEB}
+  - dpkg -x sphinxsearch.deb .
+  - popd
 
 before_script:
-  - sudo service sphinxsearch stop
-  - composer install --dev
+  - composer dump-autoload
   - cd tests
-  - /usr/bin/searchd -c sphinx.conf
+  - $HOME/sphinx/usr/bin/searchd -c sphinx.conf
 
-script: ../vendor/bin/phpunit --configuration travis/$DRIVER.phpunit.xml --coverage-text
+script: phpunit --configuration travis/$DRIVER.phpunit.xml --coverage-text

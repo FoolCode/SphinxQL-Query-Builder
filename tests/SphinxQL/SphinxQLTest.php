@@ -3,6 +3,7 @@
 use Foolz\SphinxQL\SphinxQL;
 use Foolz\SphinxQL\Facet;
 use Foolz\SphinxQL\Helper;
+use Foolz\SphinxQL\Match;
 use Foolz\SphinxQL\Tests\TestUtil;
 
 class SphinxQLTest extends PHPUnit_Framework_TestCase
@@ -407,6 +408,30 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
         $result = SphinxQL::create(self::$conn)->select()
             ->from('rt')
             ->match('content', 'directly | lazy', true)
+            ->execute()
+            ->getStored();
+
+        $this->assertCount(2, $result);
+
+        $result = SphinxQL::create(self::$conn)->select()
+            ->from('rt')
+            ->match(function ($m) {
+                $m->field('content')
+                    ->match('directly')
+                    ->orMatch('lazy');
+            })
+            ->execute()
+            ->getStored();
+
+        $this->assertCount(2, $result);
+
+        $match = Match::create(SphinxQL::create(self::$conn))
+            ->field('content')
+            ->match('directly')
+            ->orMatch('lazy');
+        $result = SphinxQL::create(self::$conn)->select()
+            ->from('rt')
+            ->match($match)
             ->execute()
             ->getStored();
 

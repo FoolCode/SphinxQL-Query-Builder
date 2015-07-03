@@ -35,6 +35,16 @@ class Match
     }
 
     /**
+     * @param SphinxQL $sphinxql
+     *
+     * @return Match
+     */
+    public static function create(SphinxQL $sphinxql)
+    {
+        return new Match($sphinxql);
+    }
+
+    /**
      * Match text or sub expression.
      *
      * Examples:

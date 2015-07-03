@@ -91,7 +91,7 @@ class MatchTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('@(title,body) test', $match->compile()->getCompiled());
 
         $match = Match::create(self::$sphinxql)
-            ->field(['title', 'body'])
+            ->field(array('title', 'body'))
             ->match('test');
         $this->assertEquals('@(title,body) test', $match->compile()->getCompiled());
 
@@ -115,7 +115,7 @@ class MatchTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('@!(title,body) test', $match->compile()->getCompiled());
 
         $match = Match::create(self::$sphinxql)
-            ->ignoreField(['title', 'body'])
+            ->ignoreField(array('title', 'body'))
             ->match('test');
         $this->assertEquals('@!(title,body) test', $match->compile()->getCompiled());
     }
@@ -220,7 +220,7 @@ class MatchTest extends PHPUnit_Framework_TestCase
 
         $match = Match::create(self::$sphinxql)
             ->match('test')
-            ->paragraph('case ');
+            ->paragraph('case');
         $this->assertEquals('test PARAGRAPH case', $match->compile()->getCompiled());
     }
 
@@ -231,7 +231,7 @@ class MatchTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('ZONE:(th)', $match->compile()->getCompiled());
 
         $match = Match::create(self::$sphinxql)
-            ->zone(['h3', 'h4']);
+            ->zone(array('h3', 'h4'));
         $this->assertEquals('ZONE:(h3,h4)', $match->compile()->getCompiled());
 
         $match = Match::create(self::$sphinxql)
@@ -250,6 +250,10 @@ class MatchTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('ZONESPAN:(th) test', $match->compile()->getCompiled());
     }
 
+    /**
+     * @covers \Foolz\SphinxQL\Match::compile
+     * @covers \Foolz\SphinxQL\Match::getCompiled
+     */
     public function testCompile()
     {
         $match = Match::create(self::$sphinxql)

@@ -68,7 +68,9 @@ class Match
      */
     public function match($keywords)
     {
-        $this->tokens[] = array('MATCH' => $keywords);
+        if ($keywords !== null) {
+            $this->tokens[] = array('MATCH' => $keywords);
+        }
         return $this;
     }
 
@@ -87,9 +89,7 @@ class Match
     public function orMatch($keywords = null)
     {
         $this->tokens[] = array('OP' => '| ');
-        if ($keywords !== null) {
-            $this->match($keywords);
-        }
+        $this->match($keywords);
         return $this;
     }
 
@@ -108,9 +108,7 @@ class Match
     public function maybe($keywords = null)
     {
         $this->tokens[] = array('OP' => 'MAYBE ');
-        if ($keywords !== null) {
-            $this->match($keywords);
-        }
+        $this->match($keywords);
         return $this;
     }
 
@@ -129,9 +127,7 @@ class Match
     public function not($keyword = null)
     {
         $this->tokens[] = array('OP' => '-');
-        if ($keyword !== null) {
-            $this->match($keyword);
-        }
+        $this->match($keyword);
         return $this;
     }
 
@@ -276,9 +272,7 @@ class Match
     public function before($keywords = null)
     {
         $this->tokens[] = array('OP' => '<< ');
-        if ($keywords !== null) {
-            $this->match($keywords);
-        }
+        $this->match($keywords);
         return $this;
     }
 
@@ -297,9 +291,7 @@ class Match
     public function exact($keyword = null)
     {
         $this->tokens[] = array('OP' => '=');
-        if ($keyword !== null) {
-            $this->match($keyword);
-        }
+        $this->match($keyword);
         return $this;
     }
 
@@ -364,9 +356,7 @@ class Match
     public function sentence($keywords = null)
     {
         $this->tokens[] = array('OP' => 'SENTENCE ');
-        if ($keywords !== null) {
-            $this->match($keywords);
-        }
+        $this->match($keywords);
         return $this;
     }
 
@@ -385,9 +375,7 @@ class Match
     public function paragraph($keywords = null)
     {
         $this->tokens[] = array('OP' => 'PARAGRAPH ');
-        if ($keywords !== null) {
-            $this->match($keywords);
-        }
+        $this->match($keywords);
         return $this;
     }
 
@@ -413,9 +401,7 @@ class Match
             $zones = array($zones);
         }
         $this->tokens[] = array('ZONE' => $zones);
-        if ($keywords !== null) {
-            $this->match($keywords);
-        }
+        $this->match($keywords);
         return $this;
     }
 
@@ -436,9 +422,7 @@ class Match
     public function zonespan($zone, $keywords = null)
     {
         $this->tokens[] = array('ZONESPAN' => $zone);
-        if ($keywords !== null) {
-            $this->match($keywords);
-        }
+        $this->match($keywords);
         return $this;
     }
 

@@ -251,6 +251,7 @@ class MatchTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers \Foolz\SphinxQL\Match::create
      * @covers \Foolz\SphinxQL\Match::compile
      * @covers \Foolz\SphinxQL\Match::getCompiled
      */

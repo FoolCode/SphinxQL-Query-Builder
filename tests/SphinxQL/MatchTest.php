@@ -250,11 +250,6 @@ class MatchTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('ZONESPAN:(th) test', $match->compile()->getCompiled());
     }
 
-    /**
-     * @covers \Foolz\SphinxQL\Match::create
-     * @covers \Foolz\SphinxQL\Match::compile
-     * @covers \Foolz\SphinxQL\Match::getCompiled
-     */
     public function testCompile()
     {
         $match = Match::create(self::$sphinxql)
@@ -280,7 +275,8 @@ class MatchTest extends PHPUnit_Framework_TestCase
             ->orMatch('blue');
         $this->assertEquals('(bag of words) << "exact phrase" << red | green | blue', $match->compile()->getCompiled());
 
-        $match = Match::create(self::$sphinxql)
+        $match = new Match(self::$sphinxql);
+        $match
             ->match('aaa')
             ->not(function ($m) {
                 $m->match('bbb')

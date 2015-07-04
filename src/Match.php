@@ -66,7 +66,7 @@ class Match
      *
      * @param string|Match|callable $keywords The text or expression to match.
      */
-    public function match($keywords)
+    public function match($keywords = null)
     {
         if ($keywords !== null) {
             $this->tokens[] = array('MATCH' => $keywords);
@@ -88,7 +88,7 @@ class Match
      */
     public function orMatch($keywords = null)
     {
-        $this->tokens[] = array('OP' => '| ');
+        $this->tokens[] = array('OPERATOR' => '| ');
         $this->match($keywords);
         return $this;
     }
@@ -107,7 +107,7 @@ class Match
      */
     public function maybe($keywords = null)
     {
-        $this->tokens[] = array('OP' => 'MAYBE ');
+        $this->tokens[] = array('OPERATOR' => 'MAYBE ');
         $this->match($keywords);
         return $this;
     }
@@ -126,7 +126,7 @@ class Match
      */
     public function not($keyword = null)
     {
-        $this->tokens[] = array('OP' => '-');
+        $this->tokens[] = array('OPERATOR' => '-');
         $this->match($keyword);
         return $this;
     }
@@ -271,7 +271,7 @@ class Match
      */
     public function before($keywords = null)
     {
-        $this->tokens[] = array('OP' => '<< ');
+        $this->tokens[] = array('OPERATOR' => '<< ');
         $this->match($keywords);
         return $this;
     }
@@ -290,7 +290,7 @@ class Match
      */
     public function exact($keyword = null)
     {
-        $this->tokens[] = array('OP' => '=');
+        $this->tokens[] = array('OPERATOR' => '=');
         $this->match($keyword);
         return $this;
     }
@@ -355,7 +355,7 @@ class Match
      */
     public function sentence($keywords = null)
     {
-        $this->tokens[] = array('OP' => 'SENTENCE ');
+        $this->tokens[] = array('OPERATOR' => 'SENTENCE ');
         $this->match($keywords);
         return $this;
     }
@@ -374,7 +374,7 @@ class Match
      */
     public function paragraph($keywords = null)
     {
-        $this->tokens[] = array('OP' => 'PARAGRAPH ');
+        $this->tokens[] = array('OPERATOR' => 'PARAGRAPH ');
         $this->match($keywords);
         return $this;
     }
@@ -447,8 +447,8 @@ class Match
                 } else {
                     $query .= '('.$this->sphinxql->escapeMatch($token['MATCH']).') ';
                 }
-            } elseif (key($token) == 'OP') {
-                $query .= $token['OP'];
+            } elseif (key($token) == 'OPERATOR') {
+                $query .= $token['OPERATOR'];
             } elseif (key($token) == 'FIELD') {
                 $query .= $token['FIELD'];
                 if (count($token['fields']) == 1) {

@@ -438,7 +438,13 @@ class SphinxQL
 
             foreach ($this->match as $match) {
                 $pre = '';
-                if (empty($match['column'])) {
+                if (is_callable($match['column'])) {
+                    $sub = new Match($this);
+                    call_user_func($match['column'], $sub);
+                    $pre .= $sub->compile()->getCompiled();
+                } elseif ($match['column'] instanceof Match) {
+                    $pre .= $match['column']->compile()->getCompiled();
+                } elseif (empty($match['column'])) {
                     $pre .= '';
                 } elseif (is_array($match['column'])) {
                     $pre .= '@('.implode(',', $match['column']).') ';
@@ -903,13 +909,13 @@ class SphinxQL
     /**
      * MATCH clause (Sphinx-specific)
      *
-     * @param mixed    $column The column name (can be an array or a string)
+     * @param mixed    $column The column name (can be array, string, function, or Match)
      * @param string   $value  The value
      * @param boolean  $half  Exclude ", |, - control characters from being escaped
      *
      * @return SphinxQL
      */
-    public function match($column, $value, $half = false)
+    public function match($column, $value = null, $half = false)
     {
         if ($column === '*' || (is_array($column) && in_array('*', $column))) {
             $column = array();

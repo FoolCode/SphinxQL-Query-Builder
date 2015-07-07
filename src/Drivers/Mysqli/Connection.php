@@ -255,7 +255,9 @@ class Connection implements ConnectionInterface
         $this->ping();
 
         if (($value = $this->getConnection()->real_escape_string((string) $value)) === false) {
+            // @codeCoverageIgnoreStart
             throw new DatabaseException($this->getConnection()->error, $this->getConnection()->errno);
+            // @codeCoverageIgnoreEnd
         }
 
         return "'".$value."'";

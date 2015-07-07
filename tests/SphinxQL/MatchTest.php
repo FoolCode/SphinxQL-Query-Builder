@@ -30,6 +30,20 @@ class MatchTest extends PHPUnit_Framework_TestCase
                 $m->match('a')->orMatch('b');
             });
         $this->assertEquals('(a | b)', $match->compile()->getCompiled());
+
+        $sub = new Match(self::$sphinxql);
+        $sub->match('a')->orMatch('b');
+        $match = Match::create(self::$sphinxql)
+            ->match($sub);
+        $this->assertEquals('(a | b)', $match->compile()->getCompiled());
+
+        $match = Match::create(self::$sphinxql)
+            ->match('test|case');
+        $this->assertEquals('test\|case', $match->compile()->getCompiled());
+
+        $match = Match::create(self::$sphinxql)
+            ->match(SphinxQL::expr('test|case'));
+        $this->assertEquals('test|case', $match->compile()->getCompiled());
     }
 
     public function testOrMatch()
@@ -275,8 +289,7 @@ class MatchTest extends PHPUnit_Framework_TestCase
             ->orMatch('blue');
         $this->assertEquals('(bag of words) << "exact phrase" << red | green | blue', $match->compile()->getCompiled());
 
-        $match = new Match(self::$sphinxql);
-        $match
+        $match = Match::create(self::$sphinxql)
             ->match('aaa')
             ->not(function ($m) {
                 $m->match('bbb')

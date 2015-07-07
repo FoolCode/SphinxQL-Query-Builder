@@ -39,7 +39,7 @@ class MultiResultSet implements MultiResultSetInterface
         }
 
         // don't let users mix storage and mysqli cursors
-        if ($this->cursor > 0) {
+        if ($this->cursor !== null) {
             throw new DatabaseException('The MultiResultSet is using the mysqli cursors, store() can\'t fetch all the data');
         }
 
@@ -65,14 +65,14 @@ class MultiResultSet implements MultiResultSetInterface
     public function getNext()
     {
         if ($this->stored !== null) {
-            if ($this->cursor >= count($this->stored)) {
-                return false;
-            }
-
             if ($this->cursor === null) {
                 $this->cursor = 0;
             } else {
                 $this->cursor++;
+            }
+
+            if ($this->cursor >= count($this->stored)) {
+                return false;
             }
 
             return $this->stored[$this->cursor];
@@ -141,6 +141,8 @@ class MultiResultSet implements MultiResultSetInterface
      * The value to set.
      * </p>
      * @return void
+     *
+     * @codeCoverageIgnore
      */
     public function offsetSet($offset, $value)
     {
@@ -155,6 +157,8 @@ class MultiResultSet implements MultiResultSetInterface
      * The offset to unset.
      * </p>
      * @return void
+     *
+     * @codeCoverageIgnore
      */
     public function offsetUnset($offset)
     {

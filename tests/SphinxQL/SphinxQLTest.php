@@ -95,6 +95,24 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
             ),
             $describe
         );
+
+        $describe = SphinxQL::create(self::$conn)
+            ->query('DESCRIBE rt');
+        $describe->execute();
+        $describe = $describe
+            ->getResult()
+            ->getStored();
+
+        array_shift($describe);
+        $this->assertSame(
+            array(
+                //	array('Field' => 'id', 'Type' => 'integer'), this can be bigint on id64 sphinx
+                array('Field' => 'title', 'Type' => 'field'),
+                array('Field' => 'content', 'Type' => 'field'),
+                array('Field' => 'gid', 'Type' => 'uint'),
+            ),
+            $describe
+        );
     }
 
     /**
@@ -157,8 +175,8 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
 
         SphinxQL::create(self::$conn)->insert()
             ->into('rt')
-            ->columns('id', 'title', 'content', 'gid')
-            ->values(13, 'i am getting bored', 'with all this CONTENT', 300)
+            ->columns(array('id', 'title', 'content', 'gid'))
+            ->values(array(13, 'i am getting bored', 'with all this CONTENT', 300))
             ->values(14, 'i want a vacation', 'the code is going to break sometime', 300)
             ->values(15, 'there\'s no hope in this class', 'just give up', 300)
             ->execute();
@@ -256,9 +274,11 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers \Foolz\SphinxQL\SphinxQL::compile
      * @covers \Foolz\SphinxQL\SphinxQL::compileUpdate
      * @covers \Foolz\SphinxQL\SphinxQL::compileSelect
      * @covers \Foolz\SphinxQL\SphinxQL::update
+     * @covers \Foolz\SphinxQL\SphinxQL::value
      */
     public function testUpdate()
     {
@@ -304,6 +324,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
     /**
      * @covers \Foolz\SphinxQL\SphinxQL::compileWhere
      * @covers \Foolz\SphinxQL\SphinxQL::from
+     * @covers \Foolz\SphinxQL\SphinxQL::compileFilterCondition
      */
     public function testWhere()
     {
@@ -357,6 +378,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers \Foolz\SphinxQL\SphinxQL::match
      * @covers \Foolz\SphinxQL\SphinxQL::compileMatch
      * @covers \Foolz\SphinxQL\SphinxQL::halfEscapeMatch
      */
@@ -440,15 +462,20 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
 
     public function testEscapeMatch()
     {
-        $this->assertSame('this maybe that\^32 and \| hi', SphinxQL::create(self::$conn)->escapeMatch('this MAYBE that^32 and | hi'));
+        $match = 'this MAYBE that^32 and | hi';
+        $this->assertSame('this maybe that\^32 and \| hi', SphinxQL::create(self::$conn)->escapeMatch($match));
+        $this->assertSame($match, SphinxQL::create(self::$conn)->escapeMatch(SphinxQL::expr($match)));
         $this->assertSame('stärkergradig \| mb', SphinxQL::create(self::$conn)->escapeMatch('stärkergradig | mb'));
     }
 
     public function testHalfEscapeMatch()
     {
-        $this->assertSame('this maybe that\^32 and | hi', SphinxQL::create(self::$conn)->halfEscapeMatch('this MAYBE that^32 and | hi'));
+        $match = 'this MAYBE that^32 and | hi';
+        $this->assertSame('this maybe that\^32 and | hi', SphinxQL::create(self::$conn)->halfEscapeMatch($match));
+        $this->assertSame($match, SphinxQL::create(self::$conn)->halfEscapeMatch(SphinxQL::expr($match)));
         $this->assertSame('this \- not -that | hi \-', SphinxQL::create(self::$conn)->halfEscapeMatch('this -- not -that | | hi -'));
         $this->assertSame('stärkergradig | mb', SphinxQL::create(self::$conn)->halfEscapeMatch('stärkergradig | mb'));
+        $this->assertSame('"unmatched quotes"', SphinxQL::create(self::$conn)->halfEscapeMatch('"unmatched quotes'));
     }
 
     /**
@@ -460,6 +487,13 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
     {
         $this->assertEquals(array('%' => '\%'), SphinxQL::create(self::$conn)->compileEscapeChars(array('%')));
         $this->assertEquals(array('@' => '\@'), SphinxQL::create(self::$conn)->compileEscapeChars(array('@')));
+
+        $match = 'this MAYBE that^32 and | hi';
+        $sphinxql = SphinxQL::create(self::$conn)->setFullEscapeChars(array('^'));
+        $this->assertSame('this maybe that\^32 and | hi', $sphinxql->escapeMatch($match));
+
+        $sphinxql->setHalfEscapeChars(array('|'));
+        $this->assertSame('this maybe that^32 and \| hi', $sphinxql->halfEscapeMatch($match));
     }
 
     public function testOption()
@@ -539,6 +573,14 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
 
         $this->assertCount(2, $result);
         $this->assertEquals('2', $result[1]['cnt']);
+
+        $result = SphinxQL::create(self::$conn)->select(SphinxQL::expr('count(*) as cnt'))
+            ->from('rt')
+            ->groupBy('gid')
+            ->having('gid', 304)
+            ->execute();
+
+        $this->assertCount(1, $result);
     }
 
     public function testOrderBy()
@@ -622,6 +664,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers \Foolz\SphinxQL\SphinxQL::compile
      * @covers \Foolz\SphinxQL\SphinxQL::compileDelete
      * @covers \Foolz\SphinxQL\SphinxQL::delete
      */
@@ -667,11 +710,24 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @expectedException        Foolz\SphinxQL\Exception\SphinxQLException
+     * @expectedExceptionMessage There is no Queue present to execute.
+     */
+    public function testEmptyQueue()
+    {
+        SphinxQL::create(self::$conn)
+            ->executeBatch()
+            ->getStored();
+    }
+
+    /**
      * @covers \Foolz\SphinxQL\SphinxQL::resetWhere
      * @covers \Foolz\SphinxQL\SphinxQL::resetMatch
      * @covers \Foolz\SphinxQL\SphinxQL::resetGroupBy
      * @covers \Foolz\SphinxQL\SphinxQL::resetWithinGroupOrderBy
      * @covers \Foolz\SphinxQL\SphinxQL::resetOptions
+     * @covers \Foolz\SphinxQL\SphinxQL::resetHaving
+     * @covers \Foolz\SphinxQL\SphinxQL::resetOrderBy
      */
     public function testResetMethods()
     {
@@ -689,6 +745,8 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
             ->resetWithinGroupOrderBy()
             ->option('comment', 'this should be quoted')
             ->resetOptions()
+            ->orderBy('id', 'desc')
+            ->resetOrderBy()
             ->compile()
             ->getCompiled();
 
@@ -794,6 +852,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
 
     /**
      * @covers \Foolz\SphinxQL\SphinxQL::facet
+     * @covers \Foolz\SphinxQL\SphinxQL::compileSelect
      */
     public function testFacet()
     {

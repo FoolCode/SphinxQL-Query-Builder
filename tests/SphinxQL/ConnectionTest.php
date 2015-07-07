@@ -28,10 +28,6 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
         TestUtil::getConnectionDriver();
     }
 
-    /**
-     * @covers \Foolz\SphinxQL\Connection::setParam
-     * @covers \Foolz\SphinxQL\Connection::setParams
-     */
     public function testGetParams()
     {
         $this->assertSame(
@@ -44,6 +40,12 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
         $this->connection->setParam('port', 9308);
         $this->assertSame(
             array('host' => '127.0.0.2', 'port' => 9308, 'socket' => null),
+            $this->connection->getParams()
+        );
+
+        $this->connection->setParam('host', 'localhost');
+        $this->assertSame(
+            array('host' => '127.0.0.1', 'port' => 9308, 'socket' => null),
             $this->connection->getParams()
         );
 
@@ -63,10 +65,6 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * @covers \Foolz\SphinxQL\Connection::setParams
-     * @covers \Foolz\SphinxQL\Connection::getParams
-     */
     public function testGetConnectionParams()
     {
         // verify that (deprecated) getConnectionParams continues to work
@@ -151,6 +149,24 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
             array('Variable_name' => 'total_found', 'Value' => '0'),
             array('Variable_name' => 'time', 'Value' => '0.000'),
         ), $query->getNext()->fetchAllAssoc());
+    }
+
+    /**
+     * @expectedException        Foolz\SphinxQL\Exception\SphinxQLException
+     * @expectedExceptionMessage The Queue is empty.
+     */
+    public function testEmptyMultiQuery()
+    {
+        $this->connection->connect();
+        $this->connection->multiQuery(array());
+    }
+
+    /**
+     * @expectedException Foolz\SphinxQL\Exception\DatabaseException
+     */
+    public function testMultiQueryThrowsException()
+    {
+        $this->connection->multiQuery(array('SHOW METAL'));
     }
 
     /**

@@ -2,7 +2,7 @@
 
 namespace Foolz\SphinxQL;
 use Foolz\SphinxQL\Drivers\ConnectionInterface;
-use Foolz\SphinxQL\Drivers\SphinxQLException;
+use Foolz\SphinxQL\Exception\SphinxQLException;
 use Foolz\SphinxQL\Drivers\MultiResultSetInterface;
 use Foolz\SphinxQL\Drivers\ResultSetInterface;
 
@@ -1314,11 +1314,7 @@ class SphinxQL
     {
         $result = array();
         foreach ($array as $character) {
-            if ($character === '\\') {
-                $result[$character] = '\\\\';
-            } else {
-                $result[$character] = '\\'.$character;
-            }
+            $result[$character] = '\\'.$character;
         }
 
         return $result;

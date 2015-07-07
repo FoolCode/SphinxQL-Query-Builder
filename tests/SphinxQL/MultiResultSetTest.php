@@ -2,6 +2,7 @@
 
 use Foolz\SphinxQL\SphinxQL;
 use Foolz\SphinxQL\Tests\TestUtil;
+use Foolz\SphinxQL\Exception\DatabaseException;
 
 class MultiResultSetTest extends PHPUnit_Framework_TestCase
 {
@@ -71,6 +72,14 @@ class MultiResultSetTest extends PHPUnit_Framework_TestCase
         $this->assertInstanceOf('\Foolz\Sphinxql\Drivers\ResultSetInterface', $set);
         $set = $res->getNext();
         $this->assertInstanceOf('\Foolz\Sphinxql\Drivers\ResultSetInterface', $set);
+
+        $res = self::$conn->multiQuery(array('SELECT COUNT(*) FROM rt', 'SHOW META'));
+        $res->store();
+        $set = $res->getNext();
+        $this->assertInstanceOf('\Foolz\Sphinxql\Drivers\ResultSetInterface', $set);
+        $set = $res->getNext();
+        $this->assertInstanceOf('\Foolz\Sphinxql\Drivers\ResultSetInterface', $set);
+        $this->assertFalse($res->getNext());
     }
 
 
@@ -95,6 +104,24 @@ class MultiResultSetTest extends PHPUnit_Framework_TestCase
         $this->assertInstanceOf('\Foolz\SphinxQL\Drivers\ResultSetInterface', $stored[0]);
         $all = $stored[0]->fetchAllAssoc();
         $this->assertEquals(8, $all[0]['count(*)']);
+    }
+
+    /**
+     * @expectedException Foolz\SphinxQL\Exception\DatabaseException
+     */
+    public function testInvalidStore()
+    {
+        $this->refill();
+
+        $res = self::$conn->multiQuery(array('SELECT COUNT(*) FROM rt', 'SHOW META'));
+        $res->getNext();
+        try {
+            $res->store();
+        } catch (DatabaseException $e) {
+            // we need to clean up
+            self::setUpBeforeClass();
+            throw $e;
+        }
     }
 
     public function testArrayAccess()
@@ -138,5 +165,10 @@ class MultiResultSetTest extends PHPUnit_Framework_TestCase
         }
 
         $this->assertCount(2, $array);
+
+        $this->assertCount(2, $res);
+        $this->assertTrue(isset($res[0]));
+        $this->assertFalse(isset($res[-1]));
+        $this->assertFalse(isset($res[2]));
     }
 }

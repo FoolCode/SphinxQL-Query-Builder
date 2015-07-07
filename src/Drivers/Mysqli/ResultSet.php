@@ -337,6 +337,8 @@ class ResultSet implements ResultSetInterface
      * The value to set.
      * </p>
      * @return void
+     *
+     * @codeCoverageIgnore
      */
     public function offsetSet($offset, $value)
     {
@@ -351,6 +353,8 @@ class ResultSet implements ResultSetInterface
      * The offset to unset.
      * </p>
      * @return void
+     *
+     * @codeCoverageIgnore
      */
     public function offsetUnset($offset)
     {

@@ -43,7 +43,7 @@ class MultiResultSet implements MultiResultSetInterface
         }
 
         // don't let users mix storage and pdo cursors
-        if ($this->cursor > 0) {
+        if ($this->cursor !== null) {
             throw new DatabaseException('The MultiResultSet is using the pdo cursors, store() can\'t fetch all the data');
         }
 
@@ -141,6 +141,8 @@ class MultiResultSet implements MultiResultSetInterface
      * The value to set.
      * </p>
      * @return void
+     *
+     * @codeCoverageIgnore
      */
     public function offsetSet($offset, $value)
     {
@@ -155,6 +157,8 @@ class MultiResultSet implements MultiResultSetInterface
      * The offset to unset.
      * </p>
      * @return void
+     *
+     * @codeCoverageIgnore
      */
     public function offsetUnset($offset)
     {

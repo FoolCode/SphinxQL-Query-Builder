@@ -231,12 +231,11 @@ class Connection implements ConnectionInterface
 
         $this->ping();
 
-        $this->getConnection()->multi_query(implode(';', $queue));
-
-        if ($this->getConnection()->error) {
+        // HHVM bug (2015/07/07, HipHop VM 3.8.0-dev (rel)): $mysqli->error and $mysqli->errno aren't set
+        if (!$this->getConnection()->multi_query(implode(';', $queue))) {
             throw new DatabaseException('['.$this->getConnection()->errno.'] '.
                 $this->getConnection()->error.' [ '.implode(';', $queue).']');
-        }
+        };
 
         return new MultiResultSet($this, $count);
     }

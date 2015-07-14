@@ -203,14 +203,11 @@ class Helper
         array_unshift($options, $data, $index, $query);
 
         $arr = $this->getConnection()->quoteArr($options);
-        array_walk(
-            $arr,
-            function (&$val, $key) {
-                if (is_string($key)) {
-                    $val = $val.' AS '.$key;
-                }
+        foreach ($arr as $key => &$val) {
+            if (is_string($key)) {
+                $val .= ' AS '.$key;
             }
-        );
+        }
 
         return $this->query('CALL SNIPPETS('.implode(', ', $arr).')');
     }

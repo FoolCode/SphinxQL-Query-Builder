@@ -251,7 +251,10 @@ class Connection implements ConnectionInterface
      */
     public function escape($value)
     {
-        $this->ping();
+        if ($this->connection === null) {
+            // this function is called a lot, making ping a significant cost if called every time
+            $this->ping();
+        }
 
         if (($value = $this->getConnection()->real_escape_string((string) $value)) === false) {
             // @codeCoverageIgnoreStart

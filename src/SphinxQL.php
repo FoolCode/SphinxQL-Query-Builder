@@ -487,9 +487,6 @@ class SphinxQL
                 if ($key > 0 || !empty($this->match)) {
                     $query .= 'AND ';
                 }
-
-                $just_opened = false;
-
                 $query .= $this->compileFilterCondition($where);
             }
         }
@@ -934,7 +931,6 @@ class SphinxQL
      * @param string   $column   The column name
      * @param string   $operator The operator to use
      * @param string   $value    The value to check against
-     * @param boolean  $or      If it should be prepended with OR (true) or AND (false) - not available as for Sphinx 2.0.2
      *
      * @return SphinxQL
      */

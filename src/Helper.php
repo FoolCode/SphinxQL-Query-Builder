@@ -131,26 +131,6 @@ class Helper
     }
 
     /**
-     * Runs query: SHOW SESSION VARIABLES
-     *
-     * @return SphinxQL A SphinxQL object ready to be ->execute();
-     */
-    public function showSessionVariables()
-    {
-        return $this->query('SHOW SESSION VARIABLES');
-    }
-
-    /**
-     * Runs query: SHOW GLOBAL VARIABLES
-     *
-     * @return SphinxQL
-     */
-    public function showGlobalVariables()
-    {
-        return $this->query('SHOW GLOBAL VARIABLES');
-    }
-
-    /**
      * SET syntax
      *
      * @param string  $name   The name of the variable

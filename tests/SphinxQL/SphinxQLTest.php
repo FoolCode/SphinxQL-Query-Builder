@@ -375,6 +375,24 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
             ->getStored();
 
         $this->assertCount(6, $result);
+
+        $result = SphinxQL::create(self::$conn)->select()
+            ->from('rt')
+            ->where('gid', '>', 300)
+            ->where('id', '!=', 15)
+            ->execute()
+            ->getStored();
+
+        $this->assertCount(5, $result);
+
+        $result = SphinxQL::create(self::$conn)->select()
+            ->from('rt')
+            ->match('content', 'content')
+            ->where('gid', '>', 200)
+            ->execute()
+            ->getStored();
+
+        $this->assertCount(1, $result);
     }
 
     /**

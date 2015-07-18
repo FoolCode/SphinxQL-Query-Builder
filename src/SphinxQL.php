@@ -483,28 +483,10 @@ class SphinxQL
         }
 
         if (!empty($this->where)) {
-            $just_opened = false;
-
             foreach ($this->where as $key => $where) {
-                if (in_array($where['ext_operator'], array('AND (', 'OR (', ')'))) {
-                    // if match is not empty we've got to use an operator
-                    if ($key == 0 || ! empty($this->match)) {
-                        $query .= '(';
-
-                        $just_opened = true;
-                    } else {
-                        $query .= $where['ext_operator'].' ';
-                    }
-
-                    continue;
+                if ($key > 0 || !empty($this->match)) {
+                    $query .= 'AND ';
                 }
-
-                if ($key > 0 && !$just_opened || !empty($this->match)) {
-                    $query .= $where['ext_operator'].' '; // AND/OR
-                }
-
-                $just_opened = false;
-
                 $query .= $this->compileFilterCondition($where);
             }
         }
@@ -949,11 +931,10 @@ class SphinxQL
      * @param string   $column   The column name
      * @param string   $operator The operator to use
      * @param string   $value    The value to check against
-     * @param boolean  $or      If it should be prepended with OR (true) or AND (false) - not available as for Sphinx 2.0.2
      *
      * @return SphinxQL
      */
-    public function where($column, $operator, $value = null, $or = false)
+    public function where($column, $operator, $value = null)
     {
         if ($value === null) {
             $value = $operator;
@@ -961,63 +942,10 @@ class SphinxQL
         }
 
         $this->where[] = array(
-            'ext_operator' => $or ? 'OR' : 'AND',
             'column' => $column,
             'operator' => $operator,
             'value' => $value
         );
-
-        return $this;
-    }
-
-    /**
-     * OR WHERE - at this time (Sphinx 2.0.2) it's not available
-     *
-     * @param string $column    The column name
-     * @param string $operator  The operator to use
-     * @param mixed   $value     The value to compare against
-     *
-     * @return SphinxQL
-     */
-    public function orWhere($column, $operator, $value = null)
-    {
-        $this->where($column, $operator, $value, true);
-
-        return $this;
-    }
-
-    /**
-     * Opens a parenthesis prepended with AND (where necessary)
-     *
-     * @return SphinxQL
-     */
-    public function whereOpen()
-    {
-        $this->where[] = array('ext_operator' => 'AND (');
-
-        return $this;
-    }
-
-    /**
-     * Opens a parenthesis prepended with OR (where necessary)
-     *
-     * @return SphinxQL
-     */
-    public function orWhereOpen()
-    {
-        $this->where[] = array('ext_operator' => 'OR (');
-
-        return $this;
-    }
-
-    /**
-     * Closes a parenthesis in WHERE
-     *
-     * @return SphinxQL
-     */
-    public function whereClose()
-    {
-        $this->where[] = array('ext_operator' => ')');
 
         return $this;
     }

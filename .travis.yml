@@ -33,6 +33,7 @@ before_install:
 before_script:
   - composer dump-autoload
   - cd tests
+  - gcc -shared -o data/test_udf.so test_udf.c
   - $HOME/sphinx/usr/bin/searchd -c sphinx.conf
 
 script: phpunit --configuration travis/$DRIVER.phpunit.xml --coverage-text

@@ -185,6 +185,7 @@ class SphinxQL
         '^' => '\^',
         '$' => '\$',
         '=' => '\=',
+        '<' => '\<',
     );
 
     /**
@@ -203,6 +204,7 @@ class SphinxQL
         '^' => '\^',
         '$' => '\$',
         '=' => '\=',
+        '<' => '\<',
     );
 
     public function __construct(ConnectionInterface $connection = null, $static = false)

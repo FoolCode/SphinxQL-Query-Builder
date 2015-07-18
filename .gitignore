@@ -2,4 +2,5 @@ composer.lock
 tests/searchd.log
 tests/searchd.pid
 tests/data/rt.*
+tests/data/test_udf.so
 vendor/

@@ -98,4 +98,90 @@ class HelperTest extends PHPUnit_Framework_TestCase
             $snippets
         );
     }
+
+    public function testCallKeywords()
+    {
+        $keywords = Helper::create($this->conn)->callKeywords(
+            'test case',
+            'rt'
+        )->execute()->getStored();
+        $this->assertEquals(
+            array(
+                array(
+                    'qpos'       => '1',
+                    'tokenized'  => 'test',
+                    'normalized' => 'test',
+                ),
+                array(
+                    'qpos'       => '2',
+                    'tokenized'  => 'case',
+                    'normalized' => 'case',
+                ),
+            ),
+            $keywords
+        );
+
+        $keywords = Helper::create($this->conn)->callKeywords(
+            'test case',
+            'rt',
+            1
+        )->execute()->getStored();
+        $this->assertEquals(
+            array(
+                array(
+                    'qpos'       => '1',
+                    'tokenized'  => 'test',
+                    'normalized' => 'test',
+                    'docs'       => '0',
+                    'hits'       => '0',
+                ),
+                array(
+                    'qpos'       => '2',
+                    'tokenized'  => 'case',
+                    'normalized' => 'case',
+                    'docs'       => '0',
+                    'hits'       => '0',
+                ),
+            ),
+            $keywords
+        );
+    }
+
+    /**
+     * @expectedException        Foolz\SphinxQL\Exception\DatabaseException
+     * @expectedExceptionMessage Sphinx expr: syntax error
+     */
+    public function testUdfNotInstalled()
+    {
+        $this->conn->query('SELECT MY_UDF()');
+    }
+
+    public function testCreateFunction()
+    {
+        Helper::create($this->conn)->createFunction('my_udf', 'INT', 'test_udf.so')->execute();
+        $this->assertSame(
+            array(array('MY_UDF()' => '42')),
+            $this->conn->query('SELECT MY_UDF()')->getStored()
+        );
+        Helper::create($this->conn)->dropFunction('my_udf')->execute();
+    }
+
+    // actually executing these queries may not be useful nor easy to test
+    public function testMiscellaneous()
+    {
+        $query = Helper::create($this->conn)->showMeta();
+        $this->assertEquals('SHOW META', $query->compile()->getCompiled());
+
+        $query = Helper::create($this->conn)->showWarnings();
+        $this->assertEquals('SHOW WARNINGS', $query->compile()->getCompiled());
+
+        $query = Helper::create($this->conn)->showStatus();
+        $this->assertEquals('SHOW STATUS', $query->compile()->getCompiled());
+
+        $query = Helper::create($this->conn)->attachIndex('disk', 'rt');
+        $this->assertEquals('ATTACH INDEX `disk` TO RTINDEX `rt`', $query->compile()->getCompiled());
+
+        $query = Helper::create($this->conn)->flushRtIndex('rt');
+        $this->assertEquals('FLUSH RTINDEX `rt`', $query->compile()->getCompiled());
+    }
 }

@@ -319,6 +319,38 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
             ->getStored();
 
         $this->assertCount(3, $result);
+
+        self::$conn->query('ALTER TABLE rt ADD COLUMN tags MULTI');
+        $result = SphinxQL::create(self::$conn)->select()
+            ->from('rt')
+            ->where('tags', 222)
+            ->execute()
+            ->getStored();
+        $this->assertEmpty($result);
+
+        $result = SphinxQL::create(self::$conn)->update('rt')
+            ->where('id', '=', 15)
+            ->value('tags', array(111, 222))
+            ->execute()
+            ->getStored();
+        $this->assertSame(1, $result);
+
+        $result = SphinxQL::create(self::$conn)->select()
+            ->from('rt')
+            ->where('tags', 222)
+            ->execute()
+            ->getStored();
+        $this->assertEquals(
+            array(
+                array(
+                    'id'   => '15',
+                    'gid'  => '304',
+                    'tags' => '111,222',
+                ),
+            ),
+            $result
+        );
+        self::$conn->query('ALTER TABLE rt DROP COLUMN tags');
     }
 
     /**

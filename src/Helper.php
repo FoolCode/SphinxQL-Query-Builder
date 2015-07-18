@@ -91,7 +91,7 @@ class Helper
     }
 
     /**
-     * Runs query: SHOW META
+     * Runs query: SHOW WARNINGS
      *
      * @return SphinxQL A SphinxQL object ready to be ->execute();
      */
@@ -227,7 +227,7 @@ class Helper
      * CREATE FUNCTION syntax
      *
      * @param string $udf_name
-     * @param string $returns  Whether INT|BIGINT|FLOAT
+     * @param string $returns  Whether INT|BIGINT|FLOAT|STRING
      * @param string $so_name
      *
      * @return SphinxQL A SphinxQL object ready to be ->execute();

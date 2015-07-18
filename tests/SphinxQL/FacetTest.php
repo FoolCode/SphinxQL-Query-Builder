@@ -69,7 +69,9 @@ class FacetTest  extends PHPUnit_Framework_TestCase
 
         $this->assertEquals('FACET `gid`, `title` AS name, `content`', $facet);
 
-        $facet = Facet::create(self::$conn)
+        $facet = new Facet();
+        $facet = $facet
+            ->setConnection(self::$conn)
             ->facet('gid', array('name' => 'title'), 'content')
             ->getFacet();
 

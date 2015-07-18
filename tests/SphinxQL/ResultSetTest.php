@@ -60,12 +60,25 @@ class ResultSetTest extends PHPUnit_Framework_TestCase
         $this->assertInstanceOf('\Foolz\Sphinxql\Drivers\ResultSetInterface', $res);
     }
 
+    public function testStore()
+    {
+        $this->refill();
+        $res = self::$conn->query('SELECT * FROM rt');
+        $res->store()->store();
+        $this->assertCount(8, $res->fetchAllNum());
+
+        $res = self::$conn->query('UPDATE rt SET gid = 202 WHERE gid < 202');
+        $this->assertEquals(2, $res->store()->getStored());
+    }
+
     public function testHasRow()
     {
         $this->refill();
         $res = self::$conn->query('SELECT * FROM rt');
         $this->assertTrue($res->hasRow(2));
+        $this->assertTrue(isset($res[2]));
         $this->assertFalse($res->hasRow(1000));
+        $this->assertFalse(isset($res[1000]));
         $res->freeResult();
     }
 
@@ -77,6 +90,17 @@ class ResultSetTest extends PHPUnit_Framework_TestCase
         $row = $res->fetchAssoc();
         $this->assertEquals(12, $row['id']);
         $res->freeResult();
+    }
+
+    /**
+     * @expectedException        Foolz\SphinxQL\Exception\ResultSetException
+     * @expectedExceptionMessage The row does not exist.
+     */
+    public function testToRowThrows()
+    {
+        $this->refill();
+        $res = self::$conn->query('SELECT * FROM rt');
+        $res->toRow(8);
     }
 
     public function testHasNextRow()
@@ -98,6 +122,23 @@ class ResultSetTest extends PHPUnit_Framework_TestCase
         $row = $res->fetchAssoc();
         $this->assertEquals(12, $row['id']);
         $res->freeResult();
+
+        $res = self::$conn->query('SELECT * FROM rt WHERE id = 10');
+        $res->toNextRow();
+        $row = $res->fetchAssoc();
+        $this->assertEquals(10, $row['id']);
+        $res->freeResult();
+    }
+
+    /**
+     * @expectedException        Foolz\SphinxQL\Exception\ResultSetException
+     * @expectedExceptionMessage The next row does not exist.
+     */
+    public function testToNextRowThrows()
+    {
+        $this->refill();
+        $res = self::$conn->query('SELECT * FROM rt WHERE id = 10');
+        $res->toNextRow()->toNextRow();
     }
 
     public function testGetCount()
@@ -162,10 +203,13 @@ class ResultSetTest extends PHPUnit_Framework_TestCase
         );
 
         $this->refill();
-        $res = self::$conn->query('SELECT * FROM rt');
+        $res = self::$conn->query('SELECT * FROM rt LIMIT 2');
         $array = $res->fetchAllNum();
-        $this->assertSame($expect[0], $array[0]);
-        $this->assertSame($expect[1], $array[1]);
+        $this->assertSame($expect, $array);
+
+        $res = self::$conn->query('SELECT * FROM rt LIMIT 2');
+        $array = $res->store()->fetchAllNum();
+        $this->assertSame($expect, $array);
     }
 
     public function testFetchNum()
@@ -183,6 +227,10 @@ class ResultSetTest extends PHPUnit_Framework_TestCase
 
         $this->refill();
         $res = self::$conn->query('SELECT * FROM rt');
+        $this->assertSame($expect[0], $res->toNextRow()->fetchNum());
+        $this->assertSame($expect[1], $res->toNextRow()->fetchNum());
+
+        $res = self::$conn->query('SELECT * FROM rt')->store();
         $this->assertSame($expect[0], $res->toNextRow()->fetchNum());
         $this->assertSame($expect[1], $res->toNextRow()->fetchNum());
     }

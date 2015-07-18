@@ -92,6 +92,9 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
     public function testConnect()
     {
         $this->connection->connect();
+
+        $this->connection->setParam('options', array(MYSQLI_OPT_CONNECT_TIMEOUT => 1));
+        $this->connection->connect();
     }
 
     /**
@@ -113,7 +116,6 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
         $this->connection->connect();
     }
 
-
     public function testPing()
     {
         $this->connection->connect();
@@ -125,8 +127,14 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
      */
     public function testClose()
     {
+        $encoding = mb_internal_encoding();
         $this->connection->connect();
+        if (method_exists($this->connection, 'getInternalEncoding')) {
+		    $this->assertEquals($encoding, $this->connection->getInternalEncoding());
+		    $this->assertEquals('UTF-8', mb_internal_encoding());
+        }
         $this->connection->close();
+        $this->assertEquals($encoding, mb_internal_encoding());
         $this->connection->getConnection();
     }
 
@@ -179,7 +187,6 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
 
     public function testEscape()
     {
-        $this->connection->connect();
         $result = $this->connection->escape('\' "" \'\' ');
         $this->assertEquals('\'\\\' \\"\\" \\\'\\\' \'', $result);
     }

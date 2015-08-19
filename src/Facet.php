@@ -295,10 +295,7 @@ class Facet
 
             foreach ($this->order_by as $order) {
                 $order_sub = $this->getConnection()->quoteIdentifier($order['column']).' ';
-
-                if ($order['direction'] !== null) {
-                    $order_sub .= ((strtolower($order['direction']) === 'desc') ? 'DESC' : 'ASC');
-                }
+                $order_sub .= ((strtolower($order['direction']) === 'desc') ? 'DESC' : 'ASC');
 
                 $order_arr[] = $order_sub;
             }

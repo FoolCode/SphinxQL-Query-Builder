@@ -221,7 +221,7 @@ class SphinxQL
      */
     public static function create(ConnectionInterface $connection)
     {
-        return new SphinxQL($connection);
+        return new static($connection);
     }
 
     /**

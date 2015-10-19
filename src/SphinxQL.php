@@ -593,7 +593,11 @@ class SphinxQL
                 $order_sub = $this->getConnection()->quoteIdentifier($order['column']).' ';
 
                 if ($order['direction'] !== null) {
-                    $order_sub .= ((strtolower($order['direction']) === 'desc') ? 'DESC' : 'ASC');
+                    if($order['direction'] instanceof Expression){
+                        $order_sub .= $order['direction'];
+                    }else{
+                        $order_sub .= ((strtolower($order['direction']) === 'desc') ? 'DESC' : 'ASC');
+                    }
                 }
 
                 $order_arr[] = $order_sub;

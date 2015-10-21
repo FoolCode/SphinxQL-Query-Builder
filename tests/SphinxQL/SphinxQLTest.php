@@ -574,7 +574,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
             ->compile()
             ->getCompiled();
 
-        $this->assertEquals('SELECT * FROM `rt` OPTION `comment` = \'this should be quoted\'', $result);
+        $this->assertEquals('SELECT * FROM rt OPTION comment = \'this should be quoted\'', $result);
 
         $result = SphinxQL::create(self::$conn)->select()
             ->from('rt')
@@ -582,7 +582,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
             ->compile()
             ->getCompiled();
 
-        $this->assertEquals('SELECT * FROM `rt` OPTION `field_weights` = (content=50)', $result);
+        $this->assertEquals('SELECT * FROM rt OPTION field_weights = (content=50)', $result);
 
         $result = SphinxQL::create(self::$conn)->select()
             ->from('rt')
@@ -594,7 +594,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
             ->compile()
             ->getCompiled();
 
-        $this->assertEquals('SELECT * FROM `rt` OPTION `field_weights` = (title=80, content=35, tags=92)', $result);
+        $this->assertEquals('SELECT * FROM rt OPTION field_weights = (title=80, content=35, tags=92)', $result);
     }
 
     public function testGroupBy()
@@ -800,7 +800,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
             ->compile()
             ->getCompiled();
 
-        $this->assertEquals('SELECT * FROM `rt`', $result);
+        $this->assertEquals('SELECT * FROM rt', $result);
     }
 
     /**
@@ -860,7 +860,7 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
             })
             ->orderBy('id', 'ASC');
         $this->assertEquals(
-            'SELECT * FROM (SELECT `id` FROM `rt` ORDER BY `id` DESC) ORDER BY `id` ASC',
+            'SELECT * FROM (SELECT id FROM rt ORDER BY id DESC) ORDER BY id ASC',
             $query->compile()->getCompiled()
         );
         $result = $query
@@ -879,11 +879,11 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
             ->from($subquery)
             ->orderBy('id', 'ASC');
         $this->assertEquals(
-            'SELECT `id` FROM `rt` ORDER BY `id` DESC',
+            'SELECT id FROM rt ORDER BY id DESC',
             $subquery->compile()->getCompiled()
         );
         $this->assertEquals(
-            'SELECT * FROM (SELECT `id` FROM `rt` ORDER BY `id` DESC) ORDER BY `id` ASC',
+            'SELECT * FROM (SELECT id FROM rt ORDER BY id DESC) ORDER BY id ASC',
             $query->compile()->getCompiled()
         );
         $result = $subquery

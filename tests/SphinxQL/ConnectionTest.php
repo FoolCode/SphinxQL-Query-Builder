@@ -202,26 +202,6 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
         $this->connection->escape('\' "" \'\' ');
     }
 
-    public function testQuoteIdentifier()
-    {
-        // test *
-        $this->assertEquals('*', $this->connection->quoteIdentifier('*'));
-
-        // test a normal string
-        $this->assertEquals('`foo`.`bar`', $this->connection->quoteIdentifier('foo.bar'));
-
-        // test a SphinxQLExpression
-        $this->assertEquals('foo.bar', $this->connection->quoteIdentifier(new Expression('foo.bar')));
-    }
-
-    public function testQuoteIdentifierArr()
-    {
-        $this->assertSame(
-            array('*', '`foo`.`bar`', 'foo.bar'),
-            $this->connection->quoteIdentifierArr(array('*', 'foo.bar', new Expression('foo.bar')))
-        );
-    }
-
     public function testQuote()
     {
         $this->connection->connect();

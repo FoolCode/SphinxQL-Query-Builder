@@ -239,7 +239,7 @@ class SphinxQL
      *
      * Examples:
      *    $query->where('time', '>', SphinxQL::expr('CURRENT_TIMESTAMP'));
-     *    // WHERE `time` > CURRENT_TIMESTAMP
+     *    // WHERE time > CURRENT_TIMESTAMP
      *
      * @param string $string The string to keep unaltered
      *
@@ -915,20 +915,20 @@ class SphinxQL
      *
      * Examples:
      *    $query->where('column', 'value');
-     *    // WHERE `column` = 'value'
+     *    // WHERE column = 'value'
      *
      *    $query->where('column', '=', 'value');
-     *    // WHERE `column` = 'value'
+     *    // WHERE column = 'value'
      *
      *    $query->where('column', '>=', 'value')
-     *    // WHERE `column` >= 'value'
+     *    // WHERE column >= 'value'
      *
      *    $query->where('column', 'IN', array('value1', 'value2', 'value3'));
-     *    // WHERE `column` IN ('value1', 'value2', 'value3')
+     *    // WHERE column IN ('value1', 'value2', 'value3')
      *
      *    $query->where('column', 'BETWEEN', array('value1', 'value2'))
-     *    // WHERE `column` BETWEEN 'value1' AND 'value2'
-     *    // WHERE `example` BETWEEN 10 AND 100
+     *    // WHERE column BETWEEN 'value1' AND 'value2'
+     *    // WHERE example BETWEEN 10 AND 100
      *
      * @param string   $column   The column name
      * @param string   $operator The operator to use
@@ -989,20 +989,20 @@ class SphinxQL
      *
      * Examples:
      *    $sq->having('column', 'value');
-     *    // HAVING `column` = 'value'
+     *    // HAVING column = 'value'
      *
      *    $sq->having('column', '=', 'value');
-     *    // HAVING `column` = 'value'
+     *    // HAVING column = 'value'
      *
      *    $sq->having('column', '>=', 'value')
-     *    // HAVING `column` >= 'value'
+     *    // HAVING column >= 'value'
      *
      *    $sq->having('column', 'IN', array('value1', 'value2', 'value3'));
-     *    // HAVING `column` IN ('value1', 'value2', 'value3')
+     *    // HAVING column IN ('value1', 'value2', 'value3')
      *
      *    $sq->having('column', 'BETWEEN', array('value1', 'value2'))
-     *    // HAVING `column` BETWEEN 'value1' AND 'value2'
-     *    // HAVING `example` BETWEEN 10 AND 100
+     *    // HAVING column BETWEEN 'value1' AND 'value2'
+     *    // HAVING example BETWEEN 10 AND 100
      *
      * @param string   $column   The column name
      * @param string   $operator The operator to use

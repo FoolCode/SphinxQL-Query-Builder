@@ -43,31 +43,31 @@ class FacetTest  extends PHPUnit_Framework_TestCase
             ->facet(array('gid'))
             ->getFacet();
 
-        $this->assertEquals('FACET `gid`', $facet);
+        $this->assertEquals('FACET gid', $facet);
 
         $facet = Facet::create(self::$conn)
             ->facet(array('gid', 'title', 'content'))
             ->getFacet();
 
-        $this->assertEquals('FACET `gid`, `title`, `content`', $facet);
+        $this->assertEquals('FACET gid, title, content', $facet);
 
         $facet = Facet::create(self::$conn)
             ->facet('gid', 'title', 'content')
             ->getFacet();
 
-        $this->assertEquals('FACET `gid`, `title`, `content`', $facet);
+        $this->assertEquals('FACET gid, title, content', $facet);
 
         $facet = Facet::create(self::$conn)
             ->facet(array('aliAS' => 'gid'))
             ->getFacet();
 
-        $this->assertEquals('FACET `gid` AS aliAS', $facet);
+        $this->assertEquals('FACET gid AS aliAS', $facet);
 
         $facet = Facet::create(self::$conn)
             ->facet(array('gid', 'name' => 'title', 'content'))
             ->getFacet();
 
-        $this->assertEquals('FACET `gid`, `title` AS name, `content`', $facet);
+        $this->assertEquals('FACET gid, title AS name, content', $facet);
 
         $facet = new Facet();
         $facet = $facet
@@ -75,7 +75,7 @@ class FacetTest  extends PHPUnit_Framework_TestCase
             ->facet('gid', array('name' => 'title'), 'content')
             ->getFacet();
 
-        $this->assertEquals('FACET `gid`, `title` AS name, `content`', $facet);
+        $this->assertEquals('FACET gid, title AS name, content', $facet);
     }
 
     public function testFacetFunction()
@@ -100,7 +100,7 @@ class FacetTest  extends PHPUnit_Framework_TestCase
             ->by('gid')
             ->getFacet();
 
-        $this->assertEquals('FACET `gid`, `title`, `content` BY `gid`', $facet);
+        $this->assertEquals('FACET gid, title, content BY gid', $facet);
     }
 
     public function testOrderBy()
@@ -110,7 +110,7 @@ class FacetTest  extends PHPUnit_Framework_TestCase
             ->orderBy('gid', 'DESC')
             ->getFacet();
 
-        $this->assertEquals('FACET `gid`, `title` ORDER BY `gid` DESC', $facet);
+        $this->assertEquals('FACET gid, title ORDER BY gid DESC', $facet);
 
         $facet = Facet::create(self::$conn)
             ->facet(array('gid', 'content'))
@@ -118,7 +118,7 @@ class FacetTest  extends PHPUnit_Framework_TestCase
             ->orderBy('content', 'DESC')
             ->getFacet();
 
-        $this->assertEquals('FACET `gid`, `content` ORDER BY `gid` ASC, `content` DESC', $facet);
+        $this->assertEquals('FACET gid, content ORDER BY gid ASC, content DESC', $facet);
     }
 
     public function testOrderByFunction()
@@ -128,7 +128,7 @@ class FacetTest  extends PHPUnit_Framework_TestCase
             ->orderByFunction('COUNT','*', 'DESC')
             ->getFacet();
 
-        $this->assertEquals('FACET `gid`, `title` ORDER BY COUNT(*) DESC', $facet);
+        $this->assertEquals('FACET gid, title ORDER BY COUNT(*) DESC', $facet);
     }
 
     public function testLimit()
@@ -139,6 +139,6 @@ class FacetTest  extends PHPUnit_Framework_TestCase
             ->limit(5, 5)
             ->getFacet();
 
-        $this->assertEquals('FACET `gid`, `title` ORDER BY COUNT(*) DESC LIMIT 5, 5', $facet);
+        $this->assertEquals('FACET gid, title ORDER BY COUNT(*) DESC LIMIT 5, 5', $facet);
     }
 }

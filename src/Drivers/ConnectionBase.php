@@ -97,17 +97,7 @@ abstract class ConnectionBase implements ConnectionInterface
             return $value->value();
         }
 
-        if ($value === '*') {
-            return $value;
-        }
-
-        $pieces = explode('.', $value);
-
-        foreach ($pieces as $key => $piece) {
-            $pieces[$key] = '`'.$piece.'`';
-        }
-
-        return implode('.', $pieces);
+        return $value;
     }
 
     /**

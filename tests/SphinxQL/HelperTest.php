@@ -179,9 +179,9 @@ class HelperTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('SHOW STATUS', $query->compile()->getCompiled());
 
         $query = Helper::create($this->conn)->attachIndex('disk', 'rt');
-        $this->assertEquals('ATTACH INDEX `disk` TO RTINDEX `rt`', $query->compile()->getCompiled());
+        $this->assertEquals('ATTACH INDEX disk TO RTINDEX rt', $query->compile()->getCompiled());
 
         $query = Helper::create($this->conn)->flushRtIndex('rt');
-        $this->assertEquals('FLUSH RTINDEX `rt`', $query->compile()->getCompiled());
+        $this->assertEquals('FLUSH RTINDEX rt', $query->compile()->getCompiled());
     }
 }

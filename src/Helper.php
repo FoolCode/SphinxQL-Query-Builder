@@ -275,4 +275,16 @@ class Helper
     {
         return $this->query('FLUSH RTINDEX '.$this->getConnection()->quoteIdentifier($index));
     }
+
+    /**
+     * OPTIMIZE INDEX syntax
+     *
+     * @param string $index
+     *
+     * @return SphinxQL A SphinxQL object ready to be ->execute();
+     */
+    public function optimizeIndex($index)
+    {
+        return $this->query('OPTIMIZE INDEX '.$this->getConnection()->quoteIdentifier($index));
+    }
 }

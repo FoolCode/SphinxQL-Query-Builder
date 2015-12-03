@@ -394,3 +394,4 @@ $result = SphinxQL::create($this->conn)
 * `Helper::create($conn)->dropFunction($udf_name)`
 * `Helper::create($conn)->attachIndex($disk_index, $rt_index)`
 * `Helper::create($conn)->flushRtIndex($index)`
+* `Helper::create($conn)->optimizeIndex($index)`

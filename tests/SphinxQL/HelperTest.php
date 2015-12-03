@@ -183,5 +183,8 @@ class HelperTest extends PHPUnit_Framework_TestCase
 
         $query = Helper::create($this->conn)->flushRtIndex('rt');
         $this->assertEquals('FLUSH RTINDEX rt', $query->compile()->getCompiled());
+
+        $query = Helper::create($this->conn)->optimizeIndex('rt');
+        $this->assertEquals('OPTIMIZE INDEX rt', $query->compile()->getCompiled());
     }
 }

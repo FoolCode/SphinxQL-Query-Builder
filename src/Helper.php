@@ -287,4 +287,28 @@ class Helper
     {
         return $this->query('OPTIMIZE INDEX '.$this->getConnection()->quoteIdentifier($index));
     }
+
+    /**
+     * SHOW INDEX STATUS syntax
+     *
+     * @param $index
+     *
+     * @return SphinxQL A SphinxQL object ready to be ->execute();
+     */
+    public function showIndexStatus($index)
+    {
+        return $this->query('SHOW INDEX '.$this->getConnection()->quoteIdentifier($index).' STATUS');
+    }
+
+    /**
+     * FLUSH RAMCHUNK syntax
+     *
+     * @param $index
+     *
+     * @return SphinxQL A SphinxQL object ready to be ->execute();
+     */
+    public function flushRamchunk($index)
+    {
+        return $this->query('FLUSH RAMCHUNK '.$this->getConnection()->quoteIdentifier($index));
+    }
 }

@@ -395,3 +395,5 @@ $result = SphinxQL::create($this->conn)
 * `Helper::create($conn)->attachIndex($disk_index, $rt_index)`
 * `Helper::create($conn)->flushRtIndex($index)`
 * `Helper::create($conn)->optimizeIndex($index)`
+* `Helper::create($conn)->showIndexStatus($index)`
+* `Helper::create($conn)->flushRamchunk($index)`

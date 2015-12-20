@@ -440,7 +440,7 @@ class SphinxQL
 
             foreach ($this->match as $match) {
                 $pre = '';
-                if (is_callable($match['column'])) {
+                if ($match['column'] instanceof \Closure) {
                     $sub = new Match($this);
                     call_user_func($match['column'], $sub);
                     $pre .= $sub->compile()->getCompiled();
@@ -545,7 +545,7 @@ class SphinxQL
         }
 
         if (!empty($this->from)) {
-            if (is_callable($this->from)) {
+            if ($this->from instanceof \Closure) {
                 $sub = new static($this->getConnection());
                 call_user_func($this->from, $sub);
                 $query .= 'FROM ('.$sub->compile()->getCompiled().') ';
@@ -883,7 +883,7 @@ class SphinxQL
             $this->from = \func_get_args();
         }
 
-        if (is_array($array) || is_callable($array) || $array instanceof SphinxQL) {
+        if (is_array($array) || $array instanceof \Closure || $array instanceof SphinxQL) {
             $this->from = $array;
         }
 
@@ -893,7 +893,7 @@ class SphinxQL
     /**
      * MATCH clause (Sphinx-specific)
      *
-     * @param mixed    $column The column name (can be array, string, function, or Match)
+     * @param mixed    $column The column name (can be array, string, Closure, or Match)
      * @param string   $value  The value
      * @param boolean  $half  Exclude ", |, - control characters from being escaped
      *

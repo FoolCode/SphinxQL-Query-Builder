@@ -946,4 +946,26 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
             $this->assertEquals('2', $result[1][3]['count(*)']);
         }
     }
+
+    // issue #82
+    public function testClosureMisuse()
+    {
+        $query = SphinxQL::create(self::$conn)
+            ->select()
+            ->from('strlen')
+            ->orderBy('id', 'ASC');
+        $this->assertEquals(
+            'SELECT * FROM strlen ORDER BY id ASC',
+            $query->compile()->getCompiled()
+        );
+
+        $query = SphinxQL::create(self::$conn)
+            ->select()
+            ->from('rt')
+            ->match('strlen', 'value');
+        $this->assertEquals(
+            "SELECT * FROM rt WHERE MATCH('(@strlen value)')",
+            $query->compile()->getCompiled()
+        );
+    }
 }

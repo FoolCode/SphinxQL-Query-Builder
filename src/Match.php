@@ -64,7 +64,7 @@ class Match
      *    $match->match($sub);
      *    // (a | b)
      *
-     * @param string|Match|callable $keywords The text or expression to match.
+     * @param string|Match|Closure $keywords The text or expression to match.
      */
     public function match($keywords = null)
     {
@@ -84,7 +84,7 @@ class Match
      *    $match->match('test')->orMatch('case');
      *    // test | case
      *
-     * @param string|Match|callable $keywords The text or expression to alternatively match.
+     * @param string|Match|Closure $keywords The text or expression to alternatively match.
      */
     public function orMatch($keywords = null)
     {
@@ -103,7 +103,7 @@ class Match
      *    $match->match('test')->maybe('case');
      *    // test MAYBE case
      *
-     * @param string|Match|callable $keywords The text or expression to optionally match.
+     * @param string|Match|Closure $keywords The text or expression to optionally match.
      */
     public function maybe($keywords = null)
     {
@@ -267,7 +267,7 @@ class Match
      *    $match->match('test')->before('case');
      *    // test << case
      *
-     * @param string|Match|callable $keywords The text or expression that must come after.
+     * @param string|Match|Closure $keywords The text or expression that must come after.
      */
     public function before($keywords = null)
     {
@@ -329,8 +329,8 @@ class Match
      *    $match->match('test')->near('case', 3);
      *    // test NEAR/3 case
      *
-     * @param string|Match|callable $keywords  The text or expression to match nearby.
-     * @param int                   $distance  Maximum distance to the match.
+     * @param string|Match|Closure $keywords  The text or expression to match nearby.
+     * @param int                  $distance  Maximum distance to the match.
      */
     public function near($keywords, $distance = null)
     {
@@ -351,7 +351,7 @@ class Match
      *    $match->match('test')->sentence('case');
      *    // test SENTENCE case
      *
-     * @param string|Match|callable $keywords The text or expression that must be in the sentence.
+     * @param string|Match|Closure $keywords The text or expression that must be in the sentence.
      */
     public function sentence($keywords = null)
     {
@@ -370,7 +370,7 @@ class Match
      *    $match->match('test')->paragraph('case');
      *    // test PARAGRAPH case
      *
-     * @param string|Match|callable $keywords The text or expression that must be in the paragraph.
+     * @param string|Match|Closure $keywords The text or expression that must be in the paragraph.
      */
     public function paragraph($keywords = null)
     {
@@ -392,8 +392,8 @@ class Match
      *    $match->zone('th', 'test');
      *    // ZONE:(th) test
      *
-     * @param string|array          $zones     The zone or zones to search.
-     * @param string|Match|callable $keywords  The text or expression that must be in these zones.
+     * @param string|array         $zones     The zone or zones to search.
+     * @param string|Match|Closure $keywords  The text or expression that must be in these zones.
      */
     public function zone($zones, $keywords = null)
     {
@@ -416,8 +416,8 @@ class Match
      *    $match->zonespan('th', 'test');
      *    // ZONESPAN:(th) test
      *
-     * @param string                $zone      The zone to search.
-     * @param string|Match|callable $keywords  The text or expression that must be in this zone.
+     * @param string               $zone      The zone to search.
+     * @param string|Match|Closure $keywords  The text or expression that must be in this zone.
      */
     public function zonespan($zone, $keywords = null)
     {
@@ -438,7 +438,7 @@ class Match
                     $query .= $token['MATCH']->value().' ';
                 } elseif ($token['MATCH'] instanceof Match) {
                     $query .= '('.$token['MATCH']->compile()->getCompiled().') ';
-                } elseif (is_callable($token['MATCH'])) {
+                } elseif ($token['MATCH'] instanceof \Closure) {
                     $sub = new static($this->sphinxql);
                     call_user_func($token['MATCH'], $sub);
                     $query .= '('.$sub->compile()->getCompiled().') ';

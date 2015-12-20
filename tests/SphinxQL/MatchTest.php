@@ -297,4 +297,12 @@ class MatchTest extends PHPUnit_Framework_TestCase
             });
         $this->assertEquals('aaa -(bbb -(ccc ddd))', $match->compile()->getCompiled());
     }
+
+    // issue #82
+    public function testClosureMisuse()
+    {
+        $match = Match::create(self::$sphinxql)
+            ->match('strlen');
+        $this->assertEquals('strlen', $match->compile()->getCompiled());
+    }
 }

@@ -10,8 +10,12 @@
         </testsuite>
     </testsuites>
     <filter>
-        <blacklist>
-            <directory>../../vendor</directory>
-        </blacklist>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">../../src</directory>
+            <exclude>
+                <directory suffix=".php">../../src/Drivers/Mysqli</directory>
+                <file>../../src/Drivers/SimpleConnection.php</file>
+            </exclude>
+        </whitelist>
     </filter>
 </phpunit>

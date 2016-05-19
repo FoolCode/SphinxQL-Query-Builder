@@ -88,13 +88,21 @@ class Connection extends ConnectionBase
      */
     public function ping()
     {
+        $this->ensureConnection();
+        return $this->getConnection()->ping();
+    }
+
+    /**
+     * Establishes a connection if needed
+     * @throws ConnectionException
+     */
+    private function ensureConnection()
+    {
         try {
             $this->getConnection();
         } catch (ConnectionException $e) {
             $this->connect();
         }
-
-        return $this->getConnection()->ping();
     }
 
     /**
@@ -117,7 +125,7 @@ class Connection extends ConnectionBase
      */
     public function query($query)
     {
-        $this->ping();
+        $this->ensureConnection();
 
         $resource = $this->getConnection()->query($query);
 
@@ -146,7 +154,7 @@ class Connection extends ConnectionBase
             throw new SphinxQLException('The Queue is empty.');
         }
 
-        $this->ping();
+        $this->ensureConnection();
 
         // HHVM bug (2015/07/07, HipHop VM 3.8.0-dev (rel)): $mysqli->error and $mysqli->errno aren't set
         if (!$this->getConnection()->multi_query(implode(';', $queue))) {
@@ -168,10 +176,7 @@ class Connection extends ConnectionBase
      */
     public function escape($value)
     {
-        if ($this->connection === null) {
-            // this function is called a lot, making ping a significant cost if called every time
-            $this->ping();
-        }
+        $this->ensureConnection();
 
         if (($value = $this->getConnection()->real_escape_string((string) $value)) === false) {
             // @codeCoverageIgnoreStart

@@ -131,9 +131,9 @@ abstract class ConnectionBase implements ConnectionInterface
         if ($value === null) {
             return 'null';
         } elseif ($value === true) {
-            return "'1'";
+            return 1;
         } elseif ($value === false) {
-            return "'0'";
+            return 0;
         } elseif ($value instanceof Expression) {
             // Use the raw expression
             return $value->value();

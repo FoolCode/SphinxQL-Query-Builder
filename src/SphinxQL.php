@@ -1319,6 +1319,7 @@ class SphinxQL
         $this->having = array();
         $this->order_by = array();
         $this->offset = null;
+        $this->limit = null;
         $this->into = null;
         $this->columns = array();
         $this->values = array();

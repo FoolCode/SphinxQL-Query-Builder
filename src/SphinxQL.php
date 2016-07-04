@@ -1377,4 +1377,12 @@ class SphinxQL
 
         return $this;
     }
+    
+    /**
+     * @param array $select
+     */
+    public function setSelect(array $select)
+    {
+        $this->select = $select;
+    }
 }

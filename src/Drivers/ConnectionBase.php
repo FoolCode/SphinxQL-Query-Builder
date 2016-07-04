@@ -15,8 +15,10 @@ abstract class ConnectionBase implements ConnectionInterface
 
     /**
      * Internal connection object.
+     * 
+     * @var ConnectionInterface|null
      */
-    protected $connection = null;
+    protected $connection;
 
     /**
      * Sets one or more connection parameters.

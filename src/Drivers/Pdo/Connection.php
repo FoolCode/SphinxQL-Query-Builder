@@ -120,7 +120,7 @@ class Connection extends ConnectionBase
      * @throws DatabaseException
      * @throws SphinxQLException
      */
-    public function multiQuery(Array $queue)
+    public function multiQuery(array $queue)
     {
         $this->ping();
 

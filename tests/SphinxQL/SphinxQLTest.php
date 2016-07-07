@@ -201,6 +201,30 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
             ->getStored();
 
         $this->assertCount(8, $result);
+
+        SphinxQL::create(self::$conn)->insert()
+            ->into('rt')
+            ->set(array(
+                'id' => 18,
+                'title' => 'a multi set test',
+                'content' => 'has text',
+                'gid' => 9002
+            ))
+            ->set(array(
+                'id' => 19,
+                'title' => 'and a',
+                'content' => 'second set call',
+                'gid' => 9003
+            ))
+            ->execute();
+
+        $result = SphinxQL::create(self::$conn)->select()
+            ->from('rt')
+            ->execute()
+            ->getStored();
+
+        $this->assertCount(10, $result);
+
     }
 
     /**

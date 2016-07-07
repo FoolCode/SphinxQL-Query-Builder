@@ -1180,8 +1180,12 @@ class SphinxQL
      */
     public function set($array)
     {
-        foreach ($array as $key => $item) {
-            $this->value($key, $item);
+        if ($this->columns === array_keys($array)) {
+            $this->values($array);
+        } else {
+            foreach ($array as $key => $item) {
+                $this->value($key, $item);
+            }
         }
 
         return $this;

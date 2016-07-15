@@ -45,24 +45,6 @@ interface ConnectionInterface
     public function escape($value);
 
     /**
-     * Wraps the input with identifiers when necessary.
-     *
-     * @param Expression|string $value The string to be quoted, or an Expression to leave it untouched
-     *
-     * @return Expression|string The untouched Expression or the quoted string
-     */
-    public function quoteIdentifier($value);
-
-    /**
-     * Calls $this->quoteIdentifier() on every element of the array passed.
-     *
-     * @param array $array An array of strings to be quoted
-     *
-     * @return array The array of quoted strings
-     */
-    public function quoteIdentifierArr(Array $array = array());
-
-    /**
      * Adds quotes around values when necessary.
      *
      * @param Expression|string $value The input string, eventually wrapped in an expression to leave it untouched

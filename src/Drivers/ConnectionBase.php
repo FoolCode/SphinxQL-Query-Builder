@@ -85,40 +85,6 @@ abstract class ConnectionBase implements ConnectionInterface
     }
 
     /**
-     * Wraps the input with identifiers when necessary.
-     *
-     * @param Expression|string $value The string to be quoted, or an Expression to leave it untouched
-     *
-     * @return Expression|string The untouched Expression or the quoted string
-     */
-    public function quoteIdentifier($value)
-    {
-        if ($value instanceof Expression) {
-            return $value->value();
-        }
-
-        return $value;
-    }
-
-    /**
-     * Calls $this->quoteIdentifier() on every element of the array passed.
-     *
-     * @param array $array An array of strings to be quoted
-     *
-     * @return array The array of quoted strings
-     */
-    public function quoteIdentifierArr(Array $array = array())
-    {
-        $result = array();
-
-        foreach ($array as $key => $item) {
-            $result[$key] = $this->quoteIdentifier($item);
-        }
-
-        return $result;
-    }
-
-    /**
      * Adds quotes around values when necessary.
      * Based on FuelPHP's quoting function.
      *

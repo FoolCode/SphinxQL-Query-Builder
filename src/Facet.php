@@ -274,9 +274,9 @@ class Facet
                 if ($array instanceof Expression) {
                     $facets[] = $array;
                 } else if ($array[1] === null) {
-                    $facets[] = $this->getConnection()->quoteIdentifier($array[0]);
+                    $facets[] = $array[0];
                 } else {
-                    $facets[] = $this->getConnection()->quoteIdentifier($array[0]).' AS '.$array[1];
+                    $facets[] = $array[0].' AS '.$array[1];
                 }
             }
             $query .= implode(', ', $facets).' ';
@@ -285,7 +285,7 @@ class Facet
         }
 
         if (!empty($this->by)) {
-            $query .= 'BY '.$this->getConnection()->quoteIdentifier($this->by).' ';
+            $query .= 'BY '.$this->by.' ';
         }
 
         if (!empty($this->order_by)) {
@@ -294,7 +294,7 @@ class Facet
             $order_arr = array();
 
             foreach ($this->order_by as $order) {
-                $order_sub = $this->getConnection()->quoteIdentifier($order['column']).' ';
+                $order_sub = $order['column'].' ';
                 $order_sub .= ((strtolower($order['direction']) === 'desc') ? 'DESC' : 'ASC');
 
                 $order_arr[] = $order_sub;

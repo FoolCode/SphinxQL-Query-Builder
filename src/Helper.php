@@ -149,12 +149,7 @@ class Helper
 
         $user_var = strpos($name, '@') === 0;
 
-        // if it has an @ it's a user variable and we can't wrap it
-        if ($user_var) {
-            $query .= $name.' ';
-        } else {
-            $query .= $this->getConnection()->quoteIdentifier($name).' ';
-        }
+        $query .= $name.' ';
 
         // user variables must always be processed as arrays
         if ($user_var && ! is_array($value)) {
@@ -220,7 +215,7 @@ class Helper
      */
     public function describe($index)
     {
-        return $this->query('DESCRIBE '.$this->getConnection()->quoteIdentifier($index));
+        return $this->query('DESCRIBE '.$index);
     }
 
     /**
@@ -234,7 +229,7 @@ class Helper
      */
     public function createFunction($udf_name, $returns, $so_name)
     {
-        return $this->query('CREATE FUNCTION '.$this->getConnection()->quoteIdentifier($udf_name).
+        return $this->query('CREATE FUNCTION '.$udf_name.
             ' RETURNS '.$returns.' SONAME '.$this->getConnection()->quote($so_name));
     }
 
@@ -247,7 +242,7 @@ class Helper
      */
     public function dropFunction($udf_name)
     {
-        return $this->query('DROP FUNCTION '.$this->getConnection()->quoteIdentifier($udf_name));
+        return $this->query('DROP FUNCTION '.$udf_name);
     }
 
     /**
@@ -260,8 +255,7 @@ class Helper
      */
     public function attachIndex($disk_index, $rt_index)
     {
-        return $this->query('ATTACH INDEX '.$this->getConnection()->quoteIdentifier($disk_index).
-            ' TO RTINDEX '. $this->getConnection()->quoteIdentifier($rt_index));
+        return $this->query('ATTACH INDEX '.$disk_index.' TO RTINDEX '.$rt_index);
     }
 
     /**
@@ -273,7 +267,7 @@ class Helper
      */
     public function flushRtIndex($index)
     {
-        return $this->query('FLUSH RTINDEX '.$this->getConnection()->quoteIdentifier($index));
+        return $this->query('FLUSH RTINDEX '.$index);
     }
 
     /**
@@ -285,7 +279,7 @@ class Helper
      */
     public function optimizeIndex($index)
     {
-        return $this->query('OPTIMIZE INDEX '.$this->getConnection()->quoteIdentifier($index));
+        return $this->query('OPTIMIZE INDEX '.$index);
     }
 
     /**
@@ -297,7 +291,7 @@ class Helper
      */
     public function showIndexStatus($index)
     {
-        return $this->query('SHOW INDEX '.$this->getConnection()->quoteIdentifier($index).' STATUS');
+        return $this->query('SHOW INDEX '.$index.' STATUS');
     }
 
     /**
@@ -309,6 +303,6 @@ class Helper
      */
     public function flushRamchunk($index)
     {
-        return $this->query('FLUSH RAMCHUNK '.$this->getConnection()->quoteIdentifier($index));
+        return $this->query('FLUSH RAMCHUNK '.$index);
     }
 }

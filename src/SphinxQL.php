@@ -814,6 +814,37 @@ class SphinxQL
     }
 
     /**
+     * Alters which arguments to select
+     *
+     * Query is assumed to be in SELECT mode
+     * See select() for usage
+     *
+     * @param array|string $columns Array or multiple string arguments containing column names
+     *
+     * @return SphinxQL
+     */
+    public function setSelect($columns = null)
+    {
+        if (is_array($columns)) {
+            $this->select = $columns;
+        } else {
+            $this->select = \func_get_args();
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get the columns staged to select
+     *
+     * @return array
+     */
+    public function getSelect()
+    {
+        return $this->select;
+    }
+
+    /**
      * Activates the INSERT mode
      *
      * @return SphinxQL

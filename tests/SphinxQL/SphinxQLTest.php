@@ -925,6 +925,56 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers \Foolz\SphinxQL\SphinxQL::setSelect
+     */
+    public function testSetSelect()
+    {
+        $this->refill();
+        $q1 = SphinxQL::create(self::$conn)
+            ->select(array('id', 'gid'))
+            ->from('rt');
+        $q2 = clone $q1;
+        $q2->setSelect(array('id'));
+        $result = $q1
+            ->execute()
+            ->getStored();
+        $this->assertArrayHasKey('id', $result[0]);
+        $this->assertArrayHasKey('gid', $result[0]);
+        $result = $q2
+            ->execute()
+            ->getStored();
+        $this->assertArrayHasKey('id', $result[0]);
+        $this->assertArrayNotHasKey('gid', $result[0]);
+
+        $q1 = SphinxQL::create(self::$conn)
+            ->select('id', 'gid')
+            ->from('rt');
+        $q2 = clone $q1;
+        $q2->setSelect('id');
+        $result = $q1
+            ->execute()
+            ->getStored();
+        $this->assertArrayHasKey('id', $result[0]);
+        $this->assertArrayHasKey('gid', $result[0]);
+        $result = $q2
+            ->execute()
+            ->getStored();
+        $this->assertArrayHasKey('id', $result[0]);
+        $this->assertArrayNotHasKey('gid', $result[0]);
+    }
+
+    /**
+     * @covers \Foolz\SphinxQL\SphinxQL::getSelect
+     */
+    public function testGetSelect()
+    {
+        $query = SphinxQL::create(self::$conn)
+            ->select('id', 'gid')
+            ->from('rt');
+        $this->assertEquals(array('id', 'gid'), $query->getSelect());
+    }
+
+    /**
      * @covers \Foolz\SphinxQL\SphinxQL::facet
      * @covers \Foolz\SphinxQL\SphinxQL::compileSelect
      */

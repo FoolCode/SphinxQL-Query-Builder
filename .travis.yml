@@ -25,7 +25,8 @@ matrix:
 before_install:
   - mkdir $HOME/sphinx
   - pushd $HOME/sphinx
-  - wget --quiet http://ppa.launchpad.net/builds/sphinxsearch-${SPHINXSEARCH_BUILD}/ubuntu/dists/`lsb_release -cs`/main/binary-amd64/Packages
+  - wget --quiet http://ppa.launchpad.net/builds/sphinxsearch-${SPHINXSEARCH_BUILD}/ubuntu/dists/`lsb_release -cs`/main/binary-amd64/Packages.gz
+  - gzip -d Packages.gz
   - SPHINX_DEB=`grep -m1 Filename Packages | cut -f2 -d' '`
   - wget --quiet -O sphinxsearch.deb http://ppa.launchpad.net/builds/sphinxsearch-${SPHINXSEARCH_BUILD}/ubuntu/${SPHINX_DEB}
   - dpkg -x sphinxsearch.deb .

@@ -648,10 +648,10 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
         $this->assertCount(2, $result);
         $this->assertEquals('2', $result[1]['cnt']);
 
-        $result = SphinxQL::create(self::$conn)->select(SphinxQL::expr('count(*) as cnt'))
+        $result = SphinxQL::create(self::$conn)->select(SphinxQL::expr('count(*) as cnt'), SphinxQL::expr('GROUPBY() gd'))
             ->from('rt')
             ->groupBy('gid')
-            ->having('gid', 304)
+            ->having('gd', 304)
             ->execute();
 
         $this->assertCount(1, $result);

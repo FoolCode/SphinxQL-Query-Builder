@@ -532,6 +532,14 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
             ->getStored();
 
         $this->assertCount(2, $result);
+
+        $result = SphinxQL::create(self::$conn)->select()
+            ->from('rt')
+            ->match('')
+            ->compile()
+            ->getCompiled();
+
+        $this->assertEquals('SELECT * FROM rt WHERE MATCH(\'\')', $result);
     }
 
     public function testEscapeMatch()

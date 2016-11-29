@@ -166,6 +166,38 @@ class HelperTest extends PHPUnit_Framework_TestCase
         Helper::create($this->conn)->dropFunction('my_udf')->execute();
     }
 
+    /**
+     * @covers \Foolz\SphinxQL\Helper::truncateRtIndex
+     */
+    public function testTruncateRtIndex()
+    {
+        SphinxQL::create($this->conn)->insert()
+            ->into('rt')
+            ->set(array(
+                'id' => 1,
+                'title' => 'this is a title',
+                'content' => 'this is the content',
+                'gid' => 100
+            ))
+            ->execute();
+
+        $result = SphinxQL::create($this->conn)->select()
+            ->from('rt')
+            ->execute()
+            ->getStored();
+
+        $this->assertCount(1, $result);
+
+        Helper::create($this->conn)->truncateRtIndex('rt')->execute();
+
+        $result = SphinxQL::create($this->conn)->select()
+            ->from('rt')
+            ->execute()
+            ->getStored();
+
+        $this->assertCount(0, $result);
+    }
+
     // actually executing these queries may not be useful nor easy to test
     public function testMiscellaneous()
     {

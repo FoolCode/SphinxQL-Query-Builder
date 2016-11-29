@@ -271,6 +271,18 @@ class Helper
     }
 
     /**
+     * TRUNCATE RTINDEX syntax
+     *
+     * @param string $index
+     *
+     * @return SphinxQL A SphinxQL object ready to be ->execute();
+     */
+    public function truncateRtIndex($index)
+    {
+        return $this->query('TRUNCATE RTINDEX '.$index);
+    }
+
+    /**
      * OPTIMIZE INDEX syntax
      *
      * @param string $index

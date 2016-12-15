@@ -8,12 +8,15 @@ php:
   - 5.5
   - 5.6
   - 7.0
+  - 7.1
   - hhvm
 
 env:
   - DRIVER=mysqli SPHINXSEARCH_BUILD=rel22
+  - DRIVER=mysqli SPHINXSEARCH_BUILD=rel23
   - DRIVER=mysqli SPHINXSEARCH_BUILD=beta
   - DRIVER=pdo SPHINXSEARCH_BUILD=rel22
+  - DRIVER=pdo SPHINXSEARCH_BUILD=rel23
   - DRIVER=pdo SPHINXSEARCH_BUILD=beta
 
 matrix:

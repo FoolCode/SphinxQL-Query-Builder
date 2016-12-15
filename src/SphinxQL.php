@@ -687,7 +687,7 @@ class SphinxQL
 
         if (!empty($this->values)) {
             $query .= 'VALUES ';
-            $query_sub = '';
+            $query_sub = array();
 
             foreach ($this->values as $value) {
                 $query_sub[] = '('.implode(', ', $this->getConnection()->quoteArr($value)).')';

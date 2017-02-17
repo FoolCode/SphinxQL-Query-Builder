@@ -103,11 +103,15 @@ abstract class ConnectionBase implements ConnectionInterface
         } elseif ($value instanceof Expression) {
             // Use the raw expression
             return $value->value();
-        } elseif (is_int($value)) {
-            return (int) $value;
-        } elseif (is_float($value)) {
-            // Convert to non-locale aware float to prevent possible commas
-            return sprintf('%F', $value);
+        } elseif (is_numeric($value)) {
+            if (is_int($value)) {
+                return (int) $value;
+            } elseif (is_float($value)) {
+                // Convert to non-locale aware float to prevent possible commas
+                return sprintf('%F', $value);
+            } else {
+                return $value;
+            }
         }  elseif (is_array($value)) {
             // Supports MVA attributes
             return '('.implode(',', $this->quoteArr($value)).')';

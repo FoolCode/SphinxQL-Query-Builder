@@ -13,17 +13,6 @@ use Foolz\SphinxQL\Exception\SphinxQLException;
  */
 class Connection extends ConnectionBase
 {
-    protected $silence_connection_warning = false;
-
-    /**
-     * @param bool $enable
-     * @deprecated
-     * not good
-     */
-    public function silenceConnectionWarning($enable = true)
-    {
-        $this->silence_connection_warning = $enable;
-    }
 
     /**
      * close connection
@@ -43,7 +32,7 @@ class Connection extends ConnectionBase
      */
     public function query($query)
     {
-        $this->ping();
+        $this->ensureConnection();
 
         $stm = $this->connection->prepare($query);
 
@@ -54,7 +43,7 @@ class Connection extends ConnectionBase
             throw new DatabaseException($exception->getMessage() . ' [' . $query . ']');
         }
 
-        return new ResultSet($stm);
+        return ResultSet::make($stm);
     }
 
     /**
@@ -80,23 +69,16 @@ class Connection extends ConnectionBase
             $dsn .= 'unix_socket=' . $params['socket'] . ';';
         }
 
-        if (!$suppress_error && ! $this->silence_connection_warning) {
-            try {
-                $con = new \Pdo($dsn);
-            } catch (\PDOException $exception) {
+        try {
+            $con = new \Pdo($dsn);
+        } catch (\PDOException $exception) {
+            if (!$suppress_error && !$this->silence_connection_warning) {
                 trigger_error('connection error', E_USER_WARNING);
             }
-        } else {
-            try {
-                $con = new \Pdo($dsn);
-            } catch (\PDOException $exception) {
-                throw new ConnectionException($exception->getMessage());
-            }
+
+            throw new ConnectionException($exception->getMessage());
         }
-        if(!isset($con))
-        {
-            throw new ConnectionException('connection error');
-        }
+
         $this->connection = $con;
         $this->connection->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
@@ -105,24 +87,20 @@ class Connection extends ConnectionBase
 
     public function ping()
     {
-        try {
-            $this->getConnection();
-        } catch (ConnectionException $e) {
-            $this->connect();
-        }
+        $this->ensureConnection();
 
         return $this->connection !== null;
     }
 
     /**
      * @param array $queue
-     * @return array
+     * @return \Foolz\SphinxQL\Drivers\Pdo\MultiResultSet
      * @throws DatabaseException
      * @throws SphinxQLException
      */
     public function multiQuery(array $queue)
     {
-        $this->ping();
+        $this->ensureConnection();
 
         if (count($queue) === 0) {
             throw new SphinxQLException('The Queue is empty.');
@@ -139,7 +117,7 @@ class Connection extends ConnectionBase
                 throw new DatabaseException($exception->getMessage() .' [ '.implode(';', $queue).']');
             }
 
-            return new MultiResultSet($statement);
+            return MultiResultSet::make($statement);
         }
         else
         {
@@ -151,7 +129,7 @@ class Connection extends ConnectionBase
                     throw new DatabaseException($exception->getMessage() .' [ '.implode(';', $queue).']');
                 }
                 if ($statement->columnCount()) {
-                    $set = new ResultSet($statement);
+                    $set = ResultSet::make($statement);
                     $rowset = $set->getStored();
                 } else {
                     $rowset = $statement->rowCount();
@@ -161,7 +139,7 @@ class Connection extends ConnectionBase
                 $count++;
             }
 
-            return new MultiResultSet($result);
+            return MultiResultSet::make($result);
         }
     }
 
@@ -171,7 +149,7 @@ class Connection extends ConnectionBase
      */
     public function escape($value)
     {
-        $this->ping();
+        $this->ensureConnection();
 
         return $this->connection->quote($value);
     }

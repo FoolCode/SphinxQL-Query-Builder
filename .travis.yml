@@ -22,10 +22,10 @@ env:
 matrix:
   fast_finish: true
   exclude:
+    - env: DRIVER=mysqli SPHINXSEARCH_BUILD=rel23
+    - env: DRIVER=pdo SPHINXSEARCH_BUILD=rel23
     - php: 5.3
       env: DRIVER=pdo SPHINXSEARCH_BUILD=rel22
-    - php: 5.3
-      env: DRIVER=pdo SPHINXSEARCH_BUILD=rel23
     - php: 5.3
       env: DRIVER=pdo SPHINXSEARCH_BUILD=beta
 

@@ -98,7 +98,7 @@ class ConnectionTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @expectedException PHPUnit\Framework\Error
+     * @expectedException \PHPUnit\Framework\Error\Warning
      */
     public function testConnectThrowsPHPException()
     {
@@ -192,7 +192,7 @@ class ConnectionTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @expectedException PHPUnit\Framework\Error
+     * @expectedException \PHPUnit\Framework\Error\Warning
      */
     public function testEscapeThrowsException()
     {

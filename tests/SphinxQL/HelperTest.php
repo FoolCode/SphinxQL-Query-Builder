@@ -5,7 +5,7 @@ use Foolz\SphinxQL\SphinxQL;
 use Foolz\SphinxQL\Helper;
 use Foolz\SphinxQL\Tests\TestUtil;
 
-class HelperTest extends PHPUnit_Framework_TestCase
+class HelperTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ConnectionInterface

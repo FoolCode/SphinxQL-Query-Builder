@@ -4,7 +4,7 @@ use Foolz\SphinxQL\Drivers\ConnectionInterface;
 use Foolz\SphinxQL\Expression;
 use Foolz\SphinxQL\Tests\TestUtil;
 
-class ConnectionTest extends PHPUnit_Framework_TestCase
+class ConnectionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ConnectionInterface

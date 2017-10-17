@@ -98,9 +98,15 @@ class Connection extends ConnectionBase
      */
     private function ensureConnection()
     {
+        /** @var mysqli $connection */
+        $connection = null;
+
         try {
-            $this->getConnection();
+            $connection = $this->getConnection();
         } catch (ConnectionException $e) {
+        }
+
+        if ($connection === null || !mysqli_ping($connection)) {
             $this->connect();
         }
     }

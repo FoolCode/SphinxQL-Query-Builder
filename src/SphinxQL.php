@@ -1020,7 +1020,7 @@ class SphinxQL
      */
     public function groupNBy($n)
     {
-        $this->group_n_by = $n;
+        $this->group_n_by = (int) $n;
 
         return $this;
     }

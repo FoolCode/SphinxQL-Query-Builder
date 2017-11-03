@@ -7,6 +7,11 @@ use Foolz\SphinxQL\Exception\DatabaseException;
 use Foolz\SphinxQL\Exception\SphinxQLException;
 use Foolz\SphinxQL\Drivers\ConnectionBase;
 
+/**
+ * SphinxQL connection class utilizing the MySQLi extension.
+ * It also contains escaping and quoting functions.
+ * @package Foolz\SphinxQL
+ */
 class Connection extends ConnectionBase
 {
     /**
@@ -15,24 +20,6 @@ class Connection extends ConnectionBase
      * @var string
      */
     protected $internal_encoding = null;
-
-    /**
-     * Disables any warning outputs returned on the \MySQLi connection with @ prefix.
-     *
-     * @var boolean
-     */
-    protected $silence_connection_warning = false;
-
-    /**
-     * Forces the \MySQLi connection to suppress all errors returned. This should only be used
-     * when the production server is running with high error reporting settings.
-     *
-     * @param boolean $enable True if it should be enabled, false if it should be disabled
-     */
-    public function silenceConnectionWarning($enable = true)
-    {
-        $this->silence_connection_warning = $enable;
-    }
 
     /**
      * Returns the internal encoding.
@@ -93,19 +80,6 @@ class Connection extends ConnectionBase
     }
 
     /**
-     * Establishes a connection if needed
-     * @throws ConnectionException
-     */
-    private function ensureConnection()
-    {
-        try {
-            $this->getConnection();
-        } catch (ConnectionException $e) {
-            $this->connect();
-        }
-    }
-
-    /**
      * Closes and unset the connection to the Sphinx server.
      */
     public function close()
@@ -134,7 +108,7 @@ class Connection extends ConnectionBase
                 $this->getConnection()->error.' [ '.$query.']');
         }
 
-        return new ResultSet($this, $resource);
+        return ResultSet::make($this, $resource);
     }
 
     /**
@@ -162,7 +136,7 @@ class Connection extends ConnectionBase
                 $this->getConnection()->error.' [ '.implode(';', $queue).']');
         };
 
-        return new MultiResultSet($this, $count);
+        return MultiResultSet::make($this);
     }
 
     /**

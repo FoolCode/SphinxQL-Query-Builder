@@ -19,6 +19,13 @@ abstract class ConnectionBase implements ConnectionInterface
     protected $connection = null;
 
     /**
+     * Disables any warning outputs returned on the connection with @ prefix.
+     *
+     * @var boolean
+     */
+    protected $silence_connection_warning = false;
+
+    /**
      * Sets one or more connection parameters.
      *
      * @param array $params Associative array of parameters and values.
@@ -132,5 +139,31 @@ abstract class ConnectionBase implements ConnectionInterface
         }
 
         return $result;
+    }
+
+    /**
+     * Establishes a connection if needed
+     * @throws ConnectionException
+     */
+    protected function ensureConnection()
+    {
+        try {
+            $this->getConnection();
+        } catch (ConnectionException $e) {
+            $this->connect();
+        }
+    }
+
+    /**
+     * Forces the connection to suppress all errors returned. This should only be used
+     * when the production server is running with high error reporting settings.
+     *
+     * @param boolean $enable True if it should be enabled, false if it should be disabled
+     * @deprecated
+     * not good
+     */
+    public function silenceConnectionWarning($enable = true)
+    {
+        $this->silence_connection_warning = $enable;
     }
 }

@@ -1,6 +1,9 @@
 <?php
 namespace Foolz\SphinxQL\Drivers;
 
+use Foolz\SphinxQL\Exception\ResultSetException;
+use \Foolz\SphinxQL\Drivers\Mysqli\ResultSetAdapter;
+
 abstract class ResultSetBase implements ResultSetInterface
 {
     /**
@@ -9,14 +12,39 @@ abstract class ResultSetBase implements ResultSetInterface
     protected $num_rows = 0;
 
     /**
-     * @var null|int
+     * @var int
      */
-    protected $current_row = null;
+    protected $cursor = 0;
+
+    /**
+     * @var int
+     */
+    protected $next_cursor = 0;
 
     /**
      * @var int
      */
     protected $affected_rows = 0; // leave to 0 so SELECT etc. will be coherent
+
+    /**
+     * @var array
+     */
+    protected $fields;
+
+    /**
+     * @var null|array
+     */
+    protected $stored = null;
+
+    /**
+     * @var null|array
+     */
+    protected $fetched = null;
+
+    /**
+     * @var null|\Foolz\SphinxQL\Drivers\ResultSetAdapterInterface
+     */
+    protected $adapter = null;
 
     /**
      * Checks that a row actually exists
@@ -36,9 +64,7 @@ abstract class ResultSetBase implements ResultSetInterface
      */
     public function hasNextRow()
     {
-        return $this->current_row === null
-            ? (boolean)$this->num_rows
-            : $this->current_row + 1 < $this->num_rows;
+        return $this->cursor + 1 < $this->num_rows;
     }
 
     /**
@@ -136,7 +162,9 @@ abstract class ResultSetBase implements ResultSetInterface
      */
     public function current()
     {
-        return $this->fetchAssoc();
+        $row = $this->fetched;
+        unset($this->fetched);
+        return $row;
     }
 
     /**
@@ -147,12 +175,7 @@ abstract class ResultSetBase implements ResultSetInterface
      */
     public function next()
     {
-        if ($this->hasNextRow()) {
-            $this->toNextRow();
-        } else {
-            $this->current_row++;
-        }
-
+        $this->fetched = $this->fetch(ResultSetAdapter::FETCH_ASSOC);
     }
 
     /**
@@ -163,7 +186,7 @@ abstract class ResultSetBase implements ResultSetInterface
      */
     public function key()
     {
-        return (int)$this->current_row;
+        return (int)$this->cursor;
     }
 
     /**
@@ -175,7 +198,11 @@ abstract class ResultSetBase implements ResultSetInterface
      */
     public function valid()
     {
-        return $this->hasRow($this->current_row);
+        if ($this->stored !== null) {
+            return $this->hasRow($this->cursor);
+        }
+
+        return $this->adapter->valid();
     }
 
     /**
@@ -186,9 +213,13 @@ abstract class ResultSetBase implements ResultSetInterface
      */
     public function rewind()
     {
-        if ($this->getCount()) {
-            $this->toRow(0);
+        if ($this->stored === null) {
+            $this->adapter->rewind();
         }
+
+        $this->next_cursor = 0;
+
+        $this->fetched = $this->fetch(ResultSetAdapter::FETCH_ASSOC);
     }
 
     /**
@@ -203,5 +234,229 @@ abstract class ResultSetBase implements ResultSetInterface
     public function count()
     {
         return $this->getCount();
+    }
+
+    protected function init()
+    {
+        if ($this->adapter->isDml()) {
+            $this->affected_rows = $this->adapter->getAffectedRows();
+        } else {
+            $this->num_rows = $this->adapter->getNumRows();
+            $this->fields = $this->adapter->getFields();
+        }
+    }
+
+    /**
+     * @param array $numeric_array
+     * @return array
+     */
+    protected function makeAssoc($numeric_array)
+    {
+        $assoc_array = array();
+        foreach ($numeric_array as $col_key => $col_value) {
+            $assoc_array[$this->fields[$col_key]->name] = $col_value;
+        }
+
+        return $assoc_array;
+    }
+
+    /**
+     * @param ResultSetAdapter::FETCH_ASSOC|ResultSetAdapter::FETCH_NUM $fetch_type
+     * @return array|bool|null
+     */
+    protected function fetchFromStore($fetch_type)
+    {
+        if ($this->stored === null) {
+            return false;
+        }
+
+        $row = isset($this->stored[$this->cursor]) ? $this->stored[$this->cursor] : null;
+
+        if ($row !== null) {
+            $row = $fetch_type == ResultSetAdapter::FETCH_ASSOC ? $this->makeAssoc($row) : $row;
+        }
+
+        return $row;
+    }
+
+    /**
+     * @param ResultSetAdapter::FETCH_ASSOC|ResultSetAdapter::FETCH_NUM $fetch_type
+     * @return array|bool
+     */
+    protected function fetchAllFromStore($fetch_type)
+    {
+        if ($this->stored === null) {
+            return false;
+        }
+
+        $result_from_store = array();
+
+        $this->cursor = $this->next_cursor;
+        while ($row = $this->fetchFromStore($fetch_type)) {
+            $result_from_store[] = $row;
+            $this->cursor = ++$this->next_cursor;
+        }
+
+        return $result_from_store;
+    }
+
+    /**
+     * @param ResultSetAdapter::FETCH_ASSOC|ResultSetAdapter::FETCH_NUM $fetch_type
+     * @return array
+     */
+    protected function fetchAll($fetch_type)
+    {
+        $fetch_all_result = $this->fetchAllFromStore($fetch_type);
+
+        if ($fetch_all_result === false) {
+            $fetch_all_result = $this->adapter->fetchAll($fetch_type);
+        }
+
+        $this->cursor = $this->num_rows;
+        $this->next_cursor = $this->cursor + 1;
+
+        return $fetch_all_result;
+    }
+
+    /**
+     * Store all the data in this object and free the driver object
+     *
+     * @return static $this
+     */
+    public function store()
+    {
+        if ($this->stored !== null) {
+            return $this;
+        }
+
+        if ($this->adapter->isDml()) {
+            $this->stored = $this->affected_rows;
+        } else {
+            $this->stored = $this->adapter->store();
+        }
+
+        return $this;
+    }
+
+    /**
+     * Returns the array as in version 0.9.x
+     *
+     * @return array|int|mixed
+     * @deprecated Commodity method for simple transition to version 1.0.0
+     */
+    public function getStored()
+    {
+        $this->store();
+        if ($this->adapter->isDml()) {
+            return $this->getAffectedRows();
+        }
+
+        return $this->fetchAllAssoc();
+    }
+
+    /**
+     * Moves the cursor to the selected row
+     *
+     * @param int $num The number of the row to move the cursor to
+     * @return static
+     * @throws ResultSetException If the row does not exist
+     */
+    public function toRow($num)
+    {
+        if (!$this->hasRow($num)) {
+            throw new ResultSetException('The row does not exist.');
+        }
+
+        $this->cursor = $num;
+        $this->next_cursor = $num;
+
+        if ($this->stored === null) {
+            $this->adapter->toRow($this->cursor);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Moves the cursor to the next row
+     *
+     * @return static $this
+     * @throws ResultSetException If the next row does not exist
+     */
+    public function toNextRow()
+    {
+        $this->toRow(++$this->cursor);
+        return $this;
+    }
+
+    /**
+     * Fetches all the rows as an array of associative arrays
+     *
+     * @return array
+     */
+    public function fetchAllAssoc()
+    {
+        return $this->fetchAll(ResultSetAdapter::FETCH_ASSOC);
+    }
+
+    /**
+     * Fetches all the rows as an array of indexed arrays
+     *
+     * @return array
+     */
+    public function fetchAllNum()
+    {
+        return $this->fetchAll(ResultSetAdapter::FETCH_NUM);
+    }
+
+    /**
+     * Fetches a row as an associative array
+     *
+     * @return array
+     */
+    public function fetchAssoc()
+    {
+        return $this->fetch(ResultSetAdapter::FETCH_ASSOC);
+    }
+
+    /**
+     * Fetches a row as an indexed array
+     *
+     * @return array|null
+     */
+    public function fetchNum()
+    {
+        return $this->fetch(ResultSetAdapter::FETCH_NUM);
+    }
+
+    /**
+     * @param ResultSetAdapter::FETCH_ASSOC|ResultSetAdapter::FETCH_NUM $fetch_type
+     * @return array|null
+     */
+    protected function fetch($fetch_type)
+    {
+        $this->cursor = $this->next_cursor;
+
+        $row = $this->fetchFromStore($fetch_type);
+
+        if ($row === false) {
+            $row = $this->adapter->fetch($fetch_type);
+        }
+
+        $this->next_cursor++;
+
+        return $row;
+    }
+
+    /**
+     * Frees the memory from the result
+     * Call it after you're done with a result set
+     *
+     * @return static
+     */
+    public function freeResult()
+    {
+        $this->adapter->freeResult();
+        return $this;
     }
 }

@@ -120,19 +120,13 @@ class ResultSetTest extends PHPUnit_Framework_TestCase
         $res = self::$conn->query('SELECT * FROM rt');
         $res->toNextRow()->toNextRow()->toNextRow();
         $row = $res->fetchAssoc();
-        $this->assertEquals(12, $row['id']);
-        $res->freeResult();
-
-        $res = self::$conn->query('SELECT * FROM rt WHERE id = 10');
-        $res->toNextRow();
-        $row = $res->fetchAssoc();
-        $this->assertEquals(10, $row['id']);
+        $this->assertEquals(13, $row['id']);
         $res->freeResult();
     }
 
     /**
      * @expectedException        Foolz\SphinxQL\Exception\ResultSetException
-     * @expectedExceptionMessage The next row does not exist.
+     * @expectedExceptionMessage The row does not exist.
      */
     public function testToNextRowThrows()
     {
@@ -185,8 +179,26 @@ class ResultSetTest extends PHPUnit_Framework_TestCase
 
         $this->refill();
         $res = self::$conn->query('SELECT * FROM rt');
-        $this->assertSame($expect[0], $res->toNextRow()->fetchAssoc());
-        $this->assertSame($expect[1], $res->toNextRow()->fetchAssoc());
+        $this->assertSame($expect[0], $res->fetchAssoc());
+        $this->assertSame($expect[1], $res->fetchAssoc());
+        $res->fetchAssoc();
+        $res->fetchAssoc();
+        $res->fetchAssoc();
+        $res->fetchAssoc();
+        $res->fetchAssoc();
+        $res->fetchAssoc();
+        $this->assertNull($res->fetchAssoc());
+
+        $res = self::$conn->query('SELECT * FROM rt')->store();
+        $this->assertSame($expect[0], $res->fetchAssoc());
+        $this->assertSame($expect[1], $res->fetchAssoc());
+        $res->fetchAssoc();
+        $res->fetchAssoc();
+        $res->fetchAssoc();
+        $res->fetchAssoc();
+        $res->fetchAssoc();
+        $res->fetchAssoc();
+        $this->assertNull($res->fetchAssoc());
     }
 
     public function testFetchAllNum()
@@ -227,12 +239,26 @@ class ResultSetTest extends PHPUnit_Framework_TestCase
 
         $this->refill();
         $res = self::$conn->query('SELECT * FROM rt');
-        $this->assertSame($expect[0], $res->toNextRow()->fetchNum());
-        $this->assertSame($expect[1], $res->toNextRow()->fetchNum());
+        $this->assertSame($expect[0], $res->fetchNum());
+        $this->assertSame($expect[1], $res->fetchNum());
+        $res->fetchNum();
+        $res->fetchNum();
+        $res->fetchNum();
+        $res->fetchNum();
+        $res->fetchNum();
+        $res->fetchNum();
+        $this->assertNull($res->fetchNum());
 
         $res = self::$conn->query('SELECT * FROM rt')->store();
-        $this->assertSame($expect[0], $res->toNextRow()->fetchNum());
-        $this->assertSame($expect[1], $res->toNextRow()->fetchNum());
+        $this->assertSame($expect[0], $res->fetchNum());
+        $this->assertSame($expect[1], $res->fetchNum());
+        $res->fetchNum();
+        $res->fetchNum();
+        $res->fetchNum();
+        $res->fetchNum();
+        $res->fetchNum();
+        $res->fetchNum();
+        $this->assertNull($res->fetchNum());
     }
 
     public function testGetAffectedRows()

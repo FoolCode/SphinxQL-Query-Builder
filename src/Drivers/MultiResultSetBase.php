@@ -1,6 +1,8 @@
 <?php
 namespace Foolz\SphinxQL\Drivers;
 
+use Foolz\SphinxQL\Exception\DatabaseException;
+
 abstract class MultiResultSetBase implements MultiResultSetInterface
 {
     /**
@@ -11,7 +13,27 @@ abstract class MultiResultSetBase implements MultiResultSetInterface
     /**
      * @var int
      */
-    public $cursor = null;
+    public $cursor = 0;
+
+    /**
+     * @var int
+     */
+    protected $next_cursor = 0;
+
+    /**
+     * @var \Foolz\SphinxQL\Drivers\ResultSetInterface|null
+     */
+    protected $rowSet = null;
+
+    /**
+     * @var \Foolz\SphinxQL\Drivers\MultiResultSetAdapterInterface|null
+     */
+    protected $adapter = null;
+
+    /**
+     * @var bool
+     */
+    protected $valid = true;
 
     public function getStored()
     {
@@ -34,7 +56,7 @@ abstract class MultiResultSetBase implements MultiResultSetInterface
     public function offsetExists($offset)
     {
         $this->store();
-        return $offset >= 0 && $offset < count($this->stored);
+        return $this->storedValid($offset);
     }
 
     /**
@@ -95,11 +117,7 @@ abstract class MultiResultSetBase implements MultiResultSetInterface
      */
     public function next()
     {
-        if ($this->cursor === null) {
-            $this->cursor = 0;
-        } else {
-            $this->cursor++;
-        }
+        $this->rowSet = $this->getNext();
     }
 
     /**
@@ -122,7 +140,9 @@ abstract class MultiResultSetBase implements MultiResultSetInterface
     public function rewind()
     {
         // we actually can't roll this back unless it was stored first
-        $this->cursor = null;
+        $this->cursor = 0;
+        $this->next_cursor = 0;
+        $this->rowSet = $this->getNext();
     }
 
     /**
@@ -138,5 +158,96 @@ abstract class MultiResultSetBase implements MultiResultSetInterface
     {
         $this->store();
         return count($this->stored);
+    }
+
+    /**
+     * (PHP 5 &gt;= 5.0.0)<br/>
+     * Checks if current position is valid
+     * @link http://php.net/manual/en/iterator.valid.php
+     * @return boolean The return value will be casted to boolean and then evaluated.
+     * Returns true on success or false on failure.
+     */
+    public function valid()
+    {
+        if ($this->stored !== null) {
+            return $this->storedValid();
+        }
+
+        return $this->adapter->valid();
+    }
+
+    /**
+     * (PHP 5 &gt;= 5.0.0)<br/>
+     * Return the current element
+     * @link http://php.net/manual/en/iterator.current.php
+     * @return mixed Can return any type.
+     */
+    public function current()
+    {
+        $rowSet = $this->rowSet;
+        unset($this->rowSet);
+        return $rowSet;
+    }
+
+    /**
+     * @param null|int $cursor
+     * @return bool
+     */
+    protected function storedValid($cursor = null)
+    {
+        $cursor = (!is_null($cursor) ? $cursor : $this->cursor);
+        return $cursor >= 0 && $cursor < count($this->stored);
+    }
+
+    /*
+     * @return \Foolz\SphinxQL\Drivers\ResultSetInterface|false
+     */
+    public function getNext()
+    {
+        $this->cursor = $this->next_cursor;
+
+        if ($this->stored !== null) {
+            $resultSet = !$this->storedValid() ? false : $this->stored[$this->cursor];
+        } else {
+            if ($this->next_cursor > 0) {
+                $this->adapter->getNext();
+            }
+
+            $resultSet = !$this->adapter->valid() ? false : $this->adapter->current();
+        }
+
+        $this->next_cursor++;
+
+        return $resultSet;
+    }
+
+    /**
+     * @return $this
+     * @throws DatabaseException
+     */
+    public function store()
+    {
+        if ($this->stored !== null) {
+            return $this;
+        }
+
+        // don't let users mix storage and driver cursors
+        if ($this->next_cursor > 0) {
+            throw new DatabaseException('The MultiResultSet is using the driver cursors, store() can\'t fetch all the data');
+        }
+
+        $store = array();
+        while ($set = $this->getNext()) {
+            // this relies on stored being null!
+            $store[] = $set->store();
+        }
+
+        $this->cursor = 0;
+        $this->next_cursor = 0;
+
+        // if we write the array straight to $this->stored it won't be null anymore and functions relying on null will break
+        $this->stored = $store;
+
+        return $this;
     }
 }

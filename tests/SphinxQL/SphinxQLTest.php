@@ -711,6 +711,42 @@ class SphinxQLTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('16', $result[0]['id']);
     }
 
+    public function testGroupNBy()
+    {
+        $query = SphinxQL::create(self::$conn)->select()
+            ->from('rt')
+            ->groupBy('gid');
+        $this->assertEquals(
+            'SELECT * FROM rt GROUP BY gid',
+            $query->compile()->getCompiled()
+        );
+
+        $query->groupNBy(3);
+        $this->assertEquals(
+            'SELECT * FROM rt GROUP 3 BY gid',
+            $query->compile()->getCompiled()
+        );
+
+        $query->resetGroupBy();
+        $this->assertEquals(
+            'SELECT * FROM rt',
+            $query->compile()->getCompiled()
+        );
+
+        $query->groupBy('gid');
+        $this->assertEquals(
+            'SELECT * FROM rt GROUP BY gid',
+            $query->compile()->getCompiled()
+        );
+
+        $query->resetGroupBy()
+            ->groupNBy(3);
+        $this->assertEquals(
+            'SELECT * FROM rt',
+            $query->compile()->getCompiled()
+        );
+    }
+
     public function testOffset()
     {
         $this->refill();

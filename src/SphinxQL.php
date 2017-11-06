@@ -83,6 +83,13 @@ class SphinxQL
     protected $group_by = array();
 
     /**
+     * When not null changes 'GROUP BY' to 'GROUP N BY'
+     *
+     * @var null|int
+     */
+    protected $group_n_by = null;
+
+    /**
      * ORDER BY array
      *
      * @var array
@@ -561,7 +568,11 @@ class SphinxQL
         $query .= $this->compileMatch().$this->compileWhere();
 
         if (!empty($this->group_by)) {
-            $query .= 'GROUP BY '.implode(', ', $this->group_by).' ';
+            $query .= 'GROUP ';
+            if ($this->group_n_by !== null) {
+                $query .= $this->group_n_by.' ';
+            }
+            $query .= 'BY '.implode(', ', $this->group_by).' ';
         }
 
         if (!empty($this->within_group_order_by)) {
@@ -1000,6 +1011,21 @@ class SphinxQL
     }
 
     /**
+     * GROUP N BY clause (SphinxQL-specific)
+     * Changes 'GROUP BY' into 'GROUP N BY'
+     *
+     * @param int $n Number of items per group
+     *
+     * @return SphinxQL
+     */
+    public function groupNBy($n)
+    {
+        $this->group_n_by = (int) $n;
+
+        return $this;
+    }
+
+    /**
      * WITHIN GROUP ORDER BY clause (SphinxQL-specific)
      * Adds to the previously added columns
      * Works just like a classic ORDER BY
@@ -1351,6 +1377,7 @@ class SphinxQL
         $this->where = array();
         $this->match = array();
         $this->group_by = array();
+        $this->group_n_by = null;
         $this->within_group_order_by = array();
         $this->having = array();
         $this->order_by = array();
@@ -1382,6 +1409,7 @@ class SphinxQL
     public function resetGroupBy()
     {
         $this->group_by = array();
+        $this->group_n_by = null;
 
         return $this;
     }

@@ -4,7 +4,7 @@ use Foolz\SphinxQL\Drivers\ConnectionInterface;
 use Foolz\SphinxQL\Expression;
 use Foolz\SphinxQL\Tests\TestUtil;
 
-class ConnectionTest extends PHPUnit_Framework_TestCase
+class ConnectionTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ConnectionInterface
@@ -98,7 +98,7 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException PHPUnit_Framework_Error_Warning
+     * @expectedException PHPUnit\Framework\Error\Warning
      */
     public function testConnectThrowsPHPException()
     {
@@ -192,7 +192,7 @@ class ConnectionTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException PHPUnit_Framework_Error_Warning
+     * @expectedException PHPUnit\Framework\Error\Warning
      */
     public function testEscapeThrowsException()
     {

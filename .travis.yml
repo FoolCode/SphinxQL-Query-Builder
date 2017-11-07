@@ -3,12 +3,11 @@ language: php
 sudo: false
 
 php:
-  - 5.3
   - 5.4
   - 5.5
   - 5.6
   - 7.0
-  - hhvm
+  - 7.1
 
 env:
   - DRIVER=mysqli SPHINXSEARCH_BUILD=rel22
@@ -18,9 +17,6 @@ env:
 
 matrix:
   fast_finish: true
-  allow_failures:
-    - env: DRIVER=pdo SPHINXSEARCH_BUILD=rel22
-    - env: DRIVER=pdo SPHINXSEARCH_BUILD=beta
 
 before_install:
   - mkdir $HOME/sphinx

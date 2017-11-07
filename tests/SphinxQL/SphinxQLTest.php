@@ -6,7 +6,7 @@ use Foolz\SphinxQL\Helper;
 use Foolz\SphinxQL\Match;
 use Foolz\SphinxQL\Tests\TestUtil;
 
-class SphinxQLTest extends PHPUnit_Framework_TestCase
+class SphinxQLTest extends \PHPUnit\Framework\TestCase
 {
     public static $conn = null;
 

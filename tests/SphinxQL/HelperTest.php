@@ -5,14 +5,14 @@ use Foolz\SphinxQL\SphinxQL;
 use Foolz\SphinxQL\Helper;
 use Foolz\SphinxQL\Tests\TestUtil;
 
-class HelperTest extends PHPUnit_Framework_TestCase
+class HelperTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ConnectionInterface
      */
     public $conn;
 
-    public function __construct()
+    public function setUp()
     {
         $conn = TestUtil::getConnectionDriver();
         $conn->setParam('port', 9307);

@@ -4,7 +4,7 @@ use Foolz\SphinxQL\SphinxQL;
 use Foolz\SphinxQL\Tests\TestUtil;
 use Foolz\SphinxQL\Exception\DatabaseException;
 
-class MultiResultSetTest extends PHPUnit_Framework_TestCase
+class MultiResultSetTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var Connection

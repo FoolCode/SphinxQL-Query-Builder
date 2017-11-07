@@ -4,7 +4,7 @@ use Foolz\SphinxQL\SphinxQL;
 use Foolz\SphinxQL\Drivers\Mysqli\Connection;
 use Foolz\SphinxQL\Tests\TestUtil;
 
-class ResultSetTest extends PHPUnit_Framework_TestCase
+class ResultSetTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var Connection

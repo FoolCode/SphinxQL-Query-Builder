@@ -7,7 +7,7 @@ use Foolz\SphinxQL\Tests\TestUtil;
  * @package Foolz\SphinxQL
  * @author Vicent Valls
  */
-class FacetTest  extends PHPUnit_Framework_TestCase
+class FacetTest  extends \PHPUnit\Framework\TestCase
 {
     public static $conn = null;
 

@@ -4,7 +4,7 @@ use Foolz\SphinxQL\SphinxQL;
 use Foolz\SphinxQL\Match;
 use Foolz\SphinxQL\Tests\TestUtil;
 
-class MatchTest extends PHPUnit_Framework_TestCase
+class MatchTest extends \PHPUnit\Framework\TestCase
 {
     public static $sphinxql = null;
 

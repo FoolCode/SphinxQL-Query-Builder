@@ -3,6 +3,9 @@
 // PHPUnit Backwards Compatability Fix
 if (!class_exists('\PHPUnit\Framework\TestCase')) {
     class_alias('\PHPUnit_Framework_TestCase', '\PHPUnit\Framework\TestCase');
+}
+
+if (class_exists('\PHPUnit\Framework\Error\Warning')) {
     class_alias('\PHPUnit_Framework_Error_Warning', '\PHPUnit\Framework\Error\Warning');
 }
 

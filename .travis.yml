@@ -4,7 +4,6 @@ dist: trusty
 sudo: false
 
 php:
-  - 5.3
   - 5.4
   - 5.5
   - 5.6
@@ -14,21 +13,12 @@ php:
 
 env:
   - DRIVER=mysqli SPHINXSEARCH_BUILD=rel22
-  - DRIVER=mysqli SPHINXSEARCH_BUILD=rel23
   - DRIVER=mysqli SPHINXSEARCH_BUILD=beta
   - DRIVER=pdo SPHINXSEARCH_BUILD=rel22
-  - DRIVER=pdo SPHINXSEARCH_BUILD=rel23
   - DRIVER=pdo SPHINXSEARCH_BUILD=beta
 
 matrix:
   fast_finish: true
-  exclude:
-    - env: DRIVER=mysqli SPHINXSEARCH_BUILD=rel23
-    - env: DRIVER=pdo SPHINXSEARCH_BUILD=rel23
-    - php: 5.3
-      env: DRIVER=pdo SPHINXSEARCH_BUILD=rel22
-    - php: 5.3
-      env: DRIVER=pdo SPHINXSEARCH_BUILD=beta
 
 before_install:
   - mkdir $HOME/sphinx

@@ -12,7 +12,7 @@ class HelperTest extends \PHPUnit\Framework\TestCase
      */
     public $conn;
 
-    public function __construct()
+    public function setUpBeforeClass()
     {
         $conn = TestUtil::getConnectionDriver();
         $conn->setParam('port', 9307);

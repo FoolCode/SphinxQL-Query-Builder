@@ -16,6 +16,13 @@ env:
   - DRIVER=pdo SPHINXSEARCH_BUILD=beta
 
 matrix:
+  include:
+    - php: 5.3
+      dist: precise
+      env: DRIVER=mysqli SPHINXSEARCH_BUILD=rel22
+    - php: 5.3
+      dist: precise
+      env: DRIVER=mysqli SPHINXSEARCH_BUILD=beta
   fast_finish: true
 
 before_install:

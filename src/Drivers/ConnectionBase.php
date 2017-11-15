@@ -95,7 +95,8 @@ abstract class ConnectionBase implements ConnectionInterface
      * Adds quotes around values when necessary.
      * Based on FuelPHP's quoting function.
      *
-     * @param Expression|string $value The input string, eventually wrapped in an expression to leave it untouched
+     * @param Expression|string|null|bool|array|int|float $value The input string, eventually wrapped in an expression
+     *      to leave it untouched
      *
      * @return Expression|string|int The untouched Expression or the quoted string
      */

@@ -974,8 +974,9 @@ class SphinxQL
      *    // WHERE example BETWEEN 10 AND 100
      *
      * @param string   $column   The column name
-     * @param string   $operator The operator to use
-     * @param string   $value    The value to check against
+     * @param Expression|string|null|bool|array|int|float $operator The operator to use (if value is not null, you can
+     *      use only string)
+     * @param Expression|string|null|bool|array|int|float $value The value to check against
      *
      * @return SphinxQL
      */
@@ -1141,7 +1142,7 @@ class SphinxQL
      * Used by: SELECT
      *
      * @param string $name  Option name
-     * @param string $value Option value
+     * @param Expression|array|string|int|bool|float|null $value Option value
      *
      * @return SphinxQL
      */

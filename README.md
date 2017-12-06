@@ -92,7 +92,7 @@ $result = $query->execute();
 
 * __$conn->query($query)__
 
-	Performs the query on the server. Returns an _array_ of results for `SELECT`, or an _int_ with the number of rows affected.
+	Performs the query on the server. Returns a [`ResultSet`](#resultset) object containing the query results.
 
 _More methods are available in the Connection class, but usually not necessary as these are handled automatically._
 
@@ -312,11 +312,11 @@ Will return an array with an `INT` as first member, the number of rows deleted.
 
 * __$sq->execute()__
 
-	Compiles, executes, and __returns__ an array of results of a query.
+	Compiles, executes, and __returns__ a [`ResultSet`](#resultset) object containing the query results.
 
 * __$sq->executeBatch()__
 
-	Compiles, executes, and __returns__ an array of results for a multi-query.
+	Compiles, executes, and __returns__ a [`MultiResultSet`](#multiresultset) object containing the multi-query results.
 
 * __$sq->compile()__
 
@@ -328,7 +328,7 @@ Will return an array with an `INT` as first member, the number of rows deleted.
 
 * __$sq->getResult()__
 
-	Returns the last result.
+	Returns the [`ResultSet`](#resultset) or [` MultiResultSet`](#multiresultset) object, depending on whether single or multi-query have been executed last.
 
 #### Multi-Query
 
@@ -338,7 +338,7 @@ Will return an array with an `INT` as first member, the number of rows deleted.
 
 * __$sq->executeBatch()__
 
-	Returns an array of the results of all the queued queries.
+	Returns a [`MultiResultSet`](#multiresultset) object containing the multi-query results.
 
 ```php
 <?php
@@ -354,7 +354,43 @@ $result = SphinxQL::create($this->conn)
     ->executeBatch();
 ```
 
-`$result[0]` will contain the first select. `$result[1]` will contain the META for the first query. `$result[2]` will contain the second select.
+`$result` will contain [`MultiResultSet`](#multiresultset) object. Sequential calls to the `$result->getNext()` method allow you to get a [`ResultSet`](#resultset) object containing the results of the next enqueued query.
+
+
+#### Query results
+
+##### ResultSet
+
+Contains the results of the query execution.
+
+* __$result->fetchAllAssoc()__
+
+	Fetches all result rows as an associative array.
+
+* __$result->fetchAllNum()__
+
+	Fetches all result rows as a numeric array.
+
+* __$result->fetchAssoc()__
+
+	Fetch a result row as an associative array.
+
+* __$result->fetchNum()__
+
+	Fetch a result row as a numeric array.
+
+* __$result->getAffectedRows()__
+
+	Returns the number of affected rows in the case of a DML query.
+
+##### MultiResultSet
+
+Contains the results of the multi-query execution.
+
+* __$result->getNext()__
+	
+	Returns a [`ResultSet`](#resultset) object containing the results of the next query.
+
 
 ### Helper
 

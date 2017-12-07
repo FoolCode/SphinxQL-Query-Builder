@@ -217,6 +217,22 @@ class Match
     }
 
     /**
+     * Provide an optional phrase.
+     *
+     * Example:
+     *    $match->phrase('test case')->orPhrase('another case');
+     *    // "test case" | "another case"
+     *
+     * @param string $keywords The phrase to match.
+     */
+    public function orPhrase($keywords)
+    {
+        $this->tokens[] = array('OPERATOR' => '| ');
+        $this->phrase($keywords);
+        return $this;
+    }
+
+    /**
      * Match if keywords are close enough.
      *
      * Example:

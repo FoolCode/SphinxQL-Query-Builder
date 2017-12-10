@@ -141,6 +141,13 @@ class MatchTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('"test case"', $match->compile()->getCompiled());
     }
 
+    public function testOrPhrase()
+    {
+        $match = Match::create(self::$sphinxql)
+            ->phrase('test case')->orPhrase('another case');
+        $this->assertEquals('"test case" | "another case"', $match->compile()->getCompiled());
+    }
+
     public function testProximity()
     {
         $match = Match::create(self::$sphinxql)

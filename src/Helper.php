@@ -13,7 +13,7 @@ class Helper
     /**
      * @var ConnectionInterface
      */
-    public $connection;
+    protected $connection;
 
     protected function __construct(ConnectionInterface $connection)
     {
@@ -31,23 +31,13 @@ class Helper
     }
 
     /**
-     * Returns a Connection object setup in the construct
-     *
-     * @return ConnectionInterface
-     */
-    protected function getConnection()
-    {
-        return $this->connection;
-    }
-
-    /**
      * Returns a new SphinxQL instance
      *
      * @return SphinxQL
      */
     protected function getSphinxQL()
     {
-        return SphinxQL::create($this->getConnection());
+        return SphinxQL::create($this->connection);
     }
 
     /**
@@ -153,11 +143,11 @@ class Helper
 
         // user variables must always be processed as arrays
         if ($user_var && ! is_array($value)) {
-            $query .= '= ('.$this->getConnection()->quote($value).')';
+            $query .= '= ('.$this->connection->quote($value).')';
         } elseif (is_array($value)) {
-            $query .= '= ('.implode(', ', $this->getConnection()->quoteArr($value)).')';
+            $query .= '= ('.implode(', ', $this->connection->quoteArr($value)).')';
         } else {
-            $query .= '= '.$this->getConnection()->quote($value);
+            $query .= '= '.$this->connection->quote($value);
         }
 
         return $this->query($query);
@@ -177,7 +167,7 @@ class Helper
     {
         array_unshift($options, $data, $index, $query);
 
-        $arr = $this->getConnection()->quoteArr($options);
+        $arr = $this->connection->quoteArr($options);
         foreach ($arr as $key => &$val) {
             if (is_string($key)) {
                 $val .= ' AS '.$key;
@@ -203,7 +193,7 @@ class Helper
             $arr[] = $hits;
         }
 
-        return $this->query('CALL KEYWORDS('.implode(', ', $this->getConnection()->quoteArr($arr)).')');
+        return $this->query('CALL KEYWORDS('.implode(', ', $this->connection->quoteArr($arr)).')');
     }
 
     /**
@@ -230,7 +220,7 @@ class Helper
     public function createFunction($udf_name, $returns, $so_name)
     {
         return $this->query('CREATE FUNCTION '.$udf_name.
-            ' RETURNS '.$returns.' SONAME '.$this->getConnection()->quote($so_name));
+            ' RETURNS '.$returns.' SONAME '.$this->connection->quote($so_name));
     }
 
     /**

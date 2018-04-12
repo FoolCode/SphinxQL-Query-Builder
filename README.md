@@ -10,7 +10,7 @@ Query Builder for SphinxQL
 
 This is a SphinxQL Query Builder used to work with SphinxQL, a SQL dialect used with the Sphinx search engine. It maps most of the functions listed in the [SphinxQL reference](http://sphinxsearch.com/docs/current.html#SphinxQL-reference) and is generally [faster](http://sphinxsearch.com/blog/2010/04/25/sphinxapi-vs-SphinxQL-benchmark/) than the available Sphinx API.
 
-This Query Builder has no dependencies except PHP 5.3, `\MySQLi` extension, and [Sphinx](http://sphinxsearch.com). It is also compatible with [HHVM](http://hhvm.com).
+This Query Builder has no dependencies except PHP 5.6, `\MySQLi` extension, and [Sphinx](http://sphinxsearch.com). It is also compatible with [HHVM](http://hhvm.com).
 
 __This package is BETA QUALITY.__ It is recommended that you do extensive testing in development before using it in a production environment.
 

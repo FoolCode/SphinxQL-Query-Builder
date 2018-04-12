@@ -15,24 +15,19 @@ class MultiResultSet extends MultiResultSetBase
 
     /**
      * @param MultiResultSetAdapter $adapter
-     * @param PDOStatement|array|int $statement
+     * @param PDOStatement $statement
      */
-    public function __construct(MultiResultSetAdapter $adapter, $statement)
+    public function __construct(MultiResultSetAdapter $adapter, PDOStatement $statement)
     {
         $this->adapter = $adapter;
-
-        if ($statement instanceof PDOStatement) {
-            $this->statement = $statement;
-        } else {
-            $this->stored = $statement; // for php < 5.4.0
-        }
+        $this->statement = $statement;
     }
 
     /**
-     * @param PDOStatement|array|int $statement
+     * @param PDOStatement $statement
      * @return MultiResultSet
      */
-    public static function make($statement)
+    public static function make(PDOStatement $statement)
     {
         $adapter = new MultiResultSetAdapter($statement);
         return new MultiResultSet($adapter, $statement);

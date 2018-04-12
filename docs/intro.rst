@@ -9,7 +9,7 @@ Compatiblity
 ------------
 SphinxQL Query Builder is tested against the following environments:
 
-- HHVM or PHP 5.3 and later
+- HHVM or PHP 5.6 and later
 - Sphinx (Stable)
 - Sphinx (Development)
 

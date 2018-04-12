@@ -17,35 +17,35 @@ class SphinxQL
      *
      * @var ConnectionInterface
      */
-    protected $connection = null;
+    protected $connection;
 
     /**
      * The last result object.
      *
      * @var array
      */
-    protected $last_result = null;
+    protected $last_result;
 
     /**
      * The last compiled query.
      *
      * @var string
      */
-    protected $last_compiled = null;
+    protected $last_compiled;
 
     /**
      * The last chosen method (select, insert, replace, update, delete).
      *
      * @var string
      */
-    protected $type = null;
+    protected $type;
 
     /**
      * An SQL query that is not yet executed or "compiled"
      *
      * @var string
      */
-    protected $query = null;
+    protected $query;
 
     /**
      * Array of select elements that will be comma separated.
@@ -87,7 +87,7 @@ class SphinxQL
      *
      * @var null|int
      */
-    protected $group_n_by = null;
+    protected $group_n_by;
 
     /**
      * ORDER BY array
@@ -115,21 +115,21 @@ class SphinxQL
      *
      * @var null|int
      */
-    protected $offset = null;
+    protected $offset;
 
     /**
      * When not null it adds a limit
      *
      * @var null|int
      */
-    protected $limit = null;
+    protected $limit;
 
     /**
      * Value of INTO query for INSERT or REPLACE
      *
      * @var null|string
      */
-    protected $into = null;
+    protected $into;
 
     /**
      * Array of columns for INSERT or REPLACE
@@ -171,7 +171,7 @@ class SphinxQL
      *
      * @var null|SphinxQL
      */
-    protected $queue_prev = null;
+    protected $queue_prev;
 
     /**
      * An array of escaped characters for escapeMatch()

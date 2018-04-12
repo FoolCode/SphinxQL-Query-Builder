@@ -12,7 +12,7 @@ class MultiResultSetAdapter implements \Foolz\SphinxQL\Drivers\MultiResultSetAda
     /**
      * @var Connection|null
      */
-    protected $connection = null;
+    protected $connection;
 
     public function __construct(Connection $connection)
     {

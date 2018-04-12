@@ -8,7 +8,7 @@ use PDOStatement;
 class ResultSet extends ResultSetBase
 {
 
-    protected $statement = null;
+    protected $statement;
 
     /**
      * @param ResultSetAdapter $adapter

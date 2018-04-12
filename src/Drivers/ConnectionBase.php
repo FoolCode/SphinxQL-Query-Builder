@@ -16,7 +16,7 @@ abstract class ConnectionBase implements ConnectionInterface
     /**
      * Internal connection object.
      */
-    protected $connection = null;
+    protected $connection;
 
     /**
      * Disables any warning outputs returned on the connection with @ prefix.

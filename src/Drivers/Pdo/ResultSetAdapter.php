@@ -10,7 +10,7 @@ class ResultSetAdapter implements \Foolz\SphinxQL\Drivers\ResultSetAdapterInterf
     /**
      * @var null|PDOStatement
      */
-    protected $statement = null;
+    protected $statement;
 
     /**
      * @var bool

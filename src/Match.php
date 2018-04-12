@@ -29,6 +29,9 @@ class Match
      */
     protected $sphinxql = null;
 
+    /**
+     * @param SphinxQL $sphinxql
+     */
     public function __construct(SphinxQL $sphinxql)
     {
         $this->sphinxql = $sphinxql;
@@ -64,7 +67,9 @@ class Match
      *    $match->match($sub);
      *    // (a | b)
      *
-     * @param string|Match|Closure $keywords The text or expression to match.
+     * @param string|Match|\Closure $keywords The text or expression to match.
+     *
+     * @return $this
      */
     public function match($keywords = null)
     {
@@ -84,7 +89,9 @@ class Match
      *    $match->match('test')->orMatch('case');
      *    // test | case
      *
-     * @param string|Match|Closure $keywords The text or expression to alternatively match.
+     * @param string|Match|\Closure $keywords The text or expression to alternatively match.
+     *
+     * @return $this
      */
     public function orMatch($keywords = null)
     {
@@ -103,7 +110,9 @@ class Match
      *    $match->match('test')->maybe('case');
      *    // test MAYBE case
      *
-     * @param string|Match|Closure $keywords The text or expression to optionally match.
+     * @param string|Match|\Closure $keywords The text or expression to optionally match.
+     *
+     * @return $this
      */
     public function maybe($keywords = null)
     {
@@ -123,6 +132,8 @@ class Match
      *    // -test
      *
      * @param string $keyword The word not to match.
+     *
+     * @return $this
      */
     public function not($keyword = null)
     {
@@ -155,6 +166,8 @@ class Match
      *
      * @param string|array  $fields Field or fields to search.
      * @param int           $limit  Maximum position limit in field a match is allowed at.
+     *
+     * @return $this
      */
     public function field($fields, $limit = null)
     {
@@ -187,6 +200,8 @@ class Match
      *    // @!(title,body) test
      *
      * @param string|array $fields Field or fields to ignore during search.
+     *
+     * @return $this
      */
     public function ignoreField($fields)
     {
@@ -209,6 +224,8 @@ class Match
      *    // "test case"
      *
      * @param string $keywords The phrase to match.
+     *
+     * @return $this
      */
     public function phrase($keywords)
     {
@@ -224,6 +241,8 @@ class Match
      *    // "test case" | "another case"
      *
      * @param string $keywords The phrase to match.
+     *
+     * @return $this
      */
     public function orPhrase($keywords)
     {
@@ -241,6 +260,8 @@ class Match
      *
      * @param string $keywords  The words to match.
      * @param int    $distance  The upper limit on separation between words.
+     *
+     * @return $this
      */
     public function proximity($keywords, $distance)
     {
@@ -263,6 +284,8 @@ class Match
      *
      * @param string    $keywords   The words to match.
      * @param int|float $threshold  The minimum number or percent of words that must match.
+     *
+     * @return $this
      */
     public function quorum($keywords, $threshold)
     {
@@ -283,7 +306,9 @@ class Match
      *    $match->match('test')->before('case');
      *    // test << case
      *
-     * @param string|Match|Closure $keywords The text or expression that must come after.
+     * @param string|Match|\Closure $keywords The text or expression that must come after.
+     *
+     * @return $this
      */
     public function before($keywords = null)
     {
@@ -303,6 +328,8 @@ class Match
      *    // test ="specific cases"
      *
      * @param string $keyword The word that must be matched exactly.
+     *
+     * @return $this
      */
     public function exact($keyword = null)
     {
@@ -323,6 +350,8 @@ class Match
      *
      * @param string $keyword  The word to modify the score of.
      * @param float  $amount   The amount to boost the score.
+     *
+     * @return $this
      */
     public function boost($keyword, $amount = null)
     {
@@ -345,8 +374,10 @@ class Match
      *    $match->match('test')->near('case', 3);
      *    // test NEAR/3 case
      *
-     * @param string|Match|Closure $keywords  The text or expression to match nearby.
+     * @param string|Match|\Closure $keywords  The text or expression to match nearby.
      * @param int                  $distance  Maximum distance to the match.
+     *
+     * @return $this
      */
     public function near($keywords, $distance = null)
     {
@@ -367,7 +398,9 @@ class Match
      *    $match->match('test')->sentence('case');
      *    // test SENTENCE case
      *
-     * @param string|Match|Closure $keywords The text or expression that must be in the sentence.
+     * @param string|Match|\Closure $keywords The text or expression that must be in the sentence.
+     *
+     * @return $this
      */
     public function sentence($keywords = null)
     {
@@ -386,7 +419,9 @@ class Match
      *    $match->match('test')->paragraph('case');
      *    // test PARAGRAPH case
      *
-     * @param string|Match|Closure $keywords The text or expression that must be in the paragraph.
+     * @param string|Match|\Closure $keywords The text or expression that must be in the paragraph.
+     *
+     * @return $this
      */
     public function paragraph($keywords = null)
     {
@@ -409,7 +444,9 @@ class Match
      *    // ZONE:(th) test
      *
      * @param string|array         $zones     The zone or zones to search.
-     * @param string|Match|Closure $keywords  The text or expression that must be in these zones.
+     * @param string|Match|\Closure $keywords  The text or expression that must be in these zones.
+     *
+     * @return $this
      */
     public function zone($zones, $keywords = null)
     {
@@ -433,7 +470,9 @@ class Match
      *    // ZONESPAN:(th) test
      *
      * @param string               $zone      The zone to search.
-     * @param string|Match|Closure $keywords  The text or expression that must be in this zone.
+     * @param string|Match|\Closure $keywords  The text or expression that must be in this zone.
+     *
+     * @return $this
      */
     public function zonespan($zone, $keywords = null)
     {
@@ -444,6 +483,8 @@ class Match
 
     /**
      * Build the match expression.
+     *
+     * @return $this
      */
     public function compile()
     {

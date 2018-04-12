@@ -15,6 +15,9 @@ class Helper
      */
     public $connection;
 
+    /**
+     * @param ConnectionInterface $connection
+     */
     protected function __construct(ConnectionInterface $connection)
     {
         $this->connection = $connection;
@@ -23,7 +26,7 @@ class Helper
     /**
      * @param ConnectionInterface $connection
      *
-     * @return Helper
+     * @return static
      */
     public static function create(ConnectionInterface $connection)
     {
@@ -166,10 +169,10 @@ class Helper
     /**
      * CALL SNIPPETS syntax
      *
-     * @param string $data    The document text (or documents) to search
-     * @param string $index
-     * @param string $query   Search query used for highlighting
-     * @param array  $options Associative array of additional options
+     * @param string|array $data    The document text (or documents) to search
+     * @param string       $index
+     * @param string       $query   Search query used for highlighting
+     * @param array        $options Associative array of additional options
      *
      * @return SphinxQL A SphinxQL object ready to be ->execute();
      */

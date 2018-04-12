@@ -61,6 +61,10 @@ class Facet
      */
     protected $limit = null;
 
+    /**
+     * @param ConnectionInterface|null $connection
+     * @param bool                     $static
+     */
     public function __construct(ConnectionInterface $connection = null, $static = false)
     {
         $this->connection = $connection;

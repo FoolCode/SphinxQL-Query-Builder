@@ -17,14 +17,14 @@ class Facet
      *
      * @var ConnectionInterface
      */
-    protected $connection = null;
+    protected $connection;
 
     /**
      * An SQL query that is not yet executed or "compiled"
      *
      * @var string
      */
-    protected $query = null;
+    protected $query;
 
     /**
      * Array of select elements that will be comma separated.
@@ -52,14 +52,14 @@ class Facet
      *
      * @var null|int
      */
-    protected $offset = null;
+    protected $offset;
 
     /**
      * When not null it adds a limit
      *
      * @var null|int
      */
-    protected $limit = null;
+    protected $limit;
 
     /**
      * @param ConnectionInterface|null $connection
@@ -76,11 +76,11 @@ class Facet
      *
      * @param ConnectionInterface|null $connection
      *
-     * @return Facet
+     * @return static
      */
     public static function create(ConnectionInterface $connection = null)
     {
-        return new Facet($connection);
+        return new static($connection);
     }
 
     /**

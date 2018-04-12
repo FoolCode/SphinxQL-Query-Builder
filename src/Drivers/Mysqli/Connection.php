@@ -19,7 +19,7 @@ class Connection extends ConnectionBase
      *
      * @var string
      */
-    protected $internal_encoding = null;
+    protected $internal_encoding;
 
     /**
      * Returns the internal encoding.

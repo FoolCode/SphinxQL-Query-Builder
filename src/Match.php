@@ -13,7 +13,7 @@ class Match
      *
      * @var string
      */
-    protected $last_compiled = null;
+    protected $last_compiled;
 
     /**
      * List of match operations.
@@ -27,7 +27,7 @@ class Match
      *
      * @var SphinxQL
      */
-    protected $sphinxql = null;
+    protected $sphinxql;
 
     /**
      * @param SphinxQL $sphinxql
@@ -40,11 +40,11 @@ class Match
     /**
      * @param SphinxQL $sphinxql
      *
-     * @return Match
+     * @return static
      */
     public static function create(SphinxQL $sphinxql)
     {
-        return new Match($sphinxql);
+        return new static($sphinxql);
     }
 
     /**

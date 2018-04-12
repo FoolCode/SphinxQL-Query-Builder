@@ -12,7 +12,7 @@ class MultiResultSetAdapter implements \Foolz\SphinxQL\Drivers\MultiResultSetAda
     /**
      * @var \PDOStatement
      */
-    protected $statement = null;
+    protected $statement;
 
     public function __construct($statement)
     {

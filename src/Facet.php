@@ -72,11 +72,11 @@ class Facet
      *
      * @param ConnectionInterface|null $connection
      *
-     * @return Facet
+     * @return static
      */
     public static function create(ConnectionInterface $connection = null)
     {
-        return new Facet($connection);
+        return new static($connection);
     }
 
     /**

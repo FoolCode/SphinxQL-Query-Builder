@@ -214,6 +214,10 @@ class SphinxQL
         '<' => '\<',
     );
 
+    /**
+     * @param ConnectionInterface|null $connection
+     * @param bool                     $static
+     */
     public function __construct(ConnectionInterface $connection = null, $static = false)
     {
         $this->connection = $connection;
@@ -224,7 +228,7 @@ class SphinxQL
      *
      * @param ConnectionInterface $connection
      *
-     * @return SphinxQL
+     * @return static
      */
     public static function create(ConnectionInterface $connection)
     {
@@ -341,7 +345,7 @@ class SphinxQL
      *
      * @param SphinxQL $query The object to set as previous
      *
-     * @return SphinxQL
+     * @return $this
      */
     public function setQueuePrev($query)
     {
@@ -397,7 +401,7 @@ class SphinxQL
     /**
      * Runs the compile function
      *
-     * @return SphinxQL
+     * @return $this
      */
     public function compile()
     {
@@ -423,6 +427,9 @@ class SphinxQL
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function compileQuery()
     {
         $this->last_compiled = $this->query;
@@ -505,6 +512,11 @@ class SphinxQL
         return $query;
     }
 
+    /**
+     * @param array $filter
+     *
+     * @return string
+     */
     public function compileFilterCondition($filter)
     {
         $query = '';
@@ -537,7 +549,7 @@ class SphinxQL
     /**
      * Compiles the statements for SELECT
      *
-     * @return SphinxQL
+     * @return $this
      */
     public function compileSelect()
     {
@@ -678,7 +690,7 @@ class SphinxQL
     /**
      * Compiles the statements for INSERT or REPLACE
      *
-     * @return SphinxQL
+     * @return $this
      */
     public function compileInsert()
     {
@@ -716,7 +728,7 @@ class SphinxQL
     /**
      * Compiles the statements for UPDATE
      *
-     * @return SphinxQL
+     * @return $this
      */
     public function compileUpdate()
     {
@@ -756,7 +768,7 @@ class SphinxQL
     /**
      * Compiles the statements for DELETE
      *
-     * @return SphinxQL
+     * @return $this
      */
     public function compileDelete()
     {
@@ -781,7 +793,7 @@ class SphinxQL
      *
      * @param string $sql A SphinxQL query to execute
      *
-     * @return SphinxQL
+     * @return $this
      */
     public function query($sql)
     {
@@ -810,7 +822,7 @@ class SphinxQL
      *
      * @param array|string $columns Array or multiple string arguments containing column names
      *
-     * @return SphinxQL
+     * @return $this
      */
     public function select($columns = null)
     {
@@ -834,7 +846,7 @@ class SphinxQL
      *
      * @param array|string $columns Array or multiple string arguments containing column names
      *
-     * @return SphinxQL
+     * @return $this
      */
     public function setSelect($columns = null)
     {
@@ -860,7 +872,7 @@ class SphinxQL
     /**
      * Activates the INSERT mode
      *
-     * @return SphinxQL
+     * @return $this
      */
     public function insert()
     {
@@ -873,7 +885,7 @@ class SphinxQL
     /**
      * Activates the REPLACE mode
      *
-     * @return SphinxQL
+     * @return $this
      */
     public function replace()
     {
@@ -888,7 +900,7 @@ class SphinxQL
      *
      * @param string $index The index to update into
      *
-     * @return SphinxQL
+     * @return $this
      */
     public function update($index)
     {
@@ -902,7 +914,7 @@ class SphinxQL
     /**
      * Activates the DELETE mode
      *
-     * @return SphinxQL
+     * @return $this
      */
     public function delete()
     {
@@ -918,7 +930,7 @@ class SphinxQL
      *
      * @param array $array An array of indexes to use
      *
-     * @return SphinxQL
+     * @return $this
      */
     public function from($array = null)
     {
@@ -940,7 +952,7 @@ class SphinxQL
      * @param string   $value  The value
      * @param boolean  $half  Exclude ", |, - control characters from being escaped
      *
-     * @return SphinxQL
+     * @return $this
      */
     public function match($column, $value = null, $half = false)
     {
@@ -978,7 +990,7 @@ class SphinxQL
      *      use only string)
      * @param Expression|string|null|bool|array|int|float $value The value to check against
      *
-     * @return SphinxQL
+     * @return $this
      */
     public function where($column, $operator, $value = null)
     {
@@ -1002,7 +1014,7 @@ class SphinxQL
      *
      * @param string $column A column to group by
      *
-     * @return SphinxQL
+     * @return $this
      */
     public function groupBy($column)
     {
@@ -1017,7 +1029,7 @@ class SphinxQL
      *
      * @param int $n Number of items per group
      *
-     * @return SphinxQL
+     * @return $this
      */
     public function groupNBy($n)
     {
@@ -1034,7 +1046,7 @@ class SphinxQL
      * @param string $column    The column to group by
      * @param string $direction The group by direction (asc/desc)
      *
-     * @return SphinxQL
+     * @return $this
      */
     public function withinGroupOrderBy($column, $direction = null)
     {
@@ -1067,7 +1079,7 @@ class SphinxQL
      * @param string   $operator The operator to use
      * @param string   $value    The value to check against
      *
-     * @return SphinxQL The current object
+     * @return $this
      */
     public function having($column, $operator, $value = null)
     {
@@ -1092,7 +1104,7 @@ class SphinxQL
      * @param string $column    The column to order on
      * @param string $direction The ordering direction (asc/desc)
      *
-     * @return SphinxQL
+     * @return $this
      */
     public function orderBy($column, $direction = null)
     {
@@ -1108,7 +1120,7 @@ class SphinxQL
      * @param int      $offset Offset if $limit is specified, else limit
      * @param null|int $limit  The limit to set, null for no limit
      *
-     * @return SphinxQL
+     * @return $this
      */
     public function limit($offset, $limit = null)
     {
@@ -1128,7 +1140,7 @@ class SphinxQL
      *
      * @param int $offset The offset
      *
-     * @return SphinxQL
+     * @return $this
      */
     public function offset($offset)
     {
@@ -1144,7 +1156,7 @@ class SphinxQL
      * @param string $name  Option name
      * @param Expression|array|string|int|bool|float|null $value Option value
      *
-     * @return SphinxQL
+     * @return $this
      */
     public function option($name, $value)
     {
@@ -1159,7 +1171,7 @@ class SphinxQL
      *
      * @param string $index The index to insert/replace into
      *
-     * @return SphinxQL
+     * @return $this
      */
     public function into($index)
     {
@@ -1175,7 +1187,7 @@ class SphinxQL
      *
      * @param array $array The array of columns
      *
-     * @return SphinxQL
+     * @return $this
      */
     public function columns($array = array())
     {
@@ -1195,7 +1207,7 @@ class SphinxQL
      *
      * @param array $array The array of values matching the columns from $this->columns()
      *
-     * @return SphinxQL
+     * @return $this
      */
     public function values($array)
     {
@@ -1215,7 +1227,7 @@ class SphinxQL
      * @param string $column The column name
      * @param string $value  The value
      *
-     * @return SphinxQL
+     * @return $this
      */
     public function value($column, $value)
     {
@@ -1235,7 +1247,7 @@ class SphinxQL
      *
      * @param array $array Array of key-values
      *
-     * @return SphinxQL
+     * @return $this
      */
     public function set($array)
     {
@@ -1255,7 +1267,7 @@ class SphinxQL
      * Used in: INSERT, REPLACE, UPDATE
      *
      * @param Facet $facet
-     * @return SphinxQL
+     * @return $this
      */
     public function facet($facet)
     {
@@ -1269,7 +1281,7 @@ class SphinxQL
      *
      * @param array $array The array of characters to escape
      *
-     * @return SphinxQL The escaped characters
+     * @return $this
      */
     public function setFullEscapeChars($array = array())
     {
@@ -1285,7 +1297,7 @@ class SphinxQL
      *
      * @param array $array The array of characters to escape
      *
-     * @return SphinxQL The escaped characters
+     * @return $this
      */
     public function setHalfEscapeChars($array = array())
     {
@@ -1368,7 +1380,7 @@ class SphinxQL
     /**
      * Clears the existing query build for new query when using the same SphinxQL instance.
      *
-     * @return SphinxQL
+     * @return $this
      */
     public function reset()
     {
@@ -1393,6 +1405,9 @@ class SphinxQL
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function resetWhere()
     {
         $this->where = array();
@@ -1400,6 +1415,9 @@ class SphinxQL
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function resetMatch()
     {
         $this->match = array();
@@ -1407,6 +1425,9 @@ class SphinxQL
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function resetGroupBy()
     {
         $this->group_by = array();
@@ -1415,6 +1436,9 @@ class SphinxQL
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function resetWithinGroupOrderBy()
     {
         $this->within_group_order_by = array();
@@ -1422,6 +1446,9 @@ class SphinxQL
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function resetHaving()
     {
         $this->having = array();
@@ -1429,6 +1456,9 @@ class SphinxQL
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function resetOrderBy()
     {
         $this->order_by = array();
@@ -1436,6 +1466,9 @@ class SphinxQL
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function resetOptions()
     {
         $this->options = array();

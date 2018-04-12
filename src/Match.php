@@ -37,11 +37,11 @@ class Match
     /**
      * @param SphinxQL $sphinxql
      *
-     * @return Match
+     * @return static
      */
     public static function create(SphinxQL $sphinxql)
     {
-        return new Match($sphinxql);
+        return new static($sphinxql);
     }
 
     /**

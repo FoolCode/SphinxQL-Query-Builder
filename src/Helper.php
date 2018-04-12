@@ -15,7 +15,7 @@ class Helper
      */
     public $connection;
 
-    protected function __construct(ConnectionInterface $connection)
+    public function __construct(ConnectionInterface $connection)
     {
         $this->connection = $connection;
     }

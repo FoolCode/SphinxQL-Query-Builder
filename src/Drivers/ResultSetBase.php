@@ -34,17 +34,17 @@ abstract class ResultSetBase implements ResultSetInterface
     /**
      * @var null|array
      */
-    protected $stored = null;
+    protected $stored;
 
     /**
      * @var null|array
      */
-    protected $fetched = null;
+    protected $fetched;
 
     /**
      * @var null|\Foolz\SphinxQL\Drivers\ResultSetAdapterInterface
      */
-    protected $adapter = null;
+    protected $adapter;
 
     /**
      * Checks that a row actually exists

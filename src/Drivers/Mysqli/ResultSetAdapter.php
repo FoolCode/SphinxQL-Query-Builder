@@ -7,12 +7,12 @@ class ResultSetAdapter implements \Foolz\SphinxQL\Drivers\ResultSetAdapterInterf
     /**
      * @var Connection|null
      */
-    protected $connection = null;
+    protected $connection;
 
     /**
      * @var \mysqli_result|null
      */
-    protected $result = null;
+    protected $result;
 
     /**
      * @var bool

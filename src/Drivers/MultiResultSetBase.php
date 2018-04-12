@@ -8,7 +8,7 @@ abstract class MultiResultSetBase implements MultiResultSetInterface
     /**
      * @var null|array
      */
-    public $stored = null;
+    public $stored;
 
     /**
      * @var int
@@ -23,12 +23,12 @@ abstract class MultiResultSetBase implements MultiResultSetInterface
     /**
      * @var \Foolz\SphinxQL\Drivers\ResultSetInterface|null
      */
-    protected $rowSet = null;
+    protected $rowSet;
 
     /**
      * @var \Foolz\SphinxQL\Drivers\MultiResultSetAdapterInterface|null
      */
-    protected $adapter = null;
+    protected $adapter;
 
     /**
      * @var bool

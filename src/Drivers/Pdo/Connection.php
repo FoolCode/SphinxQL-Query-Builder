@@ -96,41 +96,13 @@ class Connection extends ConnectionBase
             throw new SphinxQLException('The Queue is empty.');
         }
 
-        $result = array();
-        $count = 0;
-
-        if(version_compare(PHP_VERSION, '5.4.0', '>='))
-        {
-            try {
-                $statement = $this->connection->query(implode(';', $queue));
-            } catch (\PDOException $exception) {
-                throw new DatabaseException($exception->getMessage() .' [ '.implode(';', $queue).']');
-            }
-
-            return MultiResultSet::make($statement);
+        try {
+            $statement = $this->connection->query(implode(';', $queue));
+        } catch (\PDOException $exception) {
+            throw new DatabaseException($exception->getMessage() .' [ '.implode(';', $queue).']');
         }
-        else
-        {
-            foreach($queue as $sql)
-            {
-                try {
-                    $statement = $this->connection->query($sql);
-                } catch (\PDOException $exception) {
-                    throw new DatabaseException($exception->getMessage() .' [ '.implode(';', $queue).']');
-                }
-                if ($statement->columnCount()) {
-                    $set = ResultSet::make($statement);
-                    $rowset = $set->getStored();
-                } else {
-                    $rowset = $statement->rowCount();
-                }
 
-                $result[$count] = $rowset;
-                $count++;
-            }
-
-            return MultiResultSet::make($result);
-        }
+        return MultiResultSet::make($statement);
     }
 
     /**

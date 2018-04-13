@@ -8,7 +8,6 @@ use Foolz\SphinxQL\Drivers\ResultSetInterface;
 
 /**
  * Query Builder class for SphinxQL statements.
- * @package Foolz\SphinxQL
  */
 class SphinxQL
 {

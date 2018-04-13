@@ -7,10 +7,6 @@ use Foolz\SphinxQL\Exception\ConnectionException;
 use Foolz\SphinxQL\Exception\DatabaseException;
 use Foolz\SphinxQL\Exception\SphinxQLException;
 
-/**
- * Class PdoConnection
- * @package Foolz\SphinxQL\Drivers
- */
 class Connection extends ConnectionBase
 {
     /**

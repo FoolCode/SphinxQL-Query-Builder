@@ -4,7 +4,6 @@ namespace Foolz\SphinxQL;
 
 /**
  * Query Builder class for Match statements.
- * @package Foolz\SphinxQL
  */
 class Match
 {

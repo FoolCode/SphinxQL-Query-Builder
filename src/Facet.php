@@ -7,7 +7,6 @@ use Foolz\SphinxQL\Exception\SphinxQLException;
 
 /**
  * Query Builder class for Facet statements.
- * @package Foolz\SphinxQL
  * @author Vicent Valls
  */
 class Facet

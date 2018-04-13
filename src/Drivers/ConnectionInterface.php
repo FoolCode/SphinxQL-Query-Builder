@@ -6,11 +6,6 @@ use Foolz\SphinxQL\Exception\DatabaseException;
 use Foolz\SphinxQL\Exception\SphinxQLException;
 use Foolz\SphinxQL\Expression;
 
-/**
- * Interface ConnectionInterface
- *
- * @package Foolz\SphinxQL
- */
 interface ConnectionInterface
 {
     /**

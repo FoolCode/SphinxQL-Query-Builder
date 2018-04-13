@@ -10,7 +10,6 @@ use Foolz\SphinxQL\Drivers\ConnectionBase;
 /**
  * SphinxQL connection class utilizing the MySQLi extension.
  * It also contains escaping and quoting functions.
- * @package Foolz\SphinxQL
  */
 class Connection extends ConnectionBase
 {

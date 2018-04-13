@@ -6,7 +6,6 @@ use Foolz\SphinxQL\Drivers\ConnectionInterface;
 /**
  * SQL queries that don't require "query building"
  * These return a valid SphinxQL that can even be enqueued
- * @package Foolz\SphinxQL
  */
 class Helper
 {

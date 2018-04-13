@@ -4,7 +4,6 @@ use Foolz\SphinxQL\Facet;
 use Foolz\SphinxQL\Tests\TestUtil;
 
 /**
- * @package Foolz\SphinxQL
  * @author Vicent Valls
  */
 class FacetTest  extends \PHPUnit\Framework\TestCase

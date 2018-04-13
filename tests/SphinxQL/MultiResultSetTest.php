@@ -3,6 +3,8 @@
 use Foolz\SphinxQL\SphinxQL;
 use Foolz\SphinxQL\Tests\TestUtil;
 use Foolz\SphinxQL\Exception\DatabaseException;
+use Foolz\SphinxQL\Drivers\MultiResultSetInterface;
+use Foolz\Sphinxql\Drivers\ResultSetInterface;
 
 class MultiResultSetTest extends \PHPUnit\Framework\TestCase
 {
@@ -57,7 +59,7 @@ class MultiResultSetTest extends \PHPUnit\Framework\TestCase
     public function testIsMultiResultSet()
     {
         $res = self::$conn->multiQuery(array('SELECT COUNT(*) FROM rt', 'SHOW META'));
-        $this->assertInstanceOf('\Foolz\Sphinxql\Drivers\MultiResultSetInterface', $res);
+        $this->assertInstanceOf(MultiResultSetInterface::class, $res);
         $res->getNext();
         $res->getNext();
     }
@@ -69,16 +71,16 @@ class MultiResultSetTest extends \PHPUnit\Framework\TestCase
         $res = self::$conn->multiQuery(array('SELECT COUNT(*) FROM rt', 'SHOW META'));
 
         $set = $res->getNext();
-        $this->assertInstanceOf('\Foolz\Sphinxql\Drivers\ResultSetInterface', $set);
+        $this->assertInstanceOf(ResultSetInterface::class, $set);
         $set = $res->getNext();
-        $this->assertInstanceOf('\Foolz\Sphinxql\Drivers\ResultSetInterface', $set);
+        $this->assertInstanceOf(ResultSetInterface::class, $set);
 
         $res = self::$conn->multiQuery(array('SELECT COUNT(*) FROM rt', 'SHOW META'));
         $res->store();
         $set = $res->getNext();
-        $this->assertInstanceOf('\Foolz\Sphinxql\Drivers\ResultSetInterface', $set);
+        $this->assertInstanceOf(ResultSetInterface::class, $set);
         $set = $res->getNext();
-        $this->assertInstanceOf('\Foolz\Sphinxql\Drivers\ResultSetInterface', $set);
+        $this->assertInstanceOf(ResultSetInterface::class, $set);
         $this->assertFalse($res->getNext());
     }
 
@@ -101,7 +103,7 @@ class MultiResultSetTest extends \PHPUnit\Framework\TestCase
         $res->store();
         $stored = $res->getStored();
         $this->assertCount(2, $stored);
-        $this->assertInstanceOf('\Foolz\SphinxQL\Drivers\ResultSetInterface', $stored[0]);
+        $this->assertInstanceOf(ResultSetInterface::class, $stored[0]);
         $all = $stored[0]->fetchAllAssoc();
         $this->assertEquals(8, $all[0]['count(*)']);
     }

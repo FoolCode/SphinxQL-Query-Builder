@@ -8,12 +8,12 @@ class ExpressionTest extends \PHPUnit\Framework\TestCase
     {
         $result = new Expression('');
 
-        $this->assertInstanceOf('Foolz\Sphinxql\Expression', $result);
+        $this->assertInstanceOf(Expression::class, $result);
         $this->assertEquals('', (string) $result);
 
         $result = new Expression('* \\ Ç"" \'');
 
-        $this->assertInstanceOf('Foolz\Sphinxql\Expression', $result);
+        $this->assertInstanceOf(Expression::class, $result);
         $this->assertEquals('* \\ Ç"" \'', (string) $result);
     }
 }

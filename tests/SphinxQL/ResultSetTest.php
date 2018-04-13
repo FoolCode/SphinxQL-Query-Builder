@@ -3,6 +3,7 @@
 use Foolz\SphinxQL\SphinxQL;
 use Foolz\SphinxQL\Drivers\Mysqli\Connection;
 use Foolz\SphinxQL\Tests\TestUtil;
+use Foolz\Sphinxql\Drivers\ResultSetInterface;
 
 class ResultSetTest extends \PHPUnit\Framework\TestCase
 {
@@ -57,7 +58,7 @@ class ResultSetTest extends \PHPUnit\Framework\TestCase
     public function testIsResultSet()
     {
         $res = self::$conn->query('SELECT * FROM rt');
-        $this->assertInstanceOf('\Foolz\Sphinxql\Drivers\ResultSetInterface', $res);
+        $this->assertInstanceOf(ResultSetInterface::class, $res);
     }
 
     public function testStore()

@@ -13,15 +13,6 @@ use Foolz\SphinxQL\Exception\SphinxQLException;
  */
 class Connection extends ConnectionBase
 {
-
-    /**
-     * close connection
-     */
-    public function close()
-    {
-        $this->connection = null;
-    }
-
     /**
      * Performs a query on the Sphinx server.
      *

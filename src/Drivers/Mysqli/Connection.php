@@ -75,13 +75,13 @@ class Connection extends ConnectionBase
     }
 
     /**
-     * Closes and unset the connection to the Sphinx server.
+     * @inheritdoc
      */
     public function close()
     {
         $this->mbPop();
         $this->getConnection()->close();
-        $this->connection = null;
+        return parent::close();
     }
 
     /**

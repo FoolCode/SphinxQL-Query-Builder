@@ -103,7 +103,7 @@ class Connection extends ConnectionBase
                 $this->getConnection()->error.' [ '.$query.']');
         }
 
-        return ResultSet::make($this, $resource);
+        return new ResultSet($this, $resource);
     }
 
     /**
@@ -131,7 +131,7 @@ class Connection extends ConnectionBase
                 $this->getConnection()->error.' [ '.implode(';', $queue).']');
         };
 
-        return MultiResultSet::make($this);
+        return new MultiResultSet($this);
     }
 
     /**

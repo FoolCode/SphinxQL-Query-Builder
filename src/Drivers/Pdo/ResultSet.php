@@ -11,25 +11,14 @@ class ResultSet extends ResultSetBase
     protected $statement;
 
     /**
-     * @param ResultSetAdapter $adapter
      * @param PDOStatement $statement
      */
-    public function __construct(ResultSetAdapter $adapter, PDOStatement $statement)
+    public function __construct(PDOStatement $statement)
     {
         $this->statement = $statement;
-        $this->adapter = $adapter;
+        $this->adapter = new ResultSetAdapter($statement);
         $this->init();
         $this->store();
-    }
-
-    /**
-     * @param PDOStatement $statement
-     * @return ResultSet
-     */
-    public static function make(PDOStatement $statement)
-    {
-        $adapter = new ResultSetAdapter($statement);
-        return new ResultSet($adapter, $statement);
     }
 
     /**

@@ -13,22 +13,12 @@ class MultiResultSet extends MultiResultSetBase
     public $connection;
 
     /**
-     * @param MultiResultSetAdapter $adapter
      * @param Connection $connection
      */
-    public function __construct(MultiResultSetAdapter $adapter, Connection $connection)
+    public function __construct(Connection $connection)
     {
-        $this->adapter = $adapter;
+        $this->adapter = new MultiResultSetAdapter($connection);
         $this->connection = $connection;
     }
 
-    /**
-     * @param Connection $connection
-     * @return MultiResultSet
-     */
-    public static function make(Connection $connection)
-    {
-        $adapter = new MultiResultSetAdapter($connection);
-        return new MultiResultSet($adapter, $connection);
-    }
 }

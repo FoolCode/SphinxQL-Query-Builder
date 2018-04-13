@@ -18,20 +18,36 @@ class HelperTest extends \PHPUnit\Framework\TestCase
         $conn->setParam('port', 9307);
         $this->conn = $conn;
 
-        SphinxQL::create($this->conn)->query('TRUNCATE RTINDEX rt')->execute();
+        $this->createSphinxQL()->query('TRUNCATE RTINDEX rt')->execute();
+    }
+
+    /**
+     * @return SphinxQL
+     */
+    protected function createSphinxQL()
+    {
+        return new SphinxQL($this->conn);
+    }
+
+    /**
+     * @return Helper
+     */
+    protected function createHelper()
+    {
+        return new Helper($this->conn);
     }
 
     public function testShowTables()
     {
         $this->assertEquals(
             array(array('Index' => 'rt', 'Type' => 'rt')),
-            Helper::create($this->conn)->showTables()->execute()->getStored()
+            $this->createHelper()->showTables()->execute()->getStored()
         );
     }
 
     public function testDescribe()
     {
-        $describe = Helper::create($this->conn)->describe('rt')->execute()->getStored();
+        $describe = $this->createHelper()->describe('rt')->execute()->getStored();
         array_shift($describe);
         $this->assertSame(
             array(
@@ -45,21 +61,21 @@ class HelperTest extends \PHPUnit\Framework\TestCase
 
     public function testSetVariable()
     {
-        Helper::create($this->conn)->setVariable('AUTOCOMMIT', 0)->execute();
-        $vars = Helper::pairsToAssoc(Helper::create($this->conn)->showVariables()->execute()->getStored());
+        $this->createHelper()->setVariable('AUTOCOMMIT', 0)->execute();
+        $vars = Helper::pairsToAssoc($this->createHelper()->showVariables()->execute()->getStored());
         $this->assertEquals(0, $vars['autocommit']);
 
-        Helper::create($this->conn)->setVariable('AUTOCOMMIT', 1)->execute();
-        $vars = Helper::pairsToAssoc(Helper::create($this->conn)->showVariables()->execute()->getStored());
+        $this->createHelper()->setVariable('AUTOCOMMIT', 1)->execute();
+        $vars = Helper::pairsToAssoc($this->createHelper()->showVariables()->execute()->getStored());
         $this->assertEquals(1, $vars['autocommit']);
 
-        Helper::create($this->conn)->setVariable('@foo', 1, true);
-        Helper::create($this->conn)->setVariable('@foo', array(0), true);
+        $this->createHelper()->setVariable('@foo', 1, true);
+        $this->createHelper()->setVariable('@foo', array(0), true);
     }
 
     public function testCallSnippets()
     {
-        $snippets = Helper::create($this->conn)->callSnippets(
+        $snippets = $this->createHelper()->callSnippets(
             'this is my document text',
             'rt',
             'is'
@@ -69,7 +85,7 @@ class HelperTest extends \PHPUnit\Framework\TestCase
             $snippets
         );
 
-        $snippets = Helper::create($this->conn)->callSnippets(
+        $snippets = $this->createHelper()->callSnippets(
             'this is my document text',
             'rt',
             'is',
@@ -84,7 +100,7 @@ class HelperTest extends \PHPUnit\Framework\TestCase
             $snippets
         );
 
-        $snippets = Helper::create($this->conn)->callSnippets(
+        $snippets = $this->createHelper()->callSnippets(
             array('this is my document text', 'another document'),
             'rt',
             'is',
@@ -101,7 +117,7 @@ class HelperTest extends \PHPUnit\Framework\TestCase
 
     public function testCallKeywords()
     {
-        $keywords = Helper::create($this->conn)->callKeywords(
+        $keywords = $this->createHelper()->callKeywords(
             'test case',
             'rt'
         )->execute()->getStored();
@@ -121,7 +137,7 @@ class HelperTest extends \PHPUnit\Framework\TestCase
             $keywords
         );
 
-        $keywords = Helper::create($this->conn)->callKeywords(
+        $keywords = $this->createHelper()->callKeywords(
             'test case',
             'rt',
             1
@@ -158,12 +174,12 @@ class HelperTest extends \PHPUnit\Framework\TestCase
 
     public function testCreateFunction()
     {
-        Helper::create($this->conn)->createFunction('my_udf', 'INT', 'test_udf.so')->execute();
+        $this->createHelper()->createFunction('my_udf', 'INT', 'test_udf.so')->execute();
         $this->assertSame(
             array(array('MY_UDF()' => '42')),
             $this->conn->query('SELECT MY_UDF()')->getStored()
         );
-        Helper::create($this->conn)->dropFunction('my_udf')->execute();
+        $this->createHelper()->dropFunction('my_udf')->execute();
     }
 
     /**
@@ -171,7 +187,8 @@ class HelperTest extends \PHPUnit\Framework\TestCase
      */
     public function testTruncateRtIndex()
     {
-        SphinxQL::create($this->conn)->insert()
+        $this->createSphinxQL()
+            ->insert()
             ->into('rt')
             ->set(array(
                 'id' => 1,
@@ -181,16 +198,18 @@ class HelperTest extends \PHPUnit\Framework\TestCase
             ))
             ->execute();
 
-        $result = SphinxQL::create($this->conn)->select()
+        $result = $this->createSphinxQL()
+            ->select()
             ->from('rt')
             ->execute()
             ->getStored();
 
         $this->assertCount(1, $result);
 
-        Helper::create($this->conn)->truncateRtIndex('rt')->execute();
+        $this->createHelper()->truncateRtIndex('rt')->execute();
 
-        $result = SphinxQL::create($this->conn)->select()
+        $result = $this->createSphinxQL()
+            ->select()
             ->from('rt')
             ->execute()
             ->getStored();
@@ -201,28 +220,28 @@ class HelperTest extends \PHPUnit\Framework\TestCase
     // actually executing these queries may not be useful nor easy to test
     public function testMiscellaneous()
     {
-        $query = Helper::create($this->conn)->showMeta();
+        $query = $this->createHelper()->showMeta();
         $this->assertEquals('SHOW META', $query->compile()->getCompiled());
 
-        $query = Helper::create($this->conn)->showWarnings();
+        $query = $this->createHelper()->showWarnings();
         $this->assertEquals('SHOW WARNINGS', $query->compile()->getCompiled());
 
-        $query = Helper::create($this->conn)->showStatus();
+        $query = $this->createHelper()->showStatus();
         $this->assertEquals('SHOW STATUS', $query->compile()->getCompiled());
 
-        $query = Helper::create($this->conn)->attachIndex('disk', 'rt');
+        $query = $this->createHelper()->attachIndex('disk', 'rt');
         $this->assertEquals('ATTACH INDEX disk TO RTINDEX rt', $query->compile()->getCompiled());
 
-        $query = Helper::create($this->conn)->flushRtIndex('rt');
+        $query = $this->createHelper()->flushRtIndex('rt');
         $this->assertEquals('FLUSH RTINDEX rt', $query->compile()->getCompiled());
 
-        $query = Helper::create($this->conn)->optimizeIndex('rt');
+        $query = $this->createHelper()->optimizeIndex('rt');
         $this->assertEquals('OPTIMIZE INDEX rt', $query->compile()->getCompiled());
 
-        $query = Helper::create($this->conn)->showIndexStatus('rt');
+        $query = $this->createHelper()->showIndexStatus('rt');
         $this->assertEquals('SHOW INDEX rt STATUS', $query->compile()->getCompiled());
 
-        $query = Helper::create($this->conn)->flushRamchunk('rt');
+        $query = $this->createHelper()->flushRamchunk('rt');
         $this->assertEquals('FLUSH RAMCHUNK rt', $query->compile()->getCompiled());
     }
 }

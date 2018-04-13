@@ -14,22 +14,12 @@ class MultiResultSet extends MultiResultSetBase
     public $statement;
 
     /**
-     * @param MultiResultSetAdapter $adapter
      * @param PDOStatement $statement
      */
-    public function __construct(MultiResultSetAdapter $adapter, PDOStatement $statement)
+    public function __construct(PDOStatement $statement)
     {
-        $this->adapter = $adapter;
+        $this->adapter = new MultiResultSetAdapter($statement);
         $this->statement = $statement;
     }
 
-    /**
-     * @param PDOStatement $statement
-     * @return MultiResultSet
-     */
-    public static function make(PDOStatement $statement)
-    {
-        $adapter = new MultiResultSetAdapter($statement);
-        return new MultiResultSet($adapter, $statement);
-    }
 }

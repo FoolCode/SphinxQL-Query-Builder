@@ -34,7 +34,7 @@ class Connection extends ConnectionBase
             throw new DatabaseException($exception->getMessage() . ' [' . $query . ']');
         }
 
-        return ResultSet::make($stm);
+        return new ResultSet($stm);
     }
 
     /**
@@ -102,7 +102,7 @@ class Connection extends ConnectionBase
             throw new DatabaseException($exception->getMessage() .' [ '.implode(';', $queue).']');
         }
 
-        return MultiResultSet::make($statement);
+        return new MultiResultSet($statement);
     }
 
     /**

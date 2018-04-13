@@ -32,12 +32,7 @@ class Connection extends ConnectionBase
     }
 
     /**
-     * Establishes a connection to the Sphinx server with \MySQLi.
-     *
-     * @param boolean $suppress_error If the warnings on the connection should be suppressed
-     *
-     * @return boolean True if connected
-     * @throws ConnectionException If a connection error was encountered
+     * @inheritdoc
      */
     public function connect($suppress_error = false)
     {

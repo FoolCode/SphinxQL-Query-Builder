@@ -156,6 +156,12 @@ abstract class ConnectionBase implements ConnectionInterface
     }
 
     /**
+     * @param bool $suppress_error
+     * @return bool
+     */
+    abstract public function connect($suppress_error = false);
+
+    /**
      * Forces the connection to suppress all errors returned. This should only be used
      * when the production server is running with high error reporting settings.
      *

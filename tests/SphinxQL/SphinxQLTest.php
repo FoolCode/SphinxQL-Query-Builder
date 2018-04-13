@@ -1,5 +1,6 @@
 <?php
 
+use Foolz\SphinxQL\Expression;
 use Foolz\SphinxQL\SphinxQL;
 use Foolz\SphinxQL\Facet;
 use Foolz\SphinxQL\Helper;
@@ -56,12 +57,12 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
     {
         $result = SphinxQL::expr('');
 
-        $this->assertInstanceOf('Foolz\SphinxQL\Expression', $result);
+        $this->assertInstanceOf(Expression::class, $result);
         $this->assertEquals('', (string) $result);
 
         $result = SphinxQL::expr('* \\ Ç"" \'');
 
-        $this->assertInstanceOf('Foolz\SphinxQL\Expression', $result);
+        $this->assertInstanceOf(Expression::class, $result);
         $this->assertEquals('* \\ Ç"" \'', (string) $result);
     }
 

@@ -2,7 +2,9 @@
 
 namespace Foolz\SphinxQL\Drivers\Pdo;
 
-class MultiResultSetAdapter implements \Foolz\SphinxQL\Drivers\MultiResultSetAdapterInterface
+use Foolz\SphinxQL\Drivers\MultiResultSetAdapterInterface;
+
+class MultiResultSetAdapter implements MultiResultSetAdapterInterface
 {
     /**
      * @var bool

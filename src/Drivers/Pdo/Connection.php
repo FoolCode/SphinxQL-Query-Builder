@@ -80,7 +80,7 @@ class Connection extends ConnectionBase
 
     /**
      * @param array $queue
-     * @return \Foolz\SphinxQL\Drivers\Pdo\MultiResultSet
+     * @return MultiResultSet
      * @throws DatabaseException
      * @throws SphinxQLException
      */

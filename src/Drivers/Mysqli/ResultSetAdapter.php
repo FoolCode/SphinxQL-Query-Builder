@@ -2,7 +2,10 @@
 
 namespace Foolz\SphinxQL\Drivers\Mysqli;
 
-class ResultSetAdapter implements \Foolz\SphinxQL\Drivers\ResultSetAdapterInterface
+use Foolz\SphinxQL\Drivers\ResultSetAdapterInterface;
+use Foolz\SphinxQL\Exception\ConnectionException;
+
+class ResultSetAdapter implements ResultSetAdapterInterface
 {
     /**
      * @var Connection|null
@@ -31,7 +34,7 @@ class ResultSetAdapter implements \Foolz\SphinxQL\Drivers\ResultSetAdapterInterf
 
     /**
      * @return mixed
-     * @throws \Foolz\SphinxQL\Exception\ConnectionException
+     * @throws ConnectionException
      */
     public function getAffectedRows()
     {

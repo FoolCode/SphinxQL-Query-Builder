@@ -2,7 +2,10 @@
 
 namespace Foolz\SphinxQL\Drivers\Mysqli;
 
-class MultiResultSetAdapter implements \Foolz\SphinxQL\Drivers\MultiResultSetAdapterInterface
+use Foolz\SphinxQL\Drivers\MultiResultSetAdapterInterface;
+use Foolz\SphinxQL\Exception\ConnectionException;
+
+class MultiResultSetAdapter implements MultiResultSetAdapterInterface
 {
     /**
      * @var bool
@@ -20,7 +23,7 @@ class MultiResultSetAdapter implements \Foolz\SphinxQL\Drivers\MultiResultSetAda
     }
 
     /**
-     * @throws \Foolz\SphinxQL\Exception\ConnectionException
+     * @throws ConnectionException
      */
     public function getNext()
     {
@@ -36,7 +39,7 @@ class MultiResultSetAdapter implements \Foolz\SphinxQL\Drivers\MultiResultSetAda
 
     /**
      * @return ResultSet
-     * @throws \Foolz\SphinxQL\Exception\ConnectionException
+     * @throws ConnectionException
      */
     public function current()
     {
@@ -45,7 +48,7 @@ class MultiResultSetAdapter implements \Foolz\SphinxQL\Drivers\MultiResultSetAda
 
     /**
      * @return bool
-     * @throws \Foolz\SphinxQL\Exception\ConnectionException
+     * @throws ConnectionException
      */
     public function valid()
     {

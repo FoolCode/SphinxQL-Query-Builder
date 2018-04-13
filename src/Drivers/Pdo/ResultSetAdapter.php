@@ -2,10 +2,11 @@
 
 namespace Foolz\SphinxQL\Drivers\Pdo;
 
-use \PDO;
-use \PDOStatement;
+use Foolz\SphinxQL\Drivers\ResultSetAdapterInterface;
+use PDO;
+use PDOStatement;
 
-class ResultSetAdapter implements \Foolz\SphinxQL\Drivers\ResultSetAdapterInterface
+class ResultSetAdapter implements ResultSetAdapterInterface
 {
     /**
      * @var null|PDOStatement

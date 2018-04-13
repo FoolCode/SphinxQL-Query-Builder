@@ -21,12 +21,12 @@ abstract class MultiResultSetBase implements MultiResultSetInterface
     protected $next_cursor = 0;
 
     /**
-     * @var \Foolz\SphinxQL\Drivers\ResultSetInterface|null
+     * @var ResultSetInterface|null
      */
     protected $rowSet;
 
     /**
-     * @var \Foolz\SphinxQL\Drivers\MultiResultSetAdapterInterface|null
+     * @var MultiResultSetAdapterInterface|null
      */
     protected $adapter;
 
@@ -199,8 +199,8 @@ abstract class MultiResultSetBase implements MultiResultSetInterface
         return $cursor >= 0 && $cursor < count($this->stored);
     }
 
-    /*
-     * @return \Foolz\SphinxQL\Drivers\ResultSetInterface|false
+    /**
+     * @return ResultSetInterface|false
      */
     public function getNext()
     {

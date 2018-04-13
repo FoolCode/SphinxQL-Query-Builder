@@ -42,7 +42,7 @@ abstract class ResultSetBase implements ResultSetInterface
     protected $fetched;
 
     /**
-     * @var null|\Foolz\SphinxQL\Drivers\ResultSetAdapterInterface
+     * @var null|ResultSetAdapterInterface
      */
     protected $adapter;
 

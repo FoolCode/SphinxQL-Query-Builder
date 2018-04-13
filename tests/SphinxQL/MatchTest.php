@@ -12,20 +12,28 @@ class MatchTest extends \PHPUnit\Framework\TestCase
     {
         $conn = TestUtil::getConnectionDriver();
         $conn->setParam('port', 9307);
-        self::$sphinxql = SphinxQL::create($conn);
+        self::$sphinxql = new SphinxQL($conn);
+    }
+
+    /**
+     * @return Match
+     */
+    protected function createMatch()
+    {
+        return new Match(self::$sphinxql);
     }
 
     public function testMatch()
     {
-        $match = Match::create(self::$sphinxql)
+        $match = $this->createMatch()
             ->match('test');
         $this->assertEquals('test', $match->compile()->getCompiled());
 
-        $match = Match::create(self::$sphinxql)
+        $match = $this->createMatch()
             ->match('test case');
         $this->assertEquals('(test case)', $match->compile()->getCompiled());
 
-        $match = Match::create(self::$sphinxql)
+        $match = $this->createMatch()
             ->match(function ($m) {
                 $m->match('a')->orMatch('b');
             });
@@ -33,38 +41,38 @@ class MatchTest extends \PHPUnit\Framework\TestCase
 
         $sub = new Match(self::$sphinxql);
         $sub->match('a')->orMatch('b');
-        $match = Match::create(self::$sphinxql)
+        $match = $this->createMatch()
             ->match($sub);
         $this->assertEquals('(a | b)', $match->compile()->getCompiled());
 
-        $match = Match::create(self::$sphinxql)
+        $match = $this->createMatch()
             ->match('test|case');
         $this->assertEquals('test\|case', $match->compile()->getCompiled());
 
-        $match = Match::create(self::$sphinxql)
+        $match = $this->createMatch()
             ->match(SphinxQL::expr('test|case'));
         $this->assertEquals('test|case', $match->compile()->getCompiled());
     }
 
     public function testOrMatch()
     {
-        $match = Match::create(self::$sphinxql)
+        $match = $this->createMatch()
             ->match('test')->orMatch();
         $this->assertEquals('test |', $match->compile()->getCompiled());
 
-        $match = Match::create(self::$sphinxql)
+        $match = $this->createMatch()
             ->match('test')->orMatch('case');
         $this->assertEquals('test | case', $match->compile()->getCompiled());
     }
 
     public function testMaybe()
     {
-        $match = Match::create(self::$sphinxql)
+        $match = $this->createMatch()
             ->match('test')
             ->maybe();
         $this->assertEquals('test MAYBE', $match->compile()->getCompiled());
 
-        $match = Match::create(self::$sphinxql)
+        $match = $this->createMatch()
             ->match('test')
             ->maybe('case');
         $this->assertEquals('test MAYBE case', $match->compile()->getCompiled());
@@ -72,44 +80,44 @@ class MatchTest extends \PHPUnit\Framework\TestCase
 
     public function testNot()
     {
-        $match = Match::create(self::$sphinxql)
+        $match = $this->createMatch()
             ->not()
             ->match('test');
         $this->assertEquals('-test', $match->compile()->getCompiled());
 
-        $match = Match::create(self::$sphinxql)
+        $match = $this->createMatch()
             ->not('test');
         $this->assertEquals('-test', $match->compile()->getCompiled());
     }
 
     public function testField()
     {
-        $match = Match::create(self::$sphinxql)
+        $match = $this->createMatch()
             ->field('*')
             ->match('test');
         $this->assertEquals('@* test', $match->compile()->getCompiled());
 
-        $match = Match::create(self::$sphinxql)
+        $match = $this->createMatch()
             ->field('title')
             ->match('test');
         $this->assertEquals('@title test', $match->compile()->getCompiled());
 
-        $match = Match::create(self::$sphinxql)
+        $match = $this->createMatch()
             ->field('body', 50)
             ->match('test');
         $this->assertEquals('@body[50] test', $match->compile()->getCompiled());
 
-        $match = Match::create(self::$sphinxql)
+        $match = $this->createMatch()
             ->field('title', 'body')
             ->match('test');
         $this->assertEquals('@(title,body) test', $match->compile()->getCompiled());
 
-        $match = Match::create(self::$sphinxql)
+        $match = $this->createMatch()
             ->field(array('title', 'body'))
             ->match('test');
         $this->assertEquals('@(title,body) test', $match->compile()->getCompiled());
 
-        $match = Match::create(self::$sphinxql)
+        $match = $this->createMatch()
             ->field('@relaxed')
             ->field('nosuchfield')
             ->match('test');
@@ -118,17 +126,17 @@ class MatchTest extends \PHPUnit\Framework\TestCase
 
     public function testIgnoreField()
     {
-        $match = Match::create(self::$sphinxql)
+        $match = $this->createMatch()
             ->ignoreField('title')
             ->match('test');
         $this->assertEquals('@!title test', $match->compile()->getCompiled());
 
-        $match = Match::create(self::$sphinxql)
+        $match = $this->createMatch()
             ->ignoreField('title', 'body')
             ->match('test');
         $this->assertEquals('@!(title,body) test', $match->compile()->getCompiled());
 
-        $match = Match::create(self::$sphinxql)
+        $match = $this->createMatch()
             ->ignoreField(array('title', 'body'))
             ->match('test');
         $this->assertEquals('@!(title,body) test', $match->compile()->getCompiled());
@@ -136,44 +144,44 @@ class MatchTest extends \PHPUnit\Framework\TestCase
 
     public function testPhrase()
     {
-        $match = Match::create(self::$sphinxql)
+        $match = $this->createMatch()
             ->phrase('test case');
         $this->assertEquals('"test case"', $match->compile()->getCompiled());
     }
 
     public function testOrPhrase()
     {
-        $match = Match::create(self::$sphinxql)
+        $match = $this->createMatch()
             ->phrase('test case')->orPhrase('another case');
         $this->assertEquals('"test case" | "another case"', $match->compile()->getCompiled());
     }
 
     public function testProximity()
     {
-        $match = Match::create(self::$sphinxql)
+        $match = $this->createMatch()
             ->proximity('test case', 5);
         $this->assertEquals('"test case"~5', $match->compile()->getCompiled());
     }
 
     public function testQuorum()
     {
-        $match = Match::create(self::$sphinxql)
+        $match = $this->createMatch()
             ->quorum('this is a test case', 3);
         $this->assertEquals('"this is a test case"/3', $match->compile()->getCompiled());
 
-        $match = Match::create(self::$sphinxql)
+        $match = $this->createMatch()
             ->quorum('this is a test case', 0.5);
         $this->assertEquals('"this is a test case"/0.5', $match->compile()->getCompiled());
     }
 
     public function testBefore()
     {
-        $match = Match::create(self::$sphinxql)
+        $match = $this->createMatch()
             ->match('test')
             ->before();
         $this->assertEquals('test <<', $match->compile()->getCompiled());
 
-        $match = Match::create(self::$sphinxql)
+        $match = $this->createMatch()
             ->match('test')
             ->before('case');
         $this->assertEquals('test << case', $match->compile()->getCompiled());
@@ -181,12 +189,12 @@ class MatchTest extends \PHPUnit\Framework\TestCase
 
     public function testExact()
     {
-        $match = Match::create(self::$sphinxql)
+        $match = $this->createMatch()
             ->match('test')
             ->exact('cases');
         $this->assertEquals('test =cases', $match->compile()->getCompiled());
 
-        $match = Match::create(self::$sphinxql)
+        $match = $this->createMatch()
             ->match('test')
             ->exact()
             ->phrase('specific cases');
@@ -195,12 +203,12 @@ class MatchTest extends \PHPUnit\Framework\TestCase
 
     public function testBoost()
     {
-        $match = Match::create(self::$sphinxql)
+        $match = $this->createMatch()
             ->match('test')
             ->boost(1.2);
         $this->assertEquals('test^1.2', $match->compile()->getCompiled());
 
-        $match = Match::create(self::$sphinxql)
+        $match = $this->createMatch()
             ->match('test')
             ->boost('case', 1.2);
         $this->assertEquals('test case^1.2', $match->compile()->getCompiled());
@@ -208,12 +216,12 @@ class MatchTest extends \PHPUnit\Framework\TestCase
 
     public function testNear()
     {
-        $match = Match::create(self::$sphinxql)
+        $match = $this->createMatch()
             ->match('test')
             ->near(3);
         $this->assertEquals('test NEAR/3', $match->compile()->getCompiled());
 
-        $match = Match::create(self::$sphinxql)
+        $match = $this->createMatch()
             ->match('test')
             ->near('case', 3);
         $this->assertEquals('test NEAR/3 case', $match->compile()->getCompiled());
@@ -221,12 +229,12 @@ class MatchTest extends \PHPUnit\Framework\TestCase
 
     public function testSentence()
     {
-        $match = Match::create(self::$sphinxql)
+        $match = $this->createMatch()
             ->match('test')
             ->sentence();
         $this->assertEquals('test SENTENCE', $match->compile()->getCompiled());
 
-        $match = Match::create(self::$sphinxql)
+        $match = $this->createMatch()
             ->match('test')
             ->sentence('case');
         $this->assertEquals('test SENTENCE case', $match->compile()->getCompiled());
@@ -234,12 +242,12 @@ class MatchTest extends \PHPUnit\Framework\TestCase
 
     public function testParagraph()
     {
-        $match = Match::create(self::$sphinxql)
+        $match = $this->createMatch()
             ->match('test')
             ->paragraph();
         $this->assertEquals('test PARAGRAPH', $match->compile()->getCompiled());
 
-        $match = Match::create(self::$sphinxql)
+        $match = $this->createMatch()
             ->match('test')
             ->paragraph('case');
         $this->assertEquals('test PARAGRAPH case', $match->compile()->getCompiled());
@@ -247,33 +255,33 @@ class MatchTest extends \PHPUnit\Framework\TestCase
 
     public function testZone()
     {
-        $match = Match::create(self::$sphinxql)
+        $match = $this->createMatch()
             ->zone('th');
         $this->assertEquals('ZONE:(th)', $match->compile()->getCompiled());
 
-        $match = Match::create(self::$sphinxql)
+        $match = $this->createMatch()
             ->zone(array('h3', 'h4'));
         $this->assertEquals('ZONE:(h3,h4)', $match->compile()->getCompiled());
 
-        $match = Match::create(self::$sphinxql)
+        $match = $this->createMatch()
             ->zone('th', 'test');
         $this->assertEquals('ZONE:(th) test', $match->compile()->getCompiled());
     }
 
     public function testZonespan()
     {
-        $match = Match::create(self::$sphinxql)
+        $match = $this->createMatch()
             ->zonespan('th');
         $this->assertEquals('ZONESPAN:(th)', $match->compile()->getCompiled());
 
-        $match = Match::create(self::$sphinxql)
+        $match = $this->createMatch()
             ->zonespan('th', 'test');
         $this->assertEquals('ZONESPAN:(th) test', $match->compile()->getCompiled());
     }
 
     public function testCompile()
     {
-        $match = Match::create(self::$sphinxql)
+        $match = $this->createMatch()
             ->phrase('hello world')
             ->field('title')
             ->proximity('example program', 5)
@@ -287,7 +295,7 @@ class MatchTest extends \PHPUnit\Framework\TestCase
             ->match('code');
         $this->assertEquals('"hello world" @title "example program"~5 @body python -(php | perl) @* code', $match->compile()->getCompiled());
 
-        $match = Match::create(self::$sphinxql)
+        $match = $this->createMatch()
             ->match('bag of words')
             ->before()
             ->phrase('exact phrase')
@@ -296,7 +304,7 @@ class MatchTest extends \PHPUnit\Framework\TestCase
             ->orMatch('blue');
         $this->assertEquals('(bag of words) << "exact phrase" << red | green | blue', $match->compile()->getCompiled());
 
-        $match = Match::create(self::$sphinxql)
+        $match = $this->createMatch()
             ->match('aaa')
             ->not(function ($m) {
                 $m->match('bbb')
@@ -308,7 +316,7 @@ class MatchTest extends \PHPUnit\Framework\TestCase
     // issue #82
     public function testClosureMisuse()
     {
-        $match = Match::create(self::$sphinxql)
+        $match = $this->createMatch()
             ->match('strlen');
         $this->assertEquals('strlen', $match->compile()->getCompiled());
     }

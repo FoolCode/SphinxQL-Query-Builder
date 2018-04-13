@@ -18,7 +18,7 @@ __This package is BETA QUALITY.__ It is recommended that you do extensive testin
 
 SphinxQL evolves very fast.
 
-Most of the new functions are static one liners like `SHOW PLUGINS`. We'll avoid trying to keep up with these methods, as they are easy to just call directly (`SphinxQL::create($conn)->query($sql)->execute()`). You're free to submit pull requests to support these methods.
+Most of the new functions are static one liners like `SHOW PLUGINS`. We'll avoid trying to keep up with these methods, as they are easy to just call directly (`(new SphinxQL($conn))->query($sql)->execute()`). You're free to submit pull requests to support these methods.
 
 If any feature is unreachable through this library, open a new issue or send a pull request.
 
@@ -67,7 +67,7 @@ use Foolz\SphinxQL\Connection;
 $conn = new Connection();
 $conn->setParams(array('host' => 'domain.tld', 'port' => 9306));
 
-$query = SphinxQL::create($conn)->select('column_one', 'colume_two')
+$query = (new SphinxQL($conn))->select('column_one', 'colume_two')
     ->from('index_ancient', 'index_main', 'index_delta')
     ->match('comment', 'my opinion is superior to yours')
     ->where('banned', '=', 1);
@@ -98,7 +98,7 @@ _More methods are available in the Connection class, but usually not necessary a
 
 ### SphinxQL
 
-* __SphinxQL::create($conn)__
+* __new SphinxQL($conn)__
 
 	Creates a SphinxQL instance used for generating queries.
 
@@ -138,7 +138,7 @@ There are cases when an input __must__ be escaped in the SQL statement. The foll
 
 #### SELECT
 
-* __$sq = SphinxQL::create($conn)->select($column1, $column2, ...)->from($index1, $index2, ...)__
+* __$sq = (new SphinxQL($conn))->select($column1, $column2, ...)->from($index1, $index2, ...)__
 
 	Begins a `SELECT` query statement. If no column is specified, the statement defaults to using `*`. Both `$column1` and `$index1` can be arrays.
 
@@ -146,11 +146,11 @@ There are cases when an input __must__ be escaped in the SQL statement. The foll
 
 This will return an `INT` with the number of rows affected.
 
-* __$sq = SphinxQL::create($conn)->insert()->into($index)__
+* __$sq = (new SphinxQL($conn))->insert()->into($index)__
 
 	Begins an `INSERT`.
 
-* __$sq = SphinxQL::create($conn)->replace()->into($index)__
+* __$sq = (new SphinxQL($conn))->replace()->into($index)__
 
 	Begins an `REPLACE`.
 
@@ -172,7 +172,7 @@ This will return an `INT` with the number of rows affected.
 
 This will return an `INT` with the number of rows affected.
 
-* __$sq = SphinxQL::create($conn)->update($index)__
+* __$sq = (new SphinxQL($conn))->update($index)__
 
 	Begins an `UPDATE`.
 
@@ -188,7 +188,7 @@ This will return an `INT` with the number of rows affected.
 
 Will return an array with an `INT` as first member, the number of rows deleted.
 
-* __$sq = SphinxQL::create($conn)->delete()->from($index)->where(...)__
+* __$sq = (new SphinxQL($conn))->delete()->from($index)->where(...)__
 
 	Begins a `DELETE`.
 
@@ -243,7 +243,8 @@ Will return an array with an `INT` as first member, the number of rows deleted.
     <?php
     try
     {
-        $result = SphinxQL::create($conn)->select()
+        $result = (new SphinxQL($conn))
+            ->select()
             ->from('rt')
             ->match('title', 'Sora no || Otoshimono', true)
             ->match('title', SphinxQL::expr('"Otoshimono"/3'))
@@ -296,15 +297,15 @@ Will return an array with an `INT` as first member, the number of rows deleted.
 
 #### TRANSACTION
 
-* __SphinxQL::create($conn)->transactionBegin()__
+* __(new SphinxQL($conn))->transactionBegin()__
 
 	Begins a transaction.
 
-* __SphinxQL::create($conn)->transactionCommit()__
+* __(new SphinxQL($conn))->transactionCommit()__
 
 	Commits a transaction.
 
-* __SphinxQL::create($conn)->transactionRollback()__
+* __(new SphinxQL($conn))->transactionRollback()__
 
 	Rollbacks a transaction.
 
@@ -342,11 +343,11 @@ Will return an array with an `INT` as first member, the number of rows deleted.
 
 ```php
 <?php
-$result = SphinxQL::create($this->conn)
+$result = (new SphinxQL($this->conn))
     ->select()
     ->from('rt')
     ->match('title', 'sora')
-    ->enqueue(SphinxQL::create($this->conn)->query('SHOW META')) // this returns the object with SHOW META query
+    ->enqueue((new SphinxQL($this->conn))->query('SHOW META')) // this returns the object with SHOW META query
     ->enqueue() // this returns a new object
     ->select()
     ->from('rt')
@@ -406,11 +407,11 @@ The following methods return a prepared `SphinxQL` object. You can also use `->e
 
 ```php
 <?php
-$result = SphinxQL::create($this->conn)
+$result = (new SphinxQL($this->conn))
     ->select()
     ->from('rt')
     ->where('gid', 9003)
-    ->enqueue(Helper::create($this->conn)->showMeta()) // this returns the object with SHOW META query prepared
+    ->enqueue((new Helper($this->conn))->showMeta()) // this returns the object with SHOW META query prepared
     ->enqueue() // this returns a new object
     ->select()
     ->from('rt')
@@ -418,19 +419,19 @@ $result = SphinxQL::create($this->conn)
     ->executeBatch();
 ```
 
-* `Helper::create($conn)->showMeta() => 'SHOW META'`
-* `Helper::create($conn)->showWarnings() => 'SHOW WARNINGS'`
-* `Helper::create($conn)->showStatus() => 'SHOW STATUS'`
-* `Helper::create($conn)->showTables() => 'SHOW TABLES'`
-* `Helper::create($conn)->showVariables() => 'SHOW VARIABLES'`
-* `Helper::create($conn)->setVariable($name, $value, $global = false)`
-* `Helper::create($conn)->callSnippets($data, $index, $query, $options = array())`
-* `Helper::create($conn)->callKeywords($text, $index, $hits = null)`
-* `Helper::create($conn)->describe($index)`
-* `Helper::create($conn)->createFunction($udf_name, $returns, $soname)`
-* `Helper::create($conn)->dropFunction($udf_name)`
-* `Helper::create($conn)->attachIndex($disk_index, $rt_index)`
-* `Helper::create($conn)->flushRtIndex($index)`
-* `Helper::create($conn)->optimizeIndex($index)`
-* `Helper::create($conn)->showIndexStatus($index)`
-* `Helper::create($conn)->flushRamchunk($index)`
+* `(new Helper($conn))->showMeta() => 'SHOW META'`
+* `(new Helper($conn))->showWarnings() => 'SHOW WARNINGS'`
+* `(new Helper($conn))->showStatus() => 'SHOW STATUS'`
+* `(new Helper($conn))->showTables() => 'SHOW TABLES'`
+* `(new Helper($conn))->showVariables() => 'SHOW VARIABLES'`
+* `(new Helper($conn))->setVariable($name, $value, $global = false)`
+* `(new Helper($conn))->callSnippets($data, $index, $query, $options = array())`
+* `(new Helper($conn))->callKeywords($text, $index, $hits = null)`
+* `(new Helper($conn))->describe($index)`
+* `(new Helper($conn))->createFunction($udf_name, $returns, $soname)`
+* `(new Helper($conn))->dropFunction($udf_name)`
+* `(new Helper($conn))->attachIndex($disk_index, $rt_index)`
+* `(new Helper($conn))->flushRtIndex($index)`
+* `(new Helper($conn))->optimizeIndex($index)`
+* `(new Helper($conn))->showIndexStatus($index)`
+* `(new Helper($conn))->flushRamchunk($index)`

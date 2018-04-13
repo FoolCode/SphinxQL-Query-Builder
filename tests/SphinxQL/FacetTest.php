@@ -37,33 +37,41 @@ class FacetTest  extends \PHPUnit\Framework\TestCase
         self::$conn = $conn;
     }
 
+    /**
+     * @return Facet
+     */
+    protected function createFacet()
+    {
+        return new Facet(self::$conn);
+    }
+
     public function testFacet()
     {
-        $facet = Facet::create(self::$conn)
+        $facet = $this->createFacet()
             ->facet(array('gid'))
             ->getFacet();
 
         $this->assertEquals('FACET gid', $facet);
 
-        $facet = Facet::create(self::$conn)
+        $facet = $this->createFacet()
             ->facet(array('gid', 'title', 'content'))
             ->getFacet();
 
         $this->assertEquals('FACET gid, title, content', $facet);
 
-        $facet = Facet::create(self::$conn)
+        $facet = $this->createFacet()
             ->facet('gid', 'title', 'content')
             ->getFacet();
 
         $this->assertEquals('FACET gid, title, content', $facet);
 
-        $facet = Facet::create(self::$conn)
+        $facet = $this->createFacet()
             ->facet(array('aliAS' => 'gid'))
             ->getFacet();
 
         $this->assertEquals('FACET gid AS aliAS', $facet);
 
-        $facet = Facet::create(self::$conn)
+        $facet = $this->createFacet()
             ->facet(array('gid', 'name' => 'title', 'content'))
             ->getFacet();
 
@@ -80,13 +88,13 @@ class FacetTest  extends \PHPUnit\Framework\TestCase
 
     public function testFacetFunction()
     {
-        $facet = Facet::create(self::$conn)
+        $facet = $this->createFacet()
             ->facetFunction('INTERVAL', array('price', 200, 400, 600, 800))
             ->getFacet();
 
         $this->assertEquals('FACET INTERVAL(price,200,400,600,800)', $facet);
 
-        $facet = Facet::create(self::$conn)
+        $facet = $this->createFacet()
             ->facetFunction('COUNT', 'gid')
             ->getFacet();
 
@@ -95,7 +103,7 @@ class FacetTest  extends \PHPUnit\Framework\TestCase
 
     public function testBy()
     {
-        $facet = Facet::create(self::$conn)
+        $facet = $this->createFacet()
             ->facet(array('gid', 'title', 'content'))
             ->by('gid')
             ->getFacet();
@@ -105,14 +113,14 @@ class FacetTest  extends \PHPUnit\Framework\TestCase
 
     public function testOrderBy()
     {
-        $facet = Facet::create(self::$conn)
+        $facet = $this->createFacet()
             ->facet(array('gid', 'title'))
             ->orderBy('gid', 'DESC')
             ->getFacet();
 
         $this->assertEquals('FACET gid, title ORDER BY gid DESC', $facet);
 
-        $facet = Facet::create(self::$conn)
+        $facet = $this->createFacet()
             ->facet(array('gid', 'content'))
             ->orderBy('gid', 'ASC')
             ->orderBy('content', 'DESC')
@@ -123,7 +131,7 @@ class FacetTest  extends \PHPUnit\Framework\TestCase
 
     public function testOrderByFunction()
     {
-        $facet = Facet::create(self::$conn)
+        $facet = $this->createFacet()
             ->facet(array('gid', 'title'))
             ->orderByFunction('COUNT','*', 'DESC')
             ->getFacet();
@@ -133,7 +141,7 @@ class FacetTest  extends \PHPUnit\Framework\TestCase
 
     public function testLimit()
     {
-        $facet = Facet::create(self::$conn)
+        $facet = $this->createFacet()
             ->facet(array('gid', 'title'))
             ->orderByFunction('COUNT', '*', 'DESC')
             ->limit(5, 5)

@@ -216,23 +216,10 @@ class SphinxQL
 
     /**
      * @param ConnectionInterface|null $connection
-     * @param bool                     $static
      */
-    public function __construct(ConnectionInterface $connection = null, $static = false)
+    public function __construct(ConnectionInterface $connection = null)
     {
         $this->connection = $connection;
-    }
-
-    /**
-     * Creates and setups a SphinxQL object
-     *
-     * @param ConnectionInterface $connection
-     *
-     * @return static
-     */
-    public static function create(ConnectionInterface $connection)
-    {
-        return new static($connection);
     }
 
     /**
@@ -255,6 +242,7 @@ class SphinxQL
      * @param string $string The string to keep unaltered
      *
      * @return Expression The new Expression
+     * @todo make non static
      */
     public static function expr($string = '')
     {

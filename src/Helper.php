@@ -24,23 +24,13 @@ class Helper
     }
 
     /**
-     * @param ConnectionInterface $connection
-     *
-     * @return static
-     */
-    public static function create(ConnectionInterface $connection)
-    {
-        return new static($connection);
-    }
-
-    /**
      * Returns a new SphinxQL instance
      *
      * @return SphinxQL
      */
     protected function getSphinxQL()
     {
-        return SphinxQL::create($this->connection);
+        return new SphinxQL($this->connection);
     }
 
     /**
@@ -61,6 +51,7 @@ class Helper
      * @param array $result The result of an executed query
      *
      * @return array Associative array with Variable_name as key and Value as value
+     * @todo make non static
      */
     public static function pairsToAssoc($result)
     {

@@ -34,7 +34,7 @@ class MultiResultSetAdapter implements \Foolz\SphinxQL\Drivers\MultiResultSetAda
      */
     public function current()
     {
-        return ResultSet::make($this->statement);
+        return new ResultSet($this->statement);
     }
 
     /**

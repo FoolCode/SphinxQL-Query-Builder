@@ -63,24 +63,10 @@ class Facet
 
     /**
      * @param ConnectionInterface|null $connection
-     * @param bool                     $static
      */
-    public function __construct(ConnectionInterface $connection = null, $static = false)
+    public function __construct(ConnectionInterface $connection = null)
     {
         $this->connection = $connection;
-    }
-
-    /**
-     * Creates and setups a Facet object
-     * The connection is required only in case this is not to be passed to a SphinxQL object via $sq->facet()
-     *
-     * @param ConnectionInterface|null $connection
-     *
-     * @return static
-     */
-    public static function create(ConnectionInterface $connection = null)
-    {
-        return new static($connection);
     }
 
     /**

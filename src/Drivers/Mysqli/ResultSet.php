@@ -18,27 +18,15 @@ class ResultSet extends ResultSetBase
     protected $result;
 
     /**
-     * @param ResultSetAdapter $adapter
      * @param Connection $connection
      * @param null|\mysqli_result $result
      */
-    public function __construct(ResultSetAdapter $adapter, Connection $connection, $result = null)
+    public function __construct(Connection $connection, $result = null)
     {
         $this->connection = $connection;
-        $this->adapter = $adapter;
+        $this->adapter = new ResultSetAdapter($connection, $result);
         $this->result = $result;
         $this->init();
-    }
-
-    /**
-     * @param Connection $connection
-     * @param null|\mysqli_result $result
-     * @return ResultSet
-     */
-    public static function make(Connection $connection, $result = null)
-    {
-        $adapter = new ResultSetAdapter($connection, $result);
-        return new ResultSet($adapter, $connection, $result);
     }
 
     /**

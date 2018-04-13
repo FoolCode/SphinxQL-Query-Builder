@@ -36,14 +36,23 @@ class ResultSetTest extends \PHPUnit\Framework\TestCase
         $conn->setParam('port', 9307);
         self::$conn = $conn;
 
-        SphinxQL::create(self::$conn)->getConnection()->query('TRUNCATE RTINDEX rt');
+        (new SphinxQL(self::$conn))->getConnection()->query('TRUNCATE RTINDEX rt');
+    }
+
+    /**
+     * @return SphinxQL
+     */
+    protected function createSphinxQL()
+    {
+        return new SphinxQL(self::$conn);
     }
 
     public function refill()
     {
-        SphinxQL::create(self::$conn)->getConnection()->query('TRUNCATE RTINDEX rt');
+        $this->createSphinxQL()->getConnection()->query('TRUNCATE RTINDEX rt');
 
-        $sq = SphinxQL::create(self::$conn)->insert()
+        $sq = $this->createSphinxQL()
+            ->insert()
             ->into('rt')
             ->columns('id', 'gid', 'title', 'content');
 

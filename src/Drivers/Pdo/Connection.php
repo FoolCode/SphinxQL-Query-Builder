@@ -47,8 +47,7 @@ class Connection extends ConnectionBase
     }
 
     /**
-     * @return bool
-     * @throws ConnectionException
+     * @inheritdoc
      */
     public function connect($suppress_error = false)
     {

@@ -21,13 +21,13 @@ matrix:
 before_install:
   - mkdir $HOME/search
   - pushd $HOME/search
-  - $HOME/tests/install.sh
+  - $TRAVIS_BUILD_DIR/tests/install.sh
   - popd
 
 before_script:
   - composer dump-autoload
   - cd tests
   - gcc -shared -o data/test_udf.so test_udf.c
-  - $HOME/tests/run.sh
+  - $TRAVIS_BUILD_DIR/tests/run.sh
 
 script: phpunit --configuration travis/$DRIVER.phpunit.xml --coverage-text

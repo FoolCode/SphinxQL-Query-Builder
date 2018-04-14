@@ -27,7 +27,6 @@ before_install:
 before_script:
   - composer dump-autoload
   - cd tests
-  - gcc -shared -o data/test_udf.so test_udf.c
   - $TRAVIS_BUILD_DIR/tests/run.sh
 
 script: phpunit --configuration travis/$DRIVER.phpunit.xml --coverage-text

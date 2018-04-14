@@ -8,28 +8,25 @@ php:
   - 7.1
 
 env:
-  - DRIVER=mysqli SPHINXSEARCH_BUILD=rel22
-  - DRIVER=mysqli SPHINXSEARCH_BUILD=beta
-  - DRIVER=pdo SPHINXSEARCH_BUILD=rel22
-  - DRIVER=pdo SPHINXSEARCH_BUILD=beta
+  - DRIVER=mysqli SEARCH_BUILD=SPHINX2
+  - DRIVER=mysqli SEARCH_BUILD=SPHINX3
+  - DRIVER=mysqli SEARCH_BUILD=MANTICORE
+  - DRIVER=pdo SEARCH_BUILD=SPHINX2
+  - DRIVER=pdo SEARCH_BUILD=SPHINX3
+  - DRIVER=pdo SEARCH_BUILD=MANTICORE
 
 matrix:
   fast_finish: true
 
 before_install:
-  - mkdir $HOME/sphinx
-  - pushd $HOME/sphinx
-  - wget --quiet http://ppa.launchpad.net/builds/sphinxsearch-${SPHINXSEARCH_BUILD}/ubuntu/dists/`lsb_release -cs`/main/binary-amd64/Packages.gz
-  - gzip -d Packages.gz
-  - SPHINX_DEB=`grep -m1 Filename Packages | cut -f2 -d' '`
-  - wget --quiet -O sphinxsearch.deb http://ppa.launchpad.net/builds/sphinxsearch-${SPHINXSEARCH_BUILD}/ubuntu/${SPHINX_DEB}
-  - dpkg -x sphinxsearch.deb .
+  - mkdir $HOME/search
+  - pushd $HOME/search
+  - $TRAVIS_BUILD_DIR/tests/install.sh
   - popd
 
 before_script:
   - composer dump-autoload
   - cd tests
-  - gcc -shared -o data/test_udf.so test_udf.c
-  - $HOME/sphinx/usr/bin/searchd -c sphinx.conf
+  - $TRAVIS_BUILD_DIR/tests/run.sh
 
 script: phpunit --configuration travis/$DRIVER.phpunit.xml --coverage-text

@@ -14,6 +14,6 @@ case $SEARCH_BUILD in
     ;;
   MANITCORE)
     wget --quiet -O search.deb https://github.com/manticoresoftware/manticoresearch/releases/download/2.6.3/manticore_2.6.3-180328-cccb538-release-stemmer.trusty_amd64-bin.deb
-    dpkg -x search.deb .
+    dpkg -i search.deb
     ;;
 esac

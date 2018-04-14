@@ -12,6 +12,7 @@ case $SEARCH_BUILD in
     $HOME/search/sphinx-3.0.3/bin/searchd -c sphinx.conf
     ;;
   MANTICORE)
-    $HOME/search/usr/bin/searchd -c sphinx.conf
+    $WORK=$HOME/search
+    searchd -c sphinx.conf
     ;;
 esac

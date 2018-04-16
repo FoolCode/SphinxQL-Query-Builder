@@ -62,10 +62,6 @@ class Connection extends ConnectionBase
         try {
             $con = new \Pdo($dsn);
         } catch (\PDOException $exception) {
-            if (!$this->silence_connection_warning) {
-                trigger_error('connection error', E_USER_WARNING);
-            }
-
             throw new ConnectionException($exception->getMessage());
         }
 

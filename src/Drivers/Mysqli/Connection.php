@@ -45,15 +45,13 @@ class Connection extends ConnectionBase
             }
         }
 
-        if (!$this->silence_connection_warning) {
-            $conn->real_connect($data['host'], null, null, null, (int) $data['port'], $data['socket']);
-        } else {
-            @ $conn->real_connect($data['host'], null, null, null, (int) $data['port'], $data['socket']);
-        }
-
-        if ($conn->connect_error) {
-            throw new ConnectionException('Connection Error: ['.$conn->connect_errno.']'
-                .$conn->connect_error);
+        set_error_handler(function () {});
+        try {
+            if (!$conn->real_connect($data['host'], null, null, null, (int) $data['port'], $data['socket'])) {
+                throw new ConnectionException('Connection Error: ['.$conn->connect_errno.']'.$conn->connect_error);
+            }
+        } finally {
+            restore_error_handler();
         }
 
         $conn->set_charset('utf8');

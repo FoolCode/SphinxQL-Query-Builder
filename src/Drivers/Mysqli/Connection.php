@@ -65,7 +65,7 @@ class Connection extends ConnectionBase
     /**
      * Pings the Sphinx server.
      *
-     * @return boolean True if connected, false otherwise
+     * @return bool True if connected, false otherwise
      */
     public function ping()
     {

@@ -935,9 +935,9 @@ class SphinxQL
     /**
      * MATCH clause (Sphinx-specific)
      *
-     * @param mixed    $column The column name (can be array, string, Closure, or Match)
-     * @param string   $value  The value
-     * @param boolean  $half  Exclude ", |, - control characters from being escaped
+     * @param mixed  $column The column name (can be array, string, Closure, or Match)
+     * @param string $value  The value
+     * @param bool   $half  Exclude ", |, - control characters from being escaped
      *
      * @return $this
      */

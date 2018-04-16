@@ -116,9 +116,9 @@ class Helper
     /**
      * SET syntax
      *
-     * @param string  $name   The name of the variable
-     * @param mixed   $value  The value of the variable
-     * @param boolean $global True if the variable should be global, false otherwise
+     * @param string $name   The name of the variable
+     * @param mixed  $value  The value of the variable
+     * @param bool   $global True if the variable should be global, false otherwise
      *
      * @return SphinxQL A SphinxQL object ready to be ->execute();
      */

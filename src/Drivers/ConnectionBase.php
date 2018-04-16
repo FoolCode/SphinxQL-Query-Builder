@@ -21,7 +21,7 @@ abstract class ConnectionBase implements ConnectionInterface
     /**
      * Disables any warning outputs returned on the connection with @ prefix.
      *
-     * @var boolean
+     * @var bool
      */
     protected $silence_connection_warning = false;
 
@@ -172,7 +172,7 @@ abstract class ConnectionBase implements ConnectionInterface
      * Forces the connection to suppress all errors returned. This should only be used
      * when the production server is running with high error reporting settings.
      *
-     * @param boolean $enable True if it should be enabled, false if it should be disabled
+     * @param bool $enable True if it should be enabled, false if it should be disabled
      * @deprecated
      * not good
      */

@@ -21,6 +21,9 @@ class MultiResultSetAdapter implements MultiResultSetAdapterInterface
         $this->statement = $statement;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getNext()
     {
         if (
@@ -32,7 +35,7 @@ class MultiResultSetAdapter implements MultiResultSetAdapterInterface
     }
 
     /**
-     * @return ResultSet
+     * @inheritdoc
      */
     public function current()
     {
@@ -40,7 +43,7 @@ class MultiResultSetAdapter implements MultiResultSetAdapterInterface
     }
 
     /**
-     * @return bool
+     * @inheritdoc
      */
     public function valid()
     {

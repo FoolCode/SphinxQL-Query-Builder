@@ -33,7 +33,7 @@ class ResultSetAdapter implements ResultSetAdapterInterface
     }
 
     /**
-     * @return mixed
+     * @inheritdoc
      * @throws ConnectionException
      */
     public function getAffectedRows()
@@ -42,7 +42,7 @@ class ResultSetAdapter implements ResultSetAdapterInterface
     }
 
     /**
-     * @return int
+     * @inheritdoc
      */
     public function getNumRows()
     {
@@ -50,7 +50,7 @@ class ResultSetAdapter implements ResultSetAdapterInterface
     }
 
     /**
-     * @return array
+     * @inheritdoc
      */
     public function getFields()
     {
@@ -58,7 +58,7 @@ class ResultSetAdapter implements ResultSetAdapterInterface
     }
 
     /**
-     * @return bool
+     * @inheritdoc
      */
     public function isDml()
     {
@@ -66,7 +66,7 @@ class ResultSetAdapter implements ResultSetAdapterInterface
     }
 
     /**
-     * @return mixed
+     * @inheritdoc
      */
     public function store()
     {
@@ -75,32 +75,40 @@ class ResultSetAdapter implements ResultSetAdapterInterface
     }
 
     /**
-     * @param int $num
+     * @inheritdoc
      */
     public function toRow($num)
     {
         $this->result->data_seek($num);
     }
 
+    /**
+     * @inheritdoc
+     */
     public function freeResult()
     {
         $this->result->free_result();
     }
 
+    /**
+     * @inheritdoc
+     */
     public function rewind()
     {
         $this->valid = true;
         $this->result->data_seek(0);
     }
 
+    /**
+     * @inheritdoc
+     */
     public function valid()
     {
         return $this->valid;
     }
 
     /**
-     * @param self::FETCH_ASSOC|self::FETCH_NUM $fetch_type
-     * @return array|null
+     * @inheritdoc
      */
     public function fetch($fetch_type)
     {
@@ -118,8 +126,7 @@ class ResultSetAdapter implements ResultSetAdapterInterface
     }
 
     /**
-     * @param self::FETCH_ASSOC|self::FETCH_NUM $fetch_type
-     * @return array
+     * @inheritdoc
      */
     public function fetchAll($fetch_type)
     {

@@ -52,9 +52,9 @@ interface ConnectionInterface
     /**
      * Calls $this->quote() on every element of the array passed.
      *
-     * @param array $array The array of strings to quote
+     * @param array $array The array of elements to quote
      *
-     * @return array The array of quotes strings
+     * @return array The array of quotes elements
      */
     public function quoteArr(Array $array = array());
 }

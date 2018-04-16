@@ -94,11 +94,7 @@ abstract class ConnectionBase implements ConnectionInterface
     /**
      * Adds quotes around values when necessary.
      * Based on FuelPHP's quoting function.
-     *
-     * @param Expression|string|null|bool|array|int|float $value The input string, eventually wrapped in an expression
-     *      to leave it untouched
-     *
-     * @return Expression|string|int The untouched Expression or the quoted string
+     * @inheritdoc
      */
     public function quote($value)
     {
@@ -125,11 +121,7 @@ abstract class ConnectionBase implements ConnectionInterface
     }
 
     /**
-     * Calls $this->quote() on every element of the array passed.
-     *
-     * @param array $array The array of strings to quote
-     *
-     * @return array The array of quotes strings
+     * @inheritdoc
      */
     public function quoteArr(Array $array = array())
     {

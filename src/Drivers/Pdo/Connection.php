@@ -10,12 +10,7 @@ use Foolz\SphinxQL\Exception\SphinxQLException;
 class Connection extends ConnectionBase
 {
     /**
-     * Performs a query on the Sphinx server.
-     *
-     * @param string $query The query string
-     *
-     * @throws DatabaseException
-     * @return array|int The result array or number of rows affected
+     * @inheritdoc
      */
     public function query($query)
     {
@@ -79,10 +74,7 @@ class Connection extends ConnectionBase
     }
 
     /**
-     * @param array $queue
-     * @return MultiResultSet
-     * @throws DatabaseException
-     * @throws SphinxQLException
+     * @inheritdoc
      */
     public function multiQuery(array $queue)
     {
@@ -102,8 +94,7 @@ class Connection extends ConnectionBase
     }
 
     /**
-     * @param string $value
-     * @return string
+     * @inheritdoc
      */
     public function escape($value)
     {

@@ -23,6 +23,7 @@ class MultiResultSetAdapter implements MultiResultSetAdapterInterface
     }
 
     /**
+     * @inheritdoc
      * @throws ConnectionException
      */
     public function getNext()
@@ -38,7 +39,7 @@ class MultiResultSetAdapter implements MultiResultSetAdapterInterface
     }
 
     /**
-     * @return ResultSet
+     * @inheritdoc
      * @throws ConnectionException
      */
     public function current()
@@ -47,7 +48,7 @@ class MultiResultSetAdapter implements MultiResultSetAdapterInterface
     }
 
     /**
-     * @return bool
+     * @inheritdoc
      * @throws ConnectionException
      */
     public function valid()

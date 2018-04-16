@@ -2,6 +2,8 @@
 
 namespace Foolz\SphinxQL\Drivers;
 
+use Foolz\SphinxQL\Exception\ResultSetException;
+
 interface ResultSetInterface extends \ArrayAccess, \Iterator, \Countable
 {
     /**
@@ -24,6 +26,7 @@ interface ResultSetInterface extends \ArrayAccess, \Iterator, \Countable
      *
      * @param int $row The row to move the cursor to
      * @return $this
+     * @throws ResultSetException If the row does not exist
      */
     public function toRow($row);
 
@@ -38,11 +41,13 @@ interface ResultSetInterface extends \ArrayAccess, \Iterator, \Countable
      * Moves the cursor to the next row
      *
      * @return $this
+     * @throws ResultSetException If the next row does not exist
      */
     public function toNextRow();
 
     /**
      * Returns the number of affected rows
+     * This will be 0 for SELECT and any query not editing rows
      *
      * @return int
      */
@@ -72,19 +77,20 @@ interface ResultSetInterface extends \ArrayAccess, \Iterator, \Countable
     /**
      * Fetches all the rows the cursor points to as an associative array
      *
-     * @return array An associative array representing the row
+     * @return array|null An associative array representing the row
      */
     public function fetchAssoc();
 
     /**
      * Fetches all the rows the cursor points to as an indexed array
      *
-     * @return array An indexed array representing the row
+     * @return array|null An indexed array representing the row
      */
     public function fetchNum();
 
     /**
      * Frees the database from the result
+     * Call it after you're done with a result set
      *
      * @return $this
      */

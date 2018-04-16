@@ -24,7 +24,7 @@ class ResultSetAdapter implements ResultSetAdapterInterface
     }
 
     /**
-     * @return int
+     * @inheritdoc
      */
     public function getAffectedRows()
     {
@@ -32,7 +32,7 @@ class ResultSetAdapter implements ResultSetAdapterInterface
     }
 
     /**
-     * @return int
+     * @inheritdoc
      */
     public function getNumRows()
     {
@@ -40,7 +40,7 @@ class ResultSetAdapter implements ResultSetAdapterInterface
     }
 
     /**
-     * @return array
+     * @inheritdoc
      */
     public function getFields()
     {
@@ -54,7 +54,7 @@ class ResultSetAdapter implements ResultSetAdapterInterface
     }
 
     /**
-     * @return bool
+     * @inheritdoc
      */
     public function isDml()
     {
@@ -62,7 +62,7 @@ class ResultSetAdapter implements ResultSetAdapterInterface
     }
 
     /**
-     * @return array
+     * @inheritdoc
      */
     public function store()
     {
@@ -70,25 +70,31 @@ class ResultSetAdapter implements ResultSetAdapterInterface
     }
 
     /**
-     * @param $num
+     * @inheritdoc
      */
     public function toRow($num)
     {
         throw new \BadMethodCallException('Not implemented');
     }
 
+    /**
+     * @inheritdoc
+     */
     public function freeResult()
     {
         $this->statement->closeCursor();
     }
 
+    /**
+     * @inheritdoc
+     */
     public function rewind()
     {
 
     }
 
     /**
-     * @return bool
+     * @inheritdoc
      */
     public function valid()
     {
@@ -96,8 +102,7 @@ class ResultSetAdapter implements ResultSetAdapterInterface
     }
 
     /**
-     * @param self::FETCH_ASSOC|self::FETCH_NUM $fetch_type
-     * @return array|null
+     * @inheritdoc
      */
     public function fetch($fetch_type)
     {
@@ -116,8 +121,7 @@ class ResultSetAdapter implements ResultSetAdapterInterface
     }
 
     /**
-     * @param self::FETCH_ASSOC|self::FETCH_NUM $fetch_type
-     * @return array
+     * @inheritdoc
      */
     public function fetchAll($fetch_type)
     {

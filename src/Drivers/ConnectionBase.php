@@ -1,4 +1,5 @@
 <?php
+
 namespace Foolz\SphinxQL\Drivers;
 
 use Foolz\SphinxQL\Exception\ConnectionException;

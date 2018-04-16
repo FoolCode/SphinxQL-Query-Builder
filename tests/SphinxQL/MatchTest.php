@@ -1,7 +1,7 @@
 <?php
 
-use Foolz\SphinxQL\SphinxQL;
 use Foolz\SphinxQL\Match;
+use Foolz\SphinxQL\SphinxQL;
 use Foolz\SphinxQL\Tests\TestUtil;
 
 class MatchTest extends \PHPUnit\Framework\TestCase

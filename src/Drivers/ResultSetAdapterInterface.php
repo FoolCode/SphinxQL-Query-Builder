@@ -2,7 +2,6 @@
 
 namespace Foolz\SphinxQL\Drivers;
 
-
 interface ResultSetAdapterInterface
 {
     CONST FETCH_NUM = 'num';

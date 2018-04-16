@@ -3,6 +3,7 @@
 namespace Foolz\SphinxQL\Drivers\Pdo;
 
 use Foolz\SphinxQL\Drivers\MultiResultSetAdapterInterface;
+use PDOStatement;
 
 class MultiResultSetAdapter implements MultiResultSetAdapterInterface
 {
@@ -12,7 +13,7 @@ class MultiResultSetAdapter implements MultiResultSetAdapterInterface
     protected $valid = true;
 
     /**
-     * @var \PDOStatement
+     * @var PDOStatement
      */
     protected $statement;
 

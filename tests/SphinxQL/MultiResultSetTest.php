@@ -1,10 +1,10 @@
 <?php
 
-use Foolz\SphinxQL\SphinxQL;
-use Foolz\SphinxQL\Tests\TestUtil;
-use Foolz\SphinxQL\Exception\DatabaseException;
 use Foolz\SphinxQL\Drivers\MultiResultSetInterface;
 use Foolz\Sphinxql\Drivers\ResultSetInterface;
+use Foolz\SphinxQL\Exception\DatabaseException;
+use Foolz\SphinxQL\SphinxQL;
+use Foolz\SphinxQL\Tests\TestUtil;
 
 class MultiResultSetTest extends \PHPUnit\Framework\TestCase
 {

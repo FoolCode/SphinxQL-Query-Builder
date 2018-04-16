@@ -1,9 +1,9 @@
 <?php
 
-use Foolz\SphinxQL\SphinxQL;
 use Foolz\SphinxQL\Drivers\Mysqli\Connection;
-use Foolz\SphinxQL\Tests\TestUtil;
 use Foolz\Sphinxql\Drivers\ResultSetInterface;
+use Foolz\SphinxQL\SphinxQL;
+use Foolz\SphinxQL\Tests\TestUtil;
 
 class ResultSetTest extends \PHPUnit\Framework\TestCase
 {

@@ -1,10 +1,10 @@
 <?php
 
 use Foolz\SphinxQL\Expression;
-use Foolz\SphinxQL\SphinxQL;
 use Foolz\SphinxQL\Facet;
 use Foolz\SphinxQL\Helper;
 use Foolz\SphinxQL\Match;
+use Foolz\SphinxQL\SphinxQL;
 use Foolz\SphinxQL\Tests\TestUtil;
 
 class SphinxQLTest extends \PHPUnit\Framework\TestCase

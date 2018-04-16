@@ -4,6 +4,7 @@ namespace Foolz\SphinxQL\Drivers\Mysqli;
 
 use Foolz\SphinxQL\Drivers\ResultSetAdapterInterface;
 use Foolz\SphinxQL\Exception\ConnectionException;
+use mysqli_result;
 
 class ResultSetAdapter implements ResultSetAdapterInterface
 {
@@ -13,7 +14,7 @@ class ResultSetAdapter implements ResultSetAdapterInterface
     protected $connection;
 
     /**
-     * @var \mysqli_result|null
+     * @var mysqli_result|null
      */
     protected $result;
 
@@ -24,7 +25,7 @@ class ResultSetAdapter implements ResultSetAdapterInterface
 
     /**
      * @param Connection $connection
-     * @param null|\mysqli_result $result
+     * @param null|mysqli_result $result
      */
     public function __construct(Connection $connection, $result = null)
     {
@@ -62,7 +63,7 @@ class ResultSetAdapter implements ResultSetAdapterInterface
      */
     public function isDml()
     {
-        return !($this->result instanceof \mysqli_result);
+        return !($this->result instanceof mysqli_result);
     }
 
     /**

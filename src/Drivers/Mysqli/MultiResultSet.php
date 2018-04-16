@@ -2,7 +2,6 @@
 
 namespace Foolz\SphinxQL\Drivers\Mysqli;
 
-
 use Foolz\SphinxQL\Drivers\MultiResultSetBase;
 
 class MultiResultSet extends MultiResultSetBase

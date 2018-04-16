@@ -2,10 +2,10 @@
 
 namespace Foolz\SphinxQL\Drivers\Mysqli;
 
+use Foolz\SphinxQL\Drivers\ConnectionBase;
 use Foolz\SphinxQL\Exception\ConnectionException;
 use Foolz\SphinxQL\Exception\DatabaseException;
 use Foolz\SphinxQL\Exception\SphinxQLException;
-use Foolz\SphinxQL\Drivers\ConnectionBase;
 
 /**
  * SphinxQL connection class utilizing the MySQLi extension.

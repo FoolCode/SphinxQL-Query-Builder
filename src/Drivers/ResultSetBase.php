@@ -1,8 +1,9 @@
 <?php
+
 namespace Foolz\SphinxQL\Drivers;
 
+use Foolz\SphinxQL\Drivers\Mysqli\ResultSetAdapter;
 use Foolz\SphinxQL\Exception\ResultSetException;
-use \Foolz\SphinxQL\Drivers\Mysqli\ResultSetAdapter;
 
 abstract class ResultSetBase implements ResultSetInterface
 {

@@ -6,6 +6,8 @@ use Foolz\SphinxQL\Drivers\ConnectionBase;
 use Foolz\SphinxQL\Exception\ConnectionException;
 use Foolz\SphinxQL\Exception\DatabaseException;
 use Foolz\SphinxQL\Exception\SphinxQLException;
+use PDO;
+use PDOException;
 
 class Connection extends ConnectionBase
 {
@@ -21,7 +23,7 @@ class Connection extends ConnectionBase
         try{
             $stm->execute();
         }
-        catch(\PDOException $exception){
+        catch(PDOException $exception){
             throw new DatabaseException($exception->getMessage() . ' [' . $query . ']');
         }
 
@@ -51,8 +53,8 @@ class Connection extends ConnectionBase
         }
 
         try {
-            $con = new \Pdo($dsn);
-        } catch (\PDOException $exception) {
+            $con = new PDO($dsn);
+        } catch (PDOException $exception) {
             if (!$suppress_error && !$this->silence_connection_warning) {
                 trigger_error('connection error', E_USER_WARNING);
             }
@@ -61,7 +63,7 @@ class Connection extends ConnectionBase
         }
 
         $this->connection = $con;
-        $this->connection->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+        $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         return true;
     }
@@ -86,7 +88,7 @@ class Connection extends ConnectionBase
 
         try {
             $statement = $this->connection->query(implode(';', $queue));
-        } catch (\PDOException $exception) {
+        } catch (PDOException $exception) {
             throw new DatabaseException($exception->getMessage() .' [ '.implode(';', $queue).']');
         }
 

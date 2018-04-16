@@ -1,10 +1,11 @@
 <?php
 
 namespace Foolz\SphinxQL;
+
 use Foolz\SphinxQL\Drivers\ConnectionInterface;
-use Foolz\SphinxQL\Exception\SphinxQLException;
 use Foolz\SphinxQL\Drivers\MultiResultSetInterface;
 use Foolz\SphinxQL\Drivers\ResultSetInterface;
+use Foolz\SphinxQL\Exception\SphinxQLException;
 
 /**
  * Query Builder class for SphinxQL statements.

@@ -12,6 +12,14 @@ interface ResultSetInterface extends \ArrayAccess, \Iterator, \Countable
     public function store();
 
     /**
+     * Returns the array as in version 0.9.x
+     *
+     * @return array|int
+     * @deprecated Commodity method for simple transition to version 1.0.0
+     */
+    public function getStored();
+
+    /**
      * Checks if the specified row exists
      *
      * @param int $row The number of the row to check on

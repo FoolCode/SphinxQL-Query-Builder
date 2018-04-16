@@ -27,7 +27,7 @@ abstract class MultiResultSetBase implements MultiResultSetInterface
     protected $rowSet;
 
     /**
-     * @var MultiResultSetAdapterInterface|null
+     * @var MultiResultSetAdapterInterface
      */
     protected $adapter;
 

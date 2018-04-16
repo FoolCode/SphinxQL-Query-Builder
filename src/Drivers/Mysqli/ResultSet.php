@@ -15,15 +15,15 @@ class ResultSet extends ResultSetBase
     protected $connection;
 
     /**
-     * @var mysqli_result|null
+     * @var mysqli_result|bool
      */
     protected $result;
 
     /**
      * @param Connection         $connection
-     * @param null|mysqli_result $result
+     * @param mysqli_result|bool $result
      */
-    public function __construct(Connection $connection, mysqli_result $result = null)
+    public function __construct(Connection $connection, $result)
     {
         $this->connection = $connection;
         $this->adapter = new ResultSetAdapter($connection, $result);

@@ -79,16 +79,6 @@ abstract class ResultSetBase implements ResultSetInterface
     }
 
     /**
-     * Returns the number of rows in the result set
-     *
-     * @return int The number of rows in the result set
-     */
-    public function getCount()
-    {
-        return $this->num_rows;
-    }
-
-    /**
      * (PHP 5 &gt;= 5.0.0)<br/>
      * Whether a offset exists
      * @link http://php.net/manual/en/arrayaccess.offsetexists.php
@@ -223,17 +213,12 @@ abstract class ResultSetBase implements ResultSetInterface
     }
 
     /**
-     * (PHP 5 &gt;= 5.1.0)<br/>
-     * Count elements of an object
-     * @link http://php.net/manual/en/countable.count.php
-     * @return int The custom count as an integer.
-     * </p>
-     * <p>
-     * The return value is cast to an integer.
+     * Returns the number of rows in the result set
+     * @inheritdoc
      */
     public function count()
     {
-        return $this->getCount();
+        return $this->num_rows;
     }
 
     protected function init()

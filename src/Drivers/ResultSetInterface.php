@@ -49,13 +49,6 @@ interface ResultSetInterface extends \ArrayAccess, \Iterator, \Countable
     public function getAffectedRows();
 
     /**
-     * Returns the number of rows in the result set
-     *
-     * @return int The number of rows in the result set
-     */
-    public function getCount();
-
-    /**
      * Fetches all the rows as an array of associative arrays
      *
      * @return array An array of associative arrays

@@ -10,7 +10,7 @@ class MultiResultSet extends MultiResultSetBase
     /**
      * @var Connection
      */
-    public $connection;
+    protected $connection;
 
     /**
      * @param Connection $connection

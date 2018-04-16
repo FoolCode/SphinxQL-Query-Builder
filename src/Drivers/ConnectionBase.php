@@ -31,7 +31,7 @@ abstract class ConnectionBase implements ConnectionInterface
      *
      * @param array $params Associative array of parameters and values.
      */
-    public function setParams(Array $params)
+    public function setParams(array $params)
     {
         foreach ($params as $param => $value) {
             $this->setParam($param, $value);
@@ -124,7 +124,7 @@ abstract class ConnectionBase implements ConnectionInterface
     /**
      * @inheritdoc
      */
-    public function quoteArr(Array $array = array())
+    public function quoteArr(array $array = array())
     {
         $result = array();
 

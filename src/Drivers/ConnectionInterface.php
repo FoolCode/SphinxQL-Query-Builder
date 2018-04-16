@@ -27,7 +27,7 @@ interface ConnectionInterface
      * @throws DatabaseException In case a query throws an error
      * @throws SphinxQLException In case the array passed is empty
      */
-    public function multiQuery(Array $queue);
+    public function multiQuery(array $queue);
 
     /**
      * Escapes the input
@@ -56,5 +56,5 @@ interface ConnectionInterface
      *
      * @return array The array of quotes elements
      */
-    public function quoteArr(Array $array = array());
+    public function quoteArr(array $array = array());
 }

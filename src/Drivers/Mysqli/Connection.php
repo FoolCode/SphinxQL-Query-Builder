@@ -103,7 +103,7 @@ class Connection extends ConnectionBase
     /**
      * @inheritdoc
      */
-    public function multiQuery(Array $queue)
+    public function multiQuery(array $queue)
     {
         $count = count($queue);
 

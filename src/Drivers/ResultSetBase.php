@@ -321,7 +321,7 @@ abstract class ResultSetBase implements ResultSetInterface
     /**
      * Store all the data in this object and free the driver object
      *
-     * @return static $this
+     * @return $this
      */
     public function store()
     {
@@ -358,7 +358,7 @@ abstract class ResultSetBase implements ResultSetInterface
      * Moves the cursor to the selected row
      *
      * @param int $num The number of the row to move the cursor to
-     * @return static
+     * @return $this
      * @throws ResultSetException If the row does not exist
      */
     public function toRow($num)
@@ -380,7 +380,7 @@ abstract class ResultSetBase implements ResultSetInterface
     /**
      * Moves the cursor to the next row
      *
-     * @return static $this
+     * @return $this
      * @throws ResultSetException If the next row does not exist
      */
     public function toNextRow()
@@ -452,7 +452,7 @@ abstract class ResultSetBase implements ResultSetInterface
      * Frees the memory from the result
      * Call it after you're done with a result set
      *
-     * @return static
+     * @return $this
      */
     public function freeResult()
     {

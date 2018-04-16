@@ -7,7 +7,7 @@ interface ResultSetInterface extends \ArrayAccess, \Iterator, \Countable
     /**
      * Stores all the result data in the object and frees the database results
      *
-     * @return static
+     * @return $this
      */
     public function store();
 
@@ -23,7 +23,7 @@ interface ResultSetInterface extends \ArrayAccess, \Iterator, \Countable
      * Moves the cursor to the specified row
      *
      * @param int $row The row to move the cursor to
-     * @return static
+     * @return $this
      */
     public function toRow($row);
 
@@ -37,7 +37,7 @@ interface ResultSetInterface extends \ArrayAccess, \Iterator, \Countable
     /**
      * Moves the cursor to the next row
      *
-     * @return static
+     * @return $this
      */
     public function toNextRow();
 
@@ -86,7 +86,7 @@ interface ResultSetInterface extends \ArrayAccess, \Iterator, \Countable
     /**
      * Frees the database from the result
      *
-     * @return static
+     * @return $this
      */
     public function freeResult();
 }

@@ -97,15 +97,6 @@ class ConnectionTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @expectedException PHPUnit\Framework\Error\Warning
-     */
-    public function testConnectThrowsPHPException()
-    {
-        $this->connection->setParam('port', 9308);
-        $this->connection->connect();
-    }
-
-    /**
      * @expectedException Foolz\SphinxQL\Exception\ConnectionException
      */
     public function testConnectThrowsException()

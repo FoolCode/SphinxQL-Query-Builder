@@ -15,7 +15,6 @@ class ConnectionTest extends \PHPUnit\Framework\TestCase
     {
         $this->connection = TestUtil::getConnectionDriver();
         $this->connection->setParams(array('host' => '127.0.0.1', 'port' => 9307));
-        $this->connection->silenceConnectionWarning(false);
     }
 
     public function tearDown()
@@ -98,21 +97,11 @@ class ConnectionTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @expectedException PHPUnit\Framework\Error\Warning
-     */
-    public function testConnectThrowsPHPException()
-    {
-        $this->connection->setParam('port', 9308);
-        $this->connection->connect();
-    }
-
-    /**
      * @expectedException Foolz\SphinxQL\Exception\ConnectionException
      */
     public function testConnectThrowsException()
     {
         $this->connection->setParam('port', 9308);
-        $this->connection->silenceConnectionWarning(true);
         $this->connection->connect();
     }
 
@@ -192,7 +181,7 @@ class ConnectionTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @expectedException PHPUnit\Framework\Error\Warning
+     * @expectedException Foolz\SphinxQL\Exception\ConnectionException
      */
     public function testEscapeThrowsException()
     {

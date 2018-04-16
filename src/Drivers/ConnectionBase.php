@@ -19,13 +19,6 @@ abstract class ConnectionBase implements ConnectionInterface
     protected $connection;
 
     /**
-     * Disables any warning outputs returned on the connection with @ prefix.
-     *
-     * @var boolean
-     */
-    protected $silence_connection_warning = false;
-
-    /**
      * Sets one or more connection parameters.
      *
      * @param array $params Associative array of parameters and values.
@@ -169,23 +162,9 @@ abstract class ConnectionBase implements ConnectionInterface
     /**
      * Establishes a connection to the Sphinx server.
      *
-     * @param bool $suppress_error If the warnings on the connection should be suppressed
-     *
      * @return bool True if connected
      * @throws ConnectionException If a connection error was encountered
      */
-    abstract public function connect($suppress_error = false);
+    abstract public function connect();
 
-    /**
-     * Forces the connection to suppress all errors returned. This should only be used
-     * when the production server is running with high error reporting settings.
-     *
-     * @param boolean $enable True if it should be enabled, false if it should be disabled
-     * @deprecated
-     * not good
-     */
-    public function silenceConnectionWarning($enable = true)
-    {
-        $this->silence_connection_warning = $enable;
-    }
 }

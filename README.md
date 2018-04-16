@@ -81,11 +81,6 @@ $result = $query->execute();
 
 	Create a new Connection instance to be used with the following methods or SphinxQL class.
 
-* __$conn->silenceConnectionWarning($enable = true)__
-
-	Suppresses any warnings and errors displayed by the `\MySQLi` extension upon connection failure.
-	_This is disabled by default._
-
 * __$conn->setParams($params = array('host' => '127.0.0.1', 'port' => 9306))__
 
 	Sets the connection parameters used to establish a connection to the server. Supported parameters: 'host', 'port', 'socket', 'options'.

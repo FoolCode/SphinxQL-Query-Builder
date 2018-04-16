@@ -40,7 +40,7 @@ class Connection extends ConnectionBase
     /**
      * @inheritdoc
      */
-    public function connect($suppress_error = false)
+    public function connect()
     {
         $params = $this->getParams();
 
@@ -62,10 +62,6 @@ class Connection extends ConnectionBase
         try {
             $con = new \Pdo($dsn);
         } catch (\PDOException $exception) {
-            if (!$suppress_error && !$this->silence_connection_warning) {
-                trigger_error('connection error', E_USER_WARNING);
-            }
-
             throw new ConnectionException($exception->getMessage());
         }
 

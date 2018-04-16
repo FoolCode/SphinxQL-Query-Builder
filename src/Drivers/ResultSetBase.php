@@ -120,6 +120,7 @@ abstract class ResultSetBase implements ResultSetInterface
     {
         $row = $this->fetched;
         unset($this->fetched);
+
         return $row;
     }
 
@@ -185,6 +186,7 @@ abstract class ResultSetBase implements ResultSetInterface
 
     /**
      * @param array $numeric_array
+     *
      * @return array
      */
     protected function makeAssoc($numeric_array)
@@ -199,6 +201,7 @@ abstract class ResultSetBase implements ResultSetInterface
 
     /**
      * @param ResultSetAdapter::FETCH_ASSOC|ResultSetAdapter::FETCH_NUM $fetch_type
+     *
      * @return array|bool|null
      */
     protected function fetchFromStore($fetch_type)
@@ -218,6 +221,7 @@ abstract class ResultSetBase implements ResultSetInterface
 
     /**
      * @param ResultSetAdapter::FETCH_ASSOC|ResultSetAdapter::FETCH_NUM $fetch_type
+     *
      * @return array|bool
      */
     protected function fetchAllFromStore($fetch_type)
@@ -239,6 +243,7 @@ abstract class ResultSetBase implements ResultSetInterface
 
     /**
      * @param ResultSetAdapter::FETCH_ASSOC|ResultSetAdapter::FETCH_NUM $fetch_type
+     *
      * @return array
      */
     protected function fetchAll($fetch_type)
@@ -314,6 +319,7 @@ abstract class ResultSetBase implements ResultSetInterface
     public function toNextRow()
     {
         $this->toRow(++$this->cursor);
+
         return $this;
     }
 
@@ -351,6 +357,7 @@ abstract class ResultSetBase implements ResultSetInterface
 
     /**
      * @param ResultSetAdapter::FETCH_ASSOC|ResultSetAdapter::FETCH_NUM $fetch_type
+     *
      * @return array|null
      */
     protected function fetch($fetch_type)
@@ -374,6 +381,7 @@ abstract class ResultSetBase implements ResultSetInterface
     public function freeResult()
     {
         $this->adapter->freeResult();
+
         return $this;
     }
 }

@@ -13,10 +13,13 @@ class MultiResultSetAdapter implements MultiResultSetAdapterInterface
     protected $valid = true;
 
     /**
-     * @var Connection|null
+     * @var Connection
      */
     protected $connection;
 
+    /**
+     * @param Connection $connection
+     */
     public function __construct(Connection $connection)
     {
         $this->connection = $connection;

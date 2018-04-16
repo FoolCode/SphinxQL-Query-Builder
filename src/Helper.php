@@ -136,7 +136,7 @@ class Helper
         $query .= $name.' ';
 
         // user variables must always be processed as arrays
-        if ($user_var && ! is_array($value)) {
+        if ($user_var && !is_array($value)) {
             $query .= '= ('.$this->connection->quote($value).')';
         } elseif (is_array($value)) {
             $query .= '= ('.implode(', ', $this->connection->quoteArr($value)).')';

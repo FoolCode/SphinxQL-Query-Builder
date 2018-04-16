@@ -42,6 +42,7 @@ abstract class MultiResultSetBase implements MultiResultSetInterface
     public function getStored()
     {
         $this->store();
+
         return $this->stored;
     }
 
@@ -51,6 +52,7 @@ abstract class MultiResultSetBase implements MultiResultSetInterface
     public function offsetExists($offset)
     {
         $this->store();
+
         return $this->storedValid($offset);
     }
 
@@ -60,6 +62,7 @@ abstract class MultiResultSetBase implements MultiResultSetInterface
     public function offsetGet($offset)
     {
         $this->store();
+
         return $this->stored[$offset];
     }
 
@@ -114,6 +117,7 @@ abstract class MultiResultSetBase implements MultiResultSetInterface
     public function count()
     {
         $this->store();
+
         return count($this->stored);
     }
 
@@ -136,16 +140,19 @@ abstract class MultiResultSetBase implements MultiResultSetInterface
     {
         $rowSet = $this->rowSet;
         unset($this->rowSet);
+
         return $rowSet;
     }
 
     /**
      * @param null|int $cursor
+     *
      * @return bool
      */
     protected function storedValid($cursor = null)
     {
         $cursor = (!is_null($cursor) ? $cursor : $this->cursor);
+
         return $cursor >= 0 && $cursor < count($this->stored);
     }
 

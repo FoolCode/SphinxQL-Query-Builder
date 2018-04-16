@@ -17,7 +17,10 @@ class MultiResultSetAdapter implements MultiResultSetAdapterInterface
      */
     protected $statement;
 
-    public function __construct($statement)
+    /**
+     * @param PDOStatement $statement
+     */
+    public function __construct(PDOStatement $statement)
     {
         $this->statement = $statement;
     }

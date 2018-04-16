@@ -17,6 +17,7 @@ interface ResultSetInterface extends \ArrayAccess, \Iterator, \Countable
      * Checks if the specified row exists
      *
      * @param int $row The number of the row to check on
+     *
      * @return bool True if the row exists, false otherwise
      */
     public function hasRow($row);
@@ -25,6 +26,7 @@ interface ResultSetInterface extends \ArrayAccess, \Iterator, \Countable
      * Moves the cursor to the specified row
      *
      * @param int $row The row to move the cursor to
+     *
      * @return $this
      * @throws ResultSetException If the row does not exist
      */

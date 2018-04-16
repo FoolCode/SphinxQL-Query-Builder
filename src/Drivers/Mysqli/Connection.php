@@ -44,7 +44,7 @@ class Connection extends ConnectionBase
             }
         }
 
-        if (!$suppress_error && ! $this->silence_connection_warning) {
+        if (!$suppress_error && !$this->silence_connection_warning) {
             $conn->real_connect($data['host'], null, null, null, (int) $data['port'], $data['socket']);
         } else {
             @ $conn->real_connect($data['host'], null, null, null, (int) $data['port'], $data['socket']);
@@ -70,6 +70,7 @@ class Connection extends ConnectionBase
     public function ping()
     {
         $this->ensureConnection();
+
         return $this->getConnection()->ping();
     }
 
@@ -80,6 +81,7 @@ class Connection extends ConnectionBase
     {
         $this->mbPop();
         $this->getConnection()->close();
+
         return parent::close();
     }
 

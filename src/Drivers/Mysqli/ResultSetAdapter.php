@@ -9,7 +9,7 @@ use mysqli_result;
 class ResultSetAdapter implements ResultSetAdapterInterface
 {
     /**
-     * @var Connection|null
+     * @var Connection
      */
     protected $connection;
 
@@ -24,10 +24,10 @@ class ResultSetAdapter implements ResultSetAdapterInterface
     protected $valid = true;
 
     /**
-     * @param Connection $connection
+     * @param Connection         $connection
      * @param null|mysqli_result $result
      */
-    public function __construct(Connection $connection, $result = null)
+    public function __construct(Connection $connection, mysqli_result $result = null)
     {
         $this->connection = $connection;
         $this->result = $result;
@@ -72,6 +72,7 @@ class ResultSetAdapter implements ResultSetAdapterInterface
     public function store()
     {
         $this->result->data_seek(0);
+
         return $this->result->fetch_all(MYSQLI_NUM);
     }
 

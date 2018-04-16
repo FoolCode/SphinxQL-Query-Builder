@@ -1,6 +1,8 @@
 <?php
 
 use Foolz\SphinxQL\Drivers\MultiResultSetInterface;
+use Foolz\SphinxQL\Drivers\Mysqli\Connection as MysqliConnection;
+use Foolz\SphinxQL\Drivers\Pdo\Connection as PdoConnection;
 use Foolz\Sphinxql\Drivers\ResultSetInterface;
 use Foolz\SphinxQL\Exception\DatabaseException;
 use Foolz\SphinxQL\SphinxQL;
@@ -9,7 +11,7 @@ use Foolz\SphinxQL\Tests\TestUtil;
 class MultiResultSetTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var Connection
+     * @var MysqliConnection|PdoConnection
      */
     public static $conn = null;
 

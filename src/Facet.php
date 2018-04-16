@@ -82,11 +82,13 @@ class Facet
      * Sets the connection to be used
      *
      * @param ConnectionInterface $connection
+     *
      * @return Facet
      */
     public function setConnection(ConnectionInterface $connection = null)
     {
         $this->connection = $connection;
+
         return $this;
     }
 
@@ -194,9 +196,9 @@ class Facet
      * Examples:
      *    $query->facetFunction('category');
      *
-     * @param string       $function  Function name
-     * @param array        $params    Array  string arguments containing column names
-     * @param string       $direction The ordering direction (asc/desc)
+     * @param string $function  Function name
+     * @param array  $params    Array  string arguments containing column names
+     * @param string $direction The ordering direction (asc/desc)
      *
      * @return Facet
      */
@@ -224,6 +226,7 @@ class Facet
     {
         if ($limit === null) {
             $this->limit = (int) $offset;
+
             return $this;
         }
 
@@ -262,7 +265,7 @@ class Facet
             foreach ($this->facet as $array) {
                 if ($array instanceof Expression) {
                     $facets[] = $array;
-                } else if ($array[1] === null) {
+                } elseif ($array[1] === null) {
                     $facets[] = $array[0];
                 } else {
                     $facets[] = $array[0].' AS '.$array[1];

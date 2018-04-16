@@ -20,10 +20,9 @@ class Connection extends ConnectionBase
 
         $stm = $this->connection->prepare($query);
 
-        try{
+        try {
             $stm->execute();
-        }
-        catch(PDOException $exception){
+        } catch (PDOException $exception) {
             throw new DatabaseException($exception->getMessage() . ' [' . $query . ']');
         }
 
@@ -68,6 +67,10 @@ class Connection extends ConnectionBase
         return true;
     }
 
+    /**
+     * @return bool
+     * @throws ConnectionException
+     */
     public function ping()
     {
         $this->ensureConnection();

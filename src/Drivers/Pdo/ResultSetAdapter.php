@@ -9,7 +9,7 @@ use PDOStatement;
 class ResultSetAdapter implements ResultSetAdapterInterface
 {
     /**
-     * @var null|PDOStatement
+     * @var PDOStatement
      */
     protected $statement;
 
@@ -18,6 +18,9 @@ class ResultSetAdapter implements ResultSetAdapterInterface
      */
     protected $valid = true;
 
+    /**
+     * @param PDOStatement $statement
+     */
     public function __construct(PDOStatement $statement)
     {
         $this->statement = $statement;

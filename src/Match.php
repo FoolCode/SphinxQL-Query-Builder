@@ -65,6 +65,7 @@ class Match
         if ($keywords !== null) {
             $this->tokens[] = array('MATCH' => $keywords);
         }
+
         return $this;
     }
 
@@ -86,6 +87,7 @@ class Match
     {
         $this->tokens[] = array('OPERATOR' => '| ');
         $this->match($keywords);
+
         return $this;
     }
 
@@ -107,6 +109,7 @@ class Match
     {
         $this->tokens[] = array('OPERATOR' => 'MAYBE ');
         $this->match($keywords);
+
         return $this;
     }
 
@@ -128,6 +131,7 @@ class Match
     {
         $this->tokens[] = array('OPERATOR' => '-');
         $this->match($keyword);
+
         return $this;
     }
 
@@ -153,8 +157,8 @@ class Match
      *    $match->field('@relaxed')->field('nosuchfield')->match('test');
      *    // @@relaxed @nosuchfield test
      *
-     * @param string|array  $fields Field or fields to search.
-     * @param int           $limit  Maximum position limit in field a match is allowed at.
+     * @param string|array $fields Field or fields to search.
+     * @param int          $limit  Maximum position limit in field a match is allowed at.
      *
      * @return $this
      */
@@ -172,6 +176,7 @@ class Match
             'fields' => $fields,
             'limit'  => $limit,
         );
+
         return $this;
     }
 
@@ -202,6 +207,7 @@ class Match
             'fields' => $fields,
             'limit'  => null,
         );
+
         return $this;
     }
 
@@ -219,6 +225,7 @@ class Match
     public function phrase($keywords)
     {
         $this->tokens[] = array('PHRASE' => $keywords);
+
         return $this;
     }
 
@@ -237,6 +244,7 @@ class Match
     {
         $this->tokens[] = array('OPERATOR' => '| ');
         $this->phrase($keywords);
+
         return $this;
     }
 
@@ -247,8 +255,8 @@ class Match
      *    $match->proximity('test case', 5);
      *    // "test case"~5
      *
-     * @param string $keywords  The words to match.
-     * @param int    $distance  The upper limit on separation between words.
+     * @param string $keywords The words to match.
+     * @param int    $distance The upper limit on separation between words.
      *
      * @return $this
      */
@@ -258,6 +266,7 @@ class Match
             'PROXIMITY' => $distance,
             'keywords'  => $keywords,
         );
+
         return $this;
     }
 
@@ -271,8 +280,8 @@ class Match
      *    $match->quorum('this is a test case', 0.5);
      *    // "this is a test case"/0.5
      *
-     * @param string    $keywords   The words to match.
-     * @param int|float $threshold  The minimum number or percent of words that must match.
+     * @param string    $keywords  The words to match.
+     * @param int|float $threshold The minimum number or percent of words that must match.
      *
      * @return $this
      */
@@ -282,6 +291,7 @@ class Match
             'QUORUM'   => $threshold,
             'keywords' => $keywords,
         );
+
         return $this;
     }
 
@@ -303,6 +313,7 @@ class Match
     {
         $this->tokens[] = array('OPERATOR' => '<< ');
         $this->match($keywords);
+
         return $this;
     }
 
@@ -324,6 +335,7 @@ class Match
     {
         $this->tokens[] = array('OPERATOR' => '=');
         $this->match($keyword);
+
         return $this;
     }
 
@@ -337,8 +349,8 @@ class Match
      *    $match->match('test')->boost('case', 1.2);
      *    // test case^1.2
      *
-     * @param string $keyword  The word to modify the score of.
-     * @param float  $amount   The amount to boost the score.
+     * @param string $keyword The word to modify the score of.
+     * @param float  $amount  The amount to boost the score.
      *
      * @return $this
      */
@@ -350,6 +362,7 @@ class Match
             $this->match($keyword);
         }
         $this->tokens[] = array('BOOST' => $amount);
+
         return $this;
     }
 
@@ -363,8 +376,8 @@ class Match
      *    $match->match('test')->near('case', 3);
      *    // test NEAR/3 case
      *
-     * @param string|Match|\Closure $keywords  The text or expression to match nearby.
-     * @param int                  $distance  Maximum distance to the match.
+     * @param string|Match|\Closure $keywords The text or expression to match nearby.
+     * @param int                   $distance Maximum distance to the match.
      *
      * @return $this
      */
@@ -374,6 +387,7 @@ class Match
         if ($distance !== null) {
             $this->match($keywords);
         }
+
         return $this;
     }
 
@@ -395,6 +409,7 @@ class Match
     {
         $this->tokens[] = array('OPERATOR' => 'SENTENCE ');
         $this->match($keywords);
+
         return $this;
     }
 
@@ -416,6 +431,7 @@ class Match
     {
         $this->tokens[] = array('OPERATOR' => 'PARAGRAPH ');
         $this->match($keywords);
+
         return $this;
     }
 
@@ -432,8 +448,8 @@ class Match
      *    $match->zone('th', 'test');
      *    // ZONE:(th) test
      *
-     * @param string|array         $zones     The zone or zones to search.
-     * @param string|Match|\Closure $keywords  The text or expression that must be in these zones.
+     * @param string|array          $zones    The zone or zones to search.
+     * @param string|Match|\Closure $keywords The text or expression that must be in these zones.
      *
      * @return $this
      */
@@ -444,6 +460,7 @@ class Match
         }
         $this->tokens[] = array('ZONE' => $zones);
         $this->match($keywords);
+
         return $this;
     }
 
@@ -458,8 +475,8 @@ class Match
      *    $match->zonespan('th', 'test');
      *    // ZONESPAN:(th) test
      *
-     * @param string               $zone      The zone to search.
-     * @param string|Match|\Closure $keywords  The text or expression that must be in this zone.
+     * @param string                $zone     The zone to search.
+     * @param string|Match|\Closure $keywords The text or expression that must be in this zone.
      *
      * @return $this
      */
@@ -467,6 +484,7 @@ class Match
     {
         $this->tokens[] = array('ZONESPAN' => $zone);
         $this->match($keywords);
+
         return $this;
     }
 
@@ -525,6 +543,7 @@ class Match
             }
         }
         $this->last_compiled = trim($query);
+
         return $this;
     }
 

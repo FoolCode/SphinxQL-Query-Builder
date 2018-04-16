@@ -4,6 +4,8 @@ namespace Foolz\SphinxQL\Drivers;
 
 use Foolz\SphinxQL\Exception\ConnectionException;
 use Foolz\SphinxQL\Expression;
+use mysqli;
+use PDO;
 
 abstract class ConnectionBase implements ConnectionInterface
 {
@@ -16,6 +18,7 @@ abstract class ConnectionBase implements ConnectionInterface
 
     /**
      * Internal connection object.
+     * @var mysqli|PDO
      */
     protected $connection;
 
@@ -46,7 +49,7 @@ abstract class ConnectionBase implements ConnectionInterface
      * * array options - MySQLi options/values, as an associative array. Example: array(MYSQLI_OPT_CONNECT_TIMEOUT => 2)
      *
      * @param string $param Name of the parameter to modify.
-     * @param mixed $value Value to which the parameter will be set.
+     * @param mixed  $value Value to which the parameter will be set.
      */
     public function setParam($param, $value)
     {
@@ -80,7 +83,7 @@ abstract class ConnectionBase implements ConnectionInterface
     /**
      * Returns the current connection established.
      *
-     * @return object Internal connection object
+     * @return mysqli|PDO Internal connection object
      * @throws ConnectionException If no connection has been established or open
      */
     public function getConnection()
@@ -113,7 +116,7 @@ abstract class ConnectionBase implements ConnectionInterface
         } elseif (is_float($value)) {
             // Convert to non-locale aware float to prevent possible commas
             return sprintf('%F', $value);
-        }  elseif (is_array($value)) {
+        } elseif (is_array($value)) {
             // Supports MVA attributes
             return '('.implode(',', $this->quoteArr($value)).')';
         }
@@ -143,6 +146,7 @@ abstract class ConnectionBase implements ConnectionInterface
     public function close()
     {
         $this->connection = null;
+
         return $this;
     }
 
@@ -174,8 +178,7 @@ abstract class ConnectionBase implements ConnectionInterface
      * when the production server is running with high error reporting settings.
      *
      * @param bool $enable True if it should be enabled, false if it should be disabled
-     * @deprecated
-     * not good
+     * @deprecated not good
      */
     public function silenceConnectionWarning($enable = true)
     {

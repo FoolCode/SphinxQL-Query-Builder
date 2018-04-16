@@ -42,6 +42,6 @@ class Expression
      */
     public function __toString()
     {
-        return (string) $this->value();
+        return $this->value();
     }
 }

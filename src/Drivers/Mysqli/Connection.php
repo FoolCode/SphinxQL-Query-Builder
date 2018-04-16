@@ -34,7 +34,7 @@ class Connection extends ConnectionBase
     /**
      * @inheritdoc
      */
-    public function connect($suppress_error = false)
+    public function connect()
     {
         $data = $this->getParams();
         $conn = mysqli_init();
@@ -45,7 +45,7 @@ class Connection extends ConnectionBase
             }
         }
 
-        if (!$suppress_error && ! $this->silence_connection_warning) {
+        if (!$this->silence_connection_warning) {
             $conn->real_connect($data['host'], null, null, null, (int) $data['port'], $data['socket']);
         } else {
             @ $conn->real_connect($data['host'], null, null, null, (int) $data['port'], $data['socket']);

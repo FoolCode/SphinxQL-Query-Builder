@@ -169,12 +169,10 @@ abstract class ConnectionBase implements ConnectionInterface
     /**
      * Establishes a connection to the Sphinx server.
      *
-     * @param bool $suppress_error If the warnings on the connection should be suppressed
-     *
      * @return bool True if connected
      * @throws ConnectionException If a connection error was encountered
      */
-    abstract public function connect($suppress_error = false);
+    abstract public function connect();
 
     /**
      * Forces the connection to suppress all errors returned. This should only be used

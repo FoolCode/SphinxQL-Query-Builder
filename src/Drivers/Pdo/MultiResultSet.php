@@ -11,7 +11,7 @@ class MultiResultSet extends MultiResultSetBase
     /**
      * @var PDOStatement
      */
-    public $statement;
+    protected $statement;
 
     /**
      * @param PDOStatement $statement

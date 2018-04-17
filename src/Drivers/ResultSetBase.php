@@ -74,14 +74,6 @@ abstract class ResultSetBase implements ResultSetInterface
     /**
      * @inheritdoc
      */
-    public function getCount()
-    {
-        return $this->num_rows;
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function offsetExists($offset)
     {
         return $this->hasRow($offset);
@@ -167,11 +159,12 @@ abstract class ResultSetBase implements ResultSetInterface
     }
 
     /**
+     * Returns the number of rows in the result set
      * @inheritdoc
      */
     public function count()
     {
-        return $this->getCount();
+        return $this->num_rows;
     }
 
     protected function init()
@@ -279,10 +272,7 @@ abstract class ResultSetBase implements ResultSetInterface
     }
 
     /**
-     * Returns the array as in version 0.9.x
-     *
-     * @return array|int|mixed
-     * @deprecated Commodity method for simple transition to version 1.0.0
+     * @inheritdoc
      */
     public function getStored()
     {

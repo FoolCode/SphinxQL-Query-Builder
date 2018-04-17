@@ -9,12 +9,12 @@ abstract class MultiResultSetBase implements MultiResultSetInterface
     /**
      * @var null|array
      */
-    public $stored;
+    protected $stored;
 
     /**
      * @var int
      */
-    public $cursor = 0;
+    protected $cursor = 0;
 
     /**
      * @var int

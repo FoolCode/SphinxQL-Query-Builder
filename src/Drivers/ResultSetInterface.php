@@ -14,6 +14,14 @@ interface ResultSetInterface extends \ArrayAccess, \Iterator, \Countable
     public function store();
 
     /**
+     * Returns the array as in version 0.9.x
+     *
+     * @return array|int
+     * @deprecated Commodity method for simple transition to version 1.0.0
+     */
+    public function getStored();
+
+    /**
      * Checks if the specified row exists
      *
      * @param int $row The number of the row to check on
@@ -54,13 +62,6 @@ interface ResultSetInterface extends \ArrayAccess, \Iterator, \Countable
      * @return int
      */
     public function getAffectedRows();
-
-    /**
-     * Returns the number of rows in the result set
-     *
-     * @return int The number of rows in the result set
-     */
-    public function getCount();
 
     /**
      * Fetches all the rows as an array of associative arrays

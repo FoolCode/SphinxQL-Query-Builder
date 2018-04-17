@@ -145,11 +145,11 @@ class ResultSetTest extends \PHPUnit\Framework\TestCase
         $res->toNextRow()->toNextRow();
     }
 
-    public function testGetCount()
+    public function testCount()
     {
         $this->refill();
         $res = self::$conn->query('SELECT * FROM rt');
-        $this->assertEquals(8, $res->getCount());
+        $this->assertEquals(8, $res->count());
     }
 
     public function testFetchAllAssoc()
@@ -302,8 +302,7 @@ class ResultSetTest extends \PHPUnit\Framework\TestCase
     {
         $this->refill();
         $res = self::$conn->query('SELECT * FROM rt');
-        $this->assertEquals($res->getCount(), $res->count());
-        $this->assertEquals($res->getCount(), count($res));
+        $this->assertEquals($res->count(), count($res));
     }
 
     public function testIterator()

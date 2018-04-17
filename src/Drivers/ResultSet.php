@@ -2,10 +2,10 @@
 
 namespace Foolz\SphinxQL\Drivers;
 
-use Foolz\SphinxQL\Drivers\Mysqli\ResultSetAdapter;
+use Foolz\SphinxQL\Drivers\Pdo\ResultSetAdapter as PdoResultSetAdapter;
 use Foolz\SphinxQL\Exception\ResultSetException;
 
-abstract class ResultSetBase implements ResultSetInterface
+class ResultSet implements ResultSetInterface
 {
     /**
      * @var int
@@ -43,9 +43,22 @@ abstract class ResultSetBase implements ResultSetInterface
     protected $fetched;
 
     /**
-     * @var null|ResultSetAdapterInterface
+     * @var ResultSetAdapterInterface
      */
     protected $adapter;
+
+    /**
+     * @param ResultSetAdapterInterface $adapter
+     */
+    public function __construct(ResultSetAdapterInterface $adapter)
+    {
+        $this->adapter = $adapter;
+        $this->init();
+
+        if ($adapter instanceof PdoResultSetAdapter) { //почему то только для PDO
+            $this->store();
+        }
+    }
 
     /**
      * @inheritdoc
@@ -121,7 +134,7 @@ abstract class ResultSetBase implements ResultSetInterface
      */
     public function next()
     {
-        $this->fetched = $this->fetch(ResultSetAdapter::FETCH_ASSOC);
+        $this->fetched = $this->fetch(ResultSetAdapterInterface::FETCH_ASSOC);
     }
 
     /**
@@ -155,7 +168,7 @@ abstract class ResultSetBase implements ResultSetInterface
 
         $this->next_cursor = 0;
 
-        $this->fetched = $this->fetch(ResultSetAdapter::FETCH_ASSOC);
+        $this->fetched = $this->fetch(ResultSetAdapterInterface::FETCH_ASSOC);
     }
 
     /**
@@ -193,7 +206,7 @@ abstract class ResultSetBase implements ResultSetInterface
     }
 
     /**
-     * @param ResultSetAdapter::FETCH_ASSOC|ResultSetAdapter::FETCH_NUM $fetch_type
+     * @param ResultSetAdapterInterface::FETCH_ASSOC|ResultSetAdapterInterface::FETCH_NUM $fetch_type
      *
      * @return array|bool|null
      */
@@ -206,14 +219,14 @@ abstract class ResultSetBase implements ResultSetInterface
         $row = isset($this->stored[$this->cursor]) ? $this->stored[$this->cursor] : null;
 
         if ($row !== null) {
-            $row = $fetch_type == ResultSetAdapter::FETCH_ASSOC ? $this->makeAssoc($row) : $row;
+            $row = $fetch_type == ResultSetAdapterInterface::FETCH_ASSOC ? $this->makeAssoc($row) : $row;
         }
 
         return $row;
     }
 
     /**
-     * @param ResultSetAdapter::FETCH_ASSOC|ResultSetAdapter::FETCH_NUM $fetch_type
+     * @param ResultSetAdapterInterface::FETCH_ASSOC|ResultSetAdapterInterface::FETCH_NUM $fetch_type
      *
      * @return array|bool
      */
@@ -235,7 +248,7 @@ abstract class ResultSetBase implements ResultSetInterface
     }
 
     /**
-     * @param ResultSetAdapter::FETCH_ASSOC|ResultSetAdapter::FETCH_NUM $fetch_type
+     * @param ResultSetAdapterInterface::FETCH_ASSOC|ResultSetAdapterInterface::FETCH_NUM $fetch_type
      *
      * @return array
      */
@@ -318,7 +331,7 @@ abstract class ResultSetBase implements ResultSetInterface
      */
     public function fetchAllAssoc()
     {
-        return $this->fetchAll(ResultSetAdapter::FETCH_ASSOC);
+        return $this->fetchAll(ResultSetAdapterInterface::FETCH_ASSOC);
     }
 
     /**
@@ -326,7 +339,7 @@ abstract class ResultSetBase implements ResultSetInterface
      */
     public function fetchAllNum()
     {
-        return $this->fetchAll(ResultSetAdapter::FETCH_NUM);
+        return $this->fetchAll(ResultSetAdapterInterface::FETCH_NUM);
     }
 
     /**
@@ -334,7 +347,7 @@ abstract class ResultSetBase implements ResultSetInterface
      */
     public function fetchAssoc()
     {
-        return $this->fetch(ResultSetAdapter::FETCH_ASSOC);
+        return $this->fetch(ResultSetAdapterInterface::FETCH_ASSOC);
     }
 
     /**
@@ -342,11 +355,11 @@ abstract class ResultSetBase implements ResultSetInterface
      */
     public function fetchNum()
     {
-        return $this->fetch(ResultSetAdapter::FETCH_NUM);
+        return $this->fetch(ResultSetAdapterInterface::FETCH_NUM);
     }
 
     /**
-     * @param ResultSetAdapter::FETCH_ASSOC|ResultSetAdapter::FETCH_NUM $fetch_type
+     * @param ResultSetAdapterInterface::FETCH_ASSOC|ResultSetAdapterInterface::FETCH_NUM $fetch_type
      *
      * @return array|null
      */

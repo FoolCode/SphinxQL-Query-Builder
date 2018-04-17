@@ -4,6 +4,7 @@ namespace Foolz\SphinxQL\Drivers\Pdo;
 
 use Foolz\SphinxQL\Drivers\ConnectionBase;
 use Foolz\SphinxQL\Drivers\MultiResultSet;
+use Foolz\SphinxQL\Drivers\ResultSet;
 use Foolz\SphinxQL\Exception\ConnectionException;
 use Foolz\SphinxQL\Exception\DatabaseException;
 use Foolz\SphinxQL\Exception\SphinxQLException;
@@ -27,7 +28,7 @@ class Connection extends ConnectionBase
             throw new DatabaseException($exception->getMessage() . ' [' . $query . ']');
         }
 
-        return new ResultSet($stm);
+        return new ResultSet(new ResultSetAdapter($stm));
     }
 
     /**

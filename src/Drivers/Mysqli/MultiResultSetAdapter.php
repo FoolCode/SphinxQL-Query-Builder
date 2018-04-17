@@ -3,6 +3,7 @@
 namespace Foolz\SphinxQL\Drivers\Mysqli;
 
 use Foolz\SphinxQL\Drivers\MultiResultSetAdapterInterface;
+use Foolz\SphinxQL\Drivers\ResultSet;
 use Foolz\SphinxQL\Exception\ConnectionException;
 
 class MultiResultSetAdapter implements MultiResultSetAdapterInterface
@@ -47,7 +48,8 @@ class MultiResultSetAdapter implements MultiResultSetAdapterInterface
      */
     public function current()
     {
-        return new ResultSet($this->connection, $this->connection->getConnection()->store_result());
+        $adapter = new ResultSetAdapter($this->connection, $this->connection->getConnection()->store_result());
+        return new ResultSet($adapter);
     }
 
     /**

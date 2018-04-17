@@ -55,7 +55,7 @@ class ResultSet implements ResultSetInterface
         $this->adapter = $adapter;
         $this->init();
 
-        if ($adapter instanceof PdoResultSetAdapter) { //почему то только для PDO
+        if ($adapter instanceof PdoResultSetAdapter) { //only for pdo for some reason
             $this->store();
         }
     }

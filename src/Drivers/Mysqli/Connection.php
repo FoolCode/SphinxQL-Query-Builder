@@ -3,6 +3,7 @@
 namespace Foolz\SphinxQL\Drivers\Mysqli;
 
 use Foolz\SphinxQL\Drivers\ConnectionBase;
+use Foolz\SphinxQL\Drivers\MultiResultSet;
 use Foolz\SphinxQL\Exception\ConnectionException;
 use Foolz\SphinxQL\Exception\DatabaseException;
 use Foolz\SphinxQL\Exception\SphinxQLException;
@@ -119,7 +120,7 @@ class Connection extends ConnectionBase
                 $this->getConnection()->error.' [ '.implode(';', $queue).']');
         };
 
-        return new MultiResultSet($this);
+        return new MultiResultSet(new MultiResultSetAdapter($this));
     }
 
     /**

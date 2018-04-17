@@ -1,8 +1,9 @@
 <?php
+
 namespace Foolz\SphinxQL\Drivers;
 
+use Foolz\SphinxQL\Drivers\Mysqli\ResultSetAdapter;
 use Foolz\SphinxQL\Exception\ResultSetException;
-use \Foolz\SphinxQL\Drivers\Mysqli\ResultSetAdapter;
 
 abstract class ResultSetBase implements ResultSetInterface
 {
@@ -42,15 +43,12 @@ abstract class ResultSetBase implements ResultSetInterface
     protected $fetched;
 
     /**
-     * @var null|\Foolz\SphinxQL\Drivers\ResultSetAdapterInterface
+     * @var null|ResultSetAdapterInterface
      */
     protected $adapter;
 
     /**
-     * Checks that a row actually exists
-     *
-     * @param int $num The number of the row to check on
-     * @return bool True if the row exists
+     * @inheritdoc
      */
     public function hasRow($num)
     {
@@ -58,9 +56,7 @@ abstract class ResultSetBase implements ResultSetInterface
     }
 
     /**
-     * Checks that a next row exists
-     *
-     * @return bool True if there's another row with a higher index
+     * @inheritdoc
      */
     public function hasNextRow()
     {
@@ -68,10 +64,7 @@ abstract class ResultSetBase implements ResultSetInterface
     }
 
     /**
-     * Returns the number of rows affected by the query
-     * This will be 0 for SELECT and any query not editing rows
-     *
-     * @return int
+     * @inheritdoc
      */
     public function getAffectedRows()
     {
@@ -79,16 +72,7 @@ abstract class ResultSetBase implements ResultSetInterface
     }
 
     /**
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Whether a offset exists
-     * @link http://php.net/manual/en/arrayaccess.offsetexists.php
-     * @param mixed $offset <p>
-     * An offset to check for.
-     * </p>
-     * @return boolean true on success or false on failure.
-     * </p>
-     * <p>
-     * The return value will be casted to boolean if non-boolean was returned.
+     * @inheritdoc
      */
     public function offsetExists($offset)
     {
@@ -96,13 +80,7 @@ abstract class ResultSetBase implements ResultSetInterface
     }
 
     /**
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Offset to retrieve
-     * @link http://php.net/manual/en/arrayaccess.offsetget.php
-     * @param mixed $offset <p>
-     * The offset to retrieve.
-     * </p>
-     * @return mixed Can return all value types.
+     * @inheritdoc
      */
     public function offsetGet($offset)
     {
@@ -110,17 +88,7 @@ abstract class ResultSetBase implements ResultSetInterface
     }
 
     /**
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Offset to set
-     * @link http://php.net/manual/en/arrayaccess.offsetset.php
-     * @param mixed $offset <p>
-     * The offset to assign the value to.
-     * </p>
-     * @param mixed $value <p>
-     * The value to set.
-     * </p>
-     * @return void
-     *
+     * @inheritdoc
      * @codeCoverageIgnore
      */
     public function offsetSet($offset, $value)
@@ -129,14 +97,7 @@ abstract class ResultSetBase implements ResultSetInterface
     }
 
     /**
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Offset to unset
-     * @link http://php.net/manual/en/arrayaccess.offsetunset.php
-     * @param mixed $offset <p>
-     * The offset to unset.
-     * </p>
-     * @return void
-     *
+     * @inheritdoc
      * @codeCoverageIgnore
      */
     public function offsetUnset($offset)
@@ -145,23 +106,18 @@ abstract class ResultSetBase implements ResultSetInterface
     }
 
     /**
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Return the current element
-     * @link http://php.net/manual/en/iterator.current.php
-     * @return mixed Can return any type.
+     * @inheritdoc
      */
     public function current()
     {
         $row = $this->fetched;
         unset($this->fetched);
+
         return $row;
     }
 
     /**
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Move forward to next element
-     * @link http://php.net/manual/en/iterator.next.php
-     * @return void Any returned value is ignored.
+     * @inheritdoc
      */
     public function next()
     {
@@ -169,10 +125,7 @@ abstract class ResultSetBase implements ResultSetInterface
     }
 
     /**
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Return the key of the current element
-     * @link http://php.net/manual/en/iterator.key.php
-     * @return mixed scalar on success, or null on failure.
+     * @inheritdoc
      */
     public function key()
     {
@@ -180,11 +133,7 @@ abstract class ResultSetBase implements ResultSetInterface
     }
 
     /**
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Checks if current position is valid
-     * @link http://php.net/manual/en/iterator.valid.php
-     * @return boolean The return value will be casted to boolean and then evaluated.
-     * Returns true on success or false on failure.
+     * @inheritdoc
      */
     public function valid()
     {
@@ -196,10 +145,7 @@ abstract class ResultSetBase implements ResultSetInterface
     }
 
     /**
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Rewind the Iterator to the first element
-     * @link http://php.net/manual/en/iterator.rewind.php
-     * @return void Any returned value is ignored.
+     * @inheritdoc
      */
     public function rewind()
     {
@@ -233,6 +179,7 @@ abstract class ResultSetBase implements ResultSetInterface
 
     /**
      * @param array $numeric_array
+     *
      * @return array
      */
     protected function makeAssoc($numeric_array)
@@ -247,6 +194,7 @@ abstract class ResultSetBase implements ResultSetInterface
 
     /**
      * @param ResultSetAdapter::FETCH_ASSOC|ResultSetAdapter::FETCH_NUM $fetch_type
+     *
      * @return array|bool|null
      */
     protected function fetchFromStore($fetch_type)
@@ -266,6 +214,7 @@ abstract class ResultSetBase implements ResultSetInterface
 
     /**
      * @param ResultSetAdapter::FETCH_ASSOC|ResultSetAdapter::FETCH_NUM $fetch_type
+     *
      * @return array|bool
      */
     protected function fetchAllFromStore($fetch_type)
@@ -287,6 +236,7 @@ abstract class ResultSetBase implements ResultSetInterface
 
     /**
      * @param ResultSetAdapter::FETCH_ASSOC|ResultSetAdapter::FETCH_NUM $fetch_type
+     *
      * @return array
      */
     protected function fetchAll($fetch_type)
@@ -304,9 +254,7 @@ abstract class ResultSetBase implements ResultSetInterface
     }
 
     /**
-     * Store all the data in this object and free the driver object
-     *
-     * @return static $this
+     * @inheritdoc
      */
     public function store()
     {
@@ -337,11 +285,7 @@ abstract class ResultSetBase implements ResultSetInterface
     }
 
     /**
-     * Moves the cursor to the selected row
-     *
-     * @param int $num The number of the row to move the cursor to
-     * @return static
-     * @throws ResultSetException If the row does not exist
+     * @inheritdoc
      */
     public function toRow($num)
     {
@@ -360,21 +304,17 @@ abstract class ResultSetBase implements ResultSetInterface
     }
 
     /**
-     * Moves the cursor to the next row
-     *
-     * @return static $this
-     * @throws ResultSetException If the next row does not exist
+     * @inheritdoc
      */
     public function toNextRow()
     {
         $this->toRow(++$this->cursor);
+
         return $this;
     }
 
     /**
-     * Fetches all the rows as an array of associative arrays
-     *
-     * @return array
+     * @inheritdoc
      */
     public function fetchAllAssoc()
     {
@@ -382,9 +322,7 @@ abstract class ResultSetBase implements ResultSetInterface
     }
 
     /**
-     * Fetches all the rows as an array of indexed arrays
-     *
-     * @return array
+     * @inheritdoc
      */
     public function fetchAllNum()
     {
@@ -392,9 +330,7 @@ abstract class ResultSetBase implements ResultSetInterface
     }
 
     /**
-     * Fetches a row as an associative array
-     *
-     * @return array
+     * @inheritdoc
      */
     public function fetchAssoc()
     {
@@ -402,9 +338,7 @@ abstract class ResultSetBase implements ResultSetInterface
     }
 
     /**
-     * Fetches a row as an indexed array
-     *
-     * @return array|null
+     * @inheritdoc
      */
     public function fetchNum()
     {
@@ -413,6 +347,7 @@ abstract class ResultSetBase implements ResultSetInterface
 
     /**
      * @param ResultSetAdapter::FETCH_ASSOC|ResultSetAdapter::FETCH_NUM $fetch_type
+     *
      * @return array|null
      */
     protected function fetch($fetch_type)
@@ -431,14 +366,12 @@ abstract class ResultSetBase implements ResultSetInterface
     }
 
     /**
-     * Frees the memory from the result
-     * Call it after you're done with a result set
-     *
-     * @return static
+     * @inheritdoc
      */
     public function freeResult()
     {
         $this->adapter->freeResult();
+
         return $this;
     }
 }

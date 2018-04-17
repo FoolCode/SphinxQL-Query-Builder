@@ -6,20 +6,13 @@ use Foolz\SphinxQL\Drivers\ConnectionBase;
 use Foolz\SphinxQL\Exception\ConnectionException;
 use Foolz\SphinxQL\Exception\DatabaseException;
 use Foolz\SphinxQL\Exception\SphinxQLException;
+use PDO;
+use PDOException;
 
-/**
- * Class PdoConnection
- * @package Foolz\SphinxQL\Drivers
- */
 class Connection extends ConnectionBase
 {
     /**
-     * Performs a query on the Sphinx server.
-     *
-     * @param string $query The query string
-     *
-     * @throws DatabaseException
-     * @return array|int The result array or number of rows affected
+     * @inheritdoc
      */
     public function query($query)
     {
@@ -27,10 +20,9 @@ class Connection extends ConnectionBase
 
         $stm = $this->connection->prepare($query);
 
-        try{
+        try {
             $stm->execute();
-        }
-        catch(\PDOException $exception){
+        } catch (PDOException $exception) {
             throw new DatabaseException($exception->getMessage() . ' [' . $query . ']');
         }
 
@@ -60,17 +52,21 @@ class Connection extends ConnectionBase
         }
 
         try {
-            $con = new \Pdo($dsn);
-        } catch (\PDOException $exception) {
+            $con = new PDO($dsn);
+        } catch (PDOException $exception) {
             throw new ConnectionException($exception->getMessage());
         }
 
         $this->connection = $con;
-        $this->connection->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+        $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         return true;
     }
 
+    /**
+     * @return bool
+     * @throws ConnectionException
+     */
     public function ping()
     {
         $this->ensureConnection();
@@ -79,10 +75,7 @@ class Connection extends ConnectionBase
     }
 
     /**
-     * @param array $queue
-     * @return \Foolz\SphinxQL\Drivers\Pdo\MultiResultSet
-     * @throws DatabaseException
-     * @throws SphinxQLException
+     * @inheritdoc
      */
     public function multiQuery(array $queue)
     {
@@ -94,7 +87,7 @@ class Connection extends ConnectionBase
 
         try {
             $statement = $this->connection->query(implode(';', $queue));
-        } catch (\PDOException $exception) {
+        } catch (PDOException $exception) {
             throw new DatabaseException($exception->getMessage() .' [ '.implode(';', $queue).']');
         }
 
@@ -102,8 +95,7 @@ class Connection extends ConnectionBase
     }
 
     /**
-     * @param string $value
-     * @return string
+     * @inheritdoc
      */
     public function escape($value)
     {

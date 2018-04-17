@@ -1,20 +1,23 @@
 <?php
+
 namespace Foolz\SphinxQL\Drivers;
 
+use Foolz\SphinxQL\Exception\DatabaseException;
 
 interface MultiResultSetInterface extends \ArrayAccess, \Iterator, \Countable
 {
     /**
      * Stores all the data in PHP and frees the data on the server
      *
-     * @return static
+     * @return $this
+     * @throws DatabaseException
      */
     public function store();
 
     /**
      * Returns the stored data as an array (results) of arrays (rows)
      *
-     * @return ResultSetInterface[]
+     * @return ResultSetInterface[]|null
      */
     public function getStored();
 

@@ -2,7 +2,6 @@
 
 namespace Foolz\SphinxQL\Drivers\Pdo;
 
-
 use Foolz\SphinxQL\Drivers\MultiResultSetBase;
 use PDOStatement;
 

@@ -5,7 +5,6 @@ namespace Foolz\SphinxQL;
 /**
  * Wraps expressions so they aren't quoted or modified
  * when inserted into the query
- * @package Foolz\SphinxQL
  */
 class Expression
 {
@@ -43,6 +42,6 @@ class Expression
      */
     public function __toString()
     {
-        return (string) $this->value();
+        return $this->value();
     }
 }

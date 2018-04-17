@@ -2,13 +2,14 @@
 
 namespace Foolz\SphinxQL\Drivers\Pdo;
 
-use \PDO;
-use \PDOStatement;
+use Foolz\SphinxQL\Drivers\ResultSetAdapterInterface;
+use PDO;
+use PDOStatement;
 
-class ResultSetAdapter implements \Foolz\SphinxQL\Drivers\ResultSetAdapterInterface
+class ResultSetAdapter implements ResultSetAdapterInterface
 {
     /**
-     * @var null|PDOStatement
+     * @var PDOStatement
      */
     protected $statement;
 
@@ -17,13 +18,16 @@ class ResultSetAdapter implements \Foolz\SphinxQL\Drivers\ResultSetAdapterInterf
      */
     protected $valid = true;
 
+    /**
+     * @param PDOStatement $statement
+     */
     public function __construct(PDOStatement $statement)
     {
         $this->statement = $statement;
     }
 
     /**
-     * @return int
+     * @inheritdoc
      */
     public function getAffectedRows()
     {
@@ -31,7 +35,7 @@ class ResultSetAdapter implements \Foolz\SphinxQL\Drivers\ResultSetAdapterInterf
     }
 
     /**
-     * @return int
+     * @inheritdoc
      */
     public function getNumRows()
     {
@@ -39,7 +43,7 @@ class ResultSetAdapter implements \Foolz\SphinxQL\Drivers\ResultSetAdapterInterf
     }
 
     /**
-     * @return array
+     * @inheritdoc
      */
     public function getFields()
     {
@@ -53,7 +57,7 @@ class ResultSetAdapter implements \Foolz\SphinxQL\Drivers\ResultSetAdapterInterf
     }
 
     /**
-     * @return bool
+     * @inheritdoc
      */
     public function isDml()
     {
@@ -61,7 +65,7 @@ class ResultSetAdapter implements \Foolz\SphinxQL\Drivers\ResultSetAdapterInterf
     }
 
     /**
-     * @return array
+     * @inheritdoc
      */
     public function store()
     {
@@ -69,25 +73,31 @@ class ResultSetAdapter implements \Foolz\SphinxQL\Drivers\ResultSetAdapterInterf
     }
 
     /**
-     * @param $num
+     * @inheritdoc
      */
     public function toRow($num)
     {
         throw new \BadMethodCallException('Not implemented');
     }
 
+    /**
+     * @inheritdoc
+     */
     public function freeResult()
     {
         $this->statement->closeCursor();
     }
 
+    /**
+     * @inheritdoc
+     */
     public function rewind()
     {
 
     }
 
     /**
-     * @return bool
+     * @inheritdoc
      */
     public function valid()
     {
@@ -95,8 +105,7 @@ class ResultSetAdapter implements \Foolz\SphinxQL\Drivers\ResultSetAdapterInterf
     }
 
     /**
-     * @param self::FETCH_ASSOC|self::FETCH_NUM $fetch_type
-     * @return array|null
+     * @inheritdoc
      */
     public function fetch($fetch_type)
     {
@@ -115,8 +124,7 @@ class ResultSetAdapter implements \Foolz\SphinxQL\Drivers\ResultSetAdapterInterf
     }
 
     /**
-     * @param self::FETCH_ASSOC|self::FETCH_NUM $fetch_type
-     * @return array
+     * @inheritdoc
      */
     public function fetchAll($fetch_type)
     {

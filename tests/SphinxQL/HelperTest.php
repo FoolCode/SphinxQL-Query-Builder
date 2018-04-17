@@ -1,8 +1,8 @@
 <?php
 
 use Foolz\SphinxQL\Drivers\ConnectionInterface;
-use Foolz\SphinxQL\SphinxQL;
 use Foolz\SphinxQL\Helper;
+use Foolz\SphinxQL\SphinxQL;
 use Foolz\SphinxQL\Tests\TestUtil;
 
 class HelperTest extends \PHPUnit\Framework\TestCase

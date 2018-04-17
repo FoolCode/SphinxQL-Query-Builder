@@ -2,15 +2,14 @@
 
 namespace Foolz\SphinxQL\Drivers\Mysqli;
 
+use Foolz\SphinxQL\Drivers\ConnectionBase;
 use Foolz\SphinxQL\Exception\ConnectionException;
 use Foolz\SphinxQL\Exception\DatabaseException;
 use Foolz\SphinxQL\Exception\SphinxQLException;
-use Foolz\SphinxQL\Drivers\ConnectionBase;
 
 /**
  * SphinxQL connection class utilizing the MySQLi extension.
  * It also contains escaping and quoting functions.
- * @package Foolz\SphinxQL
  */
 class Connection extends ConnectionBase
 {
@@ -64,11 +63,12 @@ class Connection extends ConnectionBase
     /**
      * Pings the Sphinx server.
      *
-     * @return boolean True if connected, false otherwise
+     * @return bool True if connected, false otherwise
      */
     public function ping()
     {
         $this->ensureConnection();
+
         return $this->getConnection()->ping();
     }
 
@@ -79,16 +79,12 @@ class Connection extends ConnectionBase
     {
         $this->mbPop();
         $this->getConnection()->close();
+
         return parent::close();
     }
 
     /**
-     * Performs a query on the Sphinx server.
-     *
-     * @param string $query The query string
-     *
-     * @return ResultSet The result array or number of rows affected
-     * @throws DatabaseException If the executed query produced an error
+     * @inheritdoc
      */
     public function query($query)
     {
@@ -105,15 +101,9 @@ class Connection extends ConnectionBase
     }
 
     /**
-     * Performs multiple queries on the Sphinx server.
-     *
-     * @param array $queue Queue holding all of the queries to be executed
-     *
-     * @return MultiResultSet The result array
-     * @throws DatabaseException In case a query throws an error
-     * @throws SphinxQLException In case the array passed is empty
+     * @inheritdoc
      */
-    public function multiQuery(Array $queue)
+    public function multiQuery(array $queue)
     {
         $count = count($queue);
 
@@ -135,11 +125,7 @@ class Connection extends ConnectionBase
     /**
      * Escapes the input with \MySQLi::real_escape_string.
      * Based on FuelPHP's escaping function.
-     *
-     * @param string $value The string to escape
-     *
-     * @return string The escaped string
-     * @throws DatabaseException If an error was encountered during server-side escape
+     * @inheritdoc
      */
     public function escape($value)
     {

@@ -2,15 +2,19 @@
 
 namespace Foolz\SphinxQL\Drivers\Mysqli;
 
-class ResultSetAdapter implements \Foolz\SphinxQL\Drivers\ResultSetAdapterInterface
+use Foolz\SphinxQL\Drivers\ResultSetAdapterInterface;
+use Foolz\SphinxQL\Exception\ConnectionException;
+use mysqli_result;
+
+class ResultSetAdapter implements ResultSetAdapterInterface
 {
     /**
-     * @var Connection|null
+     * @var Connection
      */
     protected $connection;
 
     /**
-     * @var \mysqli_result|null
+     * @var mysqli_result|bool
      */
     protected $result;
 
@@ -20,18 +24,18 @@ class ResultSetAdapter implements \Foolz\SphinxQL\Drivers\ResultSetAdapterInterf
     protected $valid = true;
 
     /**
-     * @param Connection $connection
-     * @param null|\mysqli_result $result
+     * @param Connection         $connection
+     * @param mysqli_result|bool $result
      */
-    public function __construct(Connection $connection, $result = null)
+    public function __construct(Connection $connection, $result)
     {
         $this->connection = $connection;
         $this->result = $result;
     }
 
     /**
-     * @return mixed
-     * @throws \Foolz\SphinxQL\Exception\ConnectionException
+     * @inheritdoc
+     * @throws ConnectionException
      */
     public function getAffectedRows()
     {
@@ -39,7 +43,7 @@ class ResultSetAdapter implements \Foolz\SphinxQL\Drivers\ResultSetAdapterInterf
     }
 
     /**
-     * @return int
+     * @inheritdoc
      */
     public function getNumRows()
     {
@@ -47,7 +51,7 @@ class ResultSetAdapter implements \Foolz\SphinxQL\Drivers\ResultSetAdapterInterf
     }
 
     /**
-     * @return array
+     * @inheritdoc
      */
     public function getFields()
     {
@@ -55,49 +59,58 @@ class ResultSetAdapter implements \Foolz\SphinxQL\Drivers\ResultSetAdapterInterf
     }
 
     /**
-     * @return bool
+     * @inheritdoc
      */
     public function isDml()
     {
-        return !($this->result instanceof \mysqli_result);
+        return !($this->result instanceof mysqli_result);
     }
 
     /**
-     * @return mixed
+     * @inheritdoc
      */
     public function store()
     {
         $this->result->data_seek(0);
+
         return $this->result->fetch_all(MYSQLI_NUM);
     }
 
     /**
-     * @param int $num
+     * @inheritdoc
      */
     public function toRow($num)
     {
         $this->result->data_seek($num);
     }
 
+    /**
+     * @inheritdoc
+     */
     public function freeResult()
     {
         $this->result->free_result();
     }
 
+    /**
+     * @inheritdoc
+     */
     public function rewind()
     {
         $this->valid = true;
         $this->result->data_seek(0);
     }
 
+    /**
+     * @inheritdoc
+     */
     public function valid()
     {
         return $this->valid;
     }
 
     /**
-     * @param self::FETCH_ASSOC|self::FETCH_NUM $fetch_type
-     * @return array|null
+     * @inheritdoc
      */
     public function fetch($fetch_type)
     {
@@ -115,8 +128,7 @@ class ResultSetAdapter implements \Foolz\SphinxQL\Drivers\ResultSetAdapterInterf
     }
 
     /**
-     * @param self::FETCH_ASSOC|self::FETCH_NUM $fetch_type
-     * @return array
+     * @inheritdoc
      */
     public function fetchAll($fetch_type)
     {

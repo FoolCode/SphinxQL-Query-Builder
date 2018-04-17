@@ -24,7 +24,7 @@ class ResultSet extends ResultSetBase
     /**
      * Get the result object returned by PHP's MySQLi
      *
-     * @return \Pdostatement
+     * @return PDOStatement
      *
      * @codeCoverageIgnore
      */

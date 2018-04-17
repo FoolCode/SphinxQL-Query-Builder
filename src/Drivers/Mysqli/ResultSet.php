@@ -2,8 +2,10 @@
 
 namespace Foolz\SphinxQL\Drivers\Mysqli;
 
-use Foolz\SphinxQL\Exception\ConnectionException;
 use Foolz\SphinxQL\Drivers\ResultSetBase;
+use Foolz\SphinxQL\Exception\ConnectionException;
+use mysqli;
+use mysqli_result;
 
 class ResultSet extends ResultSetBase
 {
@@ -13,15 +15,15 @@ class ResultSet extends ResultSetBase
     protected $connection;
 
     /**
-     * @var \mysqli_result
+     * @var mysqli_result|bool
      */
     protected $result;
 
     /**
-     * @param Connection $connection
-     * @param null|\mysqli_result $result
+     * @param Connection         $connection
+     * @param mysqli_result|bool $result
      */
-    public function __construct(Connection $connection, $result = null)
+    public function __construct(Connection $connection, $result)
     {
         $this->connection = $connection;
         $this->adapter = new ResultSetAdapter($connection, $result);
@@ -32,7 +34,7 @@ class ResultSet extends ResultSetBase
     /**
      * Get the result object returned by PHP's MySQLi
      *
-     * @return \mysqli_result
+     * @return mysqli_result
      *
      * @codeCoverageIgnore
      */
@@ -56,7 +58,7 @@ class ResultSet extends ResultSetBase
     /**
      * Get the PHP MySQLi object
      *
-     * @return \mysqli
+     * @return mysqli
      * @throws ConnectionException
      */
     public function getMysqliConnection()

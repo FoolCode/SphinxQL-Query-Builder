@@ -2,7 +2,10 @@
 
 namespace Foolz\SphinxQL\Drivers\Pdo;
 
-class MultiResultSetAdapter implements \Foolz\SphinxQL\Drivers\MultiResultSetAdapterInterface
+use Foolz\SphinxQL\Drivers\MultiResultSetAdapterInterface;
+use PDOStatement;
+
+class MultiResultSetAdapter implements MultiResultSetAdapterInterface
 {
     /**
      * @var bool
@@ -10,15 +13,21 @@ class MultiResultSetAdapter implements \Foolz\SphinxQL\Drivers\MultiResultSetAda
     protected $valid = true;
 
     /**
-     * @var \PDOStatement
+     * @var PDOStatement
      */
     protected $statement;
 
-    public function __construct($statement)
+    /**
+     * @param PDOStatement $statement
+     */
+    public function __construct(PDOStatement $statement)
     {
         $this->statement = $statement;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getNext()
     {
         if (
@@ -30,7 +39,7 @@ class MultiResultSetAdapter implements \Foolz\SphinxQL\Drivers\MultiResultSetAda
     }
 
     /**
-     * @return ResultSet
+     * @inheritdoc
      */
     public function current()
     {
@@ -38,7 +47,7 @@ class MultiResultSetAdapter implements \Foolz\SphinxQL\Drivers\MultiResultSetAda
     }
 
     /**
-     * @return bool
+     * @inheritdoc
      */
     public function valid()
     {

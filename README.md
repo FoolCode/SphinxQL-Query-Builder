@@ -202,7 +202,7 @@ Will return an array with an `INT` as first member, the number of rows deleted.
     $sq->where('column', '=', 'value');
 
     // WHERE `column` >= 'value'
-    $sq->where('column', '>=', 'value')
+    $sq->where('column', '>=', 'value');
 
     // WHERE `column` IN ('value1', 'value2', 'value3')
     $sq->where('column', 'IN', array('value1', 'value2', 'value3'));
@@ -212,7 +212,7 @@ Will return an array with an `INT` as first member, the number of rows deleted.
 
     // WHERE `column` BETWEEN 'value1' AND 'value2'
     // WHERE `example` BETWEEN 10 AND 100
-    $sq->where('column', 'BETWEEN', array('value1', 'value2'))
+    $sq->where('column', 'BETWEEN', array('value1', 'value2'));
 	```
 
 	_It should be noted that `OR` and parenthesis are not supported and implemented in the SphinxQL dialect yet._

@@ -1,12 +1,12 @@
 <?php
 
 namespace Foolz\SphinxQL;
+
 use Foolz\SphinxQL\Drivers\ConnectionInterface;
 
 /**
  * SQL queries that don't require "query building"
  * These return a valid SphinxQL that can even be enqueued
- * @package Foolz\SphinxQL
  */
 class Helper
 {
@@ -117,9 +117,9 @@ class Helper
     /**
      * SET syntax
      *
-     * @param string  $name   The name of the variable
-     * @param mixed   $value  The value of the variable
-     * @param boolean $global True if the variable should be global, false otherwise
+     * @param string $name   The name of the variable
+     * @param mixed  $value  The value of the variable
+     * @param bool   $global True if the variable should be global, false otherwise
      *
      * @return SphinxQL A SphinxQL object ready to be ->execute();
      */
@@ -136,7 +136,7 @@ class Helper
         $query .= $name.' ';
 
         // user variables must always be processed as arrays
-        if ($user_var && ! is_array($value)) {
+        if ($user_var && !is_array($value)) {
             $query .= '= ('.$this->connection->quote($value).')';
         } elseif (is_array($value)) {
             $query .= '= ('.implode(', ', $this->connection->quoteArr($value)).')';

@@ -6,11 +6,6 @@ use Foolz\SphinxQL\Exception\DatabaseException;
 use Foolz\SphinxQL\Exception\SphinxQLException;
 use Foolz\SphinxQL\Expression;
 
-/**
- * Interface ConnectionInterface
- *
- * @package Foolz\SphinxQL
- */
 interface ConnectionInterface
 {
     /**
@@ -32,7 +27,7 @@ interface ConnectionInterface
      * @throws DatabaseException In case a query throws an error
      * @throws SphinxQLException In case the array passed is empty
      */
-    public function multiQuery(Array $queue);
+    public function multiQuery(array $queue);
 
     /**
      * Escapes the input
@@ -57,9 +52,9 @@ interface ConnectionInterface
     /**
      * Calls $this->quote() on every element of the array passed.
      *
-     * @param array $array The array of strings to quote
+     * @param array $array The array of elements to quote
      *
-     * @return array The array of quotes strings
+     * @return array The array of quotes elements
      */
-    public function quoteArr(Array $array = array());
+    public function quoteArr(array $array = array());
 }

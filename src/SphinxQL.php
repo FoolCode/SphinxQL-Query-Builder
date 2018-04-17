@@ -1,14 +1,14 @@
 <?php
 
 namespace Foolz\SphinxQL;
+
 use Foolz\SphinxQL\Drivers\ConnectionInterface;
-use Foolz\SphinxQL\Exception\SphinxQLException;
 use Foolz\SphinxQL\Drivers\MultiResultSetInterface;
 use Foolz\SphinxQL\Drivers\ResultSetInterface;
+use Foolz\SphinxQL\Exception\SphinxQLException;
 
 /**
  * Query Builder class for SphinxQL statements.
- * @package Foolz\SphinxQL
  */
 class SphinxQL
 {
@@ -179,20 +179,20 @@ class SphinxQL
      */
     protected $escape_full_chars = array(
         '\\' => '\\\\',
-        '(' => '\(',
-        ')' => '\)',
-        '|' => '\|',
-        '-' => '\-',
-        '!' => '\!',
-        '@' => '\@',
-        '~' => '\~',
-        '"' => '\"',
-        '&' => '\&',
-        '/' => '\/',
-        '^' => '\^',
-        '$' => '\$',
-        '=' => '\=',
-        '<' => '\<',
+        '('  => '\(',
+        ')'  => '\)',
+        '|'  => '\|',
+        '-'  => '\-',
+        '!'  => '\!',
+        '@'  => '\@',
+        '~'  => '\~',
+        '"'  => '\"',
+        '&'  => '\&',
+        '/'  => '\/',
+        '^'  => '\^',
+        '$'  => '\$',
+        '='  => '\=',
+        '<'  => '\<',
     );
 
     /**
@@ -201,17 +201,17 @@ class SphinxQL
      */
     protected $escape_half_chars = array(
         '\\' => '\\\\',
-        '(' => '\(',
-        ')' => '\)',
-        '!' => '\!',
-        '@' => '\@',
-        '~' => '\~',
-        '&' => '\&',
-        '/' => '\/',
-        '^' => '\^',
-        '$' => '\$',
-        '=' => '\=',
-        '<' => '\<',
+        '('  => '\(',
+        ')'  => '\)',
+        '!'  => '\!',
+        '@'  => '\@',
+        '~'  => '\~',
+        '&'  => '\&',
+        '/'  => '\/',
+        '^'  => '\^',
+        '$'  => '\$',
+        '='  => '\=',
+        '<'  => '\<',
     );
 
     /**
@@ -470,6 +470,7 @@ class SphinxQL
             $matched = implode(' ', $matched);
             $query .= $this->getConnection()->escape(trim($matched)).') ';
         }
+
         return $query;
     }
 
@@ -936,9 +937,9 @@ class SphinxQL
     /**
      * MATCH clause (Sphinx-specific)
      *
-     * @param mixed    $column The column name (can be array, string, Closure, or Match)
-     * @param string   $value  The value
-     * @param boolean  $half  Exclude ", |, - control characters from being escaped
+     * @param mixed  $column The column name (can be array, string, Closure, or Match)
+     * @param string $value  The value
+     * @param bool   $half   Exclude ", |, - control characters from being escaped
      *
      * @return $this
      */
@@ -973,10 +974,10 @@ class SphinxQL
      *    // WHERE column BETWEEN 'value1' AND 'value2'
      *    // WHERE example BETWEEN 10 AND 100
      *
-     * @param string   $column   The column name
+     * @param string                                      $column   The column name
      * @param Expression|string|null|bool|array|int|float $operator The operator to use (if value is not null, you can
      *      use only string)
-     * @param Expression|string|null|bool|array|int|float $value The value to check against
+     * @param Expression|string|null|bool|array|int|float $value    The value to check against
      *
      * @return $this
      */
@@ -988,9 +989,9 @@ class SphinxQL
         }
 
         $this->where[] = array(
-            'column' => $column,
+            'column'   => $column,
             'operator' => $operator,
-            'value' => $value
+            'value'    => $value,
         );
 
         return $this;
@@ -1063,9 +1064,9 @@ class SphinxQL
      *    // HAVING column BETWEEN 'value1' AND 'value2'
      *    // HAVING example BETWEEN 10 AND 100
      *
-     * @param string   $column   The column name
-     * @param string   $operator The operator to use
-     * @param string   $value    The value to check against
+     * @param string $column   The column name
+     * @param string $operator The operator to use
+     * @param string $value    The value to check against
      *
      * @return $this
      */
@@ -1077,9 +1078,9 @@ class SphinxQL
         }
 
         $this->having = array(
-            'column' => $column,
+            'column'   => $column,
             'operator' => $operator,
-            'value' => $value
+            'value'    => $value,
         );
 
         return $this;
@@ -1114,6 +1115,7 @@ class SphinxQL
     {
         if ($limit === null) {
             $this->limit = (int) $offset;
+
             return $this;
         }
 
@@ -1141,7 +1143,7 @@ class SphinxQL
      * OPTION clause (SphinxQL-specific)
      * Used by: SELECT
      *
-     * @param string $name  Option name
+     * @param string                                      $name  Option name
      * @param Expression|array|string|int|bool|float|null $value Option value
      *
      * @return $this
@@ -1255,6 +1257,7 @@ class SphinxQL
      * Used in: INSERT, REPLACE, UPDATE
      *
      * @param Facet $facet
+     *
      * @return $this
      */
     public function facet($facet)

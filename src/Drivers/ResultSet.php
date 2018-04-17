@@ -134,7 +134,7 @@ class ResultSet implements ResultSetInterface
      */
     public function next()
     {
-        $this->fetched = $this->fetch(ResultSetAdapterInterface::FETCH_ASSOC);
+        $this->fetched = $this->fetch(true);
     }
 
     /**
@@ -168,7 +168,7 @@ class ResultSet implements ResultSetInterface
 
         $this->next_cursor = 0;
 
-        $this->fetched = $this->fetch(ResultSetAdapterInterface::FETCH_ASSOC);
+        $this->fetched = $this->fetch(true);
     }
 
     /**
@@ -206,11 +206,11 @@ class ResultSet implements ResultSetInterface
     }
 
     /**
-     * @param ResultSetAdapterInterface::FETCH_ASSOC|ResultSetAdapterInterface::FETCH_NUM $fetch_type
+     * @param bool $assoc
      *
      * @return array|bool|null
      */
-    protected function fetchFromStore($fetch_type)
+    protected function fetchFromStore($assoc = true)
     {
         if ($this->stored === null) {
             return false;
@@ -219,18 +219,18 @@ class ResultSet implements ResultSetInterface
         $row = isset($this->stored[$this->cursor]) ? $this->stored[$this->cursor] : null;
 
         if ($row !== null) {
-            $row = $fetch_type == ResultSetAdapterInterface::FETCH_ASSOC ? $this->makeAssoc($row) : $row;
+            $row = $assoc ? $this->makeAssoc($row) : $row;
         }
 
         return $row;
     }
 
     /**
-     * @param ResultSetAdapterInterface::FETCH_ASSOC|ResultSetAdapterInterface::FETCH_NUM $fetch_type
+     * @param bool $assoc
      *
      * @return array|bool
      */
-    protected function fetchAllFromStore($fetch_type)
+    protected function fetchAllFromStore($assoc)
     {
         if ($this->stored === null) {
             return false;
@@ -239,7 +239,7 @@ class ResultSet implements ResultSetInterface
         $result_from_store = array();
 
         $this->cursor = $this->next_cursor;
-        while ($row = $this->fetchFromStore($fetch_type)) {
+        while ($row = $this->fetchFromStore($assoc)) {
             $result_from_store[] = $row;
             $this->cursor = ++$this->next_cursor;
         }
@@ -248,16 +248,16 @@ class ResultSet implements ResultSetInterface
     }
 
     /**
-     * @param ResultSetAdapterInterface::FETCH_ASSOC|ResultSetAdapterInterface::FETCH_NUM $fetch_type
+     * @param bool $assoc
      *
      * @return array
      */
-    protected function fetchAll($fetch_type)
+    protected function fetchAll($assoc = true)
     {
-        $fetch_all_result = $this->fetchAllFromStore($fetch_type);
+        $fetch_all_result = $this->fetchAllFromStore($assoc);
 
         if ($fetch_all_result === false) {
-            $fetch_all_result = $this->adapter->fetchAll($fetch_type);
+            $fetch_all_result = $this->adapter->fetchAll($assoc);
         }
 
         $this->cursor = $this->num_rows;
@@ -331,7 +331,7 @@ class ResultSet implements ResultSetInterface
      */
     public function fetchAllAssoc()
     {
-        return $this->fetchAll(ResultSetAdapterInterface::FETCH_ASSOC);
+        return $this->fetchAll(true);
     }
 
     /**
@@ -339,7 +339,7 @@ class ResultSet implements ResultSetInterface
      */
     public function fetchAllNum()
     {
-        return $this->fetchAll(ResultSetAdapterInterface::FETCH_NUM);
+        return $this->fetchAll(false);
     }
 
     /**
@@ -347,7 +347,7 @@ class ResultSet implements ResultSetInterface
      */
     public function fetchAssoc()
     {
-        return $this->fetch(ResultSetAdapterInterface::FETCH_ASSOC);
+        return $this->fetch(true);
     }
 
     /**
@@ -355,22 +355,22 @@ class ResultSet implements ResultSetInterface
      */
     public function fetchNum()
     {
-        return $this->fetch(ResultSetAdapterInterface::FETCH_NUM);
+        return $this->fetch(false);
     }
 
     /**
-     * @param ResultSetAdapterInterface::FETCH_ASSOC|ResultSetAdapterInterface::FETCH_NUM $fetch_type
+     * @param bool $assoc
      *
      * @return array|null
      */
-    protected function fetch($fetch_type)
+    protected function fetch($assoc = true)
     {
         $this->cursor = $this->next_cursor;
 
-        $row = $this->fetchFromStore($fetch_type);
+        $row = $this->fetchFromStore($assoc);
 
         if ($row === false) {
-            $row = $this->adapter->fetch($fetch_type);
+            $row = $this->adapter->fetch($assoc);
         }
 
         $this->next_cursor++;

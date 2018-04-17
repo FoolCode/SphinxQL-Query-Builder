@@ -112,9 +112,9 @@ class ResultSetAdapter implements ResultSetAdapterInterface
     /**
      * @inheritdoc
      */
-    public function fetch($fetch_type)
+    public function fetch($assoc = true)
     {
-        if ($fetch_type == self::FETCH_ASSOC) {
+        if ($assoc) {
             $row = $this->result->fetch_assoc();
         } else {
             $row = $this->result->fetch_row();
@@ -130,9 +130,9 @@ class ResultSetAdapter implements ResultSetAdapterInterface
     /**
      * @inheritdoc
      */
-    public function fetchAll($fetch_type)
+    public function fetchAll($assoc = true)
     {
-        if ($fetch_type == self::FETCH_ASSOC) {
+        if ($assoc) {
             $row = $this->result->fetch_all(MYSQLI_ASSOC);
         } else {
             $row = $this->result->fetch_all(MYSQLI_NUM);

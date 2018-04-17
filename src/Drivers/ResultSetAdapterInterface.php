@@ -4,9 +4,6 @@ namespace Foolz\SphinxQL\Drivers;
 
 interface ResultSetAdapterInterface
 {
-    CONST FETCH_NUM = 'num';
-    CONST FETCH_ASSOC = 'assoc';
-
     /**
      * @return int
      */
@@ -53,16 +50,16 @@ interface ResultSetAdapterInterface
     public function valid();
 
     /**
-     * @param string $fetch_type self::FETCH_ASSOC|self::FETCH_NUM $fetch_type
+     * @param bool $assoc
      *
      * @return array|null
      */
-    public function fetch($fetch_type);
+    public function fetch($assoc = true);
 
     /**
-     * @param string $fetch_type self::FETCH_ASSOC|self::FETCH_NUM $fetch_type
+     * @param bool $assoc
      *
      * @return array
      */
-    public function fetchAll($fetch_type);
+    public function fetchAll($assoc = true);
 }

@@ -20,15 +20,15 @@ class Connection extends ConnectionBase
     {
         $this->ensureConnection();
 
-        $stm = $this->connection->prepare($query);
+        $statement = $this->connection->prepare($query);
 
         try {
-            $stm->execute();
+            $statement->execute();
         } catch (PDOException $exception) {
             throw new DatabaseException($exception->getMessage() . ' [' . $query . ']');
         }
 
-        return new ResultSet(new ResultSetAdapter($stm));
+        return new ResultSet(new ResultSetAdapter($statement));
     }
 
     /**

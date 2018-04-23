@@ -2,10 +2,10 @@
 
 namespace Foolz\SphinxQL\Drivers;
 
-use Foolz\SphinxQL\Drivers\Mysqli\ResultSetAdapter;
+use Foolz\SphinxQL\Drivers\Pdo\ResultSetAdapter as PdoResultSetAdapter;
 use Foolz\SphinxQL\Exception\ResultSetException;
 
-abstract class ResultSetBase implements ResultSetInterface
+class ResultSet implements ResultSetInterface
 {
     /**
      * @var int
@@ -43,9 +43,22 @@ abstract class ResultSetBase implements ResultSetInterface
     protected $fetched;
 
     /**
-     * @var null|ResultSetAdapterInterface
+     * @var ResultSetAdapterInterface
      */
     protected $adapter;
+
+    /**
+     * @param ResultSetAdapterInterface $adapter
+     */
+    public function __construct(ResultSetAdapterInterface $adapter)
+    {
+        $this->adapter = $adapter;
+        $this->init();
+
+        if ($adapter instanceof PdoResultSetAdapter) { //only for pdo for some reason
+            $this->store();
+        }
+    }
 
     /**
      * @inheritdoc
@@ -121,7 +134,7 @@ abstract class ResultSetBase implements ResultSetInterface
      */
     public function next()
     {
-        $this->fetched = $this->fetch(ResultSetAdapter::FETCH_ASSOC);
+        $this->fetched = $this->fetch(true);
     }
 
     /**
@@ -155,7 +168,7 @@ abstract class ResultSetBase implements ResultSetInterface
 
         $this->next_cursor = 0;
 
-        $this->fetched = $this->fetch(ResultSetAdapter::FETCH_ASSOC);
+        $this->fetched = $this->fetch(true);
     }
 
     /**
@@ -193,11 +206,11 @@ abstract class ResultSetBase implements ResultSetInterface
     }
 
     /**
-     * @param ResultSetAdapter::FETCH_ASSOC|ResultSetAdapter::FETCH_NUM $fetch_type
+     * @param bool $assoc
      *
      * @return array|bool|null
      */
-    protected function fetchFromStore($fetch_type)
+    protected function fetchFromStore($assoc = true)
     {
         if ($this->stored === null) {
             return false;
@@ -206,18 +219,18 @@ abstract class ResultSetBase implements ResultSetInterface
         $row = isset($this->stored[$this->cursor]) ? $this->stored[$this->cursor] : null;
 
         if ($row !== null) {
-            $row = $fetch_type == ResultSetAdapter::FETCH_ASSOC ? $this->makeAssoc($row) : $row;
+            $row = $assoc ? $this->makeAssoc($row) : $row;
         }
 
         return $row;
     }
 
     /**
-     * @param ResultSetAdapter::FETCH_ASSOC|ResultSetAdapter::FETCH_NUM $fetch_type
+     * @param bool $assoc
      *
      * @return array|bool
      */
-    protected function fetchAllFromStore($fetch_type)
+    protected function fetchAllFromStore($assoc)
     {
         if ($this->stored === null) {
             return false;
@@ -226,7 +239,7 @@ abstract class ResultSetBase implements ResultSetInterface
         $result_from_store = array();
 
         $this->cursor = $this->next_cursor;
-        while ($row = $this->fetchFromStore($fetch_type)) {
+        while ($row = $this->fetchFromStore($assoc)) {
             $result_from_store[] = $row;
             $this->cursor = ++$this->next_cursor;
         }
@@ -235,16 +248,16 @@ abstract class ResultSetBase implements ResultSetInterface
     }
 
     /**
-     * @param ResultSetAdapter::FETCH_ASSOC|ResultSetAdapter::FETCH_NUM $fetch_type
+     * @param bool $assoc
      *
      * @return array
      */
-    protected function fetchAll($fetch_type)
+    protected function fetchAll($assoc = true)
     {
-        $fetch_all_result = $this->fetchAllFromStore($fetch_type);
+        $fetch_all_result = $this->fetchAllFromStore($assoc);
 
         if ($fetch_all_result === false) {
-            $fetch_all_result = $this->adapter->fetchAll($fetch_type);
+            $fetch_all_result = $this->adapter->fetchAll($assoc);
         }
 
         $this->cursor = $this->num_rows;
@@ -318,7 +331,7 @@ abstract class ResultSetBase implements ResultSetInterface
      */
     public function fetchAllAssoc()
     {
-        return $this->fetchAll(ResultSetAdapter::FETCH_ASSOC);
+        return $this->fetchAll(true);
     }
 
     /**
@@ -326,7 +339,7 @@ abstract class ResultSetBase implements ResultSetInterface
      */
     public function fetchAllNum()
     {
-        return $this->fetchAll(ResultSetAdapter::FETCH_NUM);
+        return $this->fetchAll(false);
     }
 
     /**
@@ -334,7 +347,7 @@ abstract class ResultSetBase implements ResultSetInterface
      */
     public function fetchAssoc()
     {
-        return $this->fetch(ResultSetAdapter::FETCH_ASSOC);
+        return $this->fetch(true);
     }
 
     /**
@@ -342,22 +355,22 @@ abstract class ResultSetBase implements ResultSetInterface
      */
     public function fetchNum()
     {
-        return $this->fetch(ResultSetAdapter::FETCH_NUM);
+        return $this->fetch(false);
     }
 
     /**
-     * @param ResultSetAdapter::FETCH_ASSOC|ResultSetAdapter::FETCH_NUM $fetch_type
+     * @param bool $assoc
      *
      * @return array|null
      */
-    protected function fetch($fetch_type)
+    protected function fetch($assoc = true)
     {
         $this->cursor = $this->next_cursor;
 
-        $row = $this->fetchFromStore($fetch_type);
+        $row = $this->fetchFromStore($assoc);
 
         if ($row === false) {
-            $row = $this->adapter->fetch($fetch_type);
+            $row = $this->adapter->fetch($assoc);
         }
 
         $this->next_cursor++;

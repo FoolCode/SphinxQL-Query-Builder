@@ -3,6 +3,8 @@
 namespace Foolz\SphinxQL\Drivers\Mysqli;
 
 use Foolz\SphinxQL\Drivers\ConnectionBase;
+use Foolz\SphinxQL\Drivers\MultiResultSet;
+use Foolz\SphinxQL\Drivers\ResultSet;
 use Foolz\SphinxQL\Exception\ConnectionException;
 use Foolz\SphinxQL\Exception\DatabaseException;
 use Foolz\SphinxQL\Exception\SphinxQLException;
@@ -97,7 +99,7 @@ class Connection extends ConnectionBase
                 $this->getConnection()->error.' [ '.$query.']');
         }
 
-        return new ResultSet($this, $resource);
+        return new ResultSet(new ResultSetAdapter($this, $resource));
     }
 
     /**
@@ -113,13 +115,14 @@ class Connection extends ConnectionBase
 
         $this->ensureConnection();
 
-        // HHVM bug (2015/07/07, HipHop VM 3.8.0-dev (rel)): $mysqli->error and $mysqli->errno aren't set
-        if (!$this->getConnection()->multi_query(implode(';', $queue))) {
+        $this->getConnection()->multi_query(implode(';', $queue));
+
+        if ($this->getConnection()->error) {
             throw new DatabaseException('['.$this->getConnection()->errno.'] '.
                 $this->getConnection()->error.' [ '.implode(';', $queue).']');
-        };
+        }
 
-        return new MultiResultSet($this);
+        return new MultiResultSet(new MultiResultSetAdapter($this));
     }
 
     /**

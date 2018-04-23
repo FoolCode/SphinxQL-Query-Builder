@@ -4,7 +4,7 @@ namespace Foolz\SphinxQL\Drivers;
 
 use Foolz\SphinxQL\Exception\DatabaseException;
 
-abstract class MultiResultSetBase implements MultiResultSetInterface
+class MultiResultSet implements MultiResultSetInterface
 {
     /**
      * @var null|array
@@ -35,6 +35,14 @@ abstract class MultiResultSetBase implements MultiResultSetInterface
      * @var bool
      */
     protected $valid = true;
+
+    /**
+     * @param MultiResultSetAdapterInterface $adapter
+     */
+    public function __construct(MultiResultSetAdapterInterface $adapter)
+    {
+        $this->adapter = $adapter;
+    }
 
     /**
      * @inheritdoc

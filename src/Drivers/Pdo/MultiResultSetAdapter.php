@@ -3,6 +3,7 @@
 namespace Foolz\SphinxQL\Drivers\Pdo;
 
 use Foolz\SphinxQL\Drivers\MultiResultSetAdapterInterface;
+use Foolz\SphinxQL\Drivers\ResultSet;
 use PDOStatement;
 
 class MultiResultSetAdapter implements MultiResultSetAdapterInterface
@@ -43,7 +44,7 @@ class MultiResultSetAdapter implements MultiResultSetAdapterInterface
      */
     public function current()
     {
-        return new ResultSet($this->statement);
+        return new ResultSet(new ResultSetAdapter($this->statement));
     }
 
     /**

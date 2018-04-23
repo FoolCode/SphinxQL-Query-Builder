@@ -107,9 +107,9 @@ class ResultSetAdapter implements ResultSetAdapterInterface
     /**
      * @inheritdoc
      */
-    public function fetch($fetch_type)
+    public function fetch($assoc = true)
     {
-        if ($fetch_type == self::FETCH_ASSOC) {
+        if ($assoc) {
             $row = $this->statement->fetch(PDO::FETCH_ASSOC);
         } else {
             $row = $this->statement->fetch(PDO::FETCH_NUM);
@@ -126,9 +126,9 @@ class ResultSetAdapter implements ResultSetAdapterInterface
     /**
      * @inheritdoc
      */
-    public function fetchAll($fetch_type)
+    public function fetchAll($assoc = true)
     {
-        if ($fetch_type == self::FETCH_ASSOC) {
+        if ($assoc) {
             $row = $this->statement->fetchAll(PDO::FETCH_ASSOC);
         } else {
             $row = $this->statement->fetchAll(PDO::FETCH_NUM);

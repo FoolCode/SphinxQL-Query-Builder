@@ -17,6 +17,9 @@ env:
 
 matrix:
   fast_finish: true
+  allow_failures:
+    - env: DRIVER=mysqli SEARCH_BUILD=SPHINX3
+    - env: DRIVER=pdo SEARCH_BUILD=SPHINX3
 
 before_install:
   - mkdir $HOME/search

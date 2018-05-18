@@ -103,7 +103,7 @@ class Helper
     {
         $queryAppend = '';
         if ( ! empty( $index ) ) {
-            queryAppend = ' LIKE ' . $this->connection->quote($index);
+            $queryAppend = ' LIKE ' . $this->connection->quote($index);
         }
         return $this->query( 'SHOW TABLES' . $queryAppend );
     }

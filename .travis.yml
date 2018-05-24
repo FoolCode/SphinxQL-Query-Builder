@@ -32,4 +32,9 @@ before_script:
   - cd tests
   - $TRAVIS_BUILD_DIR/tests/run.sh
 
-script: phpunit --configuration travis/$DRIVER.phpunit.xml --coverage-text
+script:
+  - if [ $SEARCH_BUILD == "MANTICORE" ]; then
+       phpunit --configuration travis/$DRIVER.phpunit.xml --coverage-text
+    else
+       phpunit --configuration travis/$DRIVER.phpunit.xml --exclude-group=Manticore --coverage-text
+    fi

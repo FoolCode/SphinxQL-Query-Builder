@@ -5,6 +5,7 @@ use Foolz\SphinxQL\Percolate;
 use Foolz\SphinxQL\Tests\TestUtil;
 use Foolz\SphinxQL\SphinxQL;
 /**
+ * @group Manticore
  * @package Foolz\SphinxQL
  * @author Vicent Valls
  */

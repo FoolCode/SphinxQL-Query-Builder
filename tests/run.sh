@@ -14,6 +14,6 @@ case $SEARCH_BUILD in
   MANTICORE)
     WORK=$HOME/search
     gcc -shared -o data/test_udf.so ms_test_udf.c
-    $WORK/usr/bin/searchd -c sphinx.conf
+    $WORK/usr/bin/searchd -c manticore.conf
     ;;
 esac

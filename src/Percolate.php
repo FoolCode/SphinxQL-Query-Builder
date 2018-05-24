@@ -70,9 +70,9 @@ class Percolate
     protected $options = [self::OPTION_DOCS_JSON => 1];
 
     /**
-     * @var array
+     * @var string
      */
-    protected $filters = [];
+    protected $filters = '';
 
     /**
      * Query type (call | insert)
@@ -138,7 +138,7 @@ class Percolate
         $this->query = null;
         $this->options = [self::OPTION_DOCS_JSON => 1];
         $this->type = 'call';
-        $this->filters = [];
+        $this->filters = '';
         $this->tags = [];
     }
 
@@ -236,11 +236,6 @@ class Percolate
      */
     public function filter($filter)
     {
-        $filters = explode(',', $filter);
-        if (!empty($filters[1])) {
-            throw new SphinxQLException(
-                'Allow only one filter. If there is a comma in the text, it must be shielded');
-        }
         $this->filters = $this->clearString($filter);
         return $this;
     }
@@ -443,7 +438,7 @@ class Percolate
                 if ($this->options[self::OPTION_DOCS_JSON]) {
 
                     if (!is_array($this->documents)) {
-                        $json = $this->checkJson($this->documents);
+                        $json = $this->prepareFromJson($this->documents);
                         if (!$json) {
                             throw new SphinxQLException('Documents must be in json format');
                         }
@@ -466,7 +461,7 @@ class Percolate
                 if (!empty($this->documents[0]) && !is_array($this->documents[0]) &&
                     ($this->documents[0][0] == '[' || $this->documents[0][0] == '{')) {
 
-                    $json = $this->checkJson($this->documents);
+                    $json = $this->prepareFromJson($this->documents);
                     if ($json) {
                         $this->options[self::OPTION_DOCS_JSON] = 1;
                         return $json;
@@ -500,7 +495,7 @@ class Percolate
             } else {
                 if (is_string($this->documents)) {
 
-                    $json = $this->checkJson($this->documents);
+                    $json = $this->prepareFromJson($this->documents);
                     if ($json) {
                         $this->options[self::OPTION_DOCS_JSON] = 1;
                         return $json;
@@ -529,32 +524,38 @@ class Percolate
 
 
     /**
-     * Check string is valid json
+     * Prepares documents for insert in valid format.
+     * $data can be jsonArray of jsonObjects,
+     * phpArray of jsonObjects, valid json or string
      *
-     * @param string $json
-     * @return bool
+     * @param string|array $data
+     *
+     * @return bool|string
      */
-    private function checkJson($json)
+    private function prepareFromJson($data)
     {
-        if (is_array($json)) {
-            if (is_array($json[0])) {
+        if (is_array($data)) {
+            if (is_array($data[0])) {
                 return false;
             }
             $return = [];
-            foreach ($json as $item) {
-                $return[] = $this->checkJson($item);
+            foreach ($data as $item) {
+                $return[] = $this->prepareFromJson($item);
             }
+
             return '(' . implode(', ', $return) . ')';
         }
-        $array = json_decode($json, true);
+        $array = json_decode($data, true);
 
         if (json_last_error() == JSON_ERROR_NONE) { // if json
-            if (!empty($array[0])) { // If docs is jsonARRAY of jsonOBJECTS
+            if ( ! empty($array[0])) { // If docs is jsonARRAY of jsonOBJECTS
                 return $this->convertArrayForQuery($array);
             }
+
             // If docs is jsonOBJECT
-            return $this->quoteString($json);
+            return $this->quoteString($data);
         }
+
         return false;
     }
 

@@ -159,7 +159,14 @@ class Helper
      */
     public function callSnippets($data, $index, $query, $options = array())
     {
-        array_unshift($options, $data, $index, $query);
+        $documents = array();
+        if (is_array($data)) {
+            $documents[] = '('.implode(', ', $this->connection->quoteArr($data)).')';
+        } else {
+            $documents[] = $this->connection->quote($data);
+        }
+
+        array_unshift($options, $index, $query);
 
         $arr = $this->connection->quoteArr($options);
         foreach ($arr as $key => &$val) {
@@ -168,7 +175,7 @@ class Helper
             }
         }
 
-        return $this->query('CALL SNIPPETS('.implode(', ', $arr).')');
+        return $this->query('CALL SNIPPETS('.implode(', ', array_merge($documents, $arr)).')');
     }
 
     /**

@@ -915,6 +915,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
      * @covers \Foolz\SphinxQL\SphinxQL::resetGroupBy
      * @covers \Foolz\SphinxQL\SphinxQL::resetWithinGroupOrderBy
      * @covers \Foolz\SphinxQL\SphinxQL::resetOptions
+     * @covers \Foolz\SphinxQL\SphinxQL::resetFacets
      * @covers \Foolz\SphinxQL\SphinxQL::resetHaving
      * @covers \Foolz\SphinxQL\SphinxQL::resetOrderBy
      */
@@ -937,6 +938,10 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
             ->resetOptions()
             ->orderBy('id', 'desc')
             ->resetOrderBy()
+            ->facet(
+                (new Facet(self::$conn))->facet(array('gid'))
+            )
+            ->resetFacets()
             ->compile()
             ->getCompiled();
 

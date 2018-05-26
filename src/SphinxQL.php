@@ -1440,6 +1440,16 @@ class SphinxQL
     /**
      * @return $this
      */
+    public function resetFacets()
+    {
+        $this->facets = array();
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
     public function resetHaving()
     {
         $this->having = array();

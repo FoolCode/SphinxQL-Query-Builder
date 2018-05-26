@@ -159,8 +159,11 @@ class Connection extends ConnectionBase
      */
     public function mbPop()
     {
-        mb_internal_encoding($this->internal_encoding);
-        $this->internal_encoding = null;
+        // TODO: add test case for #155
+        if ($this->getInternalEncoding()) {
+            mb_internal_encoding($this->getInternalEncoding());
+            $this->internal_encoding = null;
+        }
 
         return $this;
     }

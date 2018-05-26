@@ -118,10 +118,12 @@ class ConnectionTest extends \PHPUnit\Framework\TestCase
     {
         $encoding = mb_internal_encoding();
         $this->connection->connect();
+
         if (method_exists($this->connection, 'getInternalEncoding')) {
-		    $this->assertEquals($encoding, $this->connection->getInternalEncoding());
-		    $this->assertEquals('UTF-8', mb_internal_encoding());
+            $this->assertEquals($encoding, $this->connection->getInternalEncoding());
+            $this->assertEquals('UTF-8', mb_internal_encoding());
         }
+
         $this->connection->close();
         $this->assertEquals($encoding, mb_internal_encoding());
         $this->connection->getConnection();

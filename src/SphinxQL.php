@@ -848,6 +848,31 @@ class SphinxQL
         return $this;
     }
 
+     /**
+     *
+     * Get the where array
+     *
+     * @return array
+     */
+    public function getWhere()
+    {
+        return $this->where;
+    }
+    
+    /**
+     * Sets the where array
+     *
+     * @param array $where
+     *
+     * @return SphinxQL
+     */
+    public function setWhere($where)
+    {
+        $this->where = $where;
+
+        return $this;
+    }
+
     /**
      * Get the columns staged to select
      *

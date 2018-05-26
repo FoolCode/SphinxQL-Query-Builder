@@ -12,8 +12,6 @@ This is a SphinxQL Query Builder used to work with SphinxQL, a SQL dialect used 
 
 This Query Builder has no dependencies except PHP 5.6, `\MySQLi` extension, and [Sphinx](http://sphinxsearch.com).
 
-__This package is BETA QUALITY.__ It is recommended that you do extensive testing in development before using it in a production environment.
-
 ### Missing methods?
 
 SphinxQL evolves very fast.

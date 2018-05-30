@@ -8,9 +8,9 @@ Query Builder for SphinxQL
 
 ## About
 
-This is a SphinxQL Query Builder used to work with SphinxQL, a SQL dialect used with the Sphinx search engine. It maps most of the functions listed in the [SphinxQL reference](http://sphinxsearch.com/docs/current.html#SphinxQL-reference) and is generally [faster](http://sphinxsearch.com/blog/2010/04/25/sphinxapi-vs-SphinxQL-benchmark/) than the available Sphinx API.
+This is a SphinxQL Query Builder used to work with SphinxQL, a SQL dialect used with the Sphinx search engine and it's fork Manticore. It maps most of the functions listed in the [SphinxQL reference](http://sphinxsearch.com/docs/current.html#SphinxQL-reference) and is generally [faster](http://sphinxsearch.com/blog/2010/04/25/sphinxapi-vs-SphinxQL-benchmark/) than the available Sphinx API.
 
-This Query Builder has no dependencies except PHP 5.6, `\MySQLi` extension, and [Sphinx](http://sphinxsearch.com).
+This Query Builder has no dependencies except PHP 5.6, `\MySQLi` extension, and [Sphinx](http://sphinxsearch.com)/[Manticore](https://manticoresearch.com).
 
 __This package is BETA QUALITY.__ It is recommended that you do extensive testing in development before using it in a production environment.
 
@@ -430,3 +430,91 @@ $result = (new SphinxQL($this->conn))
 * `(new Helper($conn))->optimizeIndex($index)`
 * `(new Helper($conn))->showIndexStatus($index)`
 * `(new Helper($conn))->flushRamchunk($index)`
+
+### Percolate
+ The `Percolate` class provides methods for the "Percolate query" feature of Manticore Search.
+ For more information about percolate queries refer the [Percolate Query](https://docs.manticoresearch.com/latest/html/searching/percolate_query.html) documentation.
+
+#### INSERT
+
+The Percolate class provide a dedicated helper for inserting queries in a `percolate` index. 
+
+```php
+<?php
+$query = (new Percolate($conn))
+     ->insert('full text query terms',false)      
+     ->into('pq')                                              
+     ->tags(['tag1','tag2'])                                  
+     ->filter('price>3')                                      
+     ->execute();
+ ```
+
+* __`$pq = (new Percolate($conn))->insert($query,$noEscape)`__
+
+    Begins an ``INSERT``. A single query is allowed to be added per insert. By default, the query string is escaped. Optional second parameter  `$noEscape` can be set to  `true` for not applying the escape.
+
+* __`$pq->into($index)`__
+
+   Set the percolate index for insert.
+
+* __`$pq->tags($tags)`__
+
+   Set a list of tags per query. Accepts array of strings or string delimited by comma
+
+* __`$pq->filter($filter)`__
+   Sets an attribute filtering string. The string must look the same as string of an WHERE attribute filters clause
+
+* __`$pq->execute()`__
+
+   Execute the `INSERT`.
+
+#### CALLPQ
+
+  Searches for stored queries that provide matching for input documents.
+  
+```php
+<?php
+ $query = (new Percolate($conn))
+     ->callPQ()
+     ->from('pq')                                              
+     ->documents(['multiple documents', 'go this way'])        
+     ->options([                                               
+           Percolate::OPTION_VERBOSE => 1,
+           Percolate::OPTION_DOCS_JSON => 1
+     ])
+     ->execute();
+ ```
+
+* __`$pq = (new Percolate($conn))->callPQ()`__
+
+   Begins a `CALL PQ`
+
+* __`$pq->from($index)`__
+
+   Set percolate index.
+
+* __`$pq->documents($docs)`__
+
+   Set the incoming documents. $docs can be:
+   
+  - a single plain string (requires `Percolate::OPTION_DOCS_JSON` set to 0)
+  - array of plain strings (requires `Percolate::OPTION_DOCS_JSON` set to 0)
+  - a single JSON document
+  - an array of JSON documents
+  - a JSON object containing an  array of JSON objects
+   
+
+* __`$pq->options($options)`__
+
+    Set options of `CALL PQ`. Refer the Manticore docs for more information about the `CALL PQ` parameters.
+    
+  - __Percolate::OPTION_DOCS_JSON__ (`as docs_json`) default to 1 (docs are json objects). Needs to be set to 0 for plain string documents.
+        Documents added as associative arrays will be converted to JSON when sending the query to Manticore.
+   - __Percolate::OPTION_VERBOSE__ (`as verbose`) more information is printed by following `SHOW META`, default is 0
+   - __Percolate::OPTION_QUERY__  (`as query`) returns all stored queries fields , default is 0
+   - __Percolate::OPTION_DOCS__  (`as docs`) provide result set as per document matched (instead of per query), default is 0
+
+* `$pq->execute()`
+
+   Execute the `CALL PQ`.
+

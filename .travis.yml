@@ -8,11 +8,11 @@ php:
   - 7.1
 
 env:
-  - DRIVER=mysqli SEARCH_BUILD=SPHINX2 EXCLUDE_GROUP="--exclude-group=Manitcore"
-  - DRIVER=mysqli SEARCH_BUILD=SPHINX3 EXCLUDE_GROUP="--exclude-group=Manitcore"
+  - DRIVER=mysqli SEARCH_BUILD=SPHINX2 EXCLUDE_GROUP="--exclude-group=Manticore"
+  - DRIVER=mysqli SEARCH_BUILD=SPHINX3 EXCLUDE_GROUP="--exclude-group=Manticore"
   - DRIVER=mysqli SEARCH_BUILD=MANTICORE
-  - DRIVER=pdo SEARCH_BUILD=SPHINX2 EXCLUDE_GROUP="--exclude-group=Manitcore"
-  - DRIVER=pdo SEARCH_BUILD=SPHINX3 EXCLUDE_GROUP="--exclude-group=Manitcore"
+  - DRIVER=pdo SEARCH_BUILD=SPHINX2 EXCLUDE_GROUP="--exclude-group=Manticore"
+  - DRIVER=pdo SEARCH_BUILD=SPHINX3 EXCLUDE_GROUP="--exclude-group=Manticore"
   - DRIVER=pdo SEARCH_BUILD=MANTICORE
 
 matrix:

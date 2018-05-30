@@ -42,12 +42,6 @@ class PercolateQueriesTest extends \PHPUnit\Framework\TestCase
             $this->expectExceptionMessage('Query can\'t be empty');
         }
 
-        if ($testNumber == 10) {
-            $this->expectException(SphinxQLException::class);
-            $this->expectExceptionMessage('Allow only one filter. If there is a comma in the text, it must be shielded');
-        }
-
-
         $percolate = new Percolate(self::$conn);
         $percolate
             ->insert($query)
@@ -164,14 +158,6 @@ class PercolateQueriesTest extends \PHPUnit\Framework\TestCase
                 'INSERT INTO pq (query, filters) VALUES (\'catch me if can\', \'price>3\')'
             ],
 
-            [
-                10,
-                'catch me if can',
-                'pq',
-                null,
-                'price>3, secondFilter>0',
-                null
-            ],
             [
                 11,
                 'orange|apple|cherry',

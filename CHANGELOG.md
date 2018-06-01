@@ -1,8 +1,37 @@
+#### 2.0.0
+
+* added support for [Manticore](https://manticoresearch.com)
+* added `Percolate` class for `Manticore`
+* added `orPhrase` method to `Match` class
+* added `resetFacets` method to `SphinxQL` class
+* added support for multi-document snippet call
+* fixed `Connection` exception thrown
+* fixed incorrect property accessibility/visibility
+* refactored `ResultSet` and `MultiResultSet` classes to reduce duplicate code
+* removed `Connection` error suppression
+* removed `SphinxQL\Drivers\ResultSetAdapterInterface` constants
+* removed static `SphinxQL::create` method
+* removed support for PHP 5.3 and HHVM
+* updated fetch type for drivers to use `boolean` to return assoc/indexed arrays
+* updated PHPDoc blocks
+
+Note: This release contains **breaking changes** around the instantiation of the `SphinxQL` class with the removal of static methods. Please refer to the README for any API changes.
+
+#### 1.2.0
+
+* added support for `GROUP N BY`
+* refactored `Connection`
+* refactored `ResultSet` and `MultiResultSet` to reduce duplicate code
+
+Note: This release contains **breaking changes** with the introduction of `ResultSet` and `MultiResultSet` changes. Please refer to the README for any API changes.
+
 #### 0.9.7
+
 * added support for unix sockets
 * added `NOT IN` condition in `WHERE` statements
 
 #### 0.9.6
+
 * added named integer lists support to `OPTION` with associative array (@alpha0010)
 * deprecated special case `OPTION` for `field_weights` and `index_weights`
 * forced `Connection` to use utf8 charset (@t1gor)

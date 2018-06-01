@@ -8,11 +8,11 @@ php:
   - 7.1
 
 env:
-  - DRIVER=mysqli SEARCH_BUILD=SPHINX2
-  - DRIVER=mysqli SEARCH_BUILD=SPHINX3
+  - DRIVER=mysqli SEARCH_BUILD=SPHINX2 EXCLUDE_GROUP="--exclude-group=Manticore"
+  - DRIVER=mysqli SEARCH_BUILD=SPHINX3 EXCLUDE_GROUP="--exclude-group=Manticore"
   - DRIVER=mysqli SEARCH_BUILD=MANTICORE
-  - DRIVER=pdo SEARCH_BUILD=SPHINX2
-  - DRIVER=pdo SEARCH_BUILD=SPHINX3
+  - DRIVER=pdo SEARCH_BUILD=SPHINX2 EXCLUDE_GROUP="--exclude-group=Manticore"
+  - DRIVER=pdo SEARCH_BUILD=SPHINX3 EXCLUDE_GROUP="--exclude-group=Manticore"
   - DRIVER=pdo SEARCH_BUILD=MANTICORE
 
 matrix:
@@ -32,4 +32,4 @@ before_script:
   - cd tests
   - $TRAVIS_BUILD_DIR/tests/run.sh
 
-script: phpunit --configuration travis/$DRIVER.phpunit.xml --coverage-text
+script: phpunit --configuration travis/$DRIVER.phpunit.xml --coverage-text $EXCLUDE_GROUP

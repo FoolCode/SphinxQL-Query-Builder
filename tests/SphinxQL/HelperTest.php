@@ -41,7 +41,7 @@ class HelperTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertEquals(
             array(array('Index' => 'rt', 'Type' => 'rt')),
-            $this->createHelper()->showTables()->execute()->getStored()
+            $this->createHelper()->showTables('rt')->execute()->getStored()
         );
     }
 

@@ -11,6 +11,7 @@
 * removed `Connection` error suppression
 * removed `SphinxQL\Drivers\ResultSetAdapterInterface` constants
 * removed static `SphinxQL::create` method
+* removed deprecated `\Foolz\SphinxQL\Connection`
 * removed support for PHP 5.3 and HHVM
 * updated fetch type for drivers to use `boolean` to return assoc/indexed arrays
 * updated PHPDoc blocks
@@ -20,7 +21,7 @@ Note: This release contains **breaking changes** around the instantiation of the
 #### 1.2.0
 
 * added support for `GROUP N BY`
-* refactored `Connection`
+* refactored `Connection`, `\Foolz\SphinxQL\Connection` is now deprecated.
 * refactored `ResultSet` and `MultiResultSet` to reduce duplicate code
 
 Note: This release contains **breaking changes** with the introduction of `ResultSet` and `MultiResultSet` changes. Please refer to the README for any API changes.

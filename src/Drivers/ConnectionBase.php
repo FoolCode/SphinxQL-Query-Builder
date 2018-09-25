@@ -135,6 +135,7 @@ abstract class ConnectionBase implements ConnectionInterface
      * Closes and unset the connection to the Sphinx server.
      *
      * @return $this
+     * @throws ConnectionException
      */
     public function close()
     {

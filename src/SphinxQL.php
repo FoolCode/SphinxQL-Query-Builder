@@ -5,6 +5,8 @@ namespace Foolz\SphinxQL;
 use Foolz\SphinxQL\Drivers\ConnectionInterface;
 use Foolz\SphinxQL\Drivers\MultiResultSetInterface;
 use Foolz\SphinxQL\Drivers\ResultSetInterface;
+use Foolz\SphinxQL\Exception\ConnectionException;
+use Foolz\SphinxQL\Exception\DatabaseException;
 use Foolz\SphinxQL\Exception\SphinxQLException;
 
 /**
@@ -253,6 +255,9 @@ class SphinxQL
      * Runs the query built
      *
      * @return ResultSetInterface The result of the query
+     * @throws DatabaseException
+     * @throws ConnectionException
+     * @throws SphinxQLException
      */
     public function execute()
     {
@@ -265,6 +270,8 @@ class SphinxQL
      *
      * @return MultiResultSetInterface The array of results
      * @throws SphinxQLException In case no query is in queue
+     * @throws Exception\DatabaseException
+     * @throws ConnectionException
      */
     public function executeBatch()
     {
@@ -364,6 +371,8 @@ class SphinxQL
 
     /**
      * Begins transaction
+     * @throws DatabaseException
+     * @throws ConnectionException
      */
     public function transactionBegin()
     {
@@ -372,6 +381,8 @@ class SphinxQL
 
     /**
      * Commits transaction
+     * @throws DatabaseException
+     * @throws ConnectionException
      */
     public function transactionCommit()
     {
@@ -380,6 +391,8 @@ class SphinxQL
 
     /**
      * Rollbacks transaction
+     * @throws DatabaseException
+     * @throws ConnectionException
      */
     public function transactionRollback()
     {
@@ -390,6 +403,9 @@ class SphinxQL
      * Runs the compile function
      *
      * @return $this
+     * @throws ConnectionException
+     * @throws DatabaseException
+     * @throws SphinxQLException
      */
     public function compile()
     {
@@ -430,6 +446,8 @@ class SphinxQL
      * Used by: SELECT, DELETE, UPDATE
      *
      * @return string The compiled MATCH
+     * @throws Exception\ConnectionException
+     * @throws Exception\DatabaseException
      */
     public function compileMatch()
     {
@@ -480,6 +498,8 @@ class SphinxQL
      * Used by: SELECT, DELETE, UPDATE
      *
      * @return string The compiled WHERE
+     * @throws ConnectionException
+     * @throws DatabaseException
      */
     public function compileWhere()
     {
@@ -505,6 +525,8 @@ class SphinxQL
      * @param array $filter
      *
      * @return string
+     * @throws ConnectionException
+     * @throws DatabaseException
      */
     public function compileFilterCondition($filter)
     {
@@ -539,6 +561,9 @@ class SphinxQL
      * Compiles the statements for SELECT
      *
      * @return $this
+     * @throws ConnectionException
+     * @throws DatabaseException
+     * @throws SphinxQLException
      */
     public function compileSelect()
     {
@@ -680,6 +705,8 @@ class SphinxQL
      * Compiles the statements for INSERT or REPLACE
      *
      * @return $this
+     * @throws ConnectionException
+     * @throws DatabaseException
      */
     public function compileInsert()
     {
@@ -718,6 +745,8 @@ class SphinxQL
      * Compiles the statements for UPDATE
      *
      * @return $this
+     * @throws ConnectionException
+     * @throws DatabaseException
      */
     public function compileUpdate()
     {
@@ -758,6 +787,8 @@ class SphinxQL
      * Compiles the statements for DELETE
      *
      * @return $this
+     * @throws ConnectionException
+     * @throws DatabaseException
      */
     public function compileDelete()
     {

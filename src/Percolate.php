@@ -289,6 +289,8 @@ class Percolate
      * Executs query and clear class parameters
      *
      * @return Drivers\ResultSetInterface
+     * @throws Exception\ConnectionException
+     * @throws Exception\DatabaseException
      * @throws SphinxQLException
      */
     public function execute()

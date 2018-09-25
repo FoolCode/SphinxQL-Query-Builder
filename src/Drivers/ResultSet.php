@@ -94,6 +94,7 @@ class ResultSet implements ResultSetInterface
 
     /**
      * @inheritdoc
+     * @throws ResultSetException
      */
     public function offsetGet($offset)
     {

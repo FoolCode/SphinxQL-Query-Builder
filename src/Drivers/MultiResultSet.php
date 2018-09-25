@@ -46,6 +46,7 @@ class MultiResultSet implements MultiResultSetInterface
 
     /**
      * @inheritdoc
+     * @throws DatabaseException
      */
     public function getStored()
     {
@@ -56,6 +57,7 @@ class MultiResultSet implements MultiResultSetInterface
 
     /**
      * @inheritdoc
+     * @throws DatabaseException
      */
     public function offsetExists($offset)
     {
@@ -66,6 +68,7 @@ class MultiResultSet implements MultiResultSetInterface
 
     /**
      * @inheritdoc
+     * @throws DatabaseException
      */
     public function offsetGet($offset)
     {
@@ -121,6 +124,7 @@ class MultiResultSet implements MultiResultSetInterface
 
     /**
      * @inheritdoc
+     * @throws DatabaseException
      */
     public function count()
     {

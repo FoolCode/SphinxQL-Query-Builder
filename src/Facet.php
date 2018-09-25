@@ -316,6 +316,7 @@ class Facet
      * Get String with SQL facet
      *
      * @return string
+     * @throws SphinxQLException
      */
     public function getFacet()
     {

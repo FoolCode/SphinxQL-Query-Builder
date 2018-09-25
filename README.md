@@ -59,7 +59,7 @@ The following examples will omit the namespace.
 ```php
 <?php
 use Foolz\SphinxQL\SphinxQL;
-use Foolz\SphinxQL\Connection;
+use Foolz\SphinxQL\Drivers\Mysqli\Connection;
 
 // create a SphinxQL Connection object to use with SphinxQL
 $conn = new Connection();

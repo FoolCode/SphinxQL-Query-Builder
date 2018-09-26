@@ -2,6 +2,7 @@
 
 namespace Foolz\SphinxQL\Drivers;
 
+use Foolz\SphinxQL\Exception\ConnectionException;
 use Foolz\SphinxQL\Exception\DatabaseException;
 use Foolz\SphinxQL\Exception\SphinxQLException;
 use Foolz\SphinxQL\Expression;
@@ -15,6 +16,7 @@ interface ConnectionInterface
      *
      * @return ResultSetInterface The result array or number of rows affected
      * @throws DatabaseException If the executed query produced an error
+     * @throws ConnectionException
      */
     public function query($query);
 
@@ -26,6 +28,7 @@ interface ConnectionInterface
      * @return MultiResultSetInterface The result array
      * @throws DatabaseException In case a query throws an error
      * @throws SphinxQLException In case the array passed is empty
+     * @throws ConnectionException
      */
     public function multiQuery(array $queue);
 
@@ -36,6 +39,7 @@ interface ConnectionInterface
      *
      * @return string The escaped string
      * @throws DatabaseException If an error was encountered during server-side escape
+     * @throws ConnectionException
      */
     public function escape($value);
 
@@ -46,6 +50,8 @@ interface ConnectionInterface
      *      to leave it untouched
      *
      * @return Expression|string|int The untouched Expression or the quoted string
+     * @throws DatabaseException
+     * @throws ConnectionException
      */
     public function quote($value);
 
@@ -55,6 +61,8 @@ interface ConnectionInterface
      * @param array $array The array of elements to quote
      *
      * @return array The array of quotes elements
+     * @throws DatabaseException
+     * @throws ConnectionException
      */
     public function quoteArr(array $array = array());
 }

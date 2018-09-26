@@ -98,6 +98,8 @@ class Helper
      * Runs query: SHOW TABLES
      *
      * @return SphinxQL A SphinxQL object ready to be ->execute();
+     * @throws Exception\ConnectionException
+     * @throws Exception\DatabaseException
      */
     public function showTables( $index )
     {
@@ -126,6 +128,8 @@ class Helper
      * @param bool   $global True if the variable should be global, false otherwise
      *
      * @return SphinxQL A SphinxQL object ready to be ->execute();
+     * @throws Exception\ConnectionException
+     * @throws Exception\DatabaseException
      */
     public function setVariable($name, $value, $global = false)
     {
@@ -160,6 +164,8 @@ class Helper
      * @param array        $options Associative array of additional options
      *
      * @return SphinxQL A SphinxQL object ready to be ->execute();
+     * @throws Exception\ConnectionException
+     * @throws Exception\DatabaseException
      */
     public function callSnippets($data, $index, $query, $options = array())
     {
@@ -190,6 +196,8 @@ class Helper
      * @param null|string $hits
      *
      * @return SphinxQL A SphinxQL object ready to be ->execute();
+     * @throws Exception\ConnectionException
+     * @throws Exception\DatabaseException
      */
     public function callKeywords($text, $index, $hits = null)
     {
@@ -221,6 +229,8 @@ class Helper
      * @param string $so_name
      *
      * @return SphinxQL A SphinxQL object ready to be ->execute();
+     * @throws Exception\ConnectionException
+     * @throws Exception\DatabaseException
      */
     public function createFunction($udf_name, $returns, $so_name)
     {

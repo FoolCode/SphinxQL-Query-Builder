@@ -59,7 +59,7 @@ The following examples will omit the namespace.
 ```php
 <?php
 use Foolz\SphinxQL\SphinxQL;
-use Foolz\SphinxQL\Connection;
+use Foolz\SphinxQL\Drivers\Mysqli\Connection;
 
 // create a SphinxQL Connection object to use with SphinxQL
 $conn = new Connection();
@@ -234,6 +234,7 @@ Will return an array with an `INT` as first member, the number of rows deleted.
 
     ```php
     <?php
+    use Foolz\SphinxQL\SphinxQL;
     try
     {
         $result = (new SphinxQL($conn))
@@ -336,6 +337,7 @@ Will return an array with an `INT` as first member, the number of rows deleted.
 
 ```php
 <?php
+use Foolz\SphinxQL\SphinxQL;
 $result = (new SphinxQL($this->conn))
     ->select()
     ->from('rt')
@@ -400,6 +402,7 @@ The following methods return a prepared `SphinxQL` object. You can also use `->e
 
 ```php
 <?php
+use Foolz\SphinxQL\SphinxQL;
 $result = (new SphinxQL($this->conn))
     ->select()
     ->from('rt')
@@ -439,6 +442,7 @@ The Percolate class provide a dedicated helper for inserting queries in a `perco
 
 ```php
 <?php
+use Foolz\SphinxQL\Percolate;
 $query = (new Percolate($conn))
      ->insert('full text query terms',false)      
      ->into('pq')                                              
@@ -472,7 +476,8 @@ $query = (new Percolate($conn))
   
 ```php
 <?php
- $query = (new Percolate($conn))
+use Foolz\SphinxQL\Percolate;
+$query = (new Percolate($conn))
      ->callPQ()
      ->from('pq')                                              
      ->documents(['multiple documents', 'go this way'])        

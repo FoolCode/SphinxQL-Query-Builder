@@ -10,7 +10,7 @@ Query Builder for SphinxQL
 
 This is a SphinxQL Query Builder used to work with SphinxQL, a SQL dialect used with the Sphinx search engine and it's fork Manticore. It maps most of the functions listed in the [SphinxQL reference](http://sphinxsearch.com/docs/current.html#SphinxQL-reference) and is generally [faster](http://sphinxsearch.com/blog/2010/04/25/sphinxapi-vs-SphinxQL-benchmark/) than the available Sphinx API.
 
-This Query Builder has no dependencies except PHP 5.6, `\MySQLi` extension, and [Sphinx](http://sphinxsearch.com)/[Manticore](https://manticoresearch.com).
+This Query Builder has no dependencies except PHP 5.6, `\MySQLi` extension, `PDO`, and [Sphinx](http://sphinxsearch.com)/[Manticore](https://manticoresearch.com).
 
 ### Missing methods?
 
@@ -72,6 +72,13 @@ $query = (new SphinxQL($conn))->select('column_one', 'colume_two')
 
 $result = $query->execute();
 ```
+
+### Drivers
+
+We support the following database connection drivers:
+
+* Foolz\SphinxQL\Drivers\Mysqli\Connection
+* Foolz\SphinxQL\Drivers\Pdo\Connection
 
 ### Connection
 
@@ -235,6 +242,7 @@ Will return an array with an `INT` as first member, the number of rows deleted.
     ```php
     <?php
     use Foolz\SphinxQL\SphinxQL;
+
     try
     {
         $result = (new SphinxQL($conn))
@@ -338,6 +346,7 @@ Will return an array with an `INT` as first member, the number of rows deleted.
 ```php
 <?php
 use Foolz\SphinxQL\SphinxQL;
+
 $result = (new SphinxQL($this->conn))
     ->select()
     ->from('rt')
@@ -403,6 +412,7 @@ The following methods return a prepared `SphinxQL` object. You can also use `->e
 ```php
 <?php
 use Foolz\SphinxQL\SphinxQL;
+
 $result = (new SphinxQL($this->conn))
     ->select()
     ->from('rt')
@@ -443,6 +453,7 @@ The Percolate class provide a dedicated helper for inserting queries in a `perco
 ```php
 <?php
 use Foolz\SphinxQL\Percolate;
+
 $query = (new Percolate($conn))
      ->insert('full text query terms',false)      
      ->into('pq')                                              

@@ -25,7 +25,7 @@ class Connection extends ConnectionBase
         try {
             $statement->execute();
         } catch (PDOException $exception) {
-            throw new DatabaseException($exception->getMessage() . ' [' . $query . ']');
+            throw new DatabaseException($exception->getMessage() . ' [' . $query . ']', $exception->getCode(), $exception);
         }
 
         return new ResultSet(new ResultSetAdapter($statement));
@@ -56,7 +56,7 @@ class Connection extends ConnectionBase
         try {
             $con = new PDO($dsn);
         } catch (PDOException $exception) {
-            throw new ConnectionException($exception->getMessage());
+            throw new ConnectionException($exception->getMessage(), $exception->getCode(), $exception);
         }
 
         $this->connection = $con;
@@ -90,7 +90,7 @@ class Connection extends ConnectionBase
         try {
             $statement = $this->connection->query(implode(';', $queue));
         } catch (PDOException $exception) {
-            throw new DatabaseException($exception->getMessage() .' [ '.implode(';', $queue).']');
+            throw new DatabaseException($exception->getMessage() .' [ '.implode(';', $queue).']', $exception->getCode(), $exception);
         }
 
         return new MultiResultSet(new MultiResultSetAdapter($statement));

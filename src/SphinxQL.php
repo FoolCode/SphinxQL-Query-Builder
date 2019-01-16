@@ -964,6 +964,48 @@ class SphinxQL
 
         return $this;
     }
+    
+    /**
+     * MATCH field IN (values)
+     *
+     * @param string $field  The field
+     * @param array  $values Values for IN clause
+     *
+     * @return Match
+     */
+    public function matchFieldIN(string $field, array $values) : Match {
+        $match = (new Match($this))->field($field);
+
+        /**
+         * Reindex array
+         */
+        $values = array_values(array_unique($values));
+
+        $count  = count($values);
+        for ($n = 0; $n < $count; $n++) {
+            if (!$n) {
+                $match->match($values[$n]);
+            } else {
+                $match->orMatch($values[$n]);
+            }
+        }
+        return $match;
+    }
+
+    /**
+     * Wrap match into another match helper to build complex (A OR (B AND C)) matches
+     *
+     * @param Match[] $matches Matches to group up with AND
+     *
+     * @return Match
+     */    
+    public function matchAndMatch(array $matches) {
+        $match = new Match($this);
+        foreach ($matches as $m) {
+            $match->match($m);
+        }
+        return $match;
+    }
 
     /**
      * MATCH clause (Sphinx-specific)

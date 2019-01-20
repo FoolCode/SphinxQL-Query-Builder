@@ -93,7 +93,18 @@ class Connection extends ConnectionBase
     {
         $this->ensureConnection();
 
-        $resource = $this->getConnection()->query($query);
+        set_error_handler(function () {});
+        try {
+            /**
+             * ManticoreSearch/Sphinx silence warnings thrown by php mysqli/mysqlnd
+             *
+             * unknown command (code=9) - status() command not implemented by Sphinx/ManticoreSearch
+             * ERROR mysqli::prepare(): (08S01/1047): unknown command (code=22) - prepare() not implemented by Sphinx/Manticore
+             */
+            $resource = @$this->getConnection()->query($query);
+        } finally {
+            restore_error_handler();
+        }        
 
         if ($this->getConnection()->error) {
             throw new DatabaseException('['.$this->getConnection()->errno.'] '.

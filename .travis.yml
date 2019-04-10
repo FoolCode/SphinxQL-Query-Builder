@@ -6,6 +6,8 @@ php:
   - 5.6
   - 7.0
   - 7.1
+  - 7.2
+  - 7.3
 
 env:
   - DRIVER=mysqli SEARCH_BUILD=SPHINX2 EXCLUDE_GROUP="--exclude-group=Manticore"
@@ -27,9 +29,12 @@ before_install:
   - $TRAVIS_BUILD_DIR/tests/install.sh
   - popd
 
+install: composer update --prefer-dist --no-interaction
+
 before_script:
   - composer dump-autoload
   - cd tests
   - $TRAVIS_BUILD_DIR/tests/run.sh
+  - cd ..
 
-script: phpunit --configuration travis/$DRIVER.phpunit.xml --coverage-text $EXCLUDE_GROUP
+script: ./vendor/bin/phpunit --configuration tests/travis/$DRIVER.phpunit.xml --coverage-text $EXCLUDE_GROUP

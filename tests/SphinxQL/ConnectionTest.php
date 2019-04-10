@@ -11,13 +11,13 @@ class ConnectionTest extends \PHPUnit\Framework\TestCase
      */
     private $connection = null;
 
-    public function setUp()
+    protected function setUp()
     {
         $this->connection = TestUtil::getConnectionDriver();
         $this->connection->setParams(array('host' => '127.0.0.1', 'port' => 9307));
     }
 
-    public function tearDown()
+    protected function tearDown()
     {
         $this->connection = null;
     }

@@ -807,6 +807,9 @@ class SphinxQL
             $query .= 'FROM '.$this->from[0].' ';
         }
 
+        if (!empty($this->match)) {
+            $query .= $this->compileMatch();
+        }
         if (!empty($this->where)) {
             $query .= $this->compileWhere();
         }

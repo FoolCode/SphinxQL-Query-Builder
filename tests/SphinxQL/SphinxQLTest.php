@@ -863,11 +863,12 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
         $result = $this->createSphinxQL()
             ->delete()
             ->from('rt')
-            ->where('id', 'IN', array(10, 11, 12))
+            ->where('id', 'IN', [11, 12, 13])
+            ->match('content', 'content')
             ->execute()
             ->getStored();
 
-        $this->assertSame(3, $result);
+        $this->assertSame(2, $result);
     }
 
     /**

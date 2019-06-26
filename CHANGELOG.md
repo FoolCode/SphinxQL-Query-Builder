@@ -1,3 +1,10 @@
+#### 2.1.0
+
+* added exception code and previous throwable to errors
+* added `setType` method to `SphinxQL` class
+* added support for `MATCH` to `DELETE` queries
+* updated MySQLi driver to silence internal warnings by default
+
 #### 2.0.0
 
 * added support for [Manticore](https://manticoresearch.com)

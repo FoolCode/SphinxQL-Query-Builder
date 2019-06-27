@@ -494,6 +494,16 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
             ->getStored();
 
         $this->assertCount(1, $result);
+
+        // Test #177 - Double Single Quote
+        $result = $this->createSphinxQL()
+            ->select()
+            ->from('rt')
+            ->where('id', 'IN', array("11", "12", "13"))
+            ->compile()
+            ->getCompiled();
+
+        $this->assertEquals("SELECT * FROM rt WHERE id IN ('11', '12', '13')", $result);
     }
 
     /**

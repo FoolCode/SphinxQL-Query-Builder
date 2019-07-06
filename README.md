@@ -50,7 +50,7 @@ All pull requests must be accompanied by passing unit tests and complete code co
 
 ## Installation
 
-This is a Composer package. You can install this package with the following command: `php composer.phar install`
+This is a Composer package. You can install this package with the following command: `composer require foolz/sphinxql-query-builderl`
 
 ## Usage
 

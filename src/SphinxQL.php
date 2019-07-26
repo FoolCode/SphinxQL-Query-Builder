@@ -349,7 +349,7 @@ class SphinxQL
      *
      * @param SphinxQL $query The object to set as previous
      *
-     * @return $this
+     * @return self
      */
     public function setQueuePrev($query)
     {
@@ -411,7 +411,7 @@ class SphinxQL
     /**
      * Runs the compile function
      *
-     * @return $this
+     * @return self
      * @throws ConnectionException
      * @throws DatabaseException
      * @throws SphinxQLException
@@ -441,7 +441,7 @@ class SphinxQL
     }
 
     /**
-     * @return $this
+     * @return self
      */
     public function compileQuery()
     {
@@ -569,7 +569,7 @@ class SphinxQL
     /**
      * Compiles the statements for SELECT
      *
-     * @return $this
+     * @return self
      * @throws ConnectionException
      * @throws DatabaseException
      * @throws SphinxQLException
@@ -713,7 +713,7 @@ class SphinxQL
     /**
      * Compiles the statements for INSERT or REPLACE
      *
-     * @return $this
+     * @return self
      * @throws ConnectionException
      * @throws DatabaseException
      */
@@ -753,7 +753,7 @@ class SphinxQL
     /**
      * Compiles the statements for UPDATE
      *
-     * @return $this
+     * @return self
      * @throws ConnectionException
      * @throws DatabaseException
      */
@@ -795,7 +795,7 @@ class SphinxQL
     /**
      * Compiles the statements for DELETE
      *
-     * @return $this
+     * @return self
      * @throws ConnectionException
      * @throws DatabaseException
      */
@@ -825,7 +825,7 @@ class SphinxQL
      *
      * @param string $sql A SphinxQL query to execute
      *
-     * @return $this
+     * @return self
      */
     public function query($sql)
     {
@@ -854,7 +854,7 @@ class SphinxQL
      *
      * @param array|string $columns Array or multiple string arguments containing column names
      *
-     * @return $this
+     * @return self
      */
     public function select($columns = null)
     {
@@ -878,7 +878,7 @@ class SphinxQL
      *
      * @param array|string $columns Array or multiple string arguments containing column names
      *
-     * @return $this
+     * @return self
      */
     public function setSelect($columns = null)
     {
@@ -904,7 +904,7 @@ class SphinxQL
     /**
      * Activates the INSERT mode
      *
-     * @return $this
+     * @return self
      */
     public function insert()
     {
@@ -917,7 +917,7 @@ class SphinxQL
     /**
      * Activates the REPLACE mode
      *
-     * @return $this
+     * @return self
      */
     public function replace()
     {
@@ -932,7 +932,7 @@ class SphinxQL
      *
      * @param string $index The index to update into
      *
-     * @return $this
+     * @return self
      */
     public function update($index)
     {
@@ -946,7 +946,7 @@ class SphinxQL
     /**
      * Activates the DELETE mode
      *
-     * @return $this
+     * @return self
      */
     public function delete()
     {
@@ -962,7 +962,7 @@ class SphinxQL
      *
      * @param array $array An array of indexes to use
      *
-     * @return $this
+     * @return self
      */
     public function from($array = null)
     {
@@ -984,7 +984,7 @@ class SphinxQL
      * @param string $value  The value
      * @param bool   $half   Exclude ", |, - control characters from being escaped
      *
-     * @return $this
+     * @return self
      */
     public function match($column, $value = null, $half = false)
     {
@@ -1022,7 +1022,7 @@ class SphinxQL
      *      use only string)
      * @param Expression|string|null|bool|array|int|float $value    The value to check against
      *
-     * @return $this
+     * @return self
      */
     public function where($column, $operator, $value = null)
     {
@@ -1046,7 +1046,7 @@ class SphinxQL
      *
      * @param string $column A column to group by
      *
-     * @return $this
+     * @return self
      */
     public function groupBy($column)
     {
@@ -1061,7 +1061,7 @@ class SphinxQL
      *
      * @param int $n Number of items per group
      *
-     * @return $this
+     * @return self
      */
     public function groupNBy($n)
     {
@@ -1078,7 +1078,7 @@ class SphinxQL
      * @param string $column    The column to group by
      * @param string $direction The group by direction (asc/desc)
      *
-     * @return $this
+     * @return self
      */
     public function withinGroupOrderBy($column, $direction = null)
     {
@@ -1111,7 +1111,7 @@ class SphinxQL
      * @param string $operator The operator to use
      * @param string $value    The value to check against
      *
-     * @return $this
+     * @return self
      */
     public function having($column, $operator, $value = null)
     {
@@ -1136,7 +1136,7 @@ class SphinxQL
      * @param string $column    The column to order on
      * @param string $direction The ordering direction (asc/desc)
      *
-     * @return $this
+     * @return self
      */
     public function orderBy($column, $direction = null)
     {
@@ -1152,7 +1152,7 @@ class SphinxQL
      * @param int      $offset Offset if $limit is specified, else limit
      * @param null|int $limit  The limit to set, null for no limit
      *
-     * @return $this
+     * @return self
      */
     public function limit($offset, $limit = null)
     {
@@ -1173,7 +1173,7 @@ class SphinxQL
      *
      * @param int $offset The offset
      *
-     * @return $this
+     * @return self
      */
     public function offset($offset)
     {
@@ -1189,7 +1189,7 @@ class SphinxQL
      * @param string                                      $name  Option name
      * @param Expression|array|string|int|bool|float|null $value Option value
      *
-     * @return $this
+     * @return self
      */
     public function option($name, $value)
     {
@@ -1204,7 +1204,7 @@ class SphinxQL
      *
      * @param string $index The index to insert/replace into
      *
-     * @return $this
+     * @return self
      */
     public function into($index)
     {
@@ -1220,7 +1220,7 @@ class SphinxQL
      *
      * @param array $array The array of columns
      *
-     * @return $this
+     * @return self
      */
     public function columns($array = array())
     {
@@ -1240,7 +1240,7 @@ class SphinxQL
      *
      * @param array $array The array of values matching the columns from $this->columns()
      *
-     * @return $this
+     * @return self
      */
     public function values($array)
     {
@@ -1260,7 +1260,7 @@ class SphinxQL
      * @param string $column The column name
      * @param string $value  The value
      *
-     * @return $this
+     * @return self
      */
     public function value($column, $value)
     {
@@ -1280,7 +1280,7 @@ class SphinxQL
      *
      * @param array $array Array of key-values
      *
-     * @return $this
+     * @return self
      */
     public function set($array)
     {
@@ -1301,7 +1301,7 @@ class SphinxQL
      *
      * @param Facet $facet
      *
-     * @return $this
+     * @return self
      */
     public function facet($facet)
     {
@@ -1315,7 +1315,7 @@ class SphinxQL
      *
      * @param array $array The array of characters to escape
      *
-     * @return $this
+     * @return self
      */
     public function setFullEscapeChars($array = array())
     {
@@ -1331,7 +1331,7 @@ class SphinxQL
      *
      * @param array $array The array of characters to escape
      *
-     * @return $this
+     * @return self
      */
     public function setHalfEscapeChars($array = array())
     {
@@ -1414,7 +1414,7 @@ class SphinxQL
     /**
      * Clears the existing query build for new query when using the same SphinxQL instance.
      *
-     * @return $this
+     * @return self
      */
     public function reset()
     {
@@ -1440,7 +1440,7 @@ class SphinxQL
     }
 
     /**
-     * @return $this
+     * @return self
      */
     public function resetWhere()
     {
@@ -1450,7 +1450,7 @@ class SphinxQL
     }
 
     /**
-     * @return $this
+     * @return self
      */
     public function resetMatch()
     {
@@ -1460,7 +1460,7 @@ class SphinxQL
     }
 
     /**
-     * @return $this
+     * @return self
      */
     public function resetGroupBy()
     {
@@ -1471,7 +1471,7 @@ class SphinxQL
     }
 
     /**
-     * @return $this
+     * @return self
      */
     public function resetWithinGroupOrderBy()
     {
@@ -1481,7 +1481,7 @@ class SphinxQL
     }
 
     /**
-     * @return $this
+     * @return self
      */
     public function resetFacets()
     {
@@ -1491,7 +1491,7 @@ class SphinxQL
     }
 
     /**
-     * @return $this
+     * @return self
      */
     public function resetHaving()
     {
@@ -1501,7 +1501,7 @@ class SphinxQL
     }
 
     /**
-     * @return $this
+     * @return self
      */
     public function resetOrderBy()
     {
@@ -1511,7 +1511,7 @@ class SphinxQL
     }
 
     /**
-     * @return $this
+     * @return self
      */
     public function resetOptions()
     {

@@ -532,3 +532,36 @@ $query = (new Percolate($conn))
 
    Execute the `CALL PQ`.
 
+## Laravel
+
+Laravel's dependency injection and realtime facades brings more convenience to SphinxQL Query Builder usage.
+
+```php
+// Register connection:
+use Foolz\SphinxQL\Drivers\ConnectionInterface;
+use Foolz\SphinxQL\Drivers\Mysqli\Connection;
+use Illuminate\Support\ServiceProvider;
+
+class AppServiceProvider extends ServiceProvider
+{
+    public function register()
+    {
+        $this->app->singleton(ConnectionInterface::class, function ($app) {
+            $conn = new Connection();
+            $conn->setParams(['host' => 'domain.tld', 'port' => 9306]);
+            return $conn;
+        });
+    }
+}
+
+// In another file:
+use Facades\Foolz\SphinxQL\SphinxQL;
+
+$result = SphinxQL::select('column_one', 'colume_two')
+    ->from('index_ancient', 'index_main', 'index_delta')
+    ->match('comment', 'my opinion is superior to yours')
+    ->where('banned', '=', 1)
+    ->execute();
+```
+
+Facade access also works with `Helper` and `Percolate`.

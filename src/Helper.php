@@ -210,6 +210,58 @@ class Helper
     }
 
     /**
+     * CALL SUGGEST syntax
+     *
+     * @param string      $text
+     * @param string      $index
+     * @param array       $options Associative array of additional options
+     *
+     * @return SphinxQL A SphinxQL object ready to be ->execute();
+     * @throws Exception\ConnectionException
+     * @throws Exception\DatabaseException
+     */
+    public function callSuggest($text, $index, $options = array())
+    {
+        $arr = array($text, $index);
+
+        foreach ($options as $key => &$val) {
+            if (is_string($key)) {
+                $val .= ' AS '.$key;
+            }
+        }
+        
+        $arr = array_merge($this->connection->quoteArr($arr), $options);
+
+        return $this->query('CALL SUGGEST('.implode(', ', $arr).')');
+    }
+
+    /**
+     * CALL QSUGGEST syntax
+     *
+     * @param string      $text
+     * @param string      $index
+     * @param array       $options Associative array of additional options
+     *
+     * @return SphinxQL A SphinxQL object ready to be ->execute();
+     * @throws Exception\ConnectionException
+     * @throws Exception\DatabaseException
+     */
+    public function callQsuggest($text, $index, $options = array())
+    {
+        $arr = array($text, $index);
+
+        foreach ($options as $key => &$val) {
+            if (is_string($key)) {
+                $val .= ' AS '.$key;
+            }
+        }
+        
+        $arr = array_merge($this->connection->quoteArr($arr), $options);
+
+        return $this->query('CALL QSUGGEST('.implode(', ', $arr).')');
+    }
+
+    /**
      * DESCRIBE syntax
      *
      * @param string $index The name of the index

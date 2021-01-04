@@ -54,6 +54,16 @@ SphinxQL Query Builder Helper
 .. code-block:: php
 
     Helper::create($conn)
+      ->callSuggest($text, $index, $options = array());
+
+.. code-block:: php
+
+    Helper::create($conn)
+      ->callQsuggest($text, $index, $options = array());
+
+.. code-block:: php
+
+    Helper::create($conn)
       ->describe($index);
 
 .. code-block:: php

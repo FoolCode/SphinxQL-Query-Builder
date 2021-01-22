@@ -114,9 +114,6 @@ class Facet
      */
     public function facet($columns = null)
     {
-        
-        $this->facet = [];
-        
         if (!is_array($columns)) {
             $columns = \func_get_args();
         }

@@ -94,7 +94,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
         $describe = $this->createSphinxQL()
             ->query('DESCRIBE rt')
             ->execute()
-            ->getStored();
+			->fetchAllAssoc();
 
         array_shift($describe);
         $this->assertSame(
@@ -154,7 +154,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
             ->select()
             ->from('rt')
             ->execute()
-            ->getStored();
+			->fetchAllAssoc();
 
         $this->assertCount(1, $result);
 
@@ -169,7 +169,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
             ->select()
             ->from('rt')
             ->execute()
-            ->getStored();
+			->fetchAllAssoc();
 
         $this->assertCount(2, $result);
 
@@ -186,7 +186,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
             ->select()
             ->from('rt')
             ->execute()
-            ->getStored();
+			->fetchAllAssoc();
 
         $this->assertCount(3, $result);
 
@@ -203,7 +203,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
             ->select()
             ->from('rt')
             ->execute()
-            ->getStored();
+			->fetchAllAssoc();
 
         $this->assertCount(6, $result);
 
@@ -219,7 +219,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
             ->select()
             ->from('rt')
             ->execute()
-            ->getStored();
+			->fetchAllAssoc();
 
         $this->assertCount(8, $result);
 
@@ -244,7 +244,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
             ->select()
             ->from('rt')
             ->execute()
-            ->getStored();
+			->fetchAllAssoc();
 
         $this->assertCount(10, $result);
 
@@ -273,7 +273,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
                 'gid' => 9002
             ))
             ->execute()
-            ->getStored();
+			->fetchAllAssoc();
 
         $this->assertSame(1, $result);
 
@@ -282,7 +282,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
             ->from('rt')
             ->where('id', '=', 10)
             ->execute()
-            ->getStored();
+			->fetchAllAssoc();
 
         $this->assertEquals('9002', $result[0]['gid']);
 
@@ -293,7 +293,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
             ->values(10, 'modifying the same line again', 'because i am that lazy', 9003)
             ->values(11, 'i am getting really creative with these strings', 'i\'ll need them to test MATCH!', 300)
             ->execute()
-            ->getStored();
+			->fetchAllAssoc();
 
         $this->assertSame(2, $result);
 
@@ -302,7 +302,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
             ->from('rt')
             ->where('id', 'IN', array(10, 11))
             ->execute()
-            ->getStored();
+			->fetchAllAssoc();
 
         $this->assertEquals('9003', $result[0]['gid']);
         $this->assertEquals('300', $result[1]['gid']);
@@ -321,7 +321,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
             ->from('rt')
             ->where('id', '=', 11)
             ->execute()
-            ->getStored();
+			->fetchAllAssoc();
 
         $this->assertEquals('200', $result[0]['gid']);
     }
@@ -340,7 +340,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
             ->where('id', '=', 11)
             ->value('gid', 201)
             ->execute()
-            ->getStored();
+			->fetchAllAssoc();
 
         $this->assertSame(1, $result);
 
@@ -349,7 +349,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
             ->where('gid', '=', 300)
             ->value('gid', 305)
             ->execute()
-            ->getStored();
+			->fetchAllAssoc();
 
         $this->assertSame(3, $result);
 
@@ -358,23 +358,23 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
             ->from('rt')
             ->where('id', '=', 11)
             ->execute()
-            ->getStored();
+			->fetchAllAssoc();
 
         $this->assertEquals('201', $result[0]['gid']);
 
-        $result = $this->createSphinxQL()
-            ->update('rt')
-            ->where('gid', '=', 305)
-            ->set(array('gid' => 304))
-            ->execute()
-            ->getStored();
+//        $result = $this->createSphinxQL()
+//            ->update('rt')
+//            ->where('gid', '=', 305)
+//            ->set(array('gid' => 304))
+//            ->execute()
+//			->fetchAllAssoc();
 
         $result = $this->createSphinxQL()
             ->select()
             ->from('rt')
             ->where('gid', '=', 304)
             ->execute()
-            ->getStored();
+			->fetchAllAssoc();
 
         $this->assertCount(3, $result);
 
@@ -384,7 +384,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
             ->from('rt')
             ->where('tags', 222)
             ->execute()
-            ->getStored();
+			->fetchAllAssoc();
         $this->assertEmpty($result);
 
         $result = $this->createSphinxQL()
@@ -392,7 +392,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
             ->where('id', '=', 15)
             ->value('tags', array(111, 222))
             ->execute()
-            ->getStored();
+			->fetchAllAssoc();
         $this->assertSame(1, $result);
 
         $result = $this->createSphinxQL()
@@ -400,7 +400,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
             ->from('rt')
             ->where('tags', 222)
             ->execute()
-            ->getStored();
+			->fetchAllAssoc();
         $this->assertEquals(
             array(
                 array(
@@ -428,7 +428,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
             ->from('rt')
             ->where('gid', 'BETWEEN', array(300, 400))
             ->execute()
-            ->getStored();
+			->fetchAllAssoc();
 
         $this->assertCount(3, $result);
 
@@ -437,7 +437,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
             ->from('rt')
             ->where('id', 'IN', array(11, 12, 13))
             ->execute()
-            ->getStored();
+			->fetchAllAssoc();
 
         $this->assertCount(3, $result);
 
@@ -446,7 +446,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
             ->from('rt')
             ->where('id', 'NOT IN', array(11, 12))
             ->execute()
-            ->getStored();
+			->fetchAllAssoc();
 
         $this->assertCount(6, $result);
 
@@ -455,23 +455,23 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
             ->from('rt')
             ->where('gid', '>', 300)
             ->execute()
-            ->getStored();
+			->fetchAllAssoc();
 
         $this->assertCount(6, $result);
 
-        $result = $this->createSphinxQL()
-            ->select()
-            ->from('rt')
-            ->where('gid', 304)
-            ->execute()
-            ->getStored();
+//        $result = $this->createSphinxQL()
+//            ->select()
+//            ->from('rt')
+//            ->where('gid', 304)
+//            ->execute()
+//			->fetchAllAssoc();
 
         $result = $this->createSphinxQL()
             ->select()
             ->from('rt')
             ->where('gid', '>', 300)
             ->execute()
-            ->getStored();
+			->fetchAllAssoc();
 
         $this->assertCount(6, $result);
 
@@ -481,7 +481,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
             ->where('gid', '>', 300)
             ->where('id', '!=', 15)
             ->execute()
-            ->getStored();
+			->fetchAllAssoc();
 
         $this->assertCount(5, $result);
 
@@ -491,7 +491,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
             ->match('content', 'content')
             ->where('gid', '>', 200)
             ->execute()
-            ->getStored();
+			->fetchAllAssoc();
 
         $this->assertCount(1, $result);
     }
@@ -510,7 +510,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
             ->from('rt')
             ->match('content', 'content')
             ->execute()
-            ->getStored();
+			->fetchAllAssoc();
 
         $this->assertCount(2, $result);
 
@@ -519,7 +519,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
             ->from('rt')
             ->match('title', 'value')
             ->execute()
-            ->getStored();
+			->fetchAllAssoc();
 
         $this->assertCount(1, $result);
 
@@ -529,7 +529,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
             ->match('title', 'value')
             ->match('content', 'directly')
             ->execute()
-            ->getStored();
+			->fetchAllAssoc();
 
         $this->assertCount(1, $result);
 
@@ -538,7 +538,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
             ->from('rt')
             ->match('*', 'directly')
             ->execute()
-            ->getStored();
+			->fetchAllAssoc();
 
         $this->assertCount(1, $result);
 
@@ -547,7 +547,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
             ->from('rt')
             ->match(array('title', 'content'), 'to')
             ->execute()
-            ->getStored();
+			->fetchAllAssoc();
 
         $this->assertCount(3, $result);
 
@@ -556,7 +556,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
             ->from('rt')
             ->match('content', 'directly | lazy', true)
             ->execute()
-            ->getStored();
+			->fetchAllAssoc();
 
         $this->assertCount(2, $result);
 
@@ -569,7 +569,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
                     ->orMatch('lazy');
             })
             ->execute()
-            ->getStored();
+			->fetchAllAssoc();
 
         $this->assertCount(2, $result);
 
@@ -582,7 +582,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
             ->from('rt')
             ->match($match)
             ->execute()
-            ->getStored();
+			->fetchAllAssoc();
 
         $this->assertCount(2, $result);
 
@@ -642,7 +642,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
             ->match('content', 'content')
             ->option('max_matches', 1)
             ->execute()
-            ->getStored();
+			->fetchAllAssoc();
 
         $this->assertCount(1, $result);
 
@@ -652,7 +652,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
             ->match('content', 'content')
             ->option('max_matches', SphinxQL::expr('1'))
             ->execute()
-            ->getStored();
+			->fetchAllAssoc();
 
         $this->assertCount(1, $result);
 
@@ -697,7 +697,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
             ->from('rt')
             ->groupBy('gid')
             ->execute()
-            ->getStored();
+			->fetchAllAssoc();
 
         $this->assertCount(5, $result);
         $this->assertEquals('3', $result[3]['count(*)']);
@@ -736,7 +736,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
             ->from('rt')
             ->orderBy('id', 'desc')
             ->execute()
-            ->getStored();
+			->fetchAllAssoc();
 
         $this->assertEquals('17', $result[0]['id']);
 
@@ -745,7 +745,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
             ->from('rt')
             ->orderBy('id', 'asc')
             ->execute()
-            ->getStored();
+			->fetchAllAssoc();
 
         $this->assertEquals('10', $result[0]['id']);
     }
@@ -761,7 +761,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
             ->groupBy('gid')
             ->withinGroupOrderBy('id', 'desc')
             ->execute()
-            ->getStored();
+			->fetchAllAssoc();
 
         $this->assertEquals('17', $result[0]['id']);
 
@@ -772,7 +772,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
             ->groupBy('gid')
             ->withinGroupOrderBy('id', 'asc')
             ->execute()
-            ->getStored();
+			->fetchAllAssoc();
 
         $this->assertEquals('16', $result[0]['id']);
     }
@@ -823,7 +823,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
             ->from('rt')
             ->offset(4)
             ->execute()
-            ->getStored();
+			->fetchAllAssoc();
 
         $this->assertCount(4, $result);
     }
@@ -837,7 +837,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
             ->from('rt')
             ->limit(3)
             ->execute()
-            ->getStored();
+			->fetchAllAssoc();
 
         $this->assertCount(3, $result);
 
@@ -846,7 +846,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
             ->from('rt')
             ->limit(2, 3)
             ->execute()
-            ->getStored();
+			->fetchAllAssoc();
 
         $this->assertCount(3, $result);
     }
@@ -866,7 +866,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
             ->where('id', 'IN', [11, 12, 13])
             ->match('content', 'content')
             ->execute()
-            ->getStored();
+			->fetchAllAssoc();
 
         $this->assertSame(2, $result);
     }
@@ -959,7 +959,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
             ->select(array('id', 'gid'))
             ->from('rt')
             ->execute()
-            ->getStored();
+			->fetchAllAssoc();
         $this->assertArrayHasKey('id', $result[0]);
         $this->assertArrayHasKey('gid', $result[0]);
         $this->assertEquals('10', $result[0]['id']);
@@ -969,7 +969,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
             ->select('id', 'gid')
             ->from('rt')
             ->execute()
-            ->getStored();
+			->fetchAllAssoc();
         $this->assertArrayHasKey('id', $result[0]);
         $this->assertArrayHasKey('gid', $result[0]);
         $this->assertEquals('10', $result[0]['id']);
@@ -979,7 +979,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
             ->select(array('id'))
             ->from('rt')
             ->execute()
-            ->getStored();
+			->fetchAllAssoc();
         $this->assertArrayHasKey('id', $result[0]);
         $this->assertArrayNotHasKey('gid', $result[0]);
         $this->assertEquals('10', $result[0]['id']);
@@ -988,7 +988,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
             ->select('id')
             ->from('rt')
             ->execute()
-            ->getStored();
+			->fetchAllAssoc();
         $this->assertArrayHasKey('id', $result[0]);
         $this->assertArrayNotHasKey('gid', $result[0]);
         $this->assertEquals('10', $result[0]['id']);
@@ -1011,7 +1011,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
         );
         $result = $query
             ->execute()
-            ->getStored();
+			->fetchAllAssoc();
         $this->assertArrayHasKey('id', $result[0]);
         $this->assertArrayNotHasKey('gid', $result[0]);
         $this->assertEquals('10', $result[0]['id']);
@@ -1034,13 +1034,13 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
         );
         $result = $subquery
             ->execute()
-            ->getStored();
+			->fetchAllAssoc();
         $this->assertArrayHasKey('id', $result[0]);
         $this->assertArrayNotHasKey('gid', $result[0]);
         $this->assertEquals('17', $result[0]['id']);
         $result = $query
             ->execute()
-            ->getStored();
+			->fetchAllAssoc();
         $this->assertArrayHasKey('id', $result[0]);
         $this->assertArrayNotHasKey('gid', $result[0]);
         $this->assertEquals('10', $result[0]['id']);
@@ -1059,12 +1059,12 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
         $q2->setSelect(array('id'));
         $result = $q1
             ->execute()
-            ->getStored();
+			->fetchAllAssoc();
         $this->assertArrayHasKey('id', $result[0]);
         $this->assertArrayHasKey('gid', $result[0]);
         $result = $q2
             ->execute()
-            ->getStored();
+			->fetchAllAssoc();
         $this->assertArrayHasKey('id', $result[0]);
         $this->assertArrayNotHasKey('gid', $result[0]);
 
@@ -1075,12 +1075,12 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
         $q2->setSelect('id');
         $result = $q1
             ->execute()
-            ->getStored();
+			->fetchAllAssoc();
         $this->assertArrayHasKey('id', $result[0]);
         $this->assertArrayHasKey('gid', $result[0]);
         $result = $q2
             ->execute()
-            ->getStored();
+			->fetchAllAssoc();
         $this->assertArrayHasKey('id', $result[0]);
         $this->assertArrayNotHasKey('gid', $result[0]);
     }

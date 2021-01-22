@@ -9,7 +9,7 @@ class ConnectionTest extends \PHPUnit\Framework\TestCase
     /**
      * @var ConnectionInterface
      */
-    private $connection = null;
+    private $connection;
 
     protected function setUp(): void{
 		$this->connection = TestUtil::getConnectionDriver();

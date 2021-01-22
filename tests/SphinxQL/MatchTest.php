@@ -287,10 +287,7 @@ class MatchTest extends \PHPUnit\Framework\TestCase
             ->proximity('example program', 5)
             ->field('body')
             ->match('python')
-            ->not(function ($m) {
-                $m->match('php')
-                    ->orMatch('perl');
-            })
+			->not('(php | perl)')
             ->field('*')
             ->match('code');
         $this->assertEquals('"hello world" @title "example program"~5 @body python -(php | perl) @* code', $match->compile()->getCompiled());
@@ -306,10 +303,7 @@ class MatchTest extends \PHPUnit\Framework\TestCase
 
         $match = $this->createMatch()
             ->match('aaa')
-            ->not(function ($m) {
-                $m->match('bbb')
-                    ->not('ccc ddd');
-            });
+			->not('bbb -(ccc ddd)');
         $this->assertEquals('aaa -(bbb -(ccc ddd))', $match->compile()->getCompiled());
     }
 

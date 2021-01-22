@@ -40,13 +40,13 @@ class HelperTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertEquals(
             array(array('Index' => 'rt', 'Type' => 'rt')),
-            $this->createHelper()->showTables('rt')->execute()->getStored()
+            $this->createHelper()->showTables('rt')->execute()->fetchAllAssoc()
         );
     }
 
     public function testDescribe()
     {
-        $describe = $this->createHelper()->describe('rt')->execute()->getStored();
+        $describe = $this->createHelper()->describe('rt')->execute()->fetchAllAssoc();
         array_shift($describe);
         $this->assertSame(
             array(
@@ -61,11 +61,11 @@ class HelperTest extends \PHPUnit\Framework\TestCase
     public function testSetVariable()
     {
         $this->createHelper()->setVariable('AUTOCOMMIT', 0)->execute();
-        $vars = Helper::pairsToAssoc($this->createHelper()->showVariables()->execute()->getStored());
+        $vars = Helper::pairsToAssoc($this->createHelper()->showVariables()->execute()->fetchAllAssoc());
         $this->assertEquals(0, $vars['autocommit']);
 
         $this->createHelper()->setVariable('AUTOCOMMIT', 1)->execute();
-        $vars = Helper::pairsToAssoc($this->createHelper()->showVariables()->execute()->getStored());
+        $vars = Helper::pairsToAssoc($this->createHelper()->showVariables()->execute()->fetchAllAssoc());
         $this->assertEquals(1, $vars['autocommit']);
 
         $this->createHelper()->setVariable('@foo', 1, true);
@@ -78,7 +78,7 @@ class HelperTest extends \PHPUnit\Framework\TestCase
             'this is my document text',
             'rt',
             'is'
-        )->execute()->getStored();
+        )->execute()->fetchAllAssoc();
         $this->assertEquals(
             array(array('snippet' => 'this <b>is</b> my document text')),
             $snippets
@@ -93,7 +93,7 @@ class HelperTest extends \PHPUnit\Framework\TestCase
                 'before_match' => '<em>',
                 'after_match'  => '</em>',
             )
-        )->execute()->getStored();
+        )->execute()->fetchAllAssoc();
         $this->assertEquals(
             array(array('snippet' => 'this <em>is</em> my document text')),
             $snippets
@@ -104,7 +104,7 @@ class HelperTest extends \PHPUnit\Framework\TestCase
             'rt',
             'is',
             array('allow_empty' => 1)
-        )->execute()->getStored();
+        )->execute()->fetchAllAssoc();
         $this->assertEquals(
             array(
                 array('snippet' => 'this <b>is</b> my document text'),
@@ -119,7 +119,7 @@ class HelperTest extends \PHPUnit\Framework\TestCase
         $keywords = $this->createHelper()->callKeywords(
             'test case',
             'rt'
-        )->execute()->getStored();
+        )->execute()->fetchAllAssoc();
         $this->assertEquals(
             array(
                 array(
@@ -140,7 +140,7 @@ class HelperTest extends \PHPUnit\Framework\TestCase
             'test case',
             'rt',
             1
-        )->execute()->getStored();
+        )->execute()->fetchAllAssoc();
         $this->assertEquals(
             array(
                 array(
@@ -176,7 +176,7 @@ class HelperTest extends \PHPUnit\Framework\TestCase
         $this->createHelper()->createFunction('my_udf', 'INT', 'test_udf.so')->execute();
         $this->assertSame(
             array(array('MY_UDF()' => '42')),
-            $this->conn->query('SELECT MY_UDF()')->getStored()
+            $this->conn->query('SELECT MY_UDF()')->fetchAllAssoc()
         );
         $this->createHelper()->dropFunction('my_udf')->execute();
     }
@@ -201,7 +201,7 @@ class HelperTest extends \PHPUnit\Framework\TestCase
             ->select()
             ->from('rt')
             ->execute()
-            ->getStored();
+			->fetchAllAssoc();
 
         $this->assertCount(1, $result);
 
@@ -211,7 +211,7 @@ class HelperTest extends \PHPUnit\Framework\TestCase
             ->select()
             ->from('rt')
             ->execute()
-            ->getStored();
+			->fetchAllAssoc();
 
         $this->assertCount(0, $result);
     }

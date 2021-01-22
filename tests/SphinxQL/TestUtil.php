@@ -5,6 +5,8 @@ namespace Foolz\SphinxQL\Tests;
 use Foolz\SphinxQL\Drivers\Mysqli\Connection as MysqliConnection;
 use Foolz\SphinxQL\Drivers\Pdo\Connection as PdoConnection;
 
+$GLOBALS['driver'] = 'Mysqli';
+
 class TestUtil
 {
     /**

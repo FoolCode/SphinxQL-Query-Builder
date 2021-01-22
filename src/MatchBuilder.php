@@ -3,9 +3,9 @@
 namespace Foolz\SphinxQL;
 
 /**
- * Query Builder class for Match statements.
+ * Query Builder class for MatchBuilder statements.
  */
-class Match
+class MatchBuilder
 {
     /**
      * The last compiled query.
@@ -51,12 +51,12 @@ class Match
      *    });
      *    // (a | b)
      *
-     *    $sub = new Match($sphinxql);
+     *    $sub = new MatchBuilder($sphinxql);
      *    $sub->match('a')->orMatch('b');
      *    $match->match($sub);
      *    // (a | b)
      *
-     * @param string|Match|\Closure $keywords The text or expression to match.
+     * @param string|MatchBuilder|\Closure $keywords The text or expression to match.
      *
      * @return $this
      */
@@ -79,7 +79,7 @@ class Match
      *    $match->match('test')->orMatch('case');
      *    // test | case
      *
-     * @param string|Match|\Closure $keywords The text or expression to alternatively match.
+     * @param string|MatchBuilder|\Closure $keywords The text or expression to alternatively match.
      *
      * @return $this
      */
@@ -305,7 +305,7 @@ class Match
      *    $match->match('test')->before('case');
      *    // test << case
      *
-     * @param string|Match|\Closure $keywords The text or expression that must come after.
+     * @param string|MatchBuilder|\Closure $keywords The text or expression that must come after.
      *
      * @return $this
      */
@@ -376,7 +376,7 @@ class Match
      *    $match->match('test')->near('case', 3);
      *    // test NEAR/3 case
      *
-     * @param string|Match|\Closure $keywords The text or expression to match nearby.
+     * @param string|MatchBuilder|\Closure $keywords The text or expression to match nearby.
      * @param int                   $distance Maximum distance to the match.
      *
      * @return $this
@@ -401,7 +401,7 @@ class Match
      *    $match->match('test')->sentence('case');
      *    // test SENTENCE case
      *
-     * @param string|Match|\Closure $keywords The text or expression that must be in the sentence.
+     * @param string|MatchBuilder|\Closure $keywords The text or expression that must be in the sentence.
      *
      * @return $this
      */
@@ -423,7 +423,7 @@ class Match
      *    $match->match('test')->paragraph('case');
      *    // test PARAGRAPH case
      *
-     * @param string|Match|\Closure $keywords The text or expression that must be in the paragraph.
+     * @param string|MatchBuilder|\Closure $keywords The text or expression that must be in the paragraph.
      *
      * @return $this
      */
@@ -449,7 +449,7 @@ class Match
      *    // ZONE:(th) test
      *
      * @param string|array          $zones    The zone or zones to search.
-     * @param string|Match|\Closure $keywords The text or expression that must be in these zones.
+     * @param string|MatchBuilder|\Closure $keywords The text or expression that must be in these zones.
      *
      * @return $this
      */
@@ -476,7 +476,7 @@ class Match
      *    // ZONESPAN:(th) test
      *
      * @param string                $zone     The zone to search.
-     * @param string|Match|\Closure $keywords The text or expression that must be in this zone.
+     * @param string|MatchBuilder|\Closure $keywords The text or expression that must be in this zone.
      *
      * @return $this
      */
@@ -500,7 +500,7 @@ class Match
             if (key($token) == 'MATCH') {
                 if ($token['MATCH'] instanceof Expression) {
                     $query .= $token['MATCH']->value().' ';
-                } elseif ($token['MATCH'] instanceof Match) {
+                } elseif ($token['MATCH'] instanceof MatchBuilder) {
                     $query .= '('.$token['MATCH']->compile()->getCompiled().') ';
                 } elseif ($token['MATCH'] instanceof \Closure) {
                     $sub = new static($this->sphinxql);

@@ -12,8 +12,7 @@ class HelperTest extends \PHPUnit\Framework\TestCase
      */
     public $conn;
 
-    protected function setUp()
-    {
+    protected function setUp(): void{
         $conn = TestUtil::getConnectionDriver();
         $conn->setParam('port', 9307);
         $this->conn = $conn;

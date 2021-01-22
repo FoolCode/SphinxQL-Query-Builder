@@ -9,7 +9,7 @@
 
 * added support for [Manticore](https://manticoresearch.com)
 * added `Percolate` class for `Manticore`
-* added `orPhrase` method to `Match` class
+* added `orPhrase` method to `MatchBuilder` class
 * added `resetFacets` method to `SphinxQL` class
 * added support for multi-document snippet call
 * fixed `Connection` exception thrown

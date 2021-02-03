@@ -1,3 +1,8 @@
+#### 3.0.0
+
+* added support for PHP 8.x
+* renamed `Foolz\SphinxQL\Match` to `Foolz\SphinxQL\MatchBuilder` (BREAKING CHANGE)
+
 #### 2.1.0
 
 * added exception code and previous throwable to errors
@@ -9,7 +14,7 @@
 
 * added support for [Manticore](https://manticoresearch.com)
 * added `Percolate` class for `Manticore`
-* added `orPhrase` method to `MatchBuilder` class
+* added `orPhrase` method to `Match` class
 * added `resetFacets` method to `SphinxQL` class
 * added support for multi-document snippet call
 * fixed `Connection` exception thrown

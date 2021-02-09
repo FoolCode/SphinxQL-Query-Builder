@@ -12,7 +12,8 @@ class HelperTest extends \PHPUnit\Framework\TestCase
      */
     public $conn;
 
-    protected function setUp(): void{
+    protected function setUp(): void
+    {
         $conn = TestUtil::getConnectionDriver();
         $conn->setParam('port', 9307);
         $this->conn = $conn;
@@ -201,7 +202,7 @@ class HelperTest extends \PHPUnit\Framework\TestCase
             ->select()
             ->from('rt')
             ->execute()
-			->fetchAllAssoc();
+            ->fetchAllAssoc();
 
         $this->assertCount(1, $result);
 
@@ -211,7 +212,7 @@ class HelperTest extends \PHPUnit\Framework\TestCase
             ->select()
             ->from('rt')
             ->execute()
-			->fetchAllAssoc();
+            ->fetchAllAssoc();
 
         $this->assertCount(0, $result);
     }

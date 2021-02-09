@@ -4,6 +4,7 @@ use Foolz\SphinxQL\Exception\SphinxQLException;
 use Foolz\SphinxQL\Percolate;
 use Foolz\SphinxQL\Tests\TestUtil;
 use Foolz\SphinxQL\SphinxQL;
+
 /**
  * @group Manticore
  * @package Foolz\SphinxQL
@@ -16,9 +17,9 @@ class PercolateQueriesTest extends \PHPUnit\Framework\TestCase
 
     public static function setUpBeforeClass(): void
     {
-	    $conn = TestUtil::getConnectionDriver();
-	    $conn->setParam('port', 9307);
-	    self::$conn = $conn;
+        $conn = TestUtil::getConnectionDriver();
+        $conn->setParam('port', 9307);
+        self::$conn = $conn;
 
         $sphinxQL = new SphinxQL(self::$conn);
         $sphinxQL->query('TRUNCATE RTINDEX pq')->execute();
@@ -31,7 +32,6 @@ class PercolateQueriesTest extends \PHPUnit\Framework\TestCase
      */
     public function testInsert($testNumber, $query, $index, $tags, $filter, $compiledQuery)
     {
-
         if ($testNumber == 2) {
             $this->expectException(SphinxQLException::class);
             $this->expectExceptionMessage('Index can\'t be empty');
@@ -179,19 +179,15 @@ class PercolateQueriesTest extends \PHPUnit\Framework\TestCase
         if ($testNumber == 2) {
             $this->expectException(SphinxQLException::class);
             $this->expectExceptionMessage('Document can\'t be empty');
-
         } elseif ($testNumber == 3) {
             $this->expectException(SphinxQLException::class);
             $this->expectExceptionMessage('Index can\'t be empty');
-
         } elseif ($testNumber == 12) {
             $this->expectException(SphinxQLException::class);
             $this->expectExceptionMessage('Documents must be in json format');
-
         } elseif ($testNumber == 13) {
             $this->expectException(SphinxQLException::class);
             $this->expectExceptionMessage('Documents array must be associate');
-
         }
 
         $query = (new Percolate(self::$conn))
@@ -213,7 +209,6 @@ class PercolateQueriesTest extends \PHPUnit\Framework\TestCase
             $this->assertEquals($result[0], $query[0]['UID']);
             $this->assertEquals($result[1], count($query));
         }
-
     }
 
     public function callPqProvider()
@@ -282,5 +277,4 @@ class PercolateQueriesTest extends \PHPUnit\Framework\TestCase
             [13, 'pq', ['full text query terms','full text'], [Percolate::OPTION_DOCS_JSON => 1], null],
         ];
     }
-
 }

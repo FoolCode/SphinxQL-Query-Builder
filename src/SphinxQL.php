@@ -231,7 +231,7 @@ class SphinxQL
     public function setType(string $type)
     {
         return $this->type = $type;
-    }    
+    }
 
     /**
      * Returns the currently attached connection

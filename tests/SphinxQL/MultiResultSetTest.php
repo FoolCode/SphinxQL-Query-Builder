@@ -153,7 +153,7 @@ class MultiResultSetTest extends \PHPUnit\Framework\TestCase
         $res = self::$conn->multiQuery(array('SELECT COUNT(*) FROM rt', 'SHOW META'));
 
         $array = array();
-        foreach($res as $key => $value) {
+        foreach ($res as $key => $value) {
             $array[$key] = $value;
         }
 
@@ -167,13 +167,13 @@ class MultiResultSetTest extends \PHPUnit\Framework\TestCase
         $res = self::$conn->multiQuery(array('SELECT COUNT(*) FROM rt', 'SHOW META'));
         $res->store();
         $array = array();
-        foreach($res as $key => $value) {
+        foreach ($res as $key => $value) {
             $array[$key] = $value;
         }
 
         $this->assertCount(2, $array);
 
-        foreach($res as $key => $value) {
+        foreach ($res as $key => $value) {
             $array[$key] = $value;
         }
 

@@ -11,16 +11,18 @@ class ConnectionTest extends \PHPUnit\Framework\TestCase
      */
     private $connection;
 
-    protected function setUp(): void{
-		$this->connection = TestUtil::getConnectionDriver();
-		$this->connection->setParams(array('host' => '127.0.0.1', 'port' => 9307));
-	}
+    protected function setUp(): void
+    {
+        $this->connection = TestUtil::getConnectionDriver();
+        $this->connection->setParams(array('host' => '127.0.0.1', 'port' => 9307));
+    }
 
-	protected function tearDown(): void{
-		$this->connection = null;
-	}
+    protected function tearDown(): void
+    {
+        $this->connection = null;
+    }
 
-	public function test()
+    public function test()
     {
         TestUtil::getConnectionDriver();
     }
@@ -134,7 +136,7 @@ class ConnectionTest extends \PHPUnit\Framework\TestCase
             array('Variable_name' => 'total', 'Value' => '0'),
             array('Variable_name' => 'total_found', 'Value' => '0'),
             array('Variable_name' => 'time', 'Value' => '0.000'),
-        ), $this->connection->query('SHOW META')->getStored());
+        ), $this->connection->query('SHOW META')->fetchAllAssoc());
     }
 
     public function testMultiQuery()
@@ -212,5 +214,4 @@ class ConnectionTest extends \PHPUnit\Framework\TestCase
             $this->connection->quoteArr(array(null, true, false, new Expression("fo'o'bar"), 123, 12.3, '12.3', '12'))
         );
     }
-
 }

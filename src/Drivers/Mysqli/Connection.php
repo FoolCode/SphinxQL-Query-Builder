@@ -46,7 +46,8 @@ class Connection extends ConnectionBase
             }
         }
 
-        set_error_handler(function () {});
+        set_error_handler(function () {
+        });
         try {
             if (!$conn->real_connect($data['host'], null, null, null, (int) $data['port'], $data['socket'])) {
                 throw new ConnectionException('Connection Error: ['.$conn->connect_errno.']'.$conn->connect_error);
@@ -93,7 +94,8 @@ class Connection extends ConnectionBase
     {
         $this->ensureConnection();
 
-        set_error_handler(function () {});
+        set_error_handler(function () {
+        });
         try {
             /**
              * ManticoreSearch/Sphinx silence warnings thrown by php mysqli/mysqlnd
@@ -104,7 +106,7 @@ class Connection extends ConnectionBase
             $resource = @$this->getConnection()->query($query);
         } finally {
             restore_error_handler();
-        }        
+        }
 
         if ($this->getConnection()->error) {
             throw new DatabaseException('['.$this->getConnection()->errno.'] '.

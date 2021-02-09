@@ -6,11 +6,11 @@ use Foolz\SphinxQL\Tests\TestUtil;
 /**
  * @author Vicent Valls
  */
-class FacetTest  extends \PHPUnit\Framework\TestCase
+class FacetTest extends \PHPUnit\Framework\TestCase
 {
     public static $conn = null;
 
-    public static $data = array (
+    public static $data = array(
         0 => array('id' => '10', 'gid' => '9003',
             'title' => 'modifying the same line again', 'content' => 'because i am that lazy'),
         1 => array('id' => '11', 'gid' => '201',
@@ -29,11 +29,12 @@ class FacetTest  extends \PHPUnit\Framework\TestCase
             'title' => 'what is there to do', 'content' => 'we need to create dummy data for tests'),
     );
 
-    public static function setUpBeforeClass(): void{
-		$conn = TestUtil::getConnectionDriver();
-		$conn->setParam('port', 9307);
-		self::$conn = $conn;
-	}
+    public static function setUpBeforeClass(): void
+    {
+        $conn = TestUtil::getConnectionDriver();
+        $conn->setParam('port', 9307);
+        self::$conn = $conn;
+    }
 
     /**
      * @return Facet
@@ -131,7 +132,7 @@ class FacetTest  extends \PHPUnit\Framework\TestCase
     {
         $facet = $this->createFacet()
             ->facet(array('gid', 'title'))
-            ->orderByFunction('COUNT','*', 'DESC')
+            ->orderByFunction('COUNT', '*', 'DESC')
             ->getFacet();
 
         $this->assertEquals('FACET gid, title ORDER BY COUNT(*) DESC', $facet);

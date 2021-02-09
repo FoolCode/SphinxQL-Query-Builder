@@ -2,6 +2,8 @@
 
 namespace Foolz\SphinxQL;
 
+use Closure;
+
 /**
  * Query Builder class for MatchBuilder statements.
  */
@@ -490,58 +492,82 @@ class MatchBuilder
 
     /**
      * Build the match expression.
-     *
      * @return $this
      */
-    public function compile()
+    public function compile(): self
     {
         $query = '';
+
         foreach ($this->tokens as $token) {
-            if (key($token) == 'MATCH') {
-                if ($token['MATCH'] instanceof Expression) {
-                    $query .= $token['MATCH']->value().' ';
-                } elseif ($token['MATCH'] instanceof MatchBuilder) {
-                    $query .= '('.$token['MATCH']->compile()->getCompiled().') ';
-                } elseif ($token['MATCH'] instanceof \Closure) {
-                    $sub = new static($this->sphinxql);
-                    call_user_func($token['MATCH'], $sub);
-                    $query .= '('.$sub->compile()->getCompiled().') ';
-                } elseif (strpos($token['MATCH'], ' ') === false) {
-                    $query .= $this->sphinxql->escapeMatch($token['MATCH']).' ';
-                } else {
-                    $query .= '('.$this->sphinxql->escapeMatch($token['MATCH']).') ';
+            $tokenKey = key($token);
+
+            switch ($tokenKey) {
+                case 'MATCH':{
+                    if ($token['MATCH'] instanceof Expression) {
+                        $query .= $token['MATCH']->value().' ';
+                    } elseif ($token['MATCH'] instanceof self) {
+                        $query .= '('.$token['MATCH']->compile()->getCompiled().') ';
+                    } elseif ($token['MATCH'] instanceof Closure) {
+                        $sub = new static($this->sphinxql);
+                        call_user_func($token['MATCH'], $sub);
+                        $query .= '('.$sub->compile()->getCompiled().') ';
+                    } elseif (strpos($token['MATCH'], ' ') === false) {
+                        $query .= $this->sphinxql->escapeMatch($token['MATCH']).' ';
+                    } else {
+                        $query .= '('.$this->sphinxql->escapeMatch($token['MATCH']).') ';
+                    }
+                    break;
                 }
-            } elseif (key($token) == 'OPERATOR') {
-                $query .= $token['OPERATOR'];
-            } elseif (key($token) == 'FIELD') {
-                $query .= $token['FIELD'];
-                if (count($token['fields']) == 1) {
-                    $query .= $token['fields'][0];
-                } else {
-                    $query .= '('.implode(',', $token['fields']).')';
+                case 'OPERATOR':{
+                    $query .= $token['OPERATOR'];
+                    break;
                 }
-                if ($token['limit']) {
-                    $query .= '['.$token['limit'].']';
+                case 'FIELD':{
+                    $query .= $token['FIELD'];
+                    if (count($token['fields']) === 1) {
+                        $query .= $token['fields'][0];
+                    } else {
+                        $query .= '('.implode(',', $token['fields']).')';
+                    }
+                    if ($token['limit']) {
+                        $query .= '['.$token['limit'].']';
+                    }
+                    $query .= ' ';
+                    break;
                 }
-                $query .= ' ';
-            } elseif (key($token) == 'PHRASE') {
-                $query .= '"'.$this->sphinxql->escapeMatch($token['PHRASE']).'" ';
-            } elseif (key($token) == 'PROXIMITY') {
-                $query .= '"'.$this->sphinxql->escapeMatch($token['keywords']).'"~';
-                $query .= $token['PROXIMITY'].' ';
-            } elseif (key($token) == 'QUORUM') {
-                $query .= '"'.$this->sphinxql->escapeMatch($token['keywords']).'"/';
-                $query .= $token['QUORUM'].' ';
-            } elseif (key($token) == 'BOOST') {
-                $query = rtrim($query).'^'.$token['BOOST'].' ';
-            } elseif (key($token) == 'NEAR') {
-                $query .= 'NEAR/'.$token['NEAR'].' ';
-            } elseif (key($token) == 'ZONE') {
-                $query .= 'ZONE:('.implode(',', $token['ZONE']).') ';
-            } elseif (key($token) == 'ZONESPAN') {
-                $query .= 'ZONESPAN:('.$token['ZONESPAN'].') ';
+                case 'PHRASE':{
+                    $query .= '"'.$this->sphinxql->escapeMatch($token['PHRASE']).'" ';
+                    break;
+                }
+                case 'PROXIMITY':{
+                    $query .= '"'.$this->sphinxql->escapeMatch($token['keywords']).'"~';
+                    $query .= $token['PROXIMITY'].' ';
+                    break;
+                }
+                case 'QUORUM':{
+                    $query .= '"'.$this->sphinxql->escapeMatch($token['keywords']).'"/';
+                    $query .= $token['QUORUM'].' ';
+                    break;
+                }
+                case 'BOOST':{
+                    $query = rtrim($query).'^'.$token['BOOST'].' ';
+                    break;
+                }
+                case 'NEAR':{
+                    $query .= 'NEAR/'.$token['NEAR'].' ';
+                    break;
+                }
+                case 'ZONE':{
+                    $query .= 'ZONE:('.implode(',', $token['ZONE']).') ';
+                    break;
+                }
+                case 'ZONESPAN':{
+                    $query .= 'ZONESPAN:('.$token['ZONESPAN'].') ';
+                    break;
+                }
             }
         }
+
         $this->last_compiled = trim($query);
 
         return $this;

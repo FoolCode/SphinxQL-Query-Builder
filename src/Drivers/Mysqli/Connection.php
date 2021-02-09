@@ -1,5 +1,4 @@
 <?php
-
 namespace Foolz\SphinxQL\Drivers\Mysqli;
 
 use Foolz\SphinxQL\Drivers\ConnectionBase;
@@ -162,7 +161,10 @@ class Connection extends ConnectionBase
      */
     public function mbPush()
     {
-        $this->internal_encoding = mb_internal_encoding();
+        $internalEncoding = mb_internal_encoding();
+        if (is_string($internalEncoding)) {
+            $this->internal_encoding = $internalEncoding;
+        }
         mb_internal_encoding('UTF-8');
 
         return $this;

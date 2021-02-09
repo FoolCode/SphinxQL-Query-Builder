@@ -361,12 +361,11 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals('201', $result[0]['gid']);
 
-//        $result = $this->createSphinxQL()
-//            ->update('rt')
-//            ->where('gid', '=', 305)
-//            ->set(array('gid' => 304))
-//            ->execute()
-        //			->fetchAllAssoc();
+        $this->createSphinxQL()
+            ->update('rt')
+            ->where('gid', '=', 305)
+            ->set(array('gid' => 304))
+            ->execute();
 
         $result = $this->createSphinxQL()
             ->select()
@@ -457,13 +456,6 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
             ->fetchAllAssoc();
 
         $this->assertCount(6, $result);
-
-//        $result = $this->createSphinxQL()
-//            ->select()
-//            ->from('rt')
-//            ->where('gid', 304)
-//            ->execute()
-        //			->fetchAllAssoc();
 
         $result = $this->createSphinxQL()
             ->select()

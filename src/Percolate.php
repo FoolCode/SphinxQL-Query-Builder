@@ -487,18 +487,17 @@ class Percolate
                         }
                     }
                 }
-            }else{
-				$json = $this->prepareFromJson($this->documents);
-				if ($json) {
-					$this->options[self::OPTION_DOCS_JSON] = 1;
-					return $json;
-				}
+            } else {
+                $json = $this->prepareFromJson($this->documents);
+                if ($json) {
+                    $this->options[self::OPTION_DOCS_JSON] = 1;
+                    return $json;
+                }
 
-				$this->options[self::OPTION_DOCS_JSON] = 0;
-				return $this->quoteString($this->documents);
-			}
-
-		}
+                $this->options[self::OPTION_DOCS_JSON] = 0;
+                return $this->quoteString($this->documents);
+            }
+        }
         throw new SphinxQLException('Documents can\'t be empty');
     }
 

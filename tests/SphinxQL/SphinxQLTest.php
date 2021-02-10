@@ -415,7 +415,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
         $result = $this->createSphinxQL()
             ->update('rt')
             ->where('id', '=', 15)
-            ->value('tags',  222)
+            ->value('tags', 222)
             ->execute()
             ->getAffectedRows();
         $this->assertSame(1, $result);

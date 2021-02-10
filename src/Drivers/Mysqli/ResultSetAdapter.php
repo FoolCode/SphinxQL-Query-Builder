@@ -33,12 +33,13 @@ class ResultSetAdapter implements ResultSetAdapterInterface
         $this->result = $result;
     }
 
-	/**
-	 * @inheritdoc
-	 * @return int
-	 * @throws ConnectionException
-	 */
-    public function getAffectedRows(): int{
+    /**
+     * @inheritdoc
+     * @return int
+     * @throws ConnectionException
+     */
+    public function getAffectedRows(): int
+    {
         return $this->connection->getConnection()->affected_rows;
     }
 

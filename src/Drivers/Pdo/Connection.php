@@ -15,22 +15,23 @@ use RuntimeException;
 class Connection extends ConnectionBase
 {
 
-	/**
-	 * @return PDO
-	 * @throws ConnectionException
-	 */
-	public function getConnection(): PDO{
-		$connection = parent::getConnection();
+    /**
+     * @return PDO
+     * @throws ConnectionException
+     */
+    public function getConnection(): PDO
+    {
+        $connection = parent::getConnection();
 
-		if($connection instanceof mysqli){
-			throw new RuntimeException('Connection type mismatch');
-		}
+        if ($connection instanceof mysqli) {
+            throw new RuntimeException('Connection type mismatch');
+        }
 
-		return $connection;
-	}
+        return $connection;
+    }
 
 
-		/**
+    /**
      * @inheritdoc
      */
     public function query($query)

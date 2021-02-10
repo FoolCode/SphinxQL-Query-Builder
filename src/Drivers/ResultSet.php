@@ -369,7 +369,7 @@ class ResultSet implements ResultSetInterface
 
         $row = $this->fetchFromStore($assoc);
 
-        if ($row === false){
+        if ($row === false) {
             $row = $this->adapter->fetch($assoc);
         }
 

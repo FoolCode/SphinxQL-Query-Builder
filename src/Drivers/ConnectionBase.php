@@ -6,7 +6,8 @@ use Foolz\SphinxQL\Expression;
 use mysqli;
 use PDO;
 
-abstract class ConnectionBase implements ConnectionInterface{
+abstract class ConnectionBase implements ConnectionInterface
+{
 
     /**
      * The connection parameters for the database server.
@@ -69,9 +70,9 @@ abstract class ConnectionBase implements ConnectionInterface{
 
     /**
      * Returns the current connection established.
-	 * @return mysqli|pdo Internal connection object
-	 * @throws ConnectionException If no connection has been established or open
-	 */
+     * @return mysqli|pdo Internal connection object
+     * @throws ConnectionException If no connection has been established or open
+     */
     public function getConnection()
     {
         if ($this->connection !== null) {
@@ -88,32 +89,32 @@ abstract class ConnectionBase implements ConnectionInterface{
      */
     public function quote($value)
     {
-		if ($value === null) {
-			return 'null';
-		}
-		if ($value === true) {
-			return 1;
-		}
-		if ($value === false) {
-			return 0;
-		}
-		if ($value instanceof Expression) {
-			// Use the raw expression
-			return $value->value();
-		}
-		if (is_int($value)) {
-			return (int) $value;
-		}
-		if (is_float($value)) {
-			// Convert to non-locale aware float to prevent possible commas
-			return sprintf('%F', $value);
-		}
-		if (is_array($value)) {
-			// Supports MVA attributes
-			return '('.implode(',', $this->quoteArr($value)).')';
-		}
+        if ($value === null) {
+            return 'null';
+        }
+        if ($value === true) {
+            return 1;
+        }
+        if ($value === false) {
+            return 0;
+        }
+        if ($value instanceof Expression) {
+            // Use the raw expression
+            return $value->value();
+        }
+        if (is_int($value)) {
+            return (int) $value;
+        }
+        if (is_float($value)) {
+            // Convert to non-locale aware float to prevent possible commas
+            return sprintf('%F', $value);
+        }
+        if (is_array($value)) {
+            // Supports MVA attributes
+            return '('.implode(',', $this->quoteArr($value)).')';
+        }
 
-		return $this->escape($value);
+        return $this->escape($value);
     }
 
     /**

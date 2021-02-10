@@ -23,7 +23,7 @@ class SphinxQL
 
     /**
      * The last result object.
-     * @var ResultSetInterface
+     * @var ResultSetInterface|MultiResultSetInterface
      */
     protected $last_result;
 

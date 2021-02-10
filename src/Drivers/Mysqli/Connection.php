@@ -34,21 +34,22 @@ class Connection extends ConnectionBase
         return $this->internal_encoding;
     }
 
-	/**
-	 * @return mysqli
-	 * @throws ConnectionException
-	 */
-    public function getConnection(): mysqli{
-    	$connection = parent::getConnection();
+    /**
+     * @return mysqli
+     * @throws ConnectionException
+     */
+    public function getConnection(): mysqli
+    {
+        $connection = parent::getConnection();
 
-    	if($connection instanceof PDO){
-    		throw new RuntimeException('Connection type mismatch');
-		}
+        if ($connection instanceof PDO) {
+            throw new RuntimeException('Connection type mismatch');
+        }
 
-		return $connection;
-	}
+        return $connection;
+    }
 
-	/**
+    /**
      * @inheritdoc
      */
     public function connect(): bool
@@ -94,9 +95,9 @@ class Connection extends ConnectionBase
 
     /**
      * @inheritdoc
-	 * @return ConnectionBase
-	 * @throws ConnectionException
-	 */
+     * @return ConnectionBase
+     * @throws ConnectionException
+     */
     public function close()
     {
         $this->mbPop();

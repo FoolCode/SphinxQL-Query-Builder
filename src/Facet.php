@@ -8,325 +8,325 @@ use Foolz\SphinxQL\Exception\SphinxQLException;
  * Query Builder class for Facet statements.
  * @author Vicent Valls
  */
-class Facet{
+class Facet
+{
 
-	/**
-	 * A non-static connection for the current Facet object
-	 * @var ConnectionInterface $connection
-	 */
-	protected $connection;
+    /**
+     * A non-static connection for the current Facet object
+     * @var ConnectionInterface $connection
+     */
+    protected $connection;
 
-	/**
-	 * An SQL query that is not yet executed or "compiled"
-	 * @var string $query
-	 */
-	protected $query;
+    /**
+     * An SQL query that is not yet executed or "compiled"
+     * @var string $query
+     */
+    protected $query;
 
-	/**
-	 * Array of select elements that will be comma separated.
-	 * @var array $facet
-	 */
-	protected $facet = [];
+    /**
+     * Array of select elements that will be comma separated.
+     * @var array $facet
+     */
+    protected $facet = [];
 
-	/**
-	 * BY array to be comma separated
-	 * @var array $by
-	 */
-	protected $by = [];
+    /**
+     * BY array to be comma separated
+     * @var array $by
+     */
+    protected $by = [];
 
-	/**
-	 * ORDER BY array
-	 * @var array $order_by
-	 */
-	protected $order_by = [];
+    /**
+     * ORDER BY array
+     * @var array $order_by
+     */
+    protected $order_by = [];
 
-	/**
-	 * When not null it adds an offset
-	 * @var null|int $offset
-	 */
-	protected $offset;
+    /**
+     * When not null it adds an offset
+     * @var null|int $offset
+     */
+    protected $offset;
 
-	/**
-	 * When not null it adds a limit
-	 * @var null|int $limit
-	 */
-	protected $limit;
+    /**
+     * When not null it adds a limit
+     * @var null|int $limit
+     */
+    protected $limit;
 
-	/**
-	 * @param ConnectionInterface|null $connection
-	 */
-	public function __construct(ConnectionInterface $connection = null)
-	{
-		$this->connection = $connection;
-	}
+    /**
+     * @param ConnectionInterface|null $connection
+     */
+    public function __construct(ConnectionInterface $connection = null)
+    {
+        $this->connection = $connection;
+    }
 
-	/**
-	 * Returns the currently attached connection
-	 *
-	 * @returns ConnectionInterface|null
-	 */
-	public function getConnection(): ?ConnectionInterface
-	{
-		return $this->connection;
-	}
+    /**
+     * Returns the currently attached connection
+     *
+     * @returns ConnectionInterface|null
+     */
+    public function getConnection(): ?ConnectionInterface
+    {
+        return $this->connection;
+    }
 
-	/**
-	 * Sets the connection to be used
-	 *
-	 * @param ConnectionInterface $connection
-	 *
-	 * @return Facet
-	 */
-	public function setConnection(ConnectionInterface $connection = null): self
-	{
-		$this->connection = $connection;
+    /**
+     * Sets the connection to be used
+     *
+     * @param ConnectionInterface $connection
+     *
+     * @return Facet
+     */
+    public function setConnection(ConnectionInterface $connection = null): self
+    {
+        $this->connection = $connection;
 
-		return $this;
-	}
+        return $this;
+    }
 
-	/**
-	 * Facet the columns
-	 *
-	 * Gets the arguments passed as $facet->facet('one', 'two')
-	 * Using it with array maps values as column names
-	 *
-	 * Examples:
-	 *    $query->facet('idCategory');
-	 *    // FACET idCategory
-	 *
-	 *    $query->facet('idCategory', 'year');
-	 *    // FACET idCategory, year
-	 *
-	 *    $query->facet(array('categories' => 'idCategory', 'year', 'type' => 'idType'));
-	 *    // FACET idCategory AS categories, year, idType AS type
-	 *
-	 * @param array|string $columns Array or multiple string arguments containing column names
-	 *
-	 * @return Facet
-	 */
-	public function facet($columns = null): self
-	{
-		if (!is_array($columns)) {
-			$columns = \func_get_args();
-		}
+    /**
+     * Facet the columns
+     *
+     * Gets the arguments passed as $facet->facet('one', 'two')
+     * Using it with array maps values as column names
+     *
+     * Examples:
+     *    $query->facet('idCategory');
+     *    // FACET idCategory
+     *
+     *    $query->facet('idCategory', 'year');
+     *    // FACET idCategory, year
+     *
+     *    $query->facet(array('categories' => 'idCategory', 'year', 'type' => 'idType'));
+     *    // FACET idCategory AS categories, year, idType AS type
+     *
+     * @param array|string $columns Array or multiple string arguments containing column names
+     *
+     * @return Facet
+     */
+    public function facet($columns = null): self
+    {
+        if (!is_array($columns)) {
+            $columns = \func_get_args();
+        }
 
-		foreach ($columns as $key => $column) {
-			if (is_int($key)) {
-				if (is_array($column)) {
-					$this->facet($column);
-				} else {
-					$this->facet[] = array($column, null);
-				}
-			} else {
-				$this->facet[] = array($column, $key);
-			}
-		}
+        foreach ($columns as $key => $column) {
+            if (is_int($key)) {
+                if (is_array($column)) {
+                    $this->facet($column);
+                } else {
+                    $this->facet[] = array($column, null);
+                }
+            } else {
+                $this->facet[] = array($column, $key);
+            }
+        }
 
-		return $this;
-	}
+        return $this;
+    }
 
-	/**
-	 * Facet a function
-	 *
-	 * Gets the function passed as $facet->facetFunction('FUNCTION', array('param1', 'param2', ...))
-	 *
-	 * Examples:
-	 *    $query->facetFunction('category');
-	 *
-	 * @param string       $function Function name
-	 * @param array|string|null $params   Array or multiple string arguments containing column names
-	 *
-	 * @return Facet
-	 */
-	public function facetFunction($function, $params = null): self
-	{
-		$realParams = [];
+    /**
+     * Facet a function
+     *
+     * Gets the function passed as $facet->facetFunction('FUNCTION', array('param1', 'param2', ...))
+     *
+     * Examples:
+     *    $query->facetFunction('category');
+     *
+     * @param string       $function Function name
+     * @param array|string|null $params   Array or multiple string arguments containing column names
+     *
+     * @return Facet
+     */
+    public function facetFunction($function, $params = null): self
+    {
+        $realParams = [];
 
-		if(is_string($params)){
-			$realParams = [$params];
-		}
+        if (is_string($params)) {
+            $realParams = [$params];
+        }
 
-		if (is_array($params)) {
-			$realParams = $params;
-		}
+        if (is_array($params)) {
+            $realParams = $params;
+        }
 
-		$paramStr = implode(',', $realParams);
+        $paramStr = implode(',', $realParams);
 
-		$this->facet[] = new Expression($function.'('.$paramStr.')');
+        $this->facet[] = new Expression($function.'('.$paramStr.')');
 
-		return $this;
-	}
+        return $this;
+    }
 
-	/**
-	 * GROUP BY clause
-	 * Adds to the previously added columns
-	 *
-	 * @param string $column A column to group by
-	 *
-	 * @return Facet
-	 */
-	public function by($column): self
-	{
-		$this->by[] = $column;
+    /**
+     * GROUP BY clause
+     * Adds to the previously added columns
+     *
+     * @param string $column A column to group by
+     *
+     * @return Facet
+     */
+    public function by($column): self
+    {
+        $this->by[] = $column;
 
-		return $this;
-	}
+        return $this;
+    }
 
-	/**
-	 * ORDER BY clause
-	 * Adds to the previously added columns
-	 *
-	 * @param string $column    The column to order on
-	 * @param string $direction The ordering direction (asc/desc)
-	 *
-	 * @return Facet
-	 */
-	public function orderBy($column, $direction = null): self
-	{
-		$this->order_by[] = array('column' => $column, 'direction' => $direction);
+    /**
+     * ORDER BY clause
+     * Adds to the previously added columns
+     *
+     * @param string $column    The column to order on
+     * @param string $direction The ordering direction (asc/desc)
+     *
+     * @return Facet
+     */
+    public function orderBy($column, $direction = null): self
+    {
+        $this->order_by[] = array('column' => $column, 'direction' => $direction);
 
-		return $this;
-	}
+        return $this;
+    }
 
-	/**
-	 * Facet a function
-	 *
-	 * Gets the function passed as $facet->facetFunction('FUNCTION', array('param1', 'param2', ...))
-	 *
-	 * Examples:
-	 *    $query->facetFunction('category');
-	 *
-	 * @param string $function  Function name
-	 * @param string|array|null $params Array or string of column names
-	 * @param string $direction The ordering direction (asc/desc)
-	 * @return Facet
-	 */
-	public function orderByFunction($function, $params = null, $direction = null): self
-	{
-		$realParams = [];
+    /**
+     * Facet a function
+     *
+     * Gets the function passed as $facet->facetFunction('FUNCTION', array('param1', 'param2', ...))
+     *
+     * Examples:
+     *    $query->facetFunction('category');
+     *
+     * @param string $function  Function name
+     * @param string|array|null $params Array or string of column names
+     * @param string $direction The ordering direction (asc/desc)
+     * @return Facet
+     */
+    public function orderByFunction($function, $params = null, $direction = null): self
+    {
+        $realParams = [];
 
-		if(is_string($params)){
-			$realParams = [$params];
-		}
+        if (is_string($params)) {
+            $realParams = [$params];
+        }
 
-		if (is_array($params)) {
-			$realParams = $params;
-		}
+        if (is_array($params)) {
+            $realParams = $params;
+        }
 
-		$paramStr = implode(',', $realParams);
+        $paramStr = implode(',', $realParams);
 
-		$this->order_by[] = array('column' => new Expression($function.'('.$paramStr.')'), 'direction' => $direction);
+        $this->order_by[] = array('column' => new Expression($function.'('.$paramStr.')'), 'direction' => $direction);
 
-		return $this;
-	}
+        return $this;
+    }
 
-	/**
-	 * LIMIT clause
-	 * Supports also LIMIT offset, limit
-	 *
-	 * @param int      $offset Offset if $limit is specified, else limit
-	 * @param null|int $limit  The limit to set, null for no limit
-	 *
-	 * @return Facet
-	 */
-	public function limit($offset, $limit = null): self
-	{
-		if ($limit === null) {
-			$this->limit = (int) $offset;
+    /**
+     * LIMIT clause
+     * Supports also LIMIT offset, limit
+     *
+     * @param int      $offset Offset if $limit is specified, else limit
+     * @param null|int $limit  The limit to set, null for no limit
+     *
+     * @return Facet
+     */
+    public function limit($offset, $limit = null): self
+    {
+        if ($limit === null) {
+            $this->limit = (int) $offset;
 
-			return $this;
-		}
+            return $this;
+        }
 
-		$this->offset($offset);
-		$this->limit = (int) $limit;
+        $this->offset($offset);
+        $this->limit = (int) $limit;
 
-		return $this;
-	}
+        return $this;
+    }
 
-	/**
-	 * OFFSET clause
-	 *
-	 * @param int $offset The offset
-	 *
-	 * @return Facet
-	 */
-	public function offset($offset): self
-	{
-		$this->offset = (int) $offset;
+    /**
+     * OFFSET clause
+     *
+     * @param int $offset The offset
+     *
+     * @return Facet
+     */
+    public function offset($offset): self
+    {
+        $this->offset = (int) $offset;
 
-		return $this;
-	}
+        return $this;
+    }
 
-	/**
-	 * Compiles the statements for FACET
-	 *
-	 * @return Facet
-	 * @throws SphinxQLException In case no column in facet
-	 */
-	public function compileFacet(): self
-	{
-		$query = 'FACET ';
+    /**
+     * Compiles the statements for FACET
+     *
+     * @return Facet
+     * @throws SphinxQLException In case no column in facet
+     */
+    public function compileFacet(): self
+    {
+        $query = 'FACET ';
 
-		if (!empty($this->facet)) {
-			$facets = array();
-			foreach ($this->facet as $array) {
-				if ($array instanceof Expression) {
-					$facets[] = $array;
-				} elseif ($array[1] === null) {
-					$facets[] = $array[0];
-				} else {
-					$facets[] = $array[0].' AS '.$array[1];
-				}
-			}
-			$query .= implode(', ', $facets).' ';
-		} else {
-			throw new SphinxQLException('There is no column in facet.');
-		}
+        if (!empty($this->facet)) {
+            $facets = array();
+            foreach ($this->facet as $array) {
+                if ($array instanceof Expression) {
+                    $facets[] = $array;
+                } elseif ($array[1] === null) {
+                    $facets[] = $array[0];
+                } else {
+                    $facets[] = $array[0].' AS '.$array[1];
+                }
+            }
+            $query .= implode(', ', $facets).' ';
+        } else {
+            throw new SphinxQLException('There is no column in facet.');
+        }
 
-		if (!empty($this->by)) {
-			$query .= 'BY '.implode(', ',$this->by).' ';
-		}
+        if (!empty($this->by)) {
+            $query .= 'BY '.implode(', ', $this->by).' ';
+        }
 
-		if (!empty($this->order_by)) {
-			$query .= 'ORDER BY ';
+        if (!empty($this->order_by)) {
+            $query .= 'ORDER BY ';
 
-			$order_arr = array();
+            $order_arr = array();
 
-			foreach ($this->order_by as $order) {
-				$order_sub = $order['column'].' ';
-				$order_sub .= ((strtolower($order['direction']) === 'desc') ? 'DESC' : 'ASC');
+            foreach ($this->order_by as $order) {
+                $order_sub = $order['column'].' ';
+                $order_sub .= ((strtolower($order['direction']) === 'desc') ? 'DESC' : 'ASC');
 
-				$order_arr[] = $order_sub;
-			}
+                $order_arr[] = $order_sub;
+            }
 
-			$query .= implode(', ', $order_arr).' ';
-		}
+            $query .= implode(', ', $order_arr).' ';
+        }
 
-		if ($this->limit !== null || $this->offset !== null) {
-			if ($this->offset === null) {
-				$this->offset = 0;
-			}
+        if ($this->limit !== null || $this->offset !== null) {
+            if ($this->offset === null) {
+                $this->offset = 0;
+            }
 
-			if ($this->limit === null) {
-				$this->limit = 9999999999999;
-			}
+            if ($this->limit === null) {
+                $this->limit = 9999999999999;
+            }
 
-			$query .= 'LIMIT '.((int) $this->offset).', '.((int) $this->limit).' ';
-		}
+            $query .= 'LIMIT '.((int) $this->offset).', '.((int) $this->limit).' ';
+        }
 
-		$this->query = trim($query);
+        $this->query = trim($query);
 
-		return $this;
-	}
+        return $this;
+    }
 
-	/**
-	 * Get String with SQL facet
-	 * @return string
-	 * @throws SphinxQLException
-	 */
-	public function getFacet(): string
-	{
-		return $this->compileFacet()->query;
-	}
-
+    /**
+     * Get String with SQL facet
+     * @return string
+     * @throws SphinxQLException
+     */
+    public function getFacet(): string
+    {
+        return $this->compileFacet()->query;
+    }
 }

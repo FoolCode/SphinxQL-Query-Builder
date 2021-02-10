@@ -98,7 +98,8 @@ class MultiResultSet implements MultiResultSetInterface
     /**
      * @inheritdoc
      */
-    public function next(): void{
+    public function next(): void
+    {
         $this->rowSet = $this->getNext() ?: null;
     }
 

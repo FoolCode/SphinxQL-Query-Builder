@@ -2,6 +2,7 @@
 
 namespace Foolz\SphinxQL;
 
+use Closure;
 use Foolz\SphinxQL\Drivers\ConnectionInterface;
 use Foolz\SphinxQL\Drivers\MultiResultSetInterface;
 use Foolz\SphinxQL\Drivers\ResultSetInterface;
@@ -16,15 +17,13 @@ class SphinxQL
 {
     /**
      * A non-static connection for the current SphinxQL object
-     *
      * @var ConnectionInterface
      */
     protected $connection;
 
     /**
      * The last result object.
-     *
-     * @var array
+     * @var ResultSetInterface
      */
     protected $last_result;
 
@@ -59,9 +58,9 @@ class SphinxQL
     /**
      * From in SphinxQL is the list of indexes that will be used
      *
-     * @var array
+     * @var array|Closure|self
      */
-    protected $from = array();
+    protected $from = [];
 
     /**
      * The list of where and parenthesis, must be inserted in order
@@ -217,9 +216,9 @@ class SphinxQL
     );
 
     /**
-     * @param ConnectionInterface|null $connection
+     * @param ConnectionInterface $connection
      */
-    public function __construct(ConnectionInterface $connection = null)
+    public function __construct(ConnectionInterface $connection)
     {
         $this->connection = $connection;
     }
@@ -268,7 +267,7 @@ class SphinxQL
      * @throws ConnectionException
      * @throws SphinxQLException
      */
-    public function execute()
+    public function execute(): ResultSetInterface
     {
         // pass the object so execute compiles it by itself
         return $this->last_result = $this->getConnection()->query($this->compile()->getCompiled());
@@ -361,9 +360,9 @@ class SphinxQL
     /**
      * Returns the result of the last query
      *
-     * @return array The result of the last query
+     * @return ResultSetInterface The result of the last query
      */
-    public function getResult()
+    public function getResult(): ResultSetInterface
     {
         return $this->last_result;
     }
@@ -960,17 +959,17 @@ class SphinxQL
      * FROM clause (Sphinx-specific since it works with multiple indexes)
      * func_get_args()-enabled
      *
-     * @param array $array An array of indexes to use
+     * @param string|array|Closure|self $array An array of indexes to use
      *
      * @return self
      */
-    public function from($array = null)
+    public function from($array = null): self
     {
         if (is_string($array)) {
             $this->from = \func_get_args();
         }
 
-        if (is_array($array) || $array instanceof \Closure || $array instanceof SphinxQL) {
+        if (is_array($array) || $array instanceof \Closure || $array instanceof self) {
             $this->from = $array;
         }
 
@@ -1362,7 +1361,7 @@ class SphinxQL
     /**
      * Escapes the query for the MATCH() function
      *
-     * @param string $string The string to escape for the MATCH
+     * @param string|Expression $string The string to escape for the MATCH
      *
      * @return string The escaped string
      */
@@ -1380,7 +1379,7 @@ class SphinxQL
      * Allows some of the control characters to pass through for use with a search field: -, |, "
      * It also does some tricks to wrap/unwrap within " the string and prevents errors
      *
-     * @param string $string The string to escape for the MATCH
+     * @param string|Expression $string The string to escape for the MATCH
      *
      * @return string The escaped string
      */

@@ -45,7 +45,7 @@ class Percolate
     /**
      * Documents for CALL PQ
      *
-     * @var array|string|null $documents
+     * @var array|string $documents
      */
     protected $documents;
 
@@ -487,7 +487,7 @@ class Percolate
                         }
                     }
                 }
-            } elseif (is_string($this->documents)){
+            }else{
 				$json = $this->prepareFromJson($this->documents);
 				if ($json) {
 					$this->options[self::OPTION_DOCS_JSON] = 1;

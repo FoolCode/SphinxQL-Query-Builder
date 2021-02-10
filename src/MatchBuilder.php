@@ -62,7 +62,7 @@ class MatchBuilder
      *
      * @return $this
      */
-    public function match($keywords = null)
+    public function match($keywords = null): self
     {
         if ($keywords !== null) {
             $this->tokens[] = array('MATCH' => $keywords);
@@ -85,7 +85,7 @@ class MatchBuilder
      *
      * @return $this
      */
-    public function orMatch($keywords = null)
+    public function orMatch($keywords = null): self
     {
         $this->tokens[] = array('OPERATOR' => '| ');
         $this->match($keywords);
@@ -103,11 +103,11 @@ class MatchBuilder
      *    $match->match('test')->maybe('case');
      *    // test MAYBE case
      *
-     * @param string|Match|\Closure $keywords The text or expression to optionally match.
+     * @param string|MatchBuilder|\Closure $keywords The text or expression to optionally match.
      *
      * @return $this
      */
-    public function maybe($keywords = null)
+    public function maybe($keywords = null): self
     {
         $this->tokens[] = array('OPERATOR' => 'MAYBE ');
         $this->match($keywords);
@@ -129,7 +129,7 @@ class MatchBuilder
      *
      * @return $this
      */
-    public function not($keyword = null)
+    public function not($keyword = null): self
     {
         $this->tokens[] = array('OPERATOR' => '-');
         $this->match($keyword);
@@ -164,7 +164,7 @@ class MatchBuilder
      *
      * @return $this
      */
-    public function field($fields, $limit = null)
+    public function field($fields, $limit = null): self
     {
         if (is_string($fields)) {
             $fields = func_get_args();
@@ -199,7 +199,7 @@ class MatchBuilder
      *
      * @return $this
      */
-    public function ignoreField($fields)
+    public function ignoreField($fields): self
     {
         if (is_string($fields)) {
             $fields = func_get_args();
@@ -224,7 +224,7 @@ class MatchBuilder
      *
      * @return $this
      */
-    public function phrase($keywords)
+    public function phrase($keywords): self
     {
         $this->tokens[] = array('PHRASE' => $keywords);
 
@@ -242,7 +242,7 @@ class MatchBuilder
      *
      * @return $this
      */
-    public function orPhrase($keywords)
+    public function orPhrase($keywords): self
     {
         $this->tokens[] = array('OPERATOR' => '| ');
         $this->phrase($keywords);
@@ -262,7 +262,7 @@ class MatchBuilder
      *
      * @return $this
      */
-    public function proximity($keywords, $distance)
+    public function proximity($keywords, $distance): self
     {
         $this->tokens[] = array(
             'PROXIMITY' => $distance,
@@ -287,7 +287,7 @@ class MatchBuilder
      *
      * @return $this
      */
-    public function quorum($keywords, $threshold)
+    public function quorum($keywords, $threshold): self
     {
         $this->tokens[] = array(
             'QUORUM'   => $threshold,
@@ -311,7 +311,7 @@ class MatchBuilder
      *
      * @return $this
      */
-    public function before($keywords = null)
+    public function before($keywords = null): self
     {
         $this->tokens[] = array('OPERATOR' => '<< ');
         $this->match($keywords);
@@ -333,7 +333,7 @@ class MatchBuilder
      *
      * @return $this
      */
-    public function exact($keyword = null)
+    public function exact($keyword = null): self
     {
         $this->tokens[] = array('OPERATOR' => '=');
         $this->match($keyword);
@@ -356,7 +356,7 @@ class MatchBuilder
      *
      * @return $this
      */
-    public function boost($keyword, $amount = null)
+    public function boost($keyword, $amount = null): self
     {
         if ($amount === null) {
             $amount = $keyword;
@@ -383,7 +383,7 @@ class MatchBuilder
      *
      * @return $this
      */
-    public function near($keywords, $distance = null)
+    public function near($keywords, $distance = null): self
     {
         $this->tokens[] = array('NEAR' => $distance ?: $keywords);
         if ($distance !== null) {
@@ -407,7 +407,7 @@ class MatchBuilder
      *
      * @return $this
      */
-    public function sentence($keywords = null)
+    public function sentence($keywords = null): self
     {
         $this->tokens[] = array('OPERATOR' => 'SENTENCE ');
         $this->match($keywords);
@@ -429,7 +429,7 @@ class MatchBuilder
      *
      * @return $this
      */
-    public function paragraph($keywords = null)
+    public function paragraph($keywords = null): self
     {
         $this->tokens[] = array('OPERATOR' => 'PARAGRAPH ');
         $this->match($keywords);
@@ -455,7 +455,7 @@ class MatchBuilder
      *
      * @return $this
      */
-    public function zone($zones, $keywords = null)
+    public function zone($zones, $keywords = null): self
     {
         if (is_string($zones)) {
             $zones = array($zones);
@@ -482,7 +482,7 @@ class MatchBuilder
      *
      * @return $this
      */
-    public function zonespan($zone, $keywords = null)
+    public function zonespan($zone, $keywords = null): self
     {
         $this->tokens[] = array('ZONESPAN' => $zone);
         $this->match($keywords);
@@ -503,19 +503,7 @@ class MatchBuilder
 
             switch ($tokenKey) {
                 case 'MATCH':{
-                    if ($token['MATCH'] instanceof Expression) {
-                        $query .= $token['MATCH']->value().' ';
-                    } elseif ($token['MATCH'] instanceof self) {
-                        $query .= '('.$token['MATCH']->compile()->getCompiled().') ';
-                    } elseif ($token['MATCH'] instanceof Closure) {
-                        $sub = new static($this->sphinxql);
-                        call_user_func($token['MATCH'], $sub);
-                        $query .= '('.$sub->compile()->getCompiled().') ';
-                    } elseif (strpos($token['MATCH'], ' ') === false) {
-                        $query .= $this->sphinxql->escapeMatch($token['MATCH']).' ';
-                    } else {
-                        $query .= '('.$this->sphinxql->escapeMatch($token['MATCH']).') ';
-                    }
+                	$query .= $this->compileMatch($token['MATCH']);
                     break;
                 }
                 case 'OPERATOR':{
@@ -523,16 +511,7 @@ class MatchBuilder
                     break;
                 }
                 case 'FIELD':{
-                    $query .= $token['FIELD'];
-                    if (count($token['fields']) === 1) {
-                        $query .= $token['fields'][0];
-                    } else {
-                        $query .= '('.implode(',', $token['fields']).')';
-                    }
-                    if ($token['limit']) {
-                        $query .= '['.$token['limit'].']';
-                    }
-                    $query .= ' ';
+                	$query .= $this->compileField($token['FIELD'],$token['fields'],$token['limit']);
                     break;
                 }
                 case 'PHRASE':{
@@ -573,12 +552,46 @@ class MatchBuilder
         return $this;
     }
 
+    private function compileMatch($token): string{
+		if ($token instanceof Expression) {
+			return $token->value().' ';
+		}
+		if ($token instanceof self) {
+			return '('.$token->compile()->getCompiled().') ';
+		}
+		if ($token instanceof Closure) {
+			$sub = new static($this->sphinxql);
+			$token($sub);
+			return '('.$sub->compile()->getCompiled().') ';
+		}
+		if (strpos($token, ' ') === false) {
+			return $this->sphinxql->escapeMatch($token).' ';
+		}
+		return '('.$this->sphinxql->escapeMatch($token).') ';
+	}
+
+	private function compileField($token,$fields,$limit): string{
+    	$query = $token;
+
+		if (count($fields) === 1) {
+			$query .= $fields[0];
+		} else {
+			$query .= '('.implode(',', $fields).')';
+		}
+		if ($limit) {
+			$query .= '['.$limit.']';
+		}
+		$query .= ' ';
+
+		return $query;
+	}
+
     /**
      * Returns the latest compiled match expression.
      *
      * @return string The last compiled match expression.
      */
-    public function getCompiled()
+    public function getCompiled(): string
     {
         return $this->last_compiled;
     }

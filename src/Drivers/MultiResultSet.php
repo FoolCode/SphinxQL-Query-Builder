@@ -7,9 +7,9 @@ use Foolz\SphinxQL\Exception\DatabaseException;
 class MultiResultSet implements MultiResultSetInterface
 {
     /**
-     * @var null|array
+     * @var array
      */
-    protected $stored;
+    protected $stored = [];
 
     /**
      * @var int
@@ -125,7 +125,7 @@ class MultiResultSet implements MultiResultSetInterface
      * @inheritdoc
      * @throws DatabaseException
      */
-    public function count()
+    public function count(): int
     {
         $this->store();
 

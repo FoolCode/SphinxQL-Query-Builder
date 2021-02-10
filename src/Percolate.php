@@ -45,7 +45,7 @@ class Percolate
     /**
      * Documents for CALL PQ
      *
-     * @var array|string $documents
+     * @var array|string|null $documents
      */
     protected $documents;
 

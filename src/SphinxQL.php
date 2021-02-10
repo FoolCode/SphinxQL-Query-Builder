@@ -1257,7 +1257,7 @@ class SphinxQL
      * Used in: INSERT, REPLACE
      *
      * @param string $column The column name
-     * @param string $value  The value
+     * @param mixed $value  The value
      *
      * @return self
      */

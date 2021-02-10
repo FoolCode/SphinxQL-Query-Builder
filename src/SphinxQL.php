@@ -360,9 +360,9 @@ class SphinxQL
     /**
      * Returns the result of the last query
      *
-     * @return ResultSetInterface The result of the last query
+     * @return ResultSetInterface|MultiResultSetInterface The result of the last query
      */
-    public function getResult(): ResultSetInterface
+    public function getResult()
     {
         return $this->last_result;
     }

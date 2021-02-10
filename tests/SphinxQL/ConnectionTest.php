@@ -1,13 +1,11 @@
 <?php
-
-use Foolz\SphinxQL\Drivers\ConnectionInterface;
 use Foolz\SphinxQL\Expression;
 use Foolz\SphinxQL\Tests\TestUtil;
 
 class ConnectionTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var ConnectionInterface
+     * @var \Foolz\SphinxQL\Drivers\ConnectionBase
      */
     private $connection;
 
@@ -22,12 +20,12 @@ class ConnectionTest extends \PHPUnit\Framework\TestCase
         $this->connection = null;
     }
 
-    public function test()
+    public function test(): void
     {
-        TestUtil::getConnectionDriver();
+    	self::assertNotNull(TestUtil::getConnectionDriver());
     }
 
-    public function testGetParams()
+    public function testGetParams(): void
     {
         $this->assertSame(
             array('host' => '127.0.0.1', 'port' => 9307, 'socket' => null),
@@ -74,7 +72,10 @@ class ConnectionTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(array('host' => '127.0.0.1', 'port' => 9308, 'socket' => null), $this->connection->getParams());
     }
 
-    public function testGetConnection()
+	/**
+	 * @throws \Foolz\SphinxQL\Exception\ConnectionException
+	 */
+    public function testGetConnection(): void
     {
         $this->connection->connect();
         $this->assertNotNull($this->connection->getConnection());
@@ -88,12 +89,15 @@ class ConnectionTest extends \PHPUnit\Framework\TestCase
         $this->connection->getConnection();
     }
 
+	/**
+	 * @throws \Foolz\SphinxQL\Exception\ConnectionException
+	 */
     public function testConnect()
     {
         $this->connection->connect();
 
         $this->connection->setParam('options', array(MYSQLI_OPT_CONNECT_TIMEOUT => 1));
-        $this->connection->connect();
+        self::assertIsBool($this->connection->connect());
     }
 
     /**
@@ -184,8 +188,10 @@ class ConnectionTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @expectedException Foolz\SphinxQL\Exception\ConnectionException
+     * @throws \Foolz\SphinxQL\Exception\ConnectionException
+     * @throws \Foolz\SphinxQL\Exception\DatabaseException
      */
-    public function testEscapeThrowsException()
+    public function testEscapeThrowsException(): void
     {
         // or we get the wrong error popping up
         $this->connection->setParam('port', 9308);
@@ -193,7 +199,11 @@ class ConnectionTest extends \PHPUnit\Framework\TestCase
         $this->connection->escape('\' "" \'\' ');
     }
 
-    public function testQuote()
+    /**
+     * @throws \Foolz\SphinxQL\Exception\ConnectionException
+     * @throws \Foolz\SphinxQL\Exception\DatabaseException
+     */
+    public function testQuote(): void
     {
         $this->connection->connect();
         $this->assertEquals('null', $this->connection->quote(null));
@@ -201,16 +211,20 @@ class ConnectionTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(0, $this->connection->quote(false));
         $this->assertEquals("fo'o'bar", $this->connection->quote(new Expression("fo'o'bar")));
         $this->assertEquals(123, $this->connection->quote(123));
-        $this->assertEquals("12.3", $this->connection->quote(12.3));
+        $this->assertEquals('12.300000', $this->connection->quote(12.3));
         $this->assertEquals("'12.3'", $this->connection->quote('12.3'));
         $this->assertEquals("'12'", $this->connection->quote('12'));
     }
 
-    public function testQuoteArr()
+    /**
+     * @throws \Foolz\SphinxQL\Exception\ConnectionException
+     * @throws \Foolz\SphinxQL\Exception\DatabaseException
+     */
+    public function testQuoteArr(): void
     {
         $this->connection->connect();
         $this->assertEquals(
-            array('null', 1, 0, "fo'o'bar", 123, "12.3", "'12.3'", "'12'"),
+            array('null', 1, 0, "fo'o'bar", 123, '12.300000', "'12.3'", "'12'"),
             $this->connection->quoteArr(array(null, true, false, new Expression("fo'o'bar"), 123, 12.3, '12.3', '12'))
         );
     }

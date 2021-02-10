@@ -1,5 +1,4 @@
 <?php
-
 use Foolz\SphinxQL\Expression;
 use Foolz\SphinxQL\Facet;
 use Foolz\SphinxQL\Helper;
@@ -9,7 +8,10 @@ use Foolz\SphinxQL\Tests\TestUtil;
 
 class SphinxQLTest extends \PHPUnit\Framework\TestCase
 {
-    public static $conn = null;
+    /**
+     * @var \Foolz\SphinxQL\Drivers\ConnectionInterface $conn
+     */
+    public static $conn;
 
     public static $data = array(
         0 => array('id' => '10', 'gid' => '9003',
@@ -30,6 +32,10 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
             'title' => 'what is there to do', 'content' => 'we need to create dummy data for tests'),
     );
 
+    /**
+     * @throws \Foolz\SphinxQL\Exception\ConnectionException
+     * @throws \Foolz\SphinxQL\Exception\DatabaseException
+     */
     public static function setUpBeforeClass(): void
     {
         $conn = TestUtil::getConnectionDriver();
@@ -42,12 +48,17 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
     /**
      * @return SphinxQL
      */
-    protected function createSphinxQL()
+    protected function createSphinxQL(): SphinxQL
     {
         return new SphinxQL(self::$conn);
     }
 
-    public function refill()
+    /**
+     * @throws \Foolz\SphinxQL\Exception\ConnectionException
+     * @throws \Foolz\SphinxQL\Exception\DatabaseException
+     * @throws \Foolz\SphinxQL\Exception\SphinxQLException
+     */
+    public function refill(): void
     {
         $this->createSphinxQL()->getConnection()->query('TRUNCATE RTINDEX rt');
 
@@ -63,7 +74,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
         $sq->execute();
     }
 
-    public function testExpr()
+    public function testExpr(): void
     {
         $result = SphinxQL::expr('');
 
@@ -80,16 +91,24 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
      * @covers \Foolz\SphinxQL\SphinxQL::transactionBegin
      * @covers \Foolz\SphinxQL\SphinxQL::transactionCommit
      * @covers \Foolz\SphinxQL\SphinxQL::transactionRollback
+     * @throws \Foolz\SphinxQL\Exception\ConnectionException
+     * @throws \Foolz\SphinxQL\Exception\DatabaseException
      */
-    public function testTransactions()
+    public function testTransactions(): void
     {
+    	self::assertNotNull($this->createSphinxQL());
         $this->createSphinxQL()->transactionBegin();
         $this->createSphinxQL()->transactionRollback();
         $this->createSphinxQL()->transactionBegin();
         $this->createSphinxQL()->transactionCommit();
     }
 
-    public function testQuery()
+    /**
+     * @throws \Foolz\SphinxQL\Exception\ConnectionException
+     * @throws \Foolz\SphinxQL\Exception\DatabaseException
+     * @throws \Foolz\SphinxQL\Exception\SphinxQLException
+     */
+    public function testQuery(): void
     {
         $describe = $this->createSphinxQL()
             ->query('DESCRIBE rt')
@@ -136,8 +155,11 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
      * @covers \Foolz\SphinxQL\SphinxQL::columns
      * @covers \Foolz\SphinxQL\SphinxQL::values
      * @covers \Foolz\SphinxQL\SphinxQL::into
+     * @throws \Foolz\SphinxQL\Exception\ConnectionException
+     * @throws \Foolz\SphinxQL\Exception\DatabaseException
+     * @throws \Foolz\SphinxQL\Exception\SphinxQLException
      */
-    public function testInsert()
+    public function testInsert(): void
     {
         $this->createSphinxQL()
             ->insert()
@@ -259,9 +281,11 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
      * @covers \Foolz\SphinxQL\SphinxQL::columns
      * @covers \Foolz\SphinxQL\SphinxQL::values
      * @covers \Foolz\SphinxQL\SphinxQL::into
-     * @throws \Foolz\SphinxQL\Exception\ConnectionException|\Foolz\SphinxQL\Exception\DatabaseException|\Foolz\SphinxQL\Exception\SphinxQLException
+     * @throws \Foolz\SphinxQL\Exception\ConnectionException
+     * @throws \Foolz\SphinxQL\Exception\DatabaseException
+     * @throws \Foolz\SphinxQL\Exception\SphinxQLException
      */
-    public function testReplace()
+    public function testReplace(): void
     {
         $result = $this->createSphinxQL()
             ->replace()
@@ -331,9 +355,11 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
      * @covers \Foolz\SphinxQL\SphinxQL::compileSelect
      * @covers \Foolz\SphinxQL\SphinxQL::update
      * @covers \Foolz\SphinxQL\SphinxQL::value
-     * @throws \Foolz\SphinxQL\Exception\ConnectionException|\Foolz\SphinxQL\Exception\DatabaseException|\Foolz\SphinxQL\Exception\SphinxQLException
+     * @throws \Foolz\SphinxQL\Exception\ConnectionException
+     * @throws \Foolz\SphinxQL\Exception\DatabaseException
+     * @throws \Foolz\SphinxQL\Exception\SphinxQLException
      */
-    public function testUpdate()
+    public function testUpdate(): void
     {
         $result = $this->createSphinxQL()
             ->update('rt')
@@ -417,8 +443,11 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
      * @covers \Foolz\SphinxQL\SphinxQL::compileWhere
      * @covers \Foolz\SphinxQL\SphinxQL::from
      * @covers \Foolz\SphinxQL\SphinxQL::compileFilterCondition
+     * @throws \Foolz\SphinxQL\Exception\ConnectionException
+     * @throws \Foolz\SphinxQL\Exception\DatabaseException
+     * @throws \Foolz\SphinxQL\Exception\SphinxQLException
      */
-    public function testWhere()
+    public function testWhere(): void
     {
         $this->refill();
 
@@ -492,8 +521,11 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
      * @covers \Foolz\SphinxQL\SphinxQL::match
      * @covers \Foolz\SphinxQL\SphinxQL::compileMatch
      * @covers \Foolz\SphinxQL\SphinxQL::halfEscapeMatch
+     * @throws \Foolz\SphinxQL\Exception\ConnectionException
+     * @throws \Foolz\SphinxQL\Exception\DatabaseException
+     * @throws \Foolz\SphinxQL\Exception\SphinxQLException
      */
-    public function testMatch()
+    public function testMatch(): void
     {
         $this->refill();
 
@@ -588,7 +620,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('SELECT * FROM rt WHERE MATCH(\'\')', $result);
     }
 
-    public function testEscapeMatch()
+    public function testEscapeMatch(): void
     {
         $match = 'this MAYBE that^32 and | hi';
         $this->assertSame('this maybe that\^32 and \| hi', $this->createSphinxQL()->escapeMatch($match));
@@ -596,7 +628,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
         $this->assertSame('stärkergradig \| mb', $this->createSphinxQL()->escapeMatch('stärkergradig | mb'));
     }
 
-    public function testHalfEscapeMatch()
+    public function testHalfEscapeMatch(): void
     {
         $match = 'this MAYBE that^32 and | hi';
         $this->assertSame('this maybe that\^32 and | hi', $this->createSphinxQL()->halfEscapeMatch($match));
@@ -611,7 +643,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
     * @covers \Foolz\SphinxQL\SphinxQL::setHalfEscapeChars
     * @covers \Foolz\SphinxQL\SphinxQL::compileEscapeChars
     */
-    public function testEscapeChars()
+    public function testEscapeChars(): void
     {
         $this->assertEquals(array('%' => '\%'), $this->createSphinxQL()->compileEscapeChars(array('%')));
         $this->assertEquals(array('@' => '\@'), $this->createSphinxQL()->compileEscapeChars(array('@')));
@@ -624,7 +656,12 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
         $this->assertSame('this maybe that^32 and \| hi', $sphinxql->halfEscapeMatch($match));
     }
 
-    public function testOption()
+    /**
+     * @throws \Foolz\SphinxQL\Exception\ConnectionException
+     * @throws \Foolz\SphinxQL\Exception\DatabaseException
+     * @throws \Foolz\SphinxQL\Exception\SphinxQLException
+     */
+    public function testOption(): void
     {
         $this->refill();
 
@@ -680,7 +717,12 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('SELECT * FROM rt OPTION field_weights = (title=80, content=35, tags=92)', $result);
     }
 
-    public function testGroupBy()
+    /**
+     * @throws \Foolz\SphinxQL\Exception\ConnectionException
+     * @throws \Foolz\SphinxQL\Exception\DatabaseException
+     * @throws \Foolz\SphinxQL\Exception\SphinxQLException
+     */
+    public function testGroupBy(): void
     {
         $this->refill();
 
@@ -695,7 +737,12 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('3', $result[3]['count(*)']);
     }
 
-    public function testHaving()
+    /**
+     * @throws \Foolz\SphinxQL\Exception\ConnectionException
+     * @throws \Foolz\SphinxQL\Exception\DatabaseException
+     * @throws \Foolz\SphinxQL\Exception\SphinxQLException
+     */
+    public function testHaving(): void
     {
         $this->refill();
 
@@ -719,7 +766,12 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(1, $result);
     }
 
-    public function testOrderBy()
+    /**
+     * @throws \Foolz\SphinxQL\Exception\ConnectionException
+     * @throws \Foolz\SphinxQL\Exception\DatabaseException
+     * @throws \Foolz\SphinxQL\Exception\SphinxQLException
+     */
+    public function testOrderBy(): void
     {
         $this->refill();
 
@@ -742,7 +794,12 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('10', $result[0]['id']);
     }
 
-    public function testWithinGroupOrderBy()
+    /**
+     * @throws \Foolz\SphinxQL\Exception\ConnectionException
+     * @throws \Foolz\SphinxQL\Exception\DatabaseException
+     * @throws \Foolz\SphinxQL\Exception\SphinxQLException
+     */
+    public function testWithinGroupOrderBy(): void
     {
         $this->refill();
 
@@ -769,7 +826,12 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('16', $result[0]['id']);
     }
 
-    public function testGroupNBy()
+    /**
+     * @throws \Foolz\SphinxQL\Exception\ConnectionException
+     * @throws \Foolz\SphinxQL\Exception\DatabaseException
+     * @throws \Foolz\SphinxQL\Exception\SphinxQLException
+     */
+    public function testGroupNBy(): void
     {
         $query = $this->createSphinxQL()
             ->select()
@@ -806,7 +868,12 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testOffset()
+    /**
+     * @throws \Foolz\SphinxQL\Exception\ConnectionException
+     * @throws \Foolz\SphinxQL\Exception\DatabaseException
+     * @throws \Foolz\SphinxQL\Exception\SphinxQLException
+     */
+    public function testOffset(): void
     {
         $this->refill();
 
@@ -820,7 +887,12 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(4, $result);
     }
 
-    public function testLimit()
+    /**
+     * @throws \Foolz\SphinxQL\Exception\ConnectionException
+     * @throws \Foolz\SphinxQL\Exception\DatabaseException
+     * @throws \Foolz\SphinxQL\Exception\SphinxQLException
+     */
+    public function testLimit(): void
     {
         $this->refill();
 
@@ -847,9 +919,11 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
      * @covers \Foolz\SphinxQL\SphinxQL::compile
      * @covers \Foolz\SphinxQL\SphinxQL::compileDelete
      * @covers \Foolz\SphinxQL\SphinxQL::delete
-     * @throws \Foolz\SphinxQL\Exception\ConnectionException|\Foolz\SphinxQL\Exception\DatabaseException|\Foolz\SphinxQL\Exception\SphinxQLException
+     * @throws \Foolz\SphinxQL\Exception\ConnectionException
+     * @throws \Foolz\SphinxQL\Exception\DatabaseException
+     * @throws \Foolz\SphinxQL\Exception\SphinxQLException
      */
-    public function testDelete()
+    public function testDelete(): void
     {
         $this->refill();
 
@@ -870,8 +944,11 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
      * @covers \Foolz\SphinxQL\SphinxQL::getQueue
      * @covers \Foolz\SphinxQL\SphinxQL::getQueuePrev
      * @covers \Foolz\SphinxQL\SphinxQL::setQueuePrev
+     * @throws \Foolz\SphinxQL\Exception\ConnectionException
+     * @throws \Foolz\SphinxQL\Exception\DatabaseException
+     * @throws \Foolz\SphinxQL\Exception\SphinxQLException
      */
-    public function testQueue()
+    public function testQueue(): void
     {
         $this->refill();
 
@@ -895,8 +972,11 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
     /**
      * @expectedException        Foolz\SphinxQL\Exception\SphinxQLException
      * @expectedExceptionMessage There is no Queue present to execute.
+     * @throws \Foolz\SphinxQL\Exception\ConnectionException
+     * @throws \Foolz\SphinxQL\Exception\DatabaseException
+     * @throws \Foolz\SphinxQL\Exception\SphinxQLException
      */
-    public function testEmptyQueue()
+    public function testEmptyQueue(): void
     {
         $this->createSphinxQL()
             ->executeBatch()
@@ -912,8 +992,11 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
      * @covers \Foolz\SphinxQL\SphinxQL::resetFacets
      * @covers \Foolz\SphinxQL\SphinxQL::resetHaving
      * @covers \Foolz\SphinxQL\SphinxQL::resetOrderBy
+     * @throws \Foolz\SphinxQL\Exception\ConnectionException
+     * @throws \Foolz\SphinxQL\Exception\DatabaseException
+     * @throws \Foolz\SphinxQL\Exception\SphinxQLException
      */
-    public function testResetMethods()
+    public function testResetMethods(): void
     {
         $result = $this->createSphinxQL()
             ->select()
@@ -944,8 +1027,11 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @covers \Foolz\SphinxQL\SphinxQL::select
+     * @throws \Foolz\SphinxQL\Exception\ConnectionException
+     * @throws \Foolz\SphinxQL\Exception\DatabaseException
+     * @throws \Foolz\SphinxQL\Exception\SphinxQLException
      */
-    public function testSelect()
+    public function testSelect(): void
     {
         $this->refill();
         $result = $this->createSphinxQL()
@@ -987,7 +1073,12 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('10', $result[0]['id']);
     }
 
-    public function testSubselect()
+    /**
+     * @throws \Foolz\SphinxQL\Exception\ConnectionException
+     * @throws \Foolz\SphinxQL\Exception\DatabaseException
+     * @throws \Foolz\SphinxQL\Exception\SphinxQLException
+     */
+    public function testSubselect(): void
     {
         $this->refill();
         $query = $this->createSphinxQL()
@@ -1041,8 +1132,11 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @covers \Foolz\SphinxQL\SphinxQL::setSelect
+     * @throws \Foolz\SphinxQL\Exception\ConnectionException
+     * @throws \Foolz\SphinxQL\Exception\DatabaseException
+     * @throws \Foolz\SphinxQL\Exception\SphinxQLException
      */
-    public function testSetSelect()
+    public function testSetSelect(): void
     {
         $this->refill();
         $q1 = $this->createSphinxQL()
@@ -1081,7 +1175,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
     /**
      * @covers \Foolz\SphinxQL\SphinxQL::getSelect
      */
-    public function testGetSelect()
+    public function testGetSelect(): void
     {
         $query = $this->createSphinxQL()
             ->select('id', 'gid')
@@ -1092,8 +1186,11 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
     /**
      * @covers \Foolz\SphinxQL\SphinxQL::facet
      * @covers \Foolz\SphinxQL\SphinxQL::compileSelect
+     * @throws \Foolz\SphinxQL\Exception\ConnectionException
+     * @throws \Foolz\SphinxQL\Exception\DatabaseException
+     * @throws \Foolz\SphinxQL\Exception\SphinxQLException
      */
-    public function testFacet()
+    public function testFacet(): void
     {
         $this->refill();
 
@@ -1136,8 +1233,13 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
         }
     }
 
-    // issue #82
-    public function testClosureMisuse()
+    /**
+     * Issue #82
+     * @throws \Foolz\SphinxQL\Exception\ConnectionException
+     * @throws \Foolz\SphinxQL\Exception\DatabaseException
+     * @throws \Foolz\SphinxQL\Exception\SphinxQLException
+     */
+    public function testClosureMisuse(): void
     {
         $query = $this->createSphinxQL()
             ->select()

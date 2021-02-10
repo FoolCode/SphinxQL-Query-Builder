@@ -125,7 +125,7 @@ class MatchBuilder
      *    $match->not('test');
      *    // -test
      *
-     * @param string $keyword The word not to match.
+     * @param string|MatchBuilder|\Closure $keyword The word not to match.
      *
      * @return $this
      */

@@ -279,7 +279,7 @@ class MatchTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('ZONESPAN:(th) test', $match->compile()->getCompiled());
     }
 
-    public function testCompile()
+    public function testCompile(): void
     {
         $match = $this->createMatch()
             ->phrase('hello world')
@@ -287,7 +287,9 @@ class MatchTest extends \PHPUnit\Framework\TestCase
             ->proximity('example program', 5)
             ->field('body')
             ->match('python')
-            ->not('(php | perl)')
+            ->not(static function (MatchBuilder $m) {
+                $m->match('php')->orMatch('perl');
+            })
             ->field('*')
             ->match('code');
         $this->assertEquals('"hello world" @title "example program"~5 @body python -(php | perl) @* code', $match->compile()->getCompiled());

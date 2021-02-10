@@ -164,4 +164,6 @@ abstract class ConnectionBase implements ConnectionInterface
      * @throws ConnectionException If a connection error was encountered
      */
     abstract public function connect();
+
+    abstract public function ping();
 }

@@ -109,7 +109,10 @@ class ConnectionTest extends \PHPUnit\Framework\TestCase
         $this->connection->connect();
     }
 
-    public function testPing()
+	/**
+	 * @throws \Foolz\SphinxQL\Exception\ConnectionException
+	 */
+    public function testPing(): void
     {
         $this->connection->connect();
         $this->assertTrue($this->connection->ping());

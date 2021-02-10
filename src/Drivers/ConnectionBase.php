@@ -69,10 +69,10 @@ abstract class ConnectionBase implements ConnectionInterface{
 
     /**
      * Returns the current connection established.
-	 * @return mysqli|PDO Internal connection object
+	 * @return mysqli Internal connection object
 	 * @throws ConnectionException If no connection has been established or open
 	 */
-    public function getConnection()
+    public function getConnection(): mysqli
     {
         if ($this->connection !== null) {
             return $this->connection;
@@ -132,10 +132,9 @@ abstract class ConnectionBase implements ConnectionInterface{
 
     /**
      * Closes and unset the connection to the Sphinx server.
-     *
      * @return $this
      */
-    public function close(): self
+    public function close()
     {
         $this->connection = null;
 

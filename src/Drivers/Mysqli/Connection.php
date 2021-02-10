@@ -77,7 +77,9 @@ class Connection extends ConnectionBase
 
     /**
      * @inheritdoc
-     */
+	 * @return ConnectionBase
+	 * @throws ConnectionException
+	 */
     public function close()
     {
         $this->mbPop();
@@ -93,7 +95,7 @@ class Connection extends ConnectionBase
     {
         $this->ensureConnection();
 
-        set_error_handler(function () {
+        set_error_handler(static function () {
         });
         try {
             /**

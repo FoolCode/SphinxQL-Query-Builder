@@ -1,5 +1,5 @@
 <?php
-use Foolz\SphinxQL\Drivers\ConnectionBase;
+use Foolz\SphinxQL\Drivers\Mysqli\Connection;
 use Foolz\SphinxQL\Exception\ConnectionException;
 use Foolz\SphinxQL\Exception\DatabaseException;
 use Foolz\SphinxQL\Exception\SphinxQLException;
@@ -12,7 +12,7 @@ class ConnectionTest extends TestCase
 {
 
     /**
-     * @var ConnectionBase $connection
+     * @var Connection $connection
      */
     private $connection;
 

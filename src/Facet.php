@@ -197,12 +197,11 @@ class Facet
      *    $query->facetFunction('category');
      *
      * @param string $function  Function name
-     * @param array  $params    Array  string arguments containing column names
+     * @param string|array $params Array or string of column names
      * @param string $direction The ordering direction (asc/desc)
-     *
      * @return Facet
      */
-    public function orderByFunction($function, $params = null, $direction = null)
+    public function orderByFunction($function, $params = null, $direction = null): self
     {
         if (is_array($params)) {
             $params = implode(',', $params);

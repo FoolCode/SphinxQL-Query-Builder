@@ -45,7 +45,7 @@ class Percolate
     /**
      * Documents for CALL PQ
      *
-     * @var array|string
+     * @var array|string $documents
      */
     protected $documents;
 
@@ -487,19 +487,18 @@ class Percolate
                         }
                     }
                 }
-            } else {
-                if (is_string($this->documents)) {
-                    $json = $this->prepareFromJson($this->documents);
-                    if ($json) {
-                        $this->options[self::OPTION_DOCS_JSON] = 1;
-                        return $json;
-                    }
+            } elseif (is_string($this->documents)){
+				$json = $this->prepareFromJson($this->documents);
+				if ($json) {
+					$this->options[self::OPTION_DOCS_JSON] = 1;
+					return $json;
+				}
 
-                    $this->options[self::OPTION_DOCS_JSON] = 0;
-                    return $this->quoteString($this->documents);
-                }
-            }
-        }
+				$this->options[self::OPTION_DOCS_JSON] = 0;
+				return $this->quoteString($this->documents);
+			}
+
+		}
         throw new SphinxQLException('Documents can\'t be empty');
     }
 

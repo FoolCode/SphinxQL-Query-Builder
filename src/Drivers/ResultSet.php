@@ -209,7 +209,7 @@ class ResultSet implements ResultSetInterface
     /**
      * @param bool $assoc
      *
-     * @return array|bool|null
+     * @return array|false|null
      */
     protected function fetchFromStore($assoc = true)
     {
@@ -364,13 +364,13 @@ class ResultSet implements ResultSetInterface
      *
      * @return array|null
      */
-    protected function fetch($assoc = true)
+    protected function fetch($assoc = true): ?array
     {
         $this->cursor = $this->next_cursor;
 
         $row = $this->fetchFromStore($assoc);
 
-        if ($row === false) {
+        if ($row === false){
             $row = $this->adapter->fetch($assoc);
         }
 

@@ -98,9 +98,8 @@ class MultiResultSet implements MultiResultSetInterface
     /**
      * @inheritdoc
      */
-    public function next()
-    {
-        $this->rowSet = $this->getNext();
+    public function next(): void{
+        $this->rowSet = $this->getNext() ?: null;
     }
 
     /**
@@ -119,7 +118,7 @@ class MultiResultSet implements MultiResultSetInterface
         // we actually can't roll this back unless it was stored first
         $this->cursor = 0;
         $this->next_cursor = 0;
-        $this->rowSet = $this->getNext();
+        $this->rowSet = $this->getNext() ?: null;
     }
 
     /**

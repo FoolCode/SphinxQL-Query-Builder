@@ -138,8 +138,6 @@ class ResultSetTest extends TestCase
     }
 
     /**
-     * @expectedException        ResultSetException
-     * @expectedExceptionMessage The row does not exist.
      * @throws ConnectionException
      * @throws DatabaseException
      * @throws ResultSetException
@@ -188,8 +186,6 @@ class ResultSetTest extends TestCase
     }
 
     /**
-     * @expectedException        ResultSetException
-     * @expectedExceptionMessage The row does not exist.
      * @throws ConnectionException
      * @throws DatabaseException
      * @throws ResultSetException

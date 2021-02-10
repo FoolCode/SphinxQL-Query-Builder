@@ -150,7 +150,6 @@ class MultiResultSetTest extends TestCase
     }
 
     /**
-     * @expectedException DatabaseException
      * @throws ConnectionException
      * @throws DatabaseException
      * @throws SphinxQLException

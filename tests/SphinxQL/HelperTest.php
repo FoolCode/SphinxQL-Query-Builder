@@ -199,8 +199,6 @@ class HelperTest extends TestCase
     }
 
     /**
-     * @expectedException        Foolz\SphinxQL\Exception\DatabaseException
-     * @expectedExceptionMessage Sphinx expr: syntax error
      * @throws ConnectionException
      * @throws DatabaseException
      */
@@ -228,7 +226,6 @@ class HelperTest extends TestCase
     }
 
     /**
-     * @covers \Foolz\SphinxQL\Helper::truncateRtIndex
      * @throws ConnectionException
      * @throws DatabaseException
      * @throws SphinxQLException

@@ -92,9 +92,6 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @covers SphinxQL::transactionBegin
-     * @covers SphinxQL::transactionCommit
-     * @covers SphinxQL::transactionRollback
      * @throws ConnectionException
      * @throws DatabaseException
      */
@@ -146,15 +143,6 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @covers SphinxQL::compile
-     * @covers SphinxQL::compileInsert
-     * @covers SphinxQL::compileSelect
-     * @covers SphinxQL::insert
-     * @covers SphinxQL::set
-     * @covers SphinxQL::value
-     * @covers SphinxQL::columns
-     * @covers SphinxQL::values
-     * @covers SphinxQL::into
      * @throws ConnectionException
      * @throws DatabaseException
      * @throws SphinxQLException
@@ -272,15 +260,6 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @covers SphinxQL::compile
-     * @covers SphinxQL::compileInsert
-     * @covers SphinxQL::compileSelect
-     * @covers SphinxQL::replace
-     * @covers SphinxQL::set
-     * @covers SphinxQL::value
-     * @covers SphinxQL::columns
-     * @covers SphinxQL::values
-     * @covers SphinxQL::into
      * @throws ConnectionException
      * @throws DatabaseException
      * @throws SphinxQLException
@@ -350,11 +329,6 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @covers SphinxQL::compile
-     * @covers SphinxQL::compileUpdate
-     * @covers SphinxQL::compileSelect
-     * @covers SphinxQL::update
-     * @covers SphinxQL::value
      * @throws ConnectionException
      * @throws DatabaseException
      * @throws SphinxQLException
@@ -440,9 +414,6 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @covers SphinxQL::compileWhere
-     * @covers SphinxQL::from
-     * @covers SphinxQL::compileFilterCondition
      * @throws ConnectionException
      * @throws DatabaseException
      * @throws SphinxQLException
@@ -518,9 +489,6 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @covers SphinxQL::match
-     * @covers SphinxQL::compileMatch
-     * @covers SphinxQL::halfEscapeMatch
      * @throws ConnectionException
      * @throws DatabaseException
      * @throws SphinxQLException
@@ -638,11 +606,6 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
         $this->assertSame('"unmatched quotes"', $this->createSphinxQL()->halfEscapeMatch('"unmatched quotes'));
     }
 
-    /**
-    * @covers SphinxQL::setFullEscapeChars
-    * @covers SphinxQL::setHalfEscapeChars
-    * @covers SphinxQL::compileEscapeChars
-    */
     public function testEscapeChars(): void
     {
         $this->assertEquals(array('%' => '\%'), $this->createSphinxQL()->compileEscapeChars(array('%')));
@@ -916,9 +879,6 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @covers SphinxQL::compile
-     * @covers SphinxQL::compileDelete
-     * @covers SphinxQL::delete
      * @throws ConnectionException
      * @throws DatabaseException
      * @throws SphinxQLException
@@ -939,11 +899,6 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @covers SphinxQL::executeBatch
-     * @covers SphinxQL::enqueue
-     * @covers SphinxQL::getQueue
-     * @covers SphinxQL::getQueuePrev
-     * @covers SphinxQL::setQueuePrev
      * @throws ConnectionException
      * @throws DatabaseException
      * @throws SphinxQLException
@@ -970,8 +925,6 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @expectedException        SphinxQLException
-     * @expectedExceptionMessage There is no Queue present to execute.
      * @throws ConnectionException
      * @throws DatabaseException
      * @throws SphinxQLException
@@ -987,14 +940,6 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @covers SphinxQL::resetWhere
-     * @covers SphinxQL::resetMatch
-     * @covers SphinxQL::resetGroupBy
-     * @covers SphinxQL::resetWithinGroupOrderBy
-     * @covers SphinxQL::resetOptions
-     * @covers SphinxQL::resetFacets
-     * @covers SphinxQL::resetHaving
-     * @covers SphinxQL::resetOrderBy
      * @throws ConnectionException
      * @throws DatabaseException
      * @throws SphinxQLException
@@ -1029,7 +974,6 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @covers SphinxQL::select
      * @throws ConnectionException
      * @throws DatabaseException
      * @throws SphinxQLException
@@ -1134,7 +1078,6 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @covers SphinxQL::setSelect
      * @throws ConnectionException
      * @throws DatabaseException
      * @throws SphinxQLException
@@ -1175,9 +1118,6 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
         $this->assertArrayNotHasKey('gid', $result[0]);
     }
 
-    /**
-     * @covers SphinxQL::getSelect
-     */
     public function testGetSelect(): void
     {
         $query = $this->createSphinxQL()
@@ -1187,8 +1127,6 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @covers SphinxQL::facet
-     * @covers SphinxQL::compileSelect
      * @throws ConnectionException
      * @throws DatabaseException
      * @throws SphinxQLException

@@ -91,9 +91,6 @@ class ConnectionTest extends TestCase
         $this->assertNotNull($this->connection->getConnection());
     }
 
-    /**
-     * @expectedException Foolz\SphinxQL\Exception\ConnectionException
-     */
     public function testGetConnectionThrowsException(): void
     {
         $this->expectException(ConnectionException::class);
@@ -112,9 +109,6 @@ class ConnectionTest extends TestCase
         self::assertIsBool($this->connection->connect());
     }
 
-    /**
-     * @expectedException ConnectionException
-     */
     public function testConnectThrowsException(): void
     {
         $this->expectException(ConnectionException::class);
@@ -132,9 +126,6 @@ class ConnectionTest extends TestCase
         $this->assertTrue($this->connection->ping());
     }
 
-    /**
-     * @expectedException ConnectionException
-     */
     public function testClose(): void
     {
         $this->expectException(ConnectionException::class);
@@ -179,12 +170,10 @@ class ConnectionTest extends TestCase
             array('Variable_name' => 'total', 'Value' => '0'),
             array('Variable_name' => 'total_found', 'Value' => '0'),
             array('Variable_name' => 'time', 'Value' => '0.000'),
-        ), $query->getNext()->fetchAllAssoc());
+        ), $query->getStored());
     }
 
     /**
-     * @expectedException        SphinxQLException
-     * @expectedExceptionMessage The Queue is empty.
      * @throws ConnectionException
      * @throws DatabaseException
      * @throws SphinxQLException
@@ -199,7 +188,6 @@ class ConnectionTest extends TestCase
     }
 
     /**
-     * @expectedException DatabaseException
      * @throws ConnectionException
      * @throws DatabaseException
      * @throws SphinxQLException
@@ -212,7 +200,6 @@ class ConnectionTest extends TestCase
     }
 
     /**
-     * @expectedException DatabaseException
      * @throws ConnectionException
      * @throws DatabaseException
      */
@@ -234,7 +221,6 @@ class ConnectionTest extends TestCase
     }
 
     /**
-     * @expectedException ConnectionException
      * @throws ConnectionException
      * @throws DatabaseException
      */

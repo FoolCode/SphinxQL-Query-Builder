@@ -1,17 +1,14 @@
 <?php
 namespace Foolz\SphinxQL\Tests;
 
-use Foolz\SphinxQL\Drivers\Mysqli\Connection as MysqliConnection;
-use Foolz\SphinxQL\Drivers\Pdo\Connection as PdoConnection;
-
-$GLOBALS['driver'] = 'mysqli';
+use Foolz\SphinxQL\Drivers\ConnectionBase;
 
 class TestUtil
 {
     /**
-     * @return PdoConnection|MysqliConnection
+     * @return ConnectionBase
      */
-    public static function getConnectionDriver()
+    public static function getConnectionDriver(): ConnectionBase
     {
         $connection = '\\Foolz\\SphinxQL\\Drivers\\'.$GLOBALS['driver'].'\\Connection';
 

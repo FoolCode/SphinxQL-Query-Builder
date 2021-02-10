@@ -102,7 +102,7 @@ class ResultSetTest extends TestCase
         $this->assertCount(8, $res->fetchAllNum());
 
         $res = self::$conn->query('UPDATE rt SET gid = 202 WHERE gid < 202');
-        $this->assertEquals(2, $res->store()->getStored());
+        $this->assertEquals(2, $res->store()->getAffectedRows());
     }
 
     /**

@@ -7,6 +7,9 @@ use Foolz\SphinxQL\Drivers\ResultSet;
 use Foolz\SphinxQL\Exception\ConnectionException;
 use Foolz\SphinxQL\Exception\DatabaseException;
 use Foolz\SphinxQL\Exception\SphinxQLException;
+use mysqli;
+use PDO;
+use RuntimeException;
 
 /**
  * SphinxQL connection class utilizing the MySQLi extension.
@@ -31,10 +34,24 @@ class Connection extends ConnectionBase
         return $this->internal_encoding;
     }
 
-    /**
+	/**
+	 * @return mysqli
+	 * @throws ConnectionException
+	 */
+    public function getConnection(): mysqli{
+    	$connection = parent::getConnection();
+
+    	if($connection instanceof PDO){
+    		throw new RuntimeException('Connection type mismatch');
+		}
+
+		return $connection;
+	}
+
+	/**
      * @inheritdoc
      */
-    public function connect()
+    public function connect(): bool
     {
         $data = $this->getParams();
         $conn = mysqli_init();
@@ -45,7 +62,7 @@ class Connection extends ConnectionBase
             }
         }
 
-        set_error_handler(function () {
+        set_error_handler(static function () {
         });
         try {
             if (!$conn->real_connect($data['host'], null, null, null, (int) $data['port'], $data['socket'])) {

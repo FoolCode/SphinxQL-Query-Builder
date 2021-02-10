@@ -1,5 +1,4 @@
 <?php
-
 namespace Foolz\SphinxQL\Drivers\Pdo;
 
 use Foolz\SphinxQL\Drivers\ConnectionBase;
@@ -8,19 +7,37 @@ use Foolz\SphinxQL\Drivers\ResultSet;
 use Foolz\SphinxQL\Exception\ConnectionException;
 use Foolz\SphinxQL\Exception\DatabaseException;
 use Foolz\SphinxQL\Exception\SphinxQLException;
+use mysqli;
 use PDO;
 use PDOException;
+use RuntimeException;
 
 class Connection extends ConnectionBase
 {
-    /**
+
+	/**
+	 * @return PDO
+	 * @throws ConnectionException
+	 */
+	public function getConnection(): PDO{
+		$connection = parent::getConnection();
+
+		if($connection instanceof mysqli){
+			throw new RuntimeException('Connection type mismatch');
+		}
+
+		return $connection;
+	}
+
+
+		/**
      * @inheritdoc
      */
     public function query($query)
     {
         $this->ensureConnection();
 
-        $statement = $this->connection->prepare($query);
+        $statement = $this->getConnection()->prepare($query);
 
         try {
             $statement->execute();
@@ -34,7 +51,7 @@ class Connection extends ConnectionBase
     /**
      * @inheritdoc
      */
-    public function connect()
+    public function connect(): bool
     {
         $params = $this->getParams();
 
@@ -60,7 +77,7 @@ class Connection extends ConnectionBase
         }
 
         $this->connection = $con;
-        $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $this->getConnection()->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         return true;
     }
@@ -73,7 +90,7 @@ class Connection extends ConnectionBase
     {
         $this->ensureConnection();
 
-        return $this->connection !== null;
+        return $this->getConnection() !== null;
     }
 
     /**
@@ -88,7 +105,7 @@ class Connection extends ConnectionBase
         }
 
         try {
-            $statement = $this->connection->query(implode(';', $queue));
+            $statement = $this->getConnection()->query(implode(';', $queue));
         } catch (PDOException $exception) {
             throw new DatabaseException($exception->getMessage() .' [ '.implode(';', $queue).']', $exception->getCode(), $exception);
         }
@@ -103,6 +120,6 @@ class Connection extends ConnectionBase
     {
         $this->ensureConnection();
 
-        return $this->connection->quote($value);
+        return $this->getConnection()->quote($value);
     }
 }

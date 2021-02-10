@@ -69,10 +69,10 @@ abstract class ConnectionBase implements ConnectionInterface{
 
     /**
      * Returns the current connection established.
-	 * @return mysqli Internal connection object
+	 * @return mysqli|pdo Internal connection object
 	 * @throws ConnectionException If no connection has been established or open
 	 */
-    public function getConnection(): mysqli
+    public function getConnection()
     {
         if ($this->connection !== null) {
             return $this->connection;

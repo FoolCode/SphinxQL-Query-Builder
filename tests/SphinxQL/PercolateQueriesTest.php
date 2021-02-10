@@ -1,20 +1,31 @@
 <?php
-
+use Foolz\SphinxQL\Drivers\ConnectionBase;
+use Foolz\SphinxQL\Exception\ConnectionException;
+use Foolz\SphinxQL\Exception\DatabaseException;
 use Foolz\SphinxQL\Exception\SphinxQLException;
 use Foolz\SphinxQL\Percolate;
 use Foolz\SphinxQL\Tests\TestUtil;
 use Foolz\SphinxQL\SphinxQL;
+
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group Manticore
  * @package Foolz\SphinxQL
  * @author Vicent Valls
  */
-class PercolateQueriesTest extends \PHPUnit\Framework\TestCase
+class PercolateQueriesTest extends TestCase
 {
-    public static $conn = null;
+    /**
+     * @var ConnectionBase $conn
+     */
+    public static $conn;
 
-
+    /**
+     * @throws ConnectionException
+     * @throws DatabaseException
+     * @throws SphinxQLException
+     */
     public static function setUpBeforeClass(): void
     {
         $conn = TestUtil::getConnectionDriver();
@@ -28,16 +39,24 @@ class PercolateQueriesTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider insertProvider
-     * @throws \Foolz\SphinxQL\Exception\SphinxQLException
+     * @param $testNumber
+     * @param $query
+     * @param $index
+     * @param $tags
+     * @param $filter
+     * @param $compiledQuery
+     * @throws ConnectionException
+     * @throws DatabaseException
+     * @throws SphinxQLException
      */
-    public function testInsert($testNumber, $query, $index, $tags, $filter, $compiledQuery)
+    public function testInsert($testNumber, $query, $index, $tags, $filter, $compiledQuery): void
     {
-        if ($testNumber == 2) {
+        if ($testNumber === 2) {
             $this->expectException(SphinxQLException::class);
             $this->expectExceptionMessage('Index can\'t be empty');
         }
 
-        if ($testNumber == 3) {
+        if ($testNumber === 3) {
             $this->expectException(SphinxQLException::class);
             $this->expectExceptionMessage('Query can\'t be empty');
         }
@@ -50,7 +69,7 @@ class PercolateQueriesTest extends \PHPUnit\Framework\TestCase
             ->filter($filter)
             ->execute();
 
-        if (in_array($testNumber, [1, 4, 5, 6, 7, 8, 9, 11])) {
+        if (in_array($testNumber, [1, 4, 5, 6, 7, 8, 9, 11], true)) {
             $this->assertEquals($compiledQuery, $percolate->getLastQuery());
         }
 
@@ -58,7 +77,10 @@ class PercolateQueriesTest extends \PHPUnit\Framework\TestCase
         //$this->markTestIncomplete(true);
     }
 
-    public function insertProvider()
+    /**
+     * @return array
+     */
+    public function insertProvider(): array
     {
 
         /**
@@ -171,21 +193,27 @@ class PercolateQueriesTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider callPqProvider
-     * @throws \Foolz\SphinxQL\Exception\SphinxQLException
+     * @param $testNumber
+     * @param $index
+     * @param $documents
+     * @param $options
+     * @param $result
+     * @throws ConnectionException
+     * @throws DatabaseException
+     * @throws SphinxQLException
      */
-
-    public function testPercolate($testNumber, $index, $documents, $options, $result)
+    public function testPercolate($testNumber, $index, $documents, $options, $result): void
     {
-        if ($testNumber == 2) {
+        if ($testNumber === 2) {
             $this->expectException(SphinxQLException::class);
             $this->expectExceptionMessage('Document can\'t be empty');
-        } elseif ($testNumber == 3) {
+        } elseif ($testNumber === 3) {
             $this->expectException(SphinxQLException::class);
             $this->expectExceptionMessage('Index can\'t be empty');
-        } elseif ($testNumber == 12) {
+        } elseif ($testNumber === 12) {
             $this->expectException(SphinxQLException::class);
             $this->expectExceptionMessage('Documents must be in json format');
-        } elseif ($testNumber == 13) {
+        } elseif ($testNumber === 13) {
             $this->expectException(SphinxQLException::class);
             $this->expectExceptionMessage('Documents array must be associate');
         }
@@ -198,20 +226,20 @@ class PercolateQueriesTest extends \PHPUnit\Framework\TestCase
             ->execute();
 
 
-        if (in_array($testNumber, [1, 4, 5, 6, 7, 8, 9, 11])) {
+        if (in_array($testNumber, [1, 4, 5, 6, 7, 8, 9, 11], true)) {
             $query = $query->fetchAllAssoc();
             $this->assertEquals($result[0], $query[0]['Query']);
-            $this->assertEquals($result[1], count($query));
+            $this->assertCount($result[1], $query);
         }
 
-        if ($testNumber == 10) {
+        if ($testNumber === 10) {
             $query = $query->fetchAllAssoc();
             $this->assertEquals($result[0], $query[0]['UID']);
-            $this->assertEquals($result[1], count($query));
+            $this->assertCount($result[1], $query);
         }
     }
 
-    public function callPqProvider()
+    public function callPqProvider(): array
     {
         /**
          * 1) Call PQ

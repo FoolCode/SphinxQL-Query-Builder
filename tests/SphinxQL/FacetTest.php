@@ -1,14 +1,21 @@
 <?php
-
+use Foolz\SphinxQL\Drivers\ConnectionBase;
+use Foolz\SphinxQL\Exception\SphinxQLException;
 use Foolz\SphinxQL\Facet;
 use Foolz\SphinxQL\Tests\TestUtil;
+
+use PHPUnit\Framework\TestCase;
 
 /**
  * @author Vicent Valls
  */
-class FacetTest extends \PHPUnit\Framework\TestCase
+class FacetTest extends TestCase
 {
-    public static $conn = null;
+
+    /**
+     * @var ConnectionBase $connection
+     */
+    public static $conn;
 
     public static $data = array(
         0 => array('id' => '10', 'gid' => '9003',
@@ -39,12 +46,15 @@ class FacetTest extends \PHPUnit\Framework\TestCase
     /**
      * @return Facet
      */
-    protected function createFacet()
+    protected function createFacet(): Facet
     {
         return new Facet(self::$conn);
     }
 
-    public function testFacet()
+    /**
+     * @throws SphinxQLException
+     */
+    public function testFacet(): void
     {
         $facet = $this->createFacet()
             ->facet(array('gid'))
@@ -85,7 +95,10 @@ class FacetTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('FACET gid, title AS name, content', $facet);
     }
 
-    public function testFacetFunction()
+    /**
+     * @throws SphinxQLException
+     */
+    public function testFacetFunction(): void
     {
         $facet = $this->createFacet()
             ->facetFunction('INTERVAL', array('price', 200, 400, 600, 800))
@@ -100,7 +113,10 @@ class FacetTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('FACET COUNT(gid)', $facet);
     }
 
-    public function testBy()
+    /**
+     * @throws SphinxQLException
+     */
+    public function testBy(): void
     {
         $facet = $this->createFacet()
             ->facet(array('gid', 'title', 'content'))
@@ -110,7 +126,10 @@ class FacetTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('FACET gid, title, content BY gid', $facet);
     }
 
-    public function testOrderBy()
+    /**
+     * @throws SphinxQLException
+     */
+    public function testOrderBy(): void
     {
         $facet = $this->createFacet()
             ->facet(array('gid', 'title'))
@@ -128,7 +147,10 @@ class FacetTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('FACET gid, content ORDER BY gid ASC, content DESC', $facet);
     }
 
-    public function testOrderByFunction()
+    /**
+     * @throws SphinxQLException
+     */
+    public function testOrderByFunction(): void
     {
         $facet = $this->createFacet()
             ->facet(array('gid', 'title'))
@@ -138,7 +160,10 @@ class FacetTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('FACET gid, title ORDER BY COUNT(*) DESC', $facet);
     }
 
-    public function testLimit()
+    /**
+     * @throws SphinxQLException
+     */
+    public function testLimit(): void
     {
         $facet = $this->createFacet()
             ->facet(array('gid', 'title'))

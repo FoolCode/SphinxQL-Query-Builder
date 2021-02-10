@@ -1,19 +1,21 @@
 <?php
-
+use Foolz\SphinxQL\Drivers\ConnectionBase;
 use Foolz\SphinxQL\Drivers\MultiResultSetInterface;
-use Foolz\SphinxQL\Drivers\Mysqli\Connection as MysqliConnection;
-use Foolz\SphinxQL\Drivers\Pdo\Connection as PdoConnection;
 use Foolz\Sphinxql\Drivers\ResultSetInterface;
+use Foolz\SphinxQL\Exception\ConnectionException;
 use Foolz\SphinxQL\Exception\DatabaseException;
+use Foolz\SphinxQL\Exception\SphinxQLException;
 use Foolz\SphinxQL\SphinxQL;
 use Foolz\SphinxQL\Tests\TestUtil;
 
-class MultiResultSetTest extends \PHPUnit\Framework\TestCase
+use PHPUnit\Framework\TestCase;
+
+class MultiResultSetTest extends TestCase
 {
     /**
-     * @var MysqliConnection|PdoConnection
+     * @var ConnectionBase
      */
-    public static $conn = null;
+    public static $conn;
 
     public static $data = array(
         0 => array('id' => '10', 'gid' => '9003',
@@ -34,6 +36,10 @@ class MultiResultSetTest extends \PHPUnit\Framework\TestCase
             'title' => 'what is there to do', 'content' => 'we need to create dummy data for tests'),
     );
 
+    /**
+     * @throws DatabaseException
+     * @throws ConnectionException
+     */
     public static function setUpBeforeClass(): void
     {
         $conn = TestUtil::getConnectionDriver();
@@ -46,12 +52,17 @@ class MultiResultSetTest extends \PHPUnit\Framework\TestCase
     /**
      * @return SphinxQL
      */
-    protected function createSphinxQL()
+    protected function createSphinxQL(): SphinxQL
     {
         return new SphinxQL(self::$conn);
     }
 
-    public function refill()
+    /**
+     * @throws DatabaseException
+     * @throws ConnectionException
+     * @throws SphinxQLException
+     */
+    public function refill(): void
     {
         $this->createSphinxQL()->getConnection()->query('TRUNCATE RTINDEX rt');
 
@@ -67,7 +78,12 @@ class MultiResultSetTest extends \PHPUnit\Framework\TestCase
         $sq->execute();
     }
 
-    public function testIsMultiResultSet()
+    /**
+     * @throws ConnectionException
+     * @throws DatabaseException
+     * @throws SphinxQLException
+     */
+    public function testIsMultiResultSet(): void
     {
         $res = self::$conn->multiQuery(array('SELECT COUNT(*) FROM rt', 'SHOW META'));
         $this->assertInstanceOf(MultiResultSetInterface::class, $res);
@@ -75,7 +91,12 @@ class MultiResultSetTest extends \PHPUnit\Framework\TestCase
         $res->getNext();
     }
 
-    public function testGetNextSet()
+    /**
+     * @throws ConnectionException
+     * @throws DatabaseException
+     * @throws SphinxQLException
+     */
+    public function testGetNextSet(): void
     {
         $this->refill();
 
@@ -95,8 +116,12 @@ class MultiResultSetTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($res->getNext());
     }
 
-
-    public function testGetNextSetFalse()
+    /**
+     * @throws ConnectionException
+     * @throws DatabaseException
+     * @throws SphinxQLException
+     */
+    public function testGetNextSetFalse(): void
     {
         $this->refill();
 
@@ -106,7 +131,12 @@ class MultiResultSetTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($res->getNext());
     }
 
-    public function testStore()
+    /**
+     * @throws ConnectionException
+     * @throws DatabaseException
+     * @throws SphinxQLException
+     */
+    public function testStore(): void
     {
         $this->refill();
 
@@ -120,10 +150,15 @@ class MultiResultSetTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @expectedException Foolz\SphinxQL\Exception\DatabaseException
+     * @expectedException DatabaseException
+     * @throws ConnectionException
+     * @throws DatabaseException
+     * @throws SphinxQLException
      */
-    public function testInvalidStore()
+    public function testInvalidStore(): void
     {
+        $this->expectException(DatabaseException::class);
+
         $this->refill();
 
         $res = self::$conn->multiQuery(array('SELECT COUNT(*) FROM rt', 'SHOW META'));
@@ -137,7 +172,12 @@ class MultiResultSetTest extends \PHPUnit\Framework\TestCase
         }
     }
 
-    public function testArrayAccess()
+    /**
+     * @throws ConnectionException
+     * @throws DatabaseException
+     * @throws SphinxQLException
+     */
+    public function testArrayAccess(): void
     {
         $this->refill();
 
@@ -146,7 +186,12 @@ class MultiResultSetTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(8, $res[0][0]['count(*)']);
     }
 
-    public function testIterator()
+    /**
+     * @throws ConnectionException
+     * @throws DatabaseException
+     * @throws SphinxQLException
+     */
+    public function testIterator(): void
     {
         $this->refill();
 
@@ -160,7 +205,12 @@ class MultiResultSetTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(2, $array);
     }
 
-    public function testIteratorStored()
+    /**
+     * @throws ConnectionException
+     * @throws DatabaseException
+     * @throws SphinxQLException
+     */
+    public function testIteratorStored(): void
     {
         $this->refill();
 

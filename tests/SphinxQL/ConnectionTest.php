@@ -1,18 +1,28 @@
 <?php
+use Foolz\SphinxQL\Drivers\ConnectionBase;
+use Foolz\SphinxQL\Exception\ConnectionException;
+use Foolz\SphinxQL\Exception\DatabaseException;
+use Foolz\SphinxQL\Exception\SphinxQLException;
 use Foolz\SphinxQL\Expression;
 use Foolz\SphinxQL\Tests\TestUtil;
 
-class ConnectionTest extends \PHPUnit\Framework\TestCase
+use PHPUnit\Framework\TestCase;
+
+class ConnectionTest extends TestCase
 {
+
     /**
-     * @var \Foolz\SphinxQL\Drivers\ConnectionBase
+     * @var ConnectionBase $connection
      */
     private $connection;
 
     protected function setUp(): void
     {
         $this->connection = TestUtil::getConnectionDriver();
-        $this->connection->setParams(array('host' => '127.0.0.1', 'port' => 9307));
+        $this->connection->setParams([
+            'host'	=> '127.0.0.1',
+            'port'	=> 9307,
+        ]);
     }
 
     protected function tearDown(): void
@@ -22,7 +32,7 @@ class ConnectionTest extends \PHPUnit\Framework\TestCase
 
     public function test(): void
     {
-    	self::assertNotNull(TestUtil::getConnectionDriver());
+        self::assertNotNull(TestUtil::getConnectionDriver());
     }
 
     public function testGetParams(): void
@@ -62,7 +72,7 @@ class ConnectionTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetConnectionParams()
+    public function testGetConnectionParams(): void
     {
         // verify that (deprecated) getConnectionParams continues to work
         $this->assertSame(array('host' => '127.0.0.1', 'port' => 9307, 'socket' => null), $this->connection->getParams());
@@ -72,9 +82,9 @@ class ConnectionTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(array('host' => '127.0.0.1', 'port' => 9308, 'socket' => null), $this->connection->getParams());
     }
 
-	/**
-	 * @throws \Foolz\SphinxQL\Exception\ConnectionException
-	 */
+    /**
+     * @throws ConnectionException
+     */
     public function testGetConnection(): void
     {
         $this->connection->connect();
@@ -84,15 +94,17 @@ class ConnectionTest extends \PHPUnit\Framework\TestCase
     /**
      * @expectedException Foolz\SphinxQL\Exception\ConnectionException
      */
-    public function testGetConnectionThrowsException()
+    public function testGetConnectionThrowsException(): void
     {
+        $this->expectException(ConnectionException::class);
+
         $this->connection->getConnection();
     }
 
-	/**
-	 * @throws \Foolz\SphinxQL\Exception\ConnectionException
-	 */
-    public function testConnect()
+    /**
+     * @throws ConnectionException
+     */
+    public function testConnect(): void
     {
         $this->connection->connect();
 
@@ -101,17 +113,19 @@ class ConnectionTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @expectedException Foolz\SphinxQL\Exception\ConnectionException
+     * @expectedException ConnectionException
      */
-    public function testConnectThrowsException()
+    public function testConnectThrowsException(): void
     {
+        $this->expectException(ConnectionException::class);
+
         $this->connection->setParam('port', 9308);
         $this->connection->connect();
     }
 
-	/**
-	 * @throws \Foolz\SphinxQL\Exception\ConnectionException
-	 */
+    /**
+     * @throws ConnectionException
+     */
     public function testPing(): void
     {
         $this->connection->connect();
@@ -119,10 +133,12 @@ class ConnectionTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @expectedException Foolz\SphinxQL\Exception\ConnectionException
+     * @expectedException ConnectionException
      */
-    public function testClose()
+    public function testClose(): void
     {
+        $this->expectException(ConnectionException::class);
+
         $encoding = mb_internal_encoding();
         $this->connection->connect();
 
@@ -136,7 +152,11 @@ class ConnectionTest extends \PHPUnit\Framework\TestCase
         $this->connection->getConnection();
     }
 
-    public function testQuery()
+    /**
+     * @throws ConnectionException
+     * @throws DatabaseException
+     */
+    public function testQuery(): void
     {
         $this->connection->connect();
         $this->assertSame(array(
@@ -146,7 +166,12 @@ class ConnectionTest extends \PHPUnit\Framework\TestCase
         ), $this->connection->query('SHOW META')->fetchAllAssoc());
     }
 
-    public function testMultiQuery()
+    /**
+     * @throws ConnectionException
+     * @throws SphinxQLException
+     * @throws DatabaseException
+     */
+    public function testMultiQuery(): void
     {
         $this->connection->connect();
         $query = $this->connection->multiQuery(array('SHOW META'));
@@ -158,44 +183,65 @@ class ConnectionTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @expectedException        Foolz\SphinxQL\Exception\SphinxQLException
+     * @expectedException        SphinxQLException
      * @expectedExceptionMessage The Queue is empty.
+     * @throws ConnectionException
+     * @throws DatabaseException
+     * @throws SphinxQLException
      */
-    public function testEmptyMultiQuery()
+    public function testEmptyMultiQuery(): void
     {
+        $this->expectException(SphinxQLException::class);
+        $this->expectErrorMessage('The Queue is empty.');
+        
         $this->connection->connect();
         $this->connection->multiQuery(array());
     }
 
     /**
-     * @expectedException Foolz\SphinxQL\Exception\DatabaseException
+     * @expectedException DatabaseException
+     * @throws ConnectionException
+     * @throws DatabaseException
+     * @throws SphinxQLException
      */
-    public function testMultiQueryThrowsException()
+    public function testMultiQueryThrowsException(): void
     {
+        $this->expectException(DatabaseException::class);
+
         $this->connection->multiQuery(array('SHOW METAL'));
     }
 
     /**
-     * @expectedException Foolz\SphinxQL\Exception\DatabaseException
+     * @expectedException DatabaseException
+     * @throws ConnectionException
+     * @throws DatabaseException
      */
-    public function testQueryThrowsException()
+    public function testQueryThrowsException(): void
     {
+        $this->expectException(DatabaseException::class);
+
         $this->connection->query('SHOW METAL');
     }
 
-    public function testEscape()
+    /**
+     * @throws ConnectionException
+     * @throws DatabaseException
+     */
+    public function testEscape(): void
     {
         $result = $this->connection->escape('\' "" \'\' ');
         $this->assertEquals('\'\\\' \\"\\" \\\'\\\' \'', $result);
     }
 
     /**
-     * @expectedException Foolz\SphinxQL\Exception\ConnectionException
-     * @throws \Foolz\SphinxQL\Exception\ConnectionException
-     * @throws \Foolz\SphinxQL\Exception\DatabaseException
+     * @expectedException ConnectionException
+     * @throws ConnectionException
+     * @throws DatabaseException
      */
     public function testEscapeThrowsException(): void
     {
+        $this->expectException(ConnectionException::class);
+
         // or we get the wrong error popping up
         $this->connection->setParam('port', 9308);
         $this->connection->connect();
@@ -203,8 +249,8 @@ class ConnectionTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @throws \Foolz\SphinxQL\Exception\ConnectionException
-     * @throws \Foolz\SphinxQL\Exception\DatabaseException
+     * @throws ConnectionException
+     * @throws DatabaseException
      */
     public function testQuote(): void
     {
@@ -220,8 +266,8 @@ class ConnectionTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @throws \Foolz\SphinxQL\Exception\ConnectionException
-     * @throws \Foolz\SphinxQL\Exception\DatabaseException
+     * @throws ConnectionException
+     * @throws DatabaseException
      */
     public function testQuoteArr(): void
     {

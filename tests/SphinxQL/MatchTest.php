@@ -1,12 +1,13 @@
 <?php
-
 use Foolz\SphinxQL\MatchBuilder;
 use Foolz\SphinxQL\SphinxQL;
 use Foolz\SphinxQL\Tests\TestUtil;
 
-class MatchTest extends \PHPUnit\Framework\TestCase
+use PHPUnit\Framework\TestCase;
+
+class MatchTest extends TestCase
 {
-    public static $sphinxql = null;
+    public static $sphinxql;
 
     public static function setUpBeforeClass(): void
     {
@@ -18,12 +19,12 @@ class MatchTest extends \PHPUnit\Framework\TestCase
     /**
      * @return MatchBuilder
      */
-    protected function createMatch()
+    protected function createMatch(): MatchBuilder
     {
         return new MatchBuilder(self::$sphinxql);
     }
 
-    public function testMatch()
+    public function testMatch(): void
     {
         $match = $this->createMatch()
             ->match('test');
@@ -34,7 +35,7 @@ class MatchTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('(test case)', $match->compile()->getCompiled());
 
         $match = $this->createMatch()
-            ->match(function ($m) {
+            ->match(static function (MatchBuilder $m) {
                 $m->match('a')->orMatch('b');
             });
         $this->assertEquals('(a | b)', $match->compile()->getCompiled());
@@ -54,7 +55,7 @@ class MatchTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('test|case', $match->compile()->getCompiled());
     }
 
-    public function testOrMatch()
+    public function testOrMatch(): void
     {
         $match = $this->createMatch()
             ->match('test')->orMatch();
@@ -65,7 +66,7 @@ class MatchTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('test | case', $match->compile()->getCompiled());
     }
 
-    public function testMaybe()
+    public function testMaybe(): void
     {
         $match = $this->createMatch()
             ->match('test')
@@ -78,7 +79,7 @@ class MatchTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('test MAYBE case', $match->compile()->getCompiled());
     }
 
-    public function testNot()
+    public function testNot(): void
     {
         $match = $this->createMatch()
             ->not()
@@ -90,7 +91,7 @@ class MatchTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('-test', $match->compile()->getCompiled());
     }
 
-    public function testField()
+    public function testField(): void
     {
         $match = $this->createMatch()
             ->field('*')
@@ -124,7 +125,7 @@ class MatchTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('@@relaxed @nosuchfield test', $match->compile()->getCompiled());
     }
 
-    public function testIgnoreField()
+    public function testIgnoreField(): void
     {
         $match = $this->createMatch()
             ->ignoreField('title')
@@ -142,28 +143,28 @@ class MatchTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('@!(title,body) test', $match->compile()->getCompiled());
     }
 
-    public function testPhrase()
+    public function testPhrase(): void
     {
         $match = $this->createMatch()
             ->phrase('test case');
         $this->assertEquals('"test case"', $match->compile()->getCompiled());
     }
 
-    public function testOrPhrase()
+    public function testOrPhrase(): void
     {
         $match = $this->createMatch()
             ->phrase('test case')->orPhrase('another case');
         $this->assertEquals('"test case" | "another case"', $match->compile()->getCompiled());
     }
 
-    public function testProximity()
+    public function testProximity(): void
     {
         $match = $this->createMatch()
             ->proximity('test case', 5);
         $this->assertEquals('"test case"~5', $match->compile()->getCompiled());
     }
 
-    public function testQuorum()
+    public function testQuorum(): void
     {
         $match = $this->createMatch()
             ->quorum('this is a test case', 3);
@@ -174,7 +175,7 @@ class MatchTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('"this is a test case"/0.5', $match->compile()->getCompiled());
     }
 
-    public function testBefore()
+    public function testBefore(): void
     {
         $match = $this->createMatch()
             ->match('test')
@@ -187,7 +188,7 @@ class MatchTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('test << case', $match->compile()->getCompiled());
     }
 
-    public function testExact()
+    public function testExact(): void
     {
         $match = $this->createMatch()
             ->match('test')
@@ -201,7 +202,7 @@ class MatchTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('test ="specific cases"', $match->compile()->getCompiled());
     }
 
-    public function testBoost()
+    public function testBoost(): void
     {
         $match = $this->createMatch()
             ->match('test')
@@ -214,7 +215,7 @@ class MatchTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('test case^1.2', $match->compile()->getCompiled());
     }
 
-    public function testNear()
+    public function testNear(): void
     {
         $match = $this->createMatch()
             ->match('test')
@@ -227,7 +228,7 @@ class MatchTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('test NEAR/3 case', $match->compile()->getCompiled());
     }
 
-    public function testSentence()
+    public function testSentence(): void
     {
         $match = $this->createMatch()
             ->match('test')
@@ -240,7 +241,7 @@ class MatchTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('test SENTENCE case', $match->compile()->getCompiled());
     }
 
-    public function testParagraph()
+    public function testParagraph(): void
     {
         $match = $this->createMatch()
             ->match('test')
@@ -253,7 +254,7 @@ class MatchTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('test PARAGRAPH case', $match->compile()->getCompiled());
     }
 
-    public function testZone()
+    public function testZone(): void
     {
         $match = $this->createMatch()
             ->zone('th');
@@ -268,7 +269,7 @@ class MatchTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('ZONE:(th) test', $match->compile()->getCompiled());
     }
 
-    public function testZonespan()
+    public function testZonespan(): void
     {
         $match = $this->createMatch()
             ->zonespan('th');
@@ -305,12 +306,16 @@ class MatchTest extends \PHPUnit\Framework\TestCase
 
         $match = $this->createMatch()
             ->match('aaa')
-            ->not('bbb -(ccc ddd)');
+            ->not(static function (MatchBuilder $m) {
+                $m->match('bbb')->not('ccc ddd');
+            });
         $this->assertEquals('aaa -(bbb -(ccc ddd))', $match->compile()->getCompiled());
     }
 
-    // issue #82
-    public function testClosureMisuse()
+    /**
+     * Issue #82
+     */
+    public function testClosureMisuse(): void
     {
         $match = $this->createMatch()
             ->match('strlen');

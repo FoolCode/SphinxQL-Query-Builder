@@ -1,10 +1,11 @@
 <?php
+use Foolz\SphinxQL\Expression;
 
-use Foolz\SphinxQL\Expression as Expression;
+use PHPUnit\Framework\TestCase;
 
-class ExpressionTest extends \PHPUnit\Framework\TestCase
+class ExpressionTest extends TestCase
 {
-    public function testValue()
+    public function testValue(): void
     {
         $result = new Expression('');
 

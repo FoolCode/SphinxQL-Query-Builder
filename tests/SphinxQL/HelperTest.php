@@ -1,17 +1,27 @@
 <?php
-
 use Foolz\SphinxQL\Drivers\ConnectionInterface;
+use Foolz\SphinxQL\Exception\ConnectionException;
+use Foolz\SphinxQL\Exception\DatabaseException;
+use Foolz\SphinxQL\Exception\SphinxQLException;
 use Foolz\SphinxQL\Helper;
 use Foolz\SphinxQL\SphinxQL;
 use Foolz\SphinxQL\Tests\TestUtil;
 
-class HelperTest extends \PHPUnit\Framework\TestCase
+use PHPUnit\Framework\TestCase;
+
+class HelperTest extends TestCase
 {
+
     /**
      * @var ConnectionInterface
      */
     public $conn;
 
+    /**
+     * @throws ConnectionException
+     * @throws DatabaseException
+     * @throws SphinxQLException
+     */
     protected function setUp(): void
     {
         $conn = TestUtil::getConnectionDriver();
@@ -24,7 +34,7 @@ class HelperTest extends \PHPUnit\Framework\TestCase
     /**
      * @return SphinxQL
      */
-    protected function createSphinxQL()
+    protected function createSphinxQL(): SphinxQL
     {
         return new SphinxQL($this->conn);
     }
@@ -32,12 +42,17 @@ class HelperTest extends \PHPUnit\Framework\TestCase
     /**
      * @return Helper
      */
-    protected function createHelper()
+    protected function createHelper(): Helper
     {
         return new Helper($this->conn);
     }
 
-    public function testShowTables()
+    /**
+     * @throws ConnectionException
+     * @throws DatabaseException
+     * @throws SphinxQLException
+     */
+    public function testShowTables(): void
     {
         $this->assertEquals(
             array(array('Index' => 'rt', 'Type' => 'rt')),
@@ -45,7 +60,12 @@ class HelperTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testDescribe()
+    /**
+     * @throws ConnectionException
+     * @throws DatabaseException
+     * @throws SphinxQLException
+     */
+    public function testDescribe(): void
     {
         $describe = $this->createHelper()->describe('rt')->execute()->fetchAllAssoc();
         array_shift($describe);
@@ -59,7 +79,12 @@ class HelperTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testSetVariable()
+    /**
+     * @throws ConnectionException
+     * @throws DatabaseException
+     * @throws SphinxQLException
+     */
+    public function testSetVariable(): void
     {
         $this->createHelper()->setVariable('AUTOCOMMIT', 0)->execute();
         $vars = Helper::pairsToAssoc($this->createHelper()->showVariables()->execute()->fetchAllAssoc());
@@ -73,7 +98,12 @@ class HelperTest extends \PHPUnit\Framework\TestCase
         $this->createHelper()->setVariable('@foo', array(0), true);
     }
 
-    public function testCallSnippets()
+    /**
+     * @throws ConnectionException
+     * @throws DatabaseException
+     * @throws SphinxQLException
+     */
+    public function testCallSnippets(): void
     {
         $snippets = $this->createHelper()->callSnippets(
             'this is my document text',
@@ -115,7 +145,12 @@ class HelperTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testCallKeywords()
+    /**
+     * @throws ConnectionException
+     * @throws DatabaseException
+     * @throws SphinxQLException
+     */
+    public function testCallKeywords(): void
     {
         $keywords = $this->createHelper()->callKeywords(
             'test case',
@@ -166,13 +201,23 @@ class HelperTest extends \PHPUnit\Framework\TestCase
     /**
      * @expectedException        Foolz\SphinxQL\Exception\DatabaseException
      * @expectedExceptionMessage Sphinx expr: syntax error
+     * @throws ConnectionException
+     * @throws DatabaseException
      */
-    public function testUdfNotInstalled()
+    public function testUdfNotInstalled(): void
     {
+        $this->expectException(DatabaseException::class);
+        $this->expectExceptionMessage('Sphinx expr: syntax error');
+
         $this->conn->query('SELECT MY_UDF()');
     }
 
-    public function testCreateFunction()
+    /**
+     * @throws ConnectionException
+     * @throws DatabaseException
+     * @throws SphinxQLException
+     */
+    public function testCreateFunction(): void
     {
         $this->createHelper()->createFunction('my_udf', 'INT', 'test_udf.so')->execute();
         $this->assertSame(
@@ -184,8 +229,11 @@ class HelperTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @covers \Foolz\SphinxQL\Helper::truncateRtIndex
+     * @throws ConnectionException
+     * @throws DatabaseException
+     * @throws SphinxQLException
      */
-    public function testTruncateRtIndex()
+    public function testTruncateRtIndex(): void
     {
         $this->createSphinxQL()
             ->insert()
@@ -217,8 +265,13 @@ class HelperTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(0, $result);
     }
 
-    // actually executing these queries may not be useful nor easy to test
-    public function testMiscellaneous()
+    /**
+     * Actually executing these queries may not be useful nor easy to test
+     * @throws ConnectionException
+     * @throws DatabaseException
+     * @throws SphinxQLException
+     */
+    public function testMiscellaneous(): void
     {
         $query = $this->createHelper()->showMeta();
         $this->assertEquals('SHOW META', $query->compile()->getCompiled());

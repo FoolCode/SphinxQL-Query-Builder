@@ -1,16 +1,22 @@
 <?php
-
-use Foolz\SphinxQL\Drivers\Mysqli\Connection;
+use Foolz\SphinxQL\Drivers\ConnectionBase;
 use Foolz\Sphinxql\Drivers\ResultSetInterface;
+use Foolz\SphinxQL\Exception\ConnectionException;
+use Foolz\SphinxQL\Exception\DatabaseException;
+use Foolz\SphinxQL\Exception\ResultSetException;
+use Foolz\SphinxQL\Exception\SphinxQLException;
 use Foolz\SphinxQL\SphinxQL;
 use Foolz\SphinxQL\Tests\TestUtil;
 
-class ResultSetTest extends \PHPUnit\Framework\TestCase
+use PHPUnit\Framework\TestCase;
+
+class ResultSetTest extends TestCase
 {
+
     /**
-     * @var Connection
+     * @var ConnectionBase $conn
      */
-    public static $conn = null;
+    public static $conn;
 
     public static $data = array(
         0 => array('id' => '10', 'gid' => '9003',
@@ -31,6 +37,10 @@ class ResultSetTest extends \PHPUnit\Framework\TestCase
             'title' => 'what is there to do', 'content' => 'we need to create dummy data for tests'),
     );
 
+    /**
+     * @throws ConnectionException
+     * @throws DatabaseException
+     */
     public static function setUpBeforeClass(): void
     {
         $conn = TestUtil::getConnectionDriver();
@@ -43,12 +53,17 @@ class ResultSetTest extends \PHPUnit\Framework\TestCase
     /**
      * @return SphinxQL
      */
-    protected function createSphinxQL()
+    protected function createSphinxQL(): SphinxQL
     {
         return new SphinxQL(self::$conn);
     }
 
-    public function refill()
+    /**
+     * @throws ConnectionException
+     * @throws DatabaseException
+     * @throws SphinxQLException
+     */
+    public function refill(): void
     {
         $this->createSphinxQL()->getConnection()->query('TRUNCATE RTINDEX rt');
 
@@ -64,13 +79,22 @@ class ResultSetTest extends \PHPUnit\Framework\TestCase
         $sq->execute();
     }
 
-    public function testIsResultSet()
+    /**
+     * @throws ConnectionException
+     * @throws DatabaseException
+     */
+    public function testIsResultSet(): void
     {
         $res = self::$conn->query('SELECT * FROM rt');
         $this->assertInstanceOf(ResultSetInterface::class, $res);
     }
 
-    public function testStore()
+    /**
+     * @throws ConnectionException
+     * @throws DatabaseException
+     * @throws SphinxQLException
+     */
+    public function testStore(): void
     {
         $this->refill();
         $res = self::$conn->query('SELECT * FROM rt');
@@ -81,7 +105,12 @@ class ResultSetTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(2, $res->store()->getStored());
     }
 
-    public function testHasRow()
+    /**
+     * @throws ConnectionException
+     * @throws DatabaseException
+     * @throws SphinxQLException
+     */
+    public function testHasRow(): void
     {
         $this->refill();
         $res = self::$conn->query('SELECT * FROM rt');
@@ -92,7 +121,13 @@ class ResultSetTest extends \PHPUnit\Framework\TestCase
         $res->freeResult();
     }
 
-    public function testToRow()
+    /**
+     * @throws ConnectionException
+     * @throws DatabaseException
+     * @throws ResultSetException
+     * @throws SphinxQLException
+     */
+    public function testToRow(): void
     {
         $this->refill();
         $res = self::$conn->query('SELECT * FROM rt');
@@ -103,17 +138,29 @@ class ResultSetTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @expectedException        Foolz\SphinxQL\Exception\ResultSetException
+     * @expectedException        ResultSetException
      * @expectedExceptionMessage The row does not exist.
+     * @throws ConnectionException
+     * @throws DatabaseException
+     * @throws ResultSetException
+     * @throws SphinxQLException
      */
-    public function testToRowThrows()
+    public function testToRowThrows(): void
     {
+        $this->expectException(ResultSetException::class);
+        $this->expectExceptionMessage('The row does not exist.');
+
         $this->refill();
         $res = self::$conn->query('SELECT * FROM rt');
         $res->toRow(8);
     }
 
-    public function testHasNextRow()
+    /**
+     * @throws ConnectionException
+     * @throws DatabaseException
+     * @throws SphinxQLException
+     */
+    public function testHasNextRow(): void
     {
         $this->refill();
         $res = self::$conn->query('SELECT * FROM rt');
@@ -124,7 +171,13 @@ class ResultSetTest extends \PHPUnit\Framework\TestCase
         $res->freeResult();
     }
 
-    public function testToNextRow()
+    /**
+     * @throws ConnectionException
+     * @throws DatabaseException
+     * @throws ResultSetException
+     * @throws SphinxQLException
+     */
+    public function testToNextRow(): void
     {
         $this->refill();
         $res = self::$conn->query('SELECT * FROM rt');
@@ -135,24 +188,41 @@ class ResultSetTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @expectedException        Foolz\SphinxQL\Exception\ResultSetException
+     * @expectedException        ResultSetException
      * @expectedExceptionMessage The row does not exist.
+     * @throws ConnectionException
+     * @throws DatabaseException
+     * @throws ResultSetException
+     * @throws SphinxQLException
      */
-    public function testToNextRowThrows()
+    public function testToNextRowThrows(): void
     {
+        $this->expectException(ResultSetException::class);
+        $this->expectExceptionMessage('The row does not exist.');
+
         $this->refill();
         $res = self::$conn->query('SELECT * FROM rt WHERE id = 10');
         $res->toNextRow()->toNextRow();
     }
 
-    public function testCount()
+    /**
+     * @throws ConnectionException
+     * @throws DatabaseException
+     * @throws SphinxQLException
+     */
+    public function testCount(): void
     {
         $this->refill();
         $res = self::$conn->query('SELECT * FROM rt');
         $this->assertEquals(8, $res->count());
     }
 
-    public function testFetchAllAssoc()
+    /**
+     * @throws ConnectionException
+     * @throws DatabaseException
+     * @throws SphinxQLException
+     */
+    public function testFetchAllAssoc(): void
     {
         $expect = array(
             0 => array(
@@ -173,7 +243,12 @@ class ResultSetTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($expect[1], $array[1]);
     }
 
-    public function testFetchAssoc()
+    /**
+     * @throws ConnectionException
+     * @throws DatabaseException
+     * @throws SphinxQLException
+     */
+    public function testFetchAssoc(): void
     {
         $expect = array(
             0 => array(
@@ -211,7 +286,12 @@ class ResultSetTest extends \PHPUnit\Framework\TestCase
         $this->assertNull($res->fetchAssoc());
     }
 
-    public function testFetchAllNum()
+    /**
+     * @throws ConnectionException
+     * @throws DatabaseException
+     * @throws SphinxQLException
+     */
+    public function testFetchAllNum(): void
     {
         $expect = array(
             0 => array(
@@ -234,7 +314,12 @@ class ResultSetTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($expect, $array);
     }
 
-    public function testFetchNum()
+    /**
+     * @throws ConnectionException
+     * @throws DatabaseException
+     * @throws SphinxQLException
+     */
+    public function testFetchNum(): void
     {
         $expect = array(
             0 => array(
@@ -271,14 +356,24 @@ class ResultSetTest extends \PHPUnit\Framework\TestCase
         $this->assertNull($res->fetchNum());
     }
 
-    public function testGetAffectedRows()
+    /**
+     * @throws ConnectionException
+     * @throws DatabaseException
+     * @throws SphinxQLException
+     */
+    public function testGetAffectedRows(): void
     {
         $this->refill();
         $res = self::$conn->query('UPDATE rt SET gid=0 WHERE id > 0');
         $this->assertSame(8, $res->getAffectedRows());
     }
 
-    public function testArrayAccess()
+    /**
+     * @throws ConnectionException
+     * @throws DatabaseException
+     * @throws SphinxQLException
+     */
+    public function testArrayAccess(): void
     {
         $expect = array(
             0 => array(
@@ -298,14 +393,24 @@ class ResultSetTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($expect[1], $res[1]);
     }
 
-    public function testCountable()
+    /**
+     * @throws ConnectionException
+     * @throws DatabaseException
+     * @throws SphinxQLException
+     */
+    public function testCountable(): void
     {
         $this->refill();
         $res = self::$conn->query('SELECT * FROM rt');
-        $this->assertEquals($res->count(), count($res));
+        $this->assertCount($res->count(), $res);
     }
 
-    public function testIterator()
+    /**
+     * @throws ConnectionException
+     * @throws DatabaseException
+     * @throws SphinxQLException
+     */
+    public function testIterator(): void
     {
         $expect = array(
             0 => array(

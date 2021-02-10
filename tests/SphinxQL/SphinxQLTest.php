@@ -259,6 +259,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
      * @covers \Foolz\SphinxQL\SphinxQL::columns
      * @covers \Foolz\SphinxQL\SphinxQL::values
      * @covers \Foolz\SphinxQL\SphinxQL::into
+     * @throws \Foolz\SphinxQL\Exception\ConnectionException|\Foolz\SphinxQL\Exception\DatabaseException|\Foolz\SphinxQL\Exception\SphinxQLException
      */
     public function testReplace()
     {
@@ -270,9 +271,8 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
                 'title' => 'modified',
                 'content' => 'this field was modified with replace',
                 'gid' => 9002
-            ))
-            ->execute()
-            ->fetchAllAssoc();
+            ))->execute()
+            ->getAffectedRows();
 
         $this->assertSame(1, $result);
 
@@ -292,7 +292,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
             ->values(10, 'modifying the same line again', 'because i am that lazy', 9003)
             ->values(11, 'i am getting really creative with these strings', 'i\'ll need them to test MATCH!', 300)
             ->execute()
-            ->fetchAllAssoc();
+            ->getAffectedRows();
 
         $this->assertSame(2, $result);
 
@@ -331,6 +331,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
      * @covers \Foolz\SphinxQL\SphinxQL::compileSelect
      * @covers \Foolz\SphinxQL\SphinxQL::update
      * @covers \Foolz\SphinxQL\SphinxQL::value
+     * @throws \Foolz\SphinxQL\Exception\ConnectionException|\Foolz\SphinxQL\Exception\DatabaseException|\Foolz\SphinxQL\Exception\SphinxQLException
      */
     public function testUpdate()
     {
@@ -339,7 +340,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
             ->where('id', '=', 11)
             ->value('gid', 201)
             ->execute()
-            ->fetchAllAssoc();
+            ->getAffectedRows();
 
         $this->assertSame(1, $result);
 
@@ -348,7 +349,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
             ->where('gid', '=', 300)
             ->value('gid', 305)
             ->execute()
-            ->fetchAllAssoc();
+            ->getAffectedRows();
 
         $this->assertSame(3, $result);
 
@@ -390,7 +391,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
             ->where('id', '=', 15)
             ->value('tags', array(111, 222))
             ->execute()
-            ->fetchAllAssoc();
+            ->getAffectedRows();
         $this->assertSame(1, $result);
 
         $result = $this->createSphinxQL()
@@ -846,6 +847,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
      * @covers \Foolz\SphinxQL\SphinxQL::compile
      * @covers \Foolz\SphinxQL\SphinxQL::compileDelete
      * @covers \Foolz\SphinxQL\SphinxQL::delete
+     * @throws \Foolz\SphinxQL\Exception\ConnectionException|\Foolz\SphinxQL\Exception\DatabaseException|\Foolz\SphinxQL\Exception\SphinxQLException
      */
     public function testDelete()
     {
@@ -857,7 +859,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
             ->where('id', 'IN', [11, 12, 13])
             ->match('content', 'content')
             ->execute()
-            ->fetchAllAssoc();
+            ->getAffectedRows();
 
         $this->assertSame(2, $result);
     }

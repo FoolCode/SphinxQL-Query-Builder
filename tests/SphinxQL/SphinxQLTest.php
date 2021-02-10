@@ -919,9 +919,9 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
             ->executeBatch()
             ->getStored();
 
-        $this->assertEquals('10', $result[0][0]['id']);
-        $this->assertEquals('1', $result[1][0]['Value']);
-        $this->assertEquals('11', $result[2][0]['id']);
+        $this->assertEquals('10', $result[0][0]['id'] ?? null);
+        $this->assertEquals('1', $result[1][0]['Value'] ?? null);
+        $this->assertEquals('11', $result[2][0]['id'] ?? null);
     }
 
     /**

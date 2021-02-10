@@ -91,6 +91,9 @@ class ConnectionTest extends TestCase
         $this->assertNotNull($this->connection->getConnection());
     }
 
+    /**
+     * @throws ConnectionException
+     */
     public function testGetConnectionThrowsException(): void
     {
         $this->expectException(ConnectionException::class);
@@ -109,6 +112,9 @@ class ConnectionTest extends TestCase
         self::assertIsBool($this->connection->connect());
     }
 
+    /**
+     * @throws ConnectionException
+     */
     public function testConnectThrowsException(): void
     {
         $this->expectException(ConnectionException::class);
@@ -126,6 +132,9 @@ class ConnectionTest extends TestCase
         $this->assertTrue($this->connection->ping());
     }
 
+    /**
+     * @throws ConnectionException
+     */
     public function testClose(): void
     {
         $this->expectException(ConnectionException::class);
@@ -166,11 +175,18 @@ class ConnectionTest extends TestCase
     {
         $this->connection->connect();
         $query = $this->connection->multiQuery(array('SHOW META'));
+
+        $result = $query->getNext();
+        $resultArr = [];
+        if ($result) {
+            $resultArr = $result->fetchAllAssoc();
+        }
+
         $this->assertSame(array(
             array('Variable_name' => 'total', 'Value' => '0'),
             array('Variable_name' => 'total_found', 'Value' => '0'),
             array('Variable_name' => 'time', 'Value' => '0.000'),
-        ), $query->getStored());
+        ), $resultArr);
     }
 
     /**
@@ -181,7 +197,7 @@ class ConnectionTest extends TestCase
     public function testEmptyMultiQuery(): void
     {
         $this->expectException(SphinxQLException::class);
-        $this->expectErrorMessage('The Queue is empty.');
+        $this->expectExceptionMessage('The Queue is empty.');
         
         $this->connection->connect();
         $this->connection->multiQuery(array());

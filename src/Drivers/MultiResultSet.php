@@ -100,7 +100,11 @@ class MultiResultSet implements MultiResultSetInterface
      */
     public function next(): void
     {
-        $this->rowSet = $this->getNext() ?: null;
+        $next = $this->getNext();
+        if (!$next) {
+            return;
+        }
+        $this->rowSet = $next;
     }
 
     /**

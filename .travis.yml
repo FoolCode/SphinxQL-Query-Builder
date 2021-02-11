@@ -29,15 +29,15 @@ addons:
 before_install:
   - mkdir $HOME/search
   - pushd $HOME/search
-  - $TRAVIS_BUILD_DIR/tests/install.sh
+#  - $TRAVIS_BUILD_DIR/install.sh
   - popd
 
 install: composer update --prefer-dist --no-interaction
 
 before_script:
   - composer dump-autoload
-  - cd tests
-  - $TRAVIS_BUILD_DIR/tests/run.sh
-  - cd ..
+#  - cd tests
+#  - $TRAVIS_BUILD_DIR/run.sh
+#  - cd ..
 
-script: ./vendor/bin/phpunit --configuration tests/travis/$DRIVER.phpunit.xml --coverage-text $EXCLUDE_GROUP
+script: ./vendor/bin/phpunit --configuration tests/travis/phpunit.$DRIVER.xml --coverage-text $EXCLUDE_GROUP

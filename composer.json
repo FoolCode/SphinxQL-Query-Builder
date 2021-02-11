@@ -1,12 +1,26 @@
 {
     "name": "foolz/sphinxql-query-builder",
-    "replace": {"foolz/sphinxql": "self.version"},
+    "replace": {
+        "foolz/sphinxql": "self.version"
+    },
     "type": "library",
     "description": "A PHP query builder for SphinxQL. Uses MySQLi to connect to the Sphinx server.",
-    "keywords": ["database", "sphinxql", "sphinx", "search", "SQL", "query builder"],
+    "keywords": [
+        "database",
+        "search",
+        "sphinx",
+        "sphinxql",
+        "SQL",
+        "query builder"
+    ],
     "homepage": "http://www.foolz.us",
     "license": "Apache-2.0",
-    "authors": [{"name": "foolz", "email": "support@foolz.us"}],
+    "authors": [
+        {
+            "name": "foolz",
+            "email": "support@foolz.us"
+        }
+    ],
     "support": {
         "email": "support@foolz.us",
         "irc": "irc://irc.irchighway.net/fooldriver"
@@ -24,7 +38,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Foolz\\SphinxQL\\Tests\\": "tests/SphinxQL"
+            "Foolz\\SphinxQL\\Tests\\": "tests/"
         }
     }
 }

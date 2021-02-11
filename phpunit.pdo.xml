@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<phpunit colors="true" stopOnFailure="false" bootstrap="../bootstrap.php">
+    <php>
+        <var name="driver" value="Pdo"/>
+    </php>
+    <testsuites>
+        <testsuite name="SphinxQL Query Builder Test Suite">
+            <directory suffix=".php">../SphinxQL</directory>
+        </testsuite>
+    </testsuites>
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">../../src</directory>
+            <exclude>
+                <directory suffix=".php">../../src/Drivers/Mysqli</directory>
+                <file>../../src/Drivers/SimpleConnection.php</file>
+            </exclude>
+        </whitelist>
+    </filter>
+</phpunit>

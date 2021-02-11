@@ -64,7 +64,7 @@ class MultiResultSetTest extends TestCase
      */
     public function refill(): void
     {
-        $this->createSphinxQL()->query('TRUNCATE RTINDEX rt')->executeBatch();
+//        $this->createSphinxQL()->query('TRUNCATE RTINDEX rt')->execute();
 
         $sq = $this->createSphinxQL()
             ->insert()

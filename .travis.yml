@@ -40,4 +40,4 @@ before_script:
 #  - $TRAVIS_BUILD_DIR/run.sh
 #  - cd ..
 
-script: ./vendor/bin/phpunit --configuration tests/travis/phpunit.$DRIVER.xml --coverage-text $EXCLUDE_GROUP
+script: ./vendor/bin/phpunit --configuration phpunit.$DRIVER.xml --coverage-text $EXCLUDE_GROUP

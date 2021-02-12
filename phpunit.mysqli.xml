@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit colors="true" stopOnFailure="false" bootstrap="vendor/autoload.php">
-    <php>
-        <var name="driver" value="Mysqli"/>
-    </php>
-    <testsuites>
-        <testsuite name="SphinxQL Query Builder Test Suite">
-            <directory suffix=".php">./tests</directory>
-        </testsuite>
-    </testsuites>
-    <filter>
-        <whitelist processUncoveredFilesFromWhitelist="true">
-            <directory suffix=".php">../../src</directory>
-            <exclude>
-                <directory suffix=".php">../../src/Drivers/Pdo</directory>
-                <file>../../src/Drivers/SimpleConnection.php</file>
-            </exclude>
-        </whitelist>
-    </filter>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" colors="true" bootstrap="vendor/autoload.php" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
+  <coverage processUncoveredFiles="true">
+    <include>
+      <directory suffix=".php">../../src</directory>
+    </include>
+    <exclude>
+      <directory suffix=".php">../../src/Drivers/Pdo</directory>
+      <file>../../src/Drivers/SimpleConnection.php</file>
+    </exclude>
+  </coverage>
+  <php>
+    <var name="driver" value="Mysqli"/>
+  </php>
+  <testsuites>
+    <testsuite name="SphinxQL Query Builder Test Suite">
+      <directory suffix=".php">./tests</directory>
+    </testsuite>
+  </testsuites>
 </phpunit>

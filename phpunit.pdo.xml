@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<phpunit colors="true" stopOnFailure="false" bootstrap="../bootstrap.php">
+<phpunit colors="true" stopOnFailure="false" bootstrap="vendor/autoload.php">
     <php>
         <var name="driver" value="Pdo"/>
     </php>
     <testsuites>
         <testsuite name="SphinxQL Query Builder Test Suite">
-            <directory suffix=".php">../SphinxQL</directory>
+            <directory suffix=".php">./tests</directory>
         </testsuite>
     </testsuites>
     <filter>

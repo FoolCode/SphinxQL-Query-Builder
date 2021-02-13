@@ -121,29 +121,51 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
             ->fetchAllAssoc();
 
         array_shift($describe);
-        $this->assertSame(
-            array(
-                //	array('Field' => 'id', 'Type' => 'integer'), this can be bigint on id64 sphinx
-                array('Field' => 'title', 'Type' => 'field','Properties'=>'indexed','Key'=>''),
-                array('Field' => 'content', 'Type' => 'field','Properties'=>'indexed','Key'=>''),
-                array('Field' => 'gid', 'Type' => 'uint','Properties'=>'','Key'=>''),
-            ),
-            $describe
-        );
+        $this->assertSame([
+			[
+				'Field'			=> 'title',
+				'Type'			=> 'field',
+//				'Properties'	=> 'indexed',
+//				'Key'			=> '',
+			],
+			[
+				'Field'			=> 'content',
+				'Type'			=> 'field',
+//				'Properties'	=> 'indexed',
+//				'Key'			=> '',
+			],
+			[
+				'Field'			=> 'gid',
+				'Type'			=> 'uint',
+//				'Properties'	=> '',
+//				'Key'			=> '',
+			],
+		],$describe);
 
         $describe = $this->createSphinxQL()->query('DESCRIBE rt');
         $result  = $describe->execute()->fetchAllAssoc();
 
         array_shift($result);
-        $this->assertSame(
-            array(
-                //	array('Field' => 'id', 'Type' => 'integer'), this can be bigint on id64 sphinx
-                array('Field' => 'title', 'Type' => 'field','Properties'=>'indexed','Key'=>''),
-                array('Field' => 'content', 'Type' => 'field','Properties'=>'indexed','Key'=>''),
-                array('Field' => 'gid', 'Type' => 'uint','Properties'=>'','Key'=>''),
-            ),
-            $result
-        );
+        $this->assertSame([
+			[
+				'Field'			=> 'title',
+				'Type'			=> 'field',
+//				'Properties'	=> 'indexed',
+//				'Key'			=> '',
+			],
+			[
+				'Field'			=> 'content',
+				'Type'			=> 'field',
+//				'Properties'	=> 'indexed',
+//				'Key'			=> '',
+			],
+			[
+				'Field'			=> 'gid',
+				'Type'			=> 'uint',
+//				'Properties'	=> '',
+//				'Key'			=> '',
+			],
+		],$result);
     }
 
     /**

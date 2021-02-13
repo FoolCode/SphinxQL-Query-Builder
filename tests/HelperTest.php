@@ -76,20 +76,20 @@ class HelperTest extends TestCase{
 			[
 				'Field'			=> 'title',
 				'Type'			=> 'field',
-				'Properties'	=> 'indexed',
-				'Key'			=> '',
+//				'Properties'	=> 'indexed',
+//				'Key'			=> '',
 			],
 			[
 				'Field'			=> 'content',
 				'Type'			=> 'field',
-				'Properties'	=> 'indexed',
-				'Key'			=> '',
+//				'Properties'	=> 'indexed',
+//				'Key'			=> '',
 			],
 			[
 				'Field'			=> 'gid',
 				'Type'			=> 'uint',
-				'Properties'	=> '',
-				'Key'			=> '',
+//				'Properties'	=> '',
+//				'Key'			=> '',
 			],
 		],$describe);
 	}

@@ -31,11 +31,6 @@ before_install:
   - pushd $HOME/search
   - $TRAVIS_BUILD_DIR/bin/install.sh
   - popd
-  - ls $TRAVIS_BUILD_DIR
-  - ls $TRAVIS_BUILD_DIR/bin
-  - ls $TRAVIS_BUILD_DIR/data
-  - ls $HOME
-  - ls $HOME/search
 
 install: composer update --prefer-dist --no-interaction
 

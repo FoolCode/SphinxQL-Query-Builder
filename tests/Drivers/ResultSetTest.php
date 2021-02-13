@@ -12,7 +12,8 @@ use Foolz\SphinxQL\Tests\TestUtil;
 
 use PHPUnit\Framework\TestCase;
 
-class ResultSetTest extends TestCase{
+class ResultSetTest extends TestCase
+{
 
     /**
      * @var ConnectionBase $conn
@@ -21,53 +22,53 @@ class ResultSetTest extends TestCase{
 
     public static $DATA = [
         0 => [
-			'id'		=> '10',
-			'gid'		=> '9003',
-			'title'		=> 'modifying the same line again',
-			'content'	=> 'because i am that lazy',
-		],
+            'id'		=> '10',
+            'gid'		=> '9003',
+            'title'		=> 'modifying the same line again',
+            'content'	=> 'because i am that lazy',
+        ],
         1 => [
-			'id'		=> '11',
-			'gid'		=> '201',
-			'title'		=> 'replacing value by value',
-			'content'	=> 'i have no idea who would use this directly',
-		],
+            'id'		=> '11',
+            'gid'		=> '201',
+            'title'		=> 'replacing value by value',
+            'content'	=> 'i have no idea who would use this directly',
+        ],
         2 => [
-			'id'		=> '12',
-			'gid'		=> '200',
-			'title'		=> 'simple logic',
-			'content'	=> 'inside the box there was the content',
-		],
+            'id'		=> '12',
+            'gid'		=> '200',
+            'title'		=> 'simple logic',
+            'content'	=> 'inside the box there was the content',
+        ],
         3 => [
-			'id'		=> '13',
-			'gid'		=> '304',
-			'title'		=> 'i am getting bored',
-			'content'	=> 'with all this CONTENT',
-		],
+            'id'		=> '13',
+            'gid'		=> '304',
+            'title'		=> 'i am getting bored',
+            'content'	=> 'with all this CONTENT',
+        ],
         4 => [
-			'id'		=> '14',
-			'gid'		=> '304',
-			'title'		=> 'i want a vacation',
-			'content'	=> 'the code is going to break sometime',
-		],
+            'id'		=> '14',
+            'gid'		=> '304',
+            'title'		=> 'i want a vacation',
+            'content'	=> 'the code is going to break sometime',
+        ],
         5 => [
-			'id'		=> '15',
-			'gid'		=> '304',
-			'title'		=> 'there\'s no hope in this class',
-			'content'	=> 'just give up',
-		],
+            'id'		=> '15',
+            'gid'		=> '304',
+            'title'		=> 'there\'s no hope in this class',
+            'content'	=> 'just give up',
+        ],
         6 => [
-			'id'		=> '16',
-			'gid'		=> '500',
-			'title'		=> 'we need to test',
-			'content'	=> 'selecting the best result in groups',
-		],
+            'id'		=> '16',
+            'gid'		=> '500',
+            'title'		=> 'we need to test',
+            'content'	=> 'selecting the best result in groups',
+        ],
         7 => [
-			'id'		=> '17',
-			'gid'		=> '500',
-			'title'		=> 'what is there to do',
-			'content'	=> 'we need to create dummy data for tests',
-		],
+            'id'		=> '17',
+            'gid'		=> '500',
+            'title'		=> 'what is there to do',
+            'content'	=> 'we need to create dummy data for tests',
+        ],
     ];
 
     /**
@@ -469,5 +470,4 @@ class ResultSetTest extends TestCase{
         }
         $this->assertEmpty($array);
     }
-
 }

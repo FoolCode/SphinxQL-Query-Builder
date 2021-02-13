@@ -10,7 +10,8 @@ use Foolz\SphinxQL\Tests\TestUtil;
 
 use PHPUnit\Framework\TestCase;
 
-class ConnectionTest extends TestCase{
+class ConnectionTest extends TestCase
+{
 
     /**
      * @var Connection $connection
@@ -20,7 +21,7 @@ class ConnectionTest extends TestCase{
     protected function setUp(): void
     {
         $this->connection = TestUtil::getConnectionDriver();
-        $this->connection->setParam('port',9307);
+        $this->connection->setParam('port', 9307);
     }
 
     protected function tearDown(): void
@@ -36,66 +37,66 @@ class ConnectionTest extends TestCase{
     public function testGetParams(): void
     {
         $this->assertSame([
-			'host'		=> '127.0.0.1',
-			'port'		=> 9307,
-			'socket'	=> null,
-		],$this->connection->getParams());
+            'host'		=> '127.0.0.1',
+            'port'		=> 9307,
+            'socket'	=> null,
+        ], $this->connection->getParams());
 
         // create a new connection and get info
         $this->connection->setParams([
-			'host'		=> '127.0.0.2',
-		]);
-        $this->connection->setParam('port',9308);
+            'host'		=> '127.0.0.2',
+        ]);
+        $this->connection->setParam('port', 9308);
         $this->assertSame([
-			'host'		=> '127.0.0.2',
-			'port'		=> 9308,
-			'socket'	=> null,
-		],$this->connection->getParams());
+            'host'		=> '127.0.0.2',
+            'port'		=> 9308,
+            'socket'	=> null,
+        ], $this->connection->getParams());
 
-        $this->connection->setParam('host','localhost');
+        $this->connection->setParam('host', 'localhost');
         $this->assertSame([
-			'host'		=> '127.0.0.1',
-			'port'		=> 9308,
-			'socket'	=> null,
-		],$this->connection->getParams());
+            'host'		=> '127.0.0.1',
+            'port'		=> 9308,
+            'socket'	=> null,
+        ], $this->connection->getParams());
 
         // create a unix socket connection with host param
-        $this->connection->setParam('host','unix:/var/run/sphinx.sock');
+        $this->connection->setParam('host', 'unix:/var/run/sphinx.sock');
         $this->assertSame([
-			'host'		=> null,
-			'port'		=> 9308,
-			'socket'	=> '/var/run/sphinx.sock',
-		],$this->connection->getParams());
+            'host'		=> null,
+            'port'		=> 9308,
+            'socket'	=> '/var/run/sphinx.sock',
+        ], $this->connection->getParams());
 
         // create unix socket connection with socket param
         $this->connection->setParam('host', '127.0.0.1');
         $this->connection->setParam('socket', '/var/run/sphinx.sock');
         $this->assertSame([
-			'host'		=> null,
-			'port'		=> 9308,
-			'socket'	=> '/var/run/sphinx.sock',
-		],$this->connection->getParams());
+            'host'		=> null,
+            'port'		=> 9308,
+            'socket'	=> '/var/run/sphinx.sock',
+        ], $this->connection->getParams());
     }
 
     public function testGetConnectionParams(): void
     {
         // verify that (deprecated) getConnectionParams continues to work
         $this->assertSame([
-			'host'		=> '127.0.0.1',
-			'port'		=> 9307,
-			'socket'	=> null,
-		],$this->connection->getParams());
+            'host'		=> '127.0.0.1',
+            'port'		=> 9307,
+            'socket'	=> null,
+        ], $this->connection->getParams());
 
         // create a new connection and get info
         $this->connection->setParams([
-			'host'		=> '127.0.0.1',
-			'port'		=> 9308,
-		]);
+            'host'		=> '127.0.0.1',
+            'port'		=> 9308,
+        ]);
         $this->assertSame([
-			'host'		=> '127.0.0.1',
-			'port'		=> 9308,
-			'socket'	=> null,
-		],$this->connection->getParams());
+            'host'		=> '127.0.0.1',
+            'port'		=> 9308,
+            'socket'	=> null,
+        ], $this->connection->getParams());
     }
 
     /**
@@ -124,9 +125,9 @@ class ConnectionTest extends TestCase{
     {
         $this->connection->connect();
 
-        $this->connection->setParam('options',[
-			MYSQLI_OPT_CONNECT_TIMEOUT => 1,
-		]);
+        $this->connection->setParam('options', [
+            MYSQLI_OPT_CONNECT_TIMEOUT => 1,
+        ]);
         self::assertIsBool($this->connection->connect());
     }
 
@@ -179,20 +180,19 @@ class ConnectionTest extends TestCase{
         $this->connection->connect();
 
         $this->assertSame([
-			[
-				'Variable_name'		=> 'total',
-				'Value'				=> '0',
-			],
-			[
-				'Variable_name'		=> 'total_found',
-				'Value'				=> '0',
-			],
-			[
-				'Variable_name'		=> 'time',
-				'Value'				=> '0.000',
-			],
-		],$this->connection->query('SHOW META')->store()->fetchAllAssoc());
-
+            [
+                'Variable_name'		=> 'total',
+                'Value'				=> '0',
+            ],
+            [
+                'Variable_name'		=> 'total_found',
+                'Value'				=> '0',
+            ],
+            [
+                'Variable_name'		=> 'time',
+                'Value'				=> '0.000',
+            ],
+        ], $this->connection->query('SHOW META')->store()->fetchAllAssoc());
     }
 
     //TODO
@@ -214,19 +214,19 @@ class ConnectionTest extends TestCase{
 //        }
 //
 //        $this->assertSame([
-//			[
-//				'Variable_name'		=> 'total',
-//				'Value'				=> '0',
-//			],
-//			[
-//				'Variable_name'		=> 'total_found',
-//				'Value'				=> '0',
-//			],
-//			[
-//				'Variable_name'		=> 'time',
-//				'Value'				=> '0.000',
-//			],
-//		], $resultArr);
+    //			[
+    //				'Variable_name'		=> 'total',
+    //				'Value'				=> '0',
+    //			],
+    //			[
+    //				'Variable_name'		=> 'total_found',
+    //				'Value'				=> '0',
+    //			],
+    //			[
+    //				'Variable_name'		=> 'time',
+    //				'Value'				=> '0.000',
+    //			],
+    //		], $resultArr);
 //    }
 
     /**
@@ -314,8 +314,9 @@ class ConnectionTest extends TestCase{
     public function testQuoteArr(): void
     {
         $this->connection->connect();
-        $this->assertEquals(['null', 1, 0, "fo'o'bar", 123, '12.300000', "'12.3'", "'12'"],
-            $this->connection->quoteArr([null, true, false, new Expression("fo'o'bar"), 123, 12.3, '12.3', '12']));
+        $this->assertEquals(
+            ['null', 1, 0, "fo'o'bar", 123, '12.300000', "'12.3'", "'12'"],
+            $this->connection->quoteArr([null, true, false, new Expression("fo'o'bar"), 123, 12.3, '12.3', '12'])
+        );
     }
-
 }

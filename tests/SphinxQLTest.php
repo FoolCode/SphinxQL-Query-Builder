@@ -64,9 +64,9 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
      */
     public function refill(): void
     {
-		$conn = TestUtil::getConnectionDriver();
-		$conn->setParam('port', 9307);
-		self::$conn = $conn;
+        $conn = TestUtil::getConnectionDriver();
+        $conn->setParam('port', 9307);
+        self::$conn = $conn;
 
         $this->createSphinxQL()->getConnection()->query('TRUNCATE RTINDEX rt');
 
@@ -121,51 +121,81 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
             ->fetchAllAssoc();
 
         array_shift($describe);
-        $this->assertSame([
-			[
-				'Field'			=> 'title',
-				'Type'			=> 'field',
-//				'Properties'	=> 'indexed',
-//				'Key'			=> '',
-			],
-			[
-				'Field'			=> 'content',
-				'Type'			=> 'field',
-//				'Properties'	=> 'indexed',
-//				'Key'			=> '',
-			],
-			[
-				'Field'			=> 'gid',
-				'Type'			=> 'uint',
-//				'Properties'	=> '',
-//				'Key'			=> '',
-			],
-		],$describe);
+
+
+        $expect = (TestUtil::getSearchBuild()==='SPHINX3')?[
+            [
+                'Field'			=> 'title',
+                'Type'			=> 'field',
+                'Properties'	=> 'indexed',
+                'Key'			=> '',
+            ],
+            [
+                'Field'			=> 'content',
+                'Type'			=> 'field',
+                'Properties'	=> 'indexed',
+                'Key'			=> '',
+            ],
+            [
+                'Field'			=> 'gid',
+                'Type'			=> 'uint',
+                'Properties'	=> '',
+                'Key'			=> '',
+            ],
+        ]:[
+            [
+                'Field'			=> 'title',
+                'Type'			=> 'field',
+            ],
+            [
+                'Field'			=> 'content',
+                'Type'			=> 'field',
+            ],
+            [
+                'Field'			=> 'gid',
+                'Type'			=> 'uint',
+            ],
+        ];
+        $this->assertSame($expect, $describe);
 
         $describe = $this->createSphinxQL()->query('DESCRIBE rt');
         $result  = $describe->execute()->fetchAllAssoc();
 
         array_shift($result);
-        $this->assertSame([
-			[
-				'Field'			=> 'title',
-				'Type'			=> 'field',
-//				'Properties'	=> 'indexed',
-//				'Key'			=> '',
-			],
-			[
-				'Field'			=> 'content',
-				'Type'			=> 'field',
-//				'Properties'	=> 'indexed',
-//				'Key'			=> '',
-			],
-			[
-				'Field'			=> 'gid',
-				'Type'			=> 'uint',
-//				'Properties'	=> '',
-//				'Key'			=> '',
-			],
-		],$result);
+        $expect = (TestUtil::getSearchBuild()==='SPHINX3')?[
+            [
+                'Field'			=> 'title',
+                'Type'			=> 'field',
+                'Properties'	=> 'indexed',
+                'Key'			=> '',
+            ],
+            [
+                'Field'			=> 'content',
+                'Type'			=> 'field',
+                'Properties'	=> 'indexed',
+                'Key'			=> '',
+            ],
+            [
+                'Field'			=> 'gid',
+                'Type'			=> 'uint',
+                'Properties'	=> '',
+                'Key'			=> '',
+            ],
+        ]:[
+            [
+                'Field'			=> 'title',
+                'Type'			=> 'field',
+            ],
+            [
+                'Field'			=> 'content',
+                'Type'			=> 'field',
+            ],
+            [
+                'Field'			=> 'gid',
+                'Type'			=> 'uint',
+            ],
+        ];
+        $this->assertSame($expect, $result);
     }
 
     /**

@@ -3,15 +3,21 @@ namespace Foolz\SphinxQL\Tests;
 
 use Foolz\SphinxQL\Drivers\ConnectionBase;
 
-class TestUtil{
+class TestUtil
+{
 
     /**
      * @return ConnectionBase
      */
-    public static function getConnectionDriver(): ConnectionBase{
+    public static function getConnectionDriver(): ConnectionBase
+    {
         $connection = '\\Foolz\\SphinxQL\\Drivers\\'.$GLOBALS['driver'].'\\Connection';
 
         return new $connection();
     }
 
+    public static function getSearchBuild(): string
+    {
+        return $GLOBALS['_SERVER']['SEARCH_BUILD'] ?? '';
+    }
 }

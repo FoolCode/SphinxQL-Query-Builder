@@ -11,3 +11,5 @@ case $SEARCH_BUILD in
     export WORK=$HOME/search
     ;;
 esac
+
+sh ./run.sh

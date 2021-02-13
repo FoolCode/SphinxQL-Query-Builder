@@ -37,8 +37,7 @@ install: composer update --prefer-dist --no-interaction
 before_script:
   - composer dump-autoload
   - cd bin
-  - $TRAVIS_BUILD_DIR/bin/env.sh
-  - $TRAVIS_BUILD_DIR/bin/run.sh
+  - $TRAVIS_BUILD_DIR/bin/run-env.sh
   - cd ..
 
 script: ./vendor/bin/phpunit --configuration phpunit.$DRIVER.xml --coverage-text $EXCLUDE_GROUP

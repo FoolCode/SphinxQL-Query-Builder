@@ -59,9 +59,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
      */
     public function refill(): void
     {
-//    	if(TestUtil::getDriver()==='pdo'){
         $this->createSphinxQL()->getConnection()->query('TRUNCATE RTINDEX rt');
-        //		}
 
         $sq = $this->createSphinxQL()
             ->insert()

@@ -1241,7 +1241,7 @@ class SphinxQL
      *
      * @return self
      */
-    public function values($array)
+    public function values(...$array)
     {
         if (is_array($array)) {
             $this->values[] = $array;

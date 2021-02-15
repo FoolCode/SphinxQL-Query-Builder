@@ -12,7 +12,8 @@ use Foolz\SphinxQL\Tests\TestUtil;
 
 use PHPUnit\Framework\TestCase;
 
-class MultiResultSetTest extends TestCase{
+class MultiResultSetTest extends TestCase
+{
 
 //    /**
 //     * @var ConnectionBase
@@ -235,5 +236,4 @@ class MultiResultSetTest extends TestCase{
 //        $this->assertFalse(isset($res[-1]));
 //        $this->assertFalse(isset($res[2]));
 //    }
-
 }

@@ -11,15 +11,16 @@ class TestUtil
      */
     public static function getConnectionDriver(): ConnectionBase
     {
-        $connection = '\\Foolz\\SphinxQL\\Drivers\\'.$GLOBALS['driver'].'\\Connection';
+        $connection = '\\Foolz\\SphinxQL\\Drivers\\'.self::getDriver().'\\Connection';
 
         return new $connection();
     }
 
-	public static function getDriver(): string
-	{
-		return $GLOBALS['_SERVER']['DRIVER'] ?? '';
-	}
+    public static function getDriver(): string
+    {
+        return $GLOBALS['driver'];
+        //		return $GLOBALS['_SERVER']['DRIVER'] ?? '';
+    }
 
     public static function getSearchBuild(): string
     {

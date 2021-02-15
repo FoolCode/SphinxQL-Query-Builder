@@ -15,7 +15,8 @@ use PHPUnit\Framework\TestCase;
  * @package Foolz\SphinxQL
  * @author Vicent Valls
  */
-class PercolateTest extends TestCase{
+class PercolateTest extends TestCase
+{
 
 //    /**
 //     * @var ConnectionBase $conn
@@ -306,5 +307,4 @@ class PercolateTest extends TestCase{
 //            [13, 'pq', ['full text query terms','full text'], [Percolate::OPTION_DOCS_JSON => 1], null],
 //        ];
 //    }
-
 }

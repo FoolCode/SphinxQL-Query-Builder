@@ -1237,11 +1237,11 @@ class SphinxQL
      * Used in: INSERT, REPLACE
      * func_get_args()-enabled
      *
-     * @param array $array The array of values matching the columns from $this->columns()
+     * @param array $array [optional] The array of values matching the columns from $this->columns()
      *
      * @return self
      */
-    public function values(...$array)
+    public function values($array)
     {
         if (is_array($array)) {
             $this->values[] = $array;

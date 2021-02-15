@@ -59,7 +59,9 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
      */
     public function refill(): void
     {
-        $this->createSphinxQL()->getConnection()->query('TRUNCATE RTINDEX rt');
+//    	if(TestUtil::getDriver()==='pdo'){
+			$this->createSphinxQL()->getConnection()->query('TRUNCATE RTINDEX rt');
+//		}
 
         $sq = $this->createSphinxQL()
             ->insert()
@@ -1012,6 +1014,9 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
      */
     public function testSelect(): void
     {
+    	if(TestUtil::getDriver()==='mysqli'){
+    		return;
+		}
         $this->refill();
         $result = $this->createSphinxQL()
             ->select(array('id', 'gid'))
@@ -1059,6 +1064,9 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
      */
     public function testSubselect(): void
     {
+		if(TestUtil::getDriver()==='mysqli'){
+			return;
+		}
         $this->refill();
         $query = $this->createSphinxQL()
             ->select()
@@ -1116,6 +1124,9 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
      */
     public function testSetSelect(): void
     {
+		if(TestUtil::getDriver()==='mysqli'){
+			return;
+		}
         $this->refill();
         $q1 = $this->createSphinxQL()
             ->select(array('id', 'gid'))
@@ -1165,6 +1176,9 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
      */
     public function testFacet(): void
     {
+		if(TestUtil::getDriver()==='mysqli'){
+			return;
+		}
         $this->refill();
 
         // test both setting and not setting the connection

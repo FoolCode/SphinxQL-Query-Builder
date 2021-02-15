@@ -16,6 +16,11 @@ class TestUtil
         return new $connection();
     }
 
+	public static function getDriver(): string
+	{
+		return $GLOBALS['_SERVER']['DRIVER'] ?? '';
+	}
+
     public static function getSearchBuild(): string
     {
         return $GLOBALS['_SERVER']['SEARCH_BUILD'] ?? '';

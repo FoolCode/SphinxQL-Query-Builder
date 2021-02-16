@@ -7,9 +7,9 @@ use Foolz\SphinxQL\Exception\DatabaseException;
 class MultiResultSet implements MultiResultSetInterface
 {
     /**
-     * @var null|array
+     * @var array
      */
-    protected $stored;
+    protected $stored = [];
 
     /**
      * @var int
@@ -98,9 +98,13 @@ class MultiResultSet implements MultiResultSetInterface
     /**
      * @inheritdoc
      */
-    public function next()
+    public function next(): void
     {
-        $this->rowSet = $this->getNext();
+        $next = $this->getNext();
+        if (!$next) {
+            return;
+        }
+        $this->rowSet = $next;
     }
 
     /**
@@ -119,14 +123,14 @@ class MultiResultSet implements MultiResultSetInterface
         // we actually can't roll this back unless it was stored first
         $this->cursor = 0;
         $this->next_cursor = 0;
-        $this->rowSet = $this->getNext();
+        $this->rowSet = $this->getNext() ?: null;
     }
 
     /**
      * @inheritdoc
      * @throws DatabaseException
      */
-    public function count()
+    public function count(): int
     {
         $this->store();
 

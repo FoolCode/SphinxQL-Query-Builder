@@ -250,7 +250,7 @@ Will return an array with an `INT` as first member, the number of rows deleted.
             ->from('rt')
             ->match('title', 'Sora no || Otoshimono', true)
             ->match('title', SphinxQL::expr('"Otoshimono"/3'))
-            ->match('loves', SphinxQL::expr(custom_escaping_fn('(you | me)')));
+            ->match('loves', SphinxQL::expr(custom_escaping_fn('(you | me)')))
             ->execute();
     }
     catch (\Foolz\SphinxQL\DatabaseException $e)

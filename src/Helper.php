@@ -101,13 +101,13 @@ class Helper
      * @throws Exception\ConnectionException
      * @throws Exception\DatabaseException
      */
-    public function showTables( $index )
+    public function showTables($index)
     {
         $queryAppend = '';
-        if ( ! empty( $index ) ) {
+        if (! empty($index)) {
             $queryAppend = ' LIKE ' . $this->connection->quote($index);
         }
-        return $this->query( 'SHOW TABLES' . $queryAppend );
+        return $this->query('SHOW TABLES' . $queryAppend);
     }
 
     /**

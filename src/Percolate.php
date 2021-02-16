@@ -45,7 +45,7 @@ class Percolate
     /**
      * Documents for CALL PQ
      *
-     * @var array|string
+     * @var array|string $documents
      */
     protected $documents;
 
@@ -124,7 +124,6 @@ class Percolate
     {
         $this->connection = $connection;
         $this->sphinxQL = new SphinxQL($this->connection);
-
     }
 
 
@@ -191,7 +190,8 @@ class Percolate
         return str_replace(
             array_keys($this->escapeChars),
             array_values($this->escapeChars),
-            $query);
+            $query
+        );
     }
 
 
@@ -204,7 +204,8 @@ class Percolate
         return str_replace(
             array_keys(array_merge($this->escapeChars, ['@' => ''])),
             ['', '', '', '', '', '', '', '', '', ''],
-            $query);
+            $query
+        );
     }
 
     /**
@@ -295,7 +296,6 @@ class Percolate
      */
     public function execute()
     {
-
         if ($this->type == 'insert') {
             return $this->sphinxQL
                 ->insert()
@@ -434,11 +434,8 @@ class Percolate
     protected function getDocuments()
     {
         if (!empty($this->documents)) {
-
             if ($this->throwExceptions) {
-
                 if ($this->options[self::OPTION_DOCS_JSON]) {
-
                     if (!is_array($this->documents)) {
                         $json = $this->prepareFromJson($this->documents);
                         if (!$json) {
@@ -462,13 +459,11 @@ class Percolate
 
                 if (!empty($this->documents[0]) && !is_array($this->documents[0]) &&
                     ($this->documents[0][0] == '[' || $this->documents[0][0] == '{')) {
-
                     $json = $this->prepareFromJson($this->documents);
                     if ($json) {
                         $this->options[self::OPTION_DOCS_JSON] = 1;
                         return $json;
                     }
-
                 } else {
                     if (!$this->isAssocArray($this->documents)) {
 
@@ -484,7 +479,6 @@ class Percolate
                             $this->options[self::OPTION_DOCS_JSON] = 1;
                             return $this->convertArrayForQuery($this->documents);
                         }
-
                     } else {
                         if ($this->isAssocArray($this->documents)) {
                             // Id doc is associate array ['foo'=>'bar']
@@ -493,19 +487,15 @@ class Percolate
                         }
                     }
                 }
-
             } else {
-                if (is_string($this->documents)) {
-
-                    $json = $this->prepareFromJson($this->documents);
-                    if ($json) {
-                        $this->options[self::OPTION_DOCS_JSON] = 1;
-                        return $json;
-                    }
-
-                    $this->options[self::OPTION_DOCS_JSON] = 0;
-                    return $this->quoteString($this->documents);
+                $json = $this->prepareFromJson($this->documents);
+                if ($json) {
+                    $this->options[self::OPTION_DOCS_JSON] = 1;
+                    return $json;
                 }
+
+                $this->options[self::OPTION_DOCS_JSON] = 0;
+                return $this->quoteString($this->documents);
             }
         }
         throw new SphinxQLException('Documents can\'t be empty');
@@ -550,7 +540,7 @@ class Percolate
         $array = json_decode($data, true);
 
         if (json_last_error() == JSON_ERROR_NONE) { // if json
-            if ( ! empty($array[0])) { // If docs is jsonARRAY of jsonOBJECTS
+            if (! empty($array[0])) { // If docs is jsonARRAY of jsonOBJECTS
                 return $this->convertArrayForQuery($array);
             }
 

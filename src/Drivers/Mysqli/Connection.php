@@ -1,5 +1,4 @@
 <?php
-
 namespace Foolz\SphinxQL\Drivers\Mysqli;
 
 use Foolz\SphinxQL\Drivers\ConnectionBase;
@@ -8,6 +7,9 @@ use Foolz\SphinxQL\Drivers\ResultSet;
 use Foolz\SphinxQL\Exception\ConnectionException;
 use Foolz\SphinxQL\Exception\DatabaseException;
 use Foolz\SphinxQL\Exception\SphinxQLException;
+use mysqli;
+use PDO;
+use RuntimeException;
 
 /**
  * SphinxQL connection class utilizing the MySQLi extension.
@@ -33,9 +35,24 @@ class Connection extends ConnectionBase
     }
 
     /**
+     * @return mysqli
+     * @throws ConnectionException
+     */
+    public function getConnection(): mysqli
+    {
+        $connection = parent::getConnection();
+
+        if ($connection instanceof PDO) {
+            throw new RuntimeException('Connection type mismatch');
+        }
+
+        return $connection;
+    }
+
+    /**
      * @inheritdoc
      */
-    public function connect()
+    public function connect(): bool
     {
         $data = $this->getParams();
         $conn = mysqli_init();
@@ -46,7 +63,8 @@ class Connection extends ConnectionBase
             }
         }
 
-        set_error_handler(function () {});
+        set_error_handler(static function () {
+        });
         try {
             if (!$conn->real_connect($data['host'], null, null, null, (int) $data['port'], $data['socket'])) {
                 throw new ConnectionException('Connection Error: ['.$conn->connect_errno.']'.$conn->connect_error);
@@ -77,6 +95,8 @@ class Connection extends ConnectionBase
 
     /**
      * @inheritdoc
+     * @return ConnectionBase
+     * @throws ConnectionException
      */
     public function close()
     {
@@ -93,7 +113,8 @@ class Connection extends ConnectionBase
     {
         $this->ensureConnection();
 
-        set_error_handler(function () {});
+        set_error_handler(static function () {
+        });
         try {
             /**
              * ManticoreSearch/Sphinx silence warnings thrown by php mysqli/mysqlnd
@@ -104,7 +125,7 @@ class Connection extends ConnectionBase
             $resource = @$this->getConnection()->query($query);
         } finally {
             restore_error_handler();
-        }        
+        }
 
         if ($this->getConnection()->error) {
             throw new DatabaseException('['.$this->getConnection()->errno.'] '.
@@ -160,7 +181,10 @@ class Connection extends ConnectionBase
      */
     public function mbPush()
     {
-        $this->internal_encoding = mb_internal_encoding();
+        $internalEncoding = mb_internal_encoding();
+        if (is_string($internalEncoding)) {
+            $this->internal_encoding = $internalEncoding;
+        }
         mb_internal_encoding('UTF-8');
 
         return $this;

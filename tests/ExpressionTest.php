@@ -1,12 +1,15 @@
 <?php
+namespace Foolz\SphinxQL\Tests;
 
-use Foolz\SphinxQL\Expression as Expression;
+use Foolz\SphinxQL\Expression;
 
-class ExpressionTest extends \PHPUnit\Framework\TestCase
+use PHPUnit\Framework\TestCase;
+
+class ExpressionTest extends TestCase
 {
-    public function testValue()
+    public function testValue(): void
     {
-        $result = new Expression('');
+        $result = new Expression();
 
         $this->assertInstanceOf(Expression::class, $result);
         $this->assertEquals('', (string) $result);

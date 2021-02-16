@@ -2,6 +2,7 @@
 
 namespace Foolz\SphinxQL;
 
+use Closure;
 use Foolz\SphinxQL\Drivers\ConnectionInterface;
 use Foolz\SphinxQL\Drivers\MultiResultSetInterface;
 use Foolz\SphinxQL\Drivers\ResultSetInterface;
@@ -16,15 +17,13 @@ class SphinxQL
 {
     /**
      * A non-static connection for the current SphinxQL object
-     *
      * @var ConnectionInterface
      */
     protected $connection;
 
     /**
      * The last result object.
-     *
-     * @var array
+     * @var ResultSetInterface|MultiResultSetInterface
      */
     protected $last_result;
 
@@ -59,9 +58,9 @@ class SphinxQL
     /**
      * From in SphinxQL is the list of indexes that will be used
      *
-     * @var array
+     * @var array|Closure|self
      */
-    protected $from = array();
+    protected $from = [];
 
     /**
      * The list of where and parenthesis, must be inserted in order
@@ -217,9 +216,9 @@ class SphinxQL
     );
 
     /**
-     * @param ConnectionInterface|null $connection
+     * @param ConnectionInterface $connection
      */
-    public function __construct(ConnectionInterface $connection = null)
+    public function __construct(ConnectionInterface $connection)
     {
         $this->connection = $connection;
     }
@@ -231,7 +230,7 @@ class SphinxQL
     public function setType(string $type)
     {
         return $this->type = $type;
-    }    
+    }
 
     /**
      * Returns the currently attached connection
@@ -268,7 +267,7 @@ class SphinxQL
      * @throws ConnectionException
      * @throws SphinxQLException
      */
-    public function execute()
+    public function execute(): ResultSetInterface
     {
         // pass the object so execute compiles it by itself
         return $this->last_result = $this->getConnection()->query($this->compile()->getCompiled());
@@ -361,7 +360,7 @@ class SphinxQL
     /**
      * Returns the result of the last query
      *
-     * @return array The result of the last query
+     * @return ResultSetInterface|MultiResultSetInterface The result of the last query
      */
     public function getResult()
     {
@@ -470,10 +469,10 @@ class SphinxQL
             foreach ($this->match as $match) {
                 $pre = '';
                 if ($match['column'] instanceof \Closure) {
-                    $sub = new Match($this);
+                    $sub = new MatchBuilder($this);
                     call_user_func($match['column'], $sub);
                     $pre .= $sub->compile()->getCompiled();
-                } elseif ($match['column'] instanceof Match) {
+                } elseif ($match['column'] instanceof MatchBuilder) {
                     $pre .= $match['column']->compile()->getCompiled();
                 } elseif (empty($match['column'])) {
                     $pre .= '';
@@ -960,17 +959,17 @@ class SphinxQL
      * FROM clause (Sphinx-specific since it works with multiple indexes)
      * func_get_args()-enabled
      *
-     * @param array $array An array of indexes to use
+     * @param string|array|Closure|self $array An array of indexes to use
      *
      * @return self
      */
-    public function from($array = null)
+    public function from($array = null): self
     {
         if (is_string($array)) {
             $this->from = \func_get_args();
         }
 
-        if (is_array($array) || $array instanceof \Closure || $array instanceof SphinxQL) {
+        if (is_array($array) || $array instanceof \Closure || $array instanceof self) {
             $this->from = $array;
         }
 
@@ -980,7 +979,7 @@ class SphinxQL
     /**
      * MATCH clause (Sphinx-specific)
      *
-     * @param mixed  $column The column name (can be array, string, Closure, or Match)
+     * @param mixed  $column The column name (can be array, string, Closure, or MatchBuilder)
      * @param string $value  The value
      * @param bool   $half   Exclude ", |, - control characters from being escaped
      *
@@ -1238,7 +1237,7 @@ class SphinxQL
      * Used in: INSERT, REPLACE
      * func_get_args()-enabled
      *
-     * @param array $array The array of values matching the columns from $this->columns()
+     * @param array $array [optional] The array of values matching the columns from $this->columns()
      *
      * @return self
      */
@@ -1258,7 +1257,7 @@ class SphinxQL
      * Used in: INSERT, REPLACE
      *
      * @param string $column The column name
-     * @param string $value  The value
+     * @param mixed $value  The value
      *
      * @return self
      */
@@ -1362,7 +1361,7 @@ class SphinxQL
     /**
      * Escapes the query for the MATCH() function
      *
-     * @param string $string The string to escape for the MATCH
+     * @param string|Expression $string The string to escape for the MATCH
      *
      * @return string The escaped string
      */
@@ -1380,7 +1379,7 @@ class SphinxQL
      * Allows some of the control characters to pass through for use with a search field: -, |, "
      * It also does some tricks to wrap/unwrap within " the string and prevents errors
      *
-     * @param string $string The string to escape for the MATCH
+     * @param string|Expression $string The string to escape for the MATCH
      *
      * @return string The escaped string
      */

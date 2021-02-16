@@ -93,7 +93,6 @@ class ResultSetAdapter implements ResultSetAdapterInterface
      */
     public function rewind()
     {
-
     }
 
     /**

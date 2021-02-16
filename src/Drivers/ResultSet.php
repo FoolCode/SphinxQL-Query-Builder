@@ -209,7 +209,7 @@ class ResultSet implements ResultSetInterface
     /**
      * @param bool $assoc
      *
-     * @return array|bool|null
+     * @return array|false|null
      */
     protected function fetchFromStore($assoc = true)
     {
@@ -228,8 +228,7 @@ class ResultSet implements ResultSetInterface
 
     /**
      * @param bool $assoc
-     *
-     * @return array|bool
+     * @return array|false
      */
     protected function fetchAllFromStore($assoc)
     {
@@ -253,11 +252,11 @@ class ResultSet implements ResultSetInterface
      *
      * @return array
      */
-    protected function fetchAll($assoc = true)
+    protected function fetchAll($assoc = true): array
     {
         $fetch_all_result = $this->fetchAllFromStore($assoc);
 
-        if ($fetch_all_result === false) {
+        if (!$fetch_all_result) {
             $fetch_all_result = $this->adapter->fetchAll($assoc);
         }
 
@@ -276,9 +275,9 @@ class ResultSet implements ResultSetInterface
             return $this;
         }
 
-        if ($this->adapter->isDml()) {
-            $this->stored = $this->affected_rows;
-        } else {
+        if (!$this->adapter->isDml()) {
+//            $this->stored = $this->affected_rows;
+//        } else {
             $this->stored = $this->adapter->store();
         }
 
@@ -364,7 +363,7 @@ class ResultSet implements ResultSetInterface
      *
      * @return array|null
      */
-    protected function fetch($assoc = true)
+    protected function fetch($assoc = true): ?array
     {
         $this->cursor = $this->next_cursor;
 

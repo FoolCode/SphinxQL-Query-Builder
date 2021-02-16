@@ -1,5 +1,4 @@
 <?php
-
 namespace Foolz\SphinxQL;
 
 use Foolz\SphinxQL\Drivers\ConnectionInterface;
@@ -11,52 +10,46 @@ use Foolz\SphinxQL\Exception\SphinxQLException;
  */
 class Facet
 {
+
     /**
      * A non-static connection for the current Facet object
-     *
-     * @var ConnectionInterface
+     * @var ConnectionInterface $connection
      */
     protected $connection;
 
     /**
      * An SQL query that is not yet executed or "compiled"
-     *
-     * @var string
+     * @var string $query
      */
     protected $query;
 
     /**
      * Array of select elements that will be comma separated.
-     *
-     * @var array
+     * @var array $facet
      */
-    protected $facet = array();
+    protected $facet = [];
 
     /**
      * BY array to be comma separated
-     *
-     * @var array
+     * @var array $by
      */
-    protected $by = array();
+    protected $by = [];
 
     /**
      * ORDER BY array
-     *
-     * @var array
+     * @var array $order_by
      */
-    protected $order_by = array();
+    protected $order_by = [];
 
     /**
      * When not null it adds an offset
-     *
-     * @var null|int
+     * @var null|int $offset
      */
     protected $offset;
 
     /**
      * When not null it adds a limit
-     *
-     * @var null|int
+     * @var null|int $limit
      */
     protected $limit;
 
@@ -73,7 +66,7 @@ class Facet
      *
      * @returns ConnectionInterface|null
      */
-    public function getConnection()
+    public function getConnection(): ?ConnectionInterface
     {
         return $this->connection;
     }
@@ -85,7 +78,7 @@ class Facet
      *
      * @return Facet
      */
-    public function setConnection(ConnectionInterface $connection = null)
+    public function setConnection(ConnectionInterface $connection = null): self
     {
         $this->connection = $connection;
 
@@ -112,7 +105,7 @@ class Facet
      *
      * @return Facet
      */
-    public function facet($columns = null)
+    public function facet($columns = null): self
     {
         if (!is_array($columns)) {
             $columns = \func_get_args();
@@ -142,17 +135,25 @@ class Facet
      *    $query->facetFunction('category');
      *
      * @param string       $function Function name
-     * @param array|string $params   Array or multiple string arguments containing column names
+     * @param array|string|null $params   Array or multiple string arguments containing column names
      *
      * @return Facet
      */
-    public function facetFunction($function, $params = null)
+    public function facetFunction($function, $params = null): self
     {
-        if (is_array($params)) {
-            $params = implode(',', $params);
+        $realParams = [];
+
+        if (is_string($params)) {
+            $realParams = [$params];
         }
 
-        $this->facet[] = new Expression($function.'('.$params.')');
+        if (is_array($params)) {
+            $realParams = $params;
+        }
+
+        $paramStr = implode(',', $realParams);
+
+        $this->facet[] = new Expression($function.'('.$paramStr.')');
 
         return $this;
     }
@@ -165,9 +166,9 @@ class Facet
      *
      * @return Facet
      */
-    public function by($column)
+    public function by($column): self
     {
-        $this->by = $column;
+        $this->by[] = $column;
 
         return $this;
     }
@@ -181,7 +182,7 @@ class Facet
      *
      * @return Facet
      */
-    public function orderBy($column, $direction = null)
+    public function orderBy($column, $direction = null): self
     {
         $this->order_by[] = array('column' => $column, 'direction' => $direction);
 
@@ -197,18 +198,25 @@ class Facet
      *    $query->facetFunction('category');
      *
      * @param string $function  Function name
-     * @param array  $params    Array  string arguments containing column names
+     * @param string|array|null $params Array or string of column names
      * @param string $direction The ordering direction (asc/desc)
-     *
      * @return Facet
      */
-    public function orderByFunction($function, $params = null, $direction = null)
+    public function orderByFunction($function, $params = null, $direction = null): self
     {
-        if (is_array($params)) {
-            $params = implode(',', $params);
+        $realParams = [];
+
+        if (is_string($params)) {
+            $realParams = [$params];
         }
 
-        $this->order_by[] = array('column' => new Expression($function.'('.$params.')'), 'direction' => $direction);
+        if (is_array($params)) {
+            $realParams = $params;
+        }
+
+        $paramStr = implode(',', $realParams);
+
+        $this->order_by[] = array('column' => new Expression($function.'('.$paramStr.')'), 'direction' => $direction);
 
         return $this;
     }
@@ -222,7 +230,7 @@ class Facet
      *
      * @return Facet
      */
-    public function limit($offset, $limit = null)
+    public function limit($offset, $limit = null): self
     {
         if ($limit === null) {
             $this->limit = (int) $offset;
@@ -243,7 +251,7 @@ class Facet
      *
      * @return Facet
      */
-    public function offset($offset)
+    public function offset($offset): self
     {
         $this->offset = (int) $offset;
 
@@ -256,7 +264,7 @@ class Facet
      * @return Facet
      * @throws SphinxQLException In case no column in facet
      */
-    public function compileFacet()
+    public function compileFacet(): self
     {
         $query = 'FACET ';
 
@@ -277,7 +285,7 @@ class Facet
         }
 
         if (!empty($this->by)) {
-            $query .= 'BY '.$this->by.' ';
+            $query .= 'BY '.implode(', ', $this->by).' ';
         }
 
         if (!empty($this->order_by)) {
@@ -314,11 +322,10 @@ class Facet
 
     /**
      * Get String with SQL facet
-     *
      * @return string
      * @throws SphinxQLException
      */
-    public function getFacet()
+    public function getFacet(): string
     {
         return $this->compileFacet()->query;
     }

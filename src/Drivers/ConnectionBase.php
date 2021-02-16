@@ -1,5 +1,4 @@
 <?php
-
 namespace Foolz\SphinxQL\Drivers;
 
 use Foolz\SphinxQL\Exception\ConnectionException;
@@ -9,9 +8,9 @@ use PDO;
 
 abstract class ConnectionBase implements ConnectionInterface
 {
+
     /**
      * The connection parameters for the database server.
-     *
      * @var array
      */
     protected $connection_params = array('host' => '127.0.0.1', 'port' => 9306, 'socket' => null);
@@ -24,10 +23,9 @@ abstract class ConnectionBase implements ConnectionInterface
 
     /**
      * Sets one or more connection parameters.
-     *
      * @param array $params Associative array of parameters and values.
      */
-    public function setParams(array $params)
+    public function setParams(array $params): void
     {
         foreach ($params as $param => $value) {
             $this->setParam($param, $value);
@@ -36,15 +34,13 @@ abstract class ConnectionBase implements ConnectionInterface
 
     /**
      * Set a single connection parameter. Valid parameters include:
-     *
      * * string host - The hostname, IP address, or unix socket
      * * int port - The port to the host
      * * array options - MySQLi options/values, as an associative array. Example: array(MYSQLI_OPT_CONNECT_TIMEOUT => 2)
-     *
      * @param string $param Name of the parameter to modify.
      * @param mixed  $value Value to which the parameter will be set.
      */
-    public function setParam($param, $value)
+    public function setParam($param, $value): void
     {
         if ($param === 'host') {
             if ($value === 'localhost') {
@@ -65,23 +61,21 @@ abstract class ConnectionBase implements ConnectionInterface
 
     /**
      * Returns the connection parameters (host, port, connection timeout) for the current instance.
-     *
      * @return array $params The current connection parameters
      */
-    public function getParams()
+    public function getParams(): array
     {
         return $this->connection_params;
     }
 
     /**
      * Returns the current connection established.
-     *
-     * @return mysqli|PDO Internal connection object
+     * @return mysqli|pdo Internal connection object
      * @throws ConnectionException If no connection has been established or open
      */
     public function getConnection()
     {
-        if (!is_null($this->connection)) {
+        if ($this->connection !== null) {
             return $this->connection;
         }
 
@@ -97,19 +91,25 @@ abstract class ConnectionBase implements ConnectionInterface
     {
         if ($value === null) {
             return 'null';
-        } elseif ($value === true) {
+        }
+        if ($value === true) {
             return 1;
-        } elseif ($value === false) {
+        }
+        if ($value === false) {
             return 0;
-        } elseif ($value instanceof Expression) {
+        }
+        if ($value instanceof Expression) {
             // Use the raw expression
             return $value->value();
-        } elseif (is_int($value)) {
+        }
+        if (is_int($value)) {
             return (int) $value;
-        } elseif (is_float($value)) {
+        }
+        if (is_float($value)) {
             // Convert to non-locale aware float to prevent possible commas
             return sprintf('%F', $value);
-        } elseif (is_array($value)) {
+        }
+        if (is_array($value)) {
             // Supports MVA attributes
             return '('.implode(',', $this->quoteArr($value)).')';
         }
@@ -120,7 +120,7 @@ abstract class ConnectionBase implements ConnectionInterface
     /**
      * @inheritdoc
      */
-    public function quoteArr(array $array = array())
+    public function quoteArr(array $array = []): array
     {
         $result = array();
 
@@ -133,9 +133,7 @@ abstract class ConnectionBase implements ConnectionInterface
 
     /**
      * Closes and unset the connection to the Sphinx server.
-     *
      * @return $this
-     * @throws ConnectionException
      */
     public function close()
     {
@@ -148,7 +146,7 @@ abstract class ConnectionBase implements ConnectionInterface
      * Establishes a connection if needed
      * @throws ConnectionException
      */
-    protected function ensureConnection()
+    protected function ensureConnection(): void
     {
         try {
             $this->getConnection();
@@ -163,6 +161,5 @@ abstract class ConnectionBase implements ConnectionInterface
      * @return bool True if connected
      * @throws ConnectionException If a connection error was encountered
      */
-    abstract public function connect();
-
+    abstract public function connect(): bool;
 }

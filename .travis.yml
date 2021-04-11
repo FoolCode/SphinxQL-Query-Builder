@@ -35,7 +35,6 @@ before_install:
 install: composer update --prefer-dist --no-interaction
 
 before_script:
-  - XDEBUG_MODE=coverage
   - composer dump-autoload
   - cd tests
   - $TRAVIS_BUILD_DIR/tests/run.sh

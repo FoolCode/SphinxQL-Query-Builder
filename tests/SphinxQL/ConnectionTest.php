@@ -80,11 +80,9 @@ class ConnectionTest extends \PHPUnit\Framework\TestCase
         $this->assertNotNull($this->connection->getConnection());
     }
 
-    /**
-     * @expectedException Foolz\SphinxQL\Exception\ConnectionException
-     */
     public function testGetConnectionThrowsException()
     {
+        $this->expectException(Foolz\SphinxQL\Exception\ConnectionException::class);
         $this->connection->getConnection();
     }
 
@@ -96,11 +94,9 @@ class ConnectionTest extends \PHPUnit\Framework\TestCase
         $this->connection->connect();
     }
 
-    /**
-     * @expectedException Foolz\SphinxQL\Exception\ConnectionException
-     */
     public function testConnectThrowsException()
     {
+        $this->expectException(Foolz\SphinxQL\Exception\ConnectionException::class);
         $this->connection->setParam('port', 9308);
         $this->connection->connect();
     }
@@ -111,11 +107,9 @@ class ConnectionTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($this->connection->ping());
     }
 
-    /**
-     * @expectedException Foolz\SphinxQL\Exception\ConnectionException
-     */
     public function testClose()
     {
+        $this->expectException(Foolz\SphinxQL\Exception\ConnectionException::class);
         $encoding = mb_internal_encoding();
         $this->connection->connect();
 
@@ -150,29 +144,23 @@ class ConnectionTest extends \PHPUnit\Framework\TestCase
         ), $query->getNext()->fetchAllAssoc());
     }
 
-    /**
-     * @expectedException        Foolz\SphinxQL\Exception\SphinxQLException
-     * @expectedExceptionMessage The Queue is empty.
-     */
     public function testEmptyMultiQuery()
     {
+        $this->expectException(Foolz\SphinxQL\Exception\SphinxQLException::class);
+        $this->expectExceptionMessage('The Queue is empty.');
         $this->connection->connect();
         $this->connection->multiQuery(array());
     }
 
-    /**
-     * @expectedException Foolz\SphinxQL\Exception\DatabaseException
-     */
     public function testMultiQueryThrowsException()
     {
+        $this->expectException(Foolz\SphinxQL\Exception\DatabaseException::class);
         $this->connection->multiQuery(array('SHOW METAL'));
     }
 
-    /**
-     * @expectedException Foolz\SphinxQL\Exception\DatabaseException
-     */
     public function testQueryThrowsException()
     {
+        $this->expectException(Foolz\SphinxQL\Exception\DatabaseException::class);
         $this->connection->query('SHOW METAL');
     }
 
@@ -182,11 +170,9 @@ class ConnectionTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('\'\\\' \\"\\" \\\'\\\' \'', $result);
     }
 
-    /**
-     * @expectedException Foolz\SphinxQL\Exception\ConnectionException
-     */
     public function testEscapeThrowsException()
     {
+        $this->expectException(Foolz\SphinxQL\Exception\ConnectionException::class);
         // or we get the wrong error popping up
         $this->connection->setParam('port', 9308);
         $this->connection->connect();

@@ -119,11 +119,9 @@ class MultiResultSetTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(8, $all[0]['count(*)']);
     }
 
-    /**
-     * @expectedException Foolz\SphinxQL\Exception\DatabaseException
-     */
     public function testInvalidStore()
     {
+        $this->expectException(Foolz\SphinxQL\Exception\DatabaseException::class);
         $this->refill();
 
         $res = self::$conn->multiQuery(array('SELECT COUNT(*) FROM rt', 'SHOW META'));

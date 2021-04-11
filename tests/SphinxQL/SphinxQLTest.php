@@ -899,12 +899,10 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('11', $result[2][0]['id']);
     }
 
-    /**
-     * @expectedException        Foolz\SphinxQL\Exception\SphinxQLException
-     * @expectedExceptionMessage There is no Queue present to execute.
-     */
     public function testEmptyQueue()
     {
+        $this->expectException(Foolz\SphinxQL\Exception\SphinxQLException::class);
+        $this->expectExceptionMessage("There is no Queue present to execute.");
         $this->createSphinxQL()
             ->executeBatch()
             ->getStored();

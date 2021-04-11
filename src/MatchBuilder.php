@@ -51,7 +51,7 @@ class MatchBuilder
      *    });
      *    // (a | b)
      *
-     *    $sub = new Match($sphinxql);
+     *    $sub = new MatchBuilder($sphinxql);
      *    $sub->match('a')->orMatch('b');
      *    $match->match($sub);
      *    // (a | b)
@@ -500,7 +500,7 @@ class MatchBuilder
             if (key($token) == 'MATCH') {
                 if ($token['MATCH'] instanceof Expression) {
                     $query .= $token['MATCH']->value().' ';
-                } elseif ($token['MATCH'] instanceof Match) {
+                } elseif ($token['MATCH'] instanceof MatchBuilder) {
                     $query .= '('.$token['MATCH']->compile()->getCompiled().') ';
                 } elseif ($token['MATCH'] instanceof \Closure) {
                     $sub = new static($this->sphinxql);

@@ -470,10 +470,10 @@ class SphinxQL
             foreach ($this->match as $match) {
                 $pre = '';
                 if ($match['column'] instanceof \Closure) {
-                    $sub = new Match($this);
+                    $sub = new MatchBuilder($this);
                     call_user_func($match['column'], $sub);
                     $pre .= $sub->compile()->getCompiled();
-                } elseif ($match['column'] instanceof Match) {
+                } elseif ($match['column'] instanceof MatchBuilder) {
                     $pre .= $match['column']->compile()->getCompiled();
                 } elseif (empty($match['column'])) {
                     $pre .= '';
@@ -980,7 +980,7 @@ class SphinxQL
     /**
      * MATCH clause (Sphinx-specific)
      *
-     * @param mixed  $column The column name (can be array, string, Closure, or Match)
+     * @param mixed  $column The column name (can be array, string, Closure, or MatchBuilder)
      * @param string $value  The value
      * @param bool   $half   Exclude ", |, - control characters from being escaped
      *

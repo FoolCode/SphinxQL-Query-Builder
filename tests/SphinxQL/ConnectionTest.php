@@ -201,7 +201,7 @@ class ConnectionTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(0, $this->connection->quote(false));
         $this->assertEquals("fo'o'bar", $this->connection->quote(new Expression("fo'o'bar")));
         $this->assertEquals(123, $this->connection->quote(123));
-        $this->assertEquals("12.3", $this->connection->quote(12.3));
+        $this->assertEquals("12.300000", $this->connection->quote(12.3));
         $this->assertEquals("'12.3'", $this->connection->quote('12.3'));
         $this->assertEquals("'12'", $this->connection->quote('12'));
     }
@@ -210,7 +210,7 @@ class ConnectionTest extends \PHPUnit\Framework\TestCase
     {
         $this->connection->connect();
         $this->assertEquals(
-            array('null', 1, 0, "fo'o'bar", 123, "12.3", "'12.3'", "'12'"),
+            array('null', 1, 0, "fo'o'bar", 123, "12.300000", "'12.3'", "'12'"),
             $this->connection->quoteArr(array(null, true, false, new Expression("fo'o'bar"), 123, 12.3, '12.3', '12'))
         );
     }

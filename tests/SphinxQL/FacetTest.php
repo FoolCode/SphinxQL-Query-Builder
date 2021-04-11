@@ -29,7 +29,7 @@ class FacetTest  extends \PHPUnit\Framework\TestCase
             'title' => 'what is there to do', 'content' => 'we need to create dummy data for tests'),
     );
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         $conn = TestUtil::getConnectionDriver();
         $conn->setParam('port', 9307);

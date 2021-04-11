@@ -8,7 +8,7 @@ class MatchBuilderTest extends \PHPUnit\Framework\TestCase
 {
     public static $sphinxql = null;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         $conn = TestUtil::getConnectionDriver();
         $conn->setParam('port', 9307);

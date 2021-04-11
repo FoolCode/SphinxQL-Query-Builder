@@ -3,7 +3,7 @@
 use Foolz\SphinxQL\Expression;
 use Foolz\SphinxQL\Facet;
 use Foolz\SphinxQL\Helper;
-use Foolz\SphinxQL\Match;
+use Foolz\SphinxQL\MatchBuilder;
 use Foolz\SphinxQL\SphinxQL;
 use Foolz\SphinxQL\Tests\TestUtil;
 
@@ -573,7 +573,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
 
         $this->assertCount(2, $result);
 
-        $match = (new Match($this->createSphinxQL()))
+        $match = (new MatchBuilder($this->createSphinxQL()))
             ->field('content')
             ->match('directly')
             ->orMatch('lazy');

@@ -5,7 +5,7 @@ namespace Foolz\SphinxQL;
 /**
  * Query Builder class for Match statements.
  */
-class Match
+class MatchBuilder
 {
     /**
      * The last compiled query.
@@ -56,7 +56,7 @@ class Match
      *    $match->match($sub);
      *    // (a | b)
      *
-     * @param string|Match|\Closure $keywords The text or expression to match.
+     * @param string|MatchBuilder|\Closure $keywords The text or expression to match.
      *
      * @return $this
      */
@@ -79,7 +79,7 @@ class Match
      *    $match->match('test')->orMatch('case');
      *    // test | case
      *
-     * @param string|Match|\Closure $keywords The text or expression to alternatively match.
+     * @param string|MatchBuilder|\Closure $keywords The text or expression to alternatively match.
      *
      * @return $this
      */
@@ -101,7 +101,7 @@ class Match
      *    $match->match('test')->maybe('case');
      *    // test MAYBE case
      *
-     * @param string|Match|\Closure $keywords The text or expression to optionally match.
+     * @param string|MatchBuilder|\Closure $keywords The text or expression to optionally match.
      *
      * @return $this
      */

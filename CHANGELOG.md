@@ -1,48 +1,47 @@
-#### 2.1.0
+#### 3.0.0
+* Added support for PHP 8
+* Renamed `Foolz\SphinxQL\Match` to `Foolz\SphinxQL\MatchBuilder` (BREAKING CHANGE)
 
-* added exception code and previous throwable to errors
-* added `setType` method to `SphinxQL` class
-* added support for `MATCH` to `DELETE` queries
-* updated MySQLi driver to silence internal warnings by default
+#### 2.1.0
+* Added exception code and previous throwable to errors
+* Added `setType` method to `SphinxQL` class
+* Added support for `MATCH` to `DELETE` queries
+* Updated MySQLi driver to silence internal warnings by default
 
 #### 2.0.0
-
-* added support for [Manticore](https://manticoresearch.com)
-* added `Percolate` class for `Manticore`
-* added `orPhrase` method to `Match` class
-* added `resetFacets` method to `SphinxQL` class
-* added support for multi-document snippet call
-* fixed `Connection` exception thrown
-* fixed incorrect property accessibility/visibility
-* refactored `ResultSet` and `MultiResultSet` classes to reduce duplicate code
-* removed `Connection` error suppression
-* removed `SphinxQL\Drivers\ResultSetAdapterInterface` constants
-* removed static `SphinxQL::create` method
-* removed deprecated `\Foolz\SphinxQL\Connection`
-* removed support for PHP 5.3 and HHVM
-* updated fetch type for drivers to use `boolean` to return assoc/indexed arrays
-* updated PHPDoc blocks
+* Added support for [Manticore](https://manticoresearch.com)
+* Added `Percolate` class for `Manticore`
+* Added `orPhrase` method to `Match` class
+* Added `resetFacets` method to `SphinxQL` class
+* Added support for multi-document snippet call
+* Fixed `Connection` exception thrown
+* Fixed incorrect property accessibility/visibility
+* Refactored `ResultSet` and `MultiResultSet` classes to reduce duplicate code
+* Removed `Connection` error suppression
+* Removed `SphinxQL\Drivers\ResultSetAdapterInterface` constants
+* Removed static `SphinxQL::create` method
+* Removed deprecated `\Foolz\SphinxQL\Connection`
+* Removed support for PHP 5.3 and HHVM
+* Updated fetch type for drivers to use `boolean` to return assoc/indexed arrays
+* Updated PHPDoc blocks
 
 Note: This release contains **breaking changes** around the instantiation of the `SphinxQL` class with the removal of static methods. Please refer to the README for any API changes.
 
 #### 1.2.0
-
-* added support for `GROUP N BY`
-* refactored `Connection`, `\Foolz\SphinxQL\Connection` is now deprecated.
-* refactored `ResultSet` and `MultiResultSet` to reduce duplicate code
+* Added support for `GROUP N BY`
+* Refactored `Connection`, `\Foolz\SphinxQL\Connection` is now deprecated.
+* Refactored `ResultSet` and `MultiResultSet` to reduce duplicate code
 
 Note: This release contains **breaking changes** with the introduction of `ResultSet` and `MultiResultSet` changes. Please refer to the README for any API changes.
 
 #### 0.9.7
-
-* added support for unix sockets
-* added `NOT IN` condition in `WHERE` statements
+* Added support for unix sockets
+* Added `NOT IN` condition in `WHERE` statements
 
 #### 0.9.6
-
-* added named integer lists support to `OPTION` with associative array (@alpha0010)
-* deprecated special case `OPTION` for `field_weights` and `index_weights`
-* forced `Connection` to use utf8 charset (@t1gor)
+* Added named integer lists support to `OPTION` with associative array (@alpha0010)
+* Deprecated special case `OPTION` for `field_weights` and `index_weights`
+* Forced `Connection` to use utf8 charset (@t1gor)
 
 #### 0.9.5
 * `Expression` support for `OPTION` value
@@ -53,58 +52,47 @@ Note: This release contains **breaking changes** with the introduction of `Resul
 * Added `ConnectionInterface`
 
 #### 0.9.3
-
 * HHVM support
 * Added escaping of new MATCH features by lowercasing the search string
 
 #### 0.9.2
-
-* created `Helper` class to contain non-query-builder query methods, all returning `SphinxQL` objects
-* deprecated all non-query-builder query methods in `SphinxQL` class
-* improved `$sq->enqueue()` in `SphinxQL` class to have a parameter to append any custom `SphinxQL` objects
-* added `$sq->query()` method to `SphinxQL` to allow setting SQL queries without executing them
+* Created `Helper` class to contain non-query-builder query methods, all returning `SphinxQL` objects
+* Deprecated all non-query-builder query methods in `SphinxQL` class
+* Improved `$sq->enqueue()` in `SphinxQL` class to have a parameter to append any custom `SphinxQL` objects
+* Added `$sq->query()` method to `SphinxQL` to allow setting SQL queries without executing them
 
 #### 0.9.1
-
-* deprecated SphinxQL::forge() with static Connection and implemented SphinxQL::create($conn)
-* added array and * support to MATCH columns (thanks to @FindTheBest)
-* added Expression support to MATCH value
+* Deprecated SphinxQL::forge() with static Connection and implemented SphinxQL::create($conn)
+* Added array and * support to MATCH columns (thanks to @FindTheBest)
+* Added Expression support to MATCH value
 
 #### 0.9.0
-
-* refactored to be fully OOP
-* changed code style to be PSR-2 compliant
-* removed all unnecessary `static` keywords
-* removed old bootstrap file for fuelphp
+* Refactored to be fully OOP
+* Changed code style to be PSR-2 compliant
+* Removed all unnecessary `static` keywords
+* Removed old bootstrap file for fuelphp
 
 #### 0.8.6
-
-* added Connection::ping()
-* added Connection::close()
-* fixed uncaught exception thrown by Connection::getConnection()
+* Added Connection::ping()
+* Added Connection::close()
+* Fixed uncaught exception thrown by Connection::getConnection()
 
 #### 0.8.5
-
-* removed Array typehints
-* removed unsupported charset argument
+* Removed Array typehints
+* Removed unsupported charset argument
 
 #### 0.8.4
-
-* fixed composer bootstrap
-* removed `Sphinxql` prefix on Connection and Expression classes
+* Fixed composer bootstrap
+* Removed `Sphinxql` prefix on Connection and Expression classes
 
 #### 0.8.3
-
-* added Queue support
+* Added Queue support
 
 #### 0.8.2
-
-* fixed composer bootstrap
+* Fixed composer bootstrap
 
 #### 0.8.1
-
-* improved phpunit tests
+* Improved phpunit tests
 
 #### 0.8.0
-
-* initial release
+* Initial release

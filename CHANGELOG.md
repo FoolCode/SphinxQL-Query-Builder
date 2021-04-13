@@ -1,5 +1,6 @@
 #### 3.0.0
 * Added support for PHP 8
+* Dropped support for PHP 7.0 and lower
 * Renamed `Foolz\SphinxQL\Match` to `Foolz\SphinxQL\MatchBuilder` (BREAKING CHANGE)
 
 #### 2.1.0

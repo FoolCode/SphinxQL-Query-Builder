@@ -14,7 +14,7 @@ class PercolateQueriesTest extends \PHPUnit\Framework\TestCase
     public static $conn = null;
 
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
 	    $conn = TestUtil::getConnectionDriver();
 	    $conn->setParam('port', 9307);

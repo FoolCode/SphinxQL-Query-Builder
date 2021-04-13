@@ -31,7 +31,7 @@ class ResultSetTest extends \PHPUnit\Framework\TestCase
             'title' => 'what is there to do', 'content' => 'we need to create dummy data for tests'),
     );
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         $conn = TestUtil::getConnectionDriver();
         $conn->setParam('port', 9307);
@@ -102,12 +102,10 @@ class ResultSetTest extends \PHPUnit\Framework\TestCase
         $res->freeResult();
     }
 
-    /**
-     * @expectedException        Foolz\SphinxQL\Exception\ResultSetException
-     * @expectedExceptionMessage The row does not exist.
-     */
     public function testToRowThrows()
     {
+        $this->expectException(Foolz\SphinxQL\Exception\ResultSetException::class);
+        $this->expectExceptionMessage("The row does not exist.");
         $this->refill();
         $res = self::$conn->query('SELECT * FROM rt');
         $res->toRow(8);
@@ -134,12 +132,10 @@ class ResultSetTest extends \PHPUnit\Framework\TestCase
         $res->freeResult();
     }
 
-    /**
-     * @expectedException        Foolz\SphinxQL\Exception\ResultSetException
-     * @expectedExceptionMessage The row does not exist.
-     */
     public function testToNextRowThrows()
     {
+        $this->expectException(Foolz\SphinxQL\Exception\ResultSetException::class);
+        $this->expectExceptionMessage("The row does not exist.");
         $this->refill();
         $res = self::$conn->query('SELECT * FROM rt WHERE id = 10');
         $res->toNextRow()->toNextRow();

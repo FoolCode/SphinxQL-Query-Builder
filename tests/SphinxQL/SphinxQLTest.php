@@ -3,7 +3,7 @@
 use Foolz\SphinxQL\Expression;
 use Foolz\SphinxQL\Facet;
 use Foolz\SphinxQL\Helper;
-use Foolz\SphinxQL\Match;
+use Foolz\SphinxQL\MatchBuilder;
 use Foolz\SphinxQL\SphinxQL;
 use Foolz\SphinxQL\Tests\TestUtil;
 
@@ -30,7 +30,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
             'title' => 'what is there to do', 'content' => 'we need to create dummy data for tests'),
     );
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         $conn = TestUtil::getConnectionDriver();
         $conn->setParam('port', 9307);
@@ -573,7 +573,7 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
 
         $this->assertCount(2, $result);
 
-        $match = (new Match($this->createSphinxQL()))
+        $match = (new MatchBuilder($this->createSphinxQL()))
             ->field('content')
             ->match('directly')
             ->orMatch('lazy');
@@ -899,12 +899,10 @@ class SphinxQLTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('11', $result[2][0]['id']);
     }
 
-    /**
-     * @expectedException        Foolz\SphinxQL\Exception\SphinxQLException
-     * @expectedExceptionMessage There is no Queue present to execute.
-     */
     public function testEmptyQueue()
     {
+        $this->expectException(Foolz\SphinxQL\Exception\SphinxQLException::class);
+        $this->expectExceptionMessage("There is no Queue present to execute.");
         $this->createSphinxQL()
             ->executeBatch()
             ->getStored();

@@ -5,7 +5,7 @@ namespace Foolz\SphinxQL;
 /**
  * Query Builder class for Match statements.
  */
-class Match
+class MatchBuilder
 {
     /**
      * The last compiled query.
@@ -51,12 +51,12 @@ class Match
      *    });
      *    // (a | b)
      *
-     *    $sub = new Match($sphinxql);
+     *    $sub = new MatchBuilder($sphinxql);
      *    $sub->match('a')->orMatch('b');
      *    $match->match($sub);
      *    // (a | b)
      *
-     * @param string|Match|\Closure $keywords The text or expression to match.
+     * @param string|MatchBuilder|\Closure $keywords The text or expression to match.
      *
      * @return $this
      */
@@ -79,7 +79,7 @@ class Match
      *    $match->match('test')->orMatch('case');
      *    // test | case
      *
-     * @param string|Match|\Closure $keywords The text or expression to alternatively match.
+     * @param string|MatchBuilder|\Closure $keywords The text or expression to alternatively match.
      *
      * @return $this
      */
@@ -101,7 +101,7 @@ class Match
      *    $match->match('test')->maybe('case');
      *    // test MAYBE case
      *
-     * @param string|Match|\Closure $keywords The text or expression to optionally match.
+     * @param string|MatchBuilder|\Closure $keywords The text or expression to optionally match.
      *
      * @return $this
      */
@@ -500,7 +500,7 @@ class Match
             if (key($token) == 'MATCH') {
                 if ($token['MATCH'] instanceof Expression) {
                     $query .= $token['MATCH']->value().' ';
-                } elseif ($token['MATCH'] instanceof Match) {
+                } elseif ($token['MATCH'] instanceof MatchBuilder) {
                     $query .= '('.$token['MATCH']->compile()->getCompiled().') ';
                 } elseif ($token['MATCH'] instanceof \Closure) {
                     $sub = new static($this->sphinxql);

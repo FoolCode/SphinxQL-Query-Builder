@@ -12,7 +12,7 @@ class HelperTest extends \PHPUnit\Framework\TestCase
      */
     public $conn;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $conn = TestUtil::getConnectionDriver();
         $conn->setParam('port', 9307);
@@ -163,12 +163,10 @@ class HelperTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @expectedException        Foolz\SphinxQL\Exception\DatabaseException
-     * @expectedExceptionMessage Sphinx expr: syntax error
-     */
     public function testUdfNotInstalled()
     {
+        $this->expectException(Foolz\SphinxQL\Exception\DatabaseException::class);
+        $this->expectExceptionMessage('Sphinx expr: syntax error');
         $this->conn->query('SELECT MY_UDF()');
     }
 

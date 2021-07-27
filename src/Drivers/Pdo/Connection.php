@@ -25,7 +25,8 @@ class Connection extends ConnectionBase
         try {
             $statement->execute();
         } catch (PDOException $exception) {
-            throw new DatabaseException($exception->getMessage() . ' [' . $query . ']', $exception->getCode(), $exception);
+            throw new DatabaseException('[' . $exception->getCode() . '] ' . $exception->getMessage() . ' [' . $query . ']',
+                (int)$exception->getCode(), $exception);
         }
 
         return new ResultSet(new ResultSetAdapter($statement));

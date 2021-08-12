@@ -1,3 +1,7 @@
+#### 3.0.1
+* Fixed Exception Error for PDO Driver
+* Dropped support for PHP 7.0 and lower
+
 #### 3.0.0
 * Added support for PHP 8
 * Dropped support for PHP 7.0 and lower

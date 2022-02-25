@@ -59,6 +59,7 @@ class MultiResultSet implements MultiResultSetInterface
      * @inheritdoc
      * @throws DatabaseException
      */
+    #[\ReturnTypeWillChange]
     public function offsetExists($offset)
     {
         $this->store();
@@ -70,6 +71,7 @@ class MultiResultSet implements MultiResultSetInterface
      * @inheritdoc
      * @throws DatabaseException
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         $this->store();
@@ -81,6 +83,7 @@ class MultiResultSet implements MultiResultSetInterface
      * @inheritdoc
      * @codeCoverageIgnore
      */
+    #[\ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
         throw new \BadMethodCallException('Not implemented');
@@ -90,6 +93,7 @@ class MultiResultSet implements MultiResultSetInterface
      * @inheritdoc
      * @codeCoverageIgnore
      */
+    #[\ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         throw new \BadMethodCallException('Not implemented');
@@ -98,6 +102,7 @@ class MultiResultSet implements MultiResultSetInterface
     /**
      * @inheritdoc
      */
+    #[\ReturnTypeWillChange]
     public function next()
     {
         $this->rowSet = $this->getNext();
@@ -106,6 +111,7 @@ class MultiResultSet implements MultiResultSetInterface
     /**
      * @inheritdoc
      */
+    #[\ReturnTypeWillChange]
     public function key()
     {
         return (int)$this->cursor;
@@ -114,6 +120,7 @@ class MultiResultSet implements MultiResultSetInterface
     /**
      * @inheritdoc
      */
+    #[\ReturnTypeWillChange]
     public function rewind()
     {
         // we actually can't roll this back unless it was stored first
@@ -126,6 +133,7 @@ class MultiResultSet implements MultiResultSetInterface
      * @inheritdoc
      * @throws DatabaseException
      */
+    #[\ReturnTypeWillChange]
     public function count()
     {
         $this->store();
@@ -136,6 +144,7 @@ class MultiResultSet implements MultiResultSetInterface
     /**
      * @inheritdoc
      */
+    #[\ReturnTypeWillChange]
     public function valid()
     {
         if ($this->stored !== null) {
@@ -148,6 +157,7 @@ class MultiResultSet implements MultiResultSetInterface
     /**
      * @inheritdoc
      */
+    #[\ReturnTypeWillChange]
     public function current()
     {
         $rowSet = $this->rowSet;

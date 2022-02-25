@@ -2,11 +2,11 @@
 
 case $SEARCH_BUILD in
   SPHINX2)
-    wget --quiet http://ppa.launchpad.net/builds/sphinxsearch-rel22/ubuntu/dists/`lsb_release -cs`/main/binary-amd64/Packages.gz
-    gzip -d Packages.gz
-    SPHINX_DEB=`grep -m1 Filename Packages | cut -f2 -d' '`
-    wget --quiet -O search.deb http://ppa.launchpad.net/builds/sphinxsearch-rel22/ubuntu/${SPHINX_DEB}
-    dpkg -x search.deb .
+    wget --quiet http://sphinxsearch.com/files/sphinx-2.2.11-release.tar.gz
+    tar zxvf sphinx-2.2.11-release.tar.gz
+    cd sphinx-2.2.11-release
+    ./configure --prefix=/usr/local/sphinx
+    make && make install
     ;;
   SPHINX3)
     wget --quiet http://sphinxsearch.com/files/sphinx-3.0.3-facc3fb-linux-amd64.tar.gz

@@ -6,7 +6,7 @@ case $SEARCH_BUILD in
     tar zxvf sphinx-2.2.11-release.tar.gz
     cd sphinx-2.2.11-release
     ./configure --prefix=/usr/local/sphinx
-    make && make install
+    sudo make && sudo make install
     ;;
   SPHINX3)
     wget --quiet http://sphinxsearch.com/files/sphinx-3.0.3-facc3fb-linux-amd64.tar.gz

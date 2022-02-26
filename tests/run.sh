@@ -4,7 +4,7 @@ case $SEARCH_BUILD in
   SPHINX2)
     WORK=$HOME/search
     gcc -shared -o data/test_udf.so test_udf.c
-    $WORK/usr/bin/searchd -c sphinx.conf
+    /usr/local/sphinx/bin/searchd -c sphinx.conf
     ;;
   SPHINX3)
     WORK=$HOME/search/sphinx-3.0.3

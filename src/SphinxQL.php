@@ -1368,6 +1368,10 @@ class SphinxQL
      */
     public function escapeMatch($string)
     {
+        if (is_null($string)) {
+            return '';
+        }
+
         if ($string instanceof Expression) {
             return $string->value();
         }

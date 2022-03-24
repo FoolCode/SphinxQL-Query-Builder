@@ -322,4 +322,14 @@ class Facet
     {
         return $this->compileFacet()->query;
     }
+
+    /**
+     * @param $distinct
+     * @return Facet
+     */
+    public function distinct($distinct)
+    {
+        $this->distinct_by = $distinct;
+        return $this;
+    }
 }

@@ -61,6 +61,13 @@ class Facet
      */
     protected $limit = null;
 
+    /**
+     * Faceting without duplicates
+     *
+     * @var null|string
+     */
+    protected $distinct_by = null;
+
     public function __construct(ConnectionInterface $connection = null, $static = false)
     {
         $this->connection = $connection;

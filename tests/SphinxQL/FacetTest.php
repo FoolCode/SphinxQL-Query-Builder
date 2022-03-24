@@ -142,13 +142,13 @@ class FacetTest  extends PHPUnit_Framework_TestCase
         $this->assertEquals('FACET gid, title ORDER BY COUNT(*) DESC LIMIT 5, 5', $facet);
     }
 
-	public function testDistinct()
-	{
-		$facet = Facet::create(self::$conn)
-			->facet(array('gid', 'title'))
-			->distinct('title')
-			->getFacet();
+    public function testDistinct()
+    {
+        $facet = Facet::create(self::$conn)
+            ->facet(array('gid', 'title'))
+            ->distinct('title')
+            ->getFacet();
 
-		$this->assertEquals('FACET gid, title DISTINCT title', $facet);
-	}
+        $this->assertEquals('FACET gid, title DISTINCT title', $facet);
+    }
 }

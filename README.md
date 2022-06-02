@@ -433,6 +433,8 @@ $result = (new SphinxQL($this->conn))
 * `(new Helper($conn))->setVariable($name, $value, $global = false)`
 * `(new Helper($conn))->callSnippets($data, $index, $query, $options = array())`
 * `(new Helper($conn))->callKeywords($text, $index, $hits = null)`
+* `(new Helper($conn))->callSuggest($text, $index, $options = array())`
+* `(new Helper($conn))->callQsuggest($text, $index, $options = array())`
 * `(new Helper($conn))->describe($index)`
 * `(new Helper($conn))->createFunction($udf_name, $returns, $soname)`
 * `(new Helper($conn))->dropFunction($udf_name)`

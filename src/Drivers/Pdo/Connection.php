@@ -20,7 +20,7 @@ class Connection extends ConnectionBase
     {
         $this->ensureConnection();
 
-        $statement = $this->connection->prepare($query);
+        $statement = $this->getConnection()->prepare($query);
 
         try {
             $statement->execute();
@@ -74,7 +74,7 @@ class Connection extends ConnectionBase
     {
         $this->ensureConnection();
 
-        return $this->connection !== null;
+        return $this->getConnection() !== null;
     }
 
     /**
@@ -89,7 +89,7 @@ class Connection extends ConnectionBase
         }
 
         try {
-            $statement = $this->connection->query(implode(';', $queue));
+            $statement = $this->getConnection()->query(implode(';', $queue));
         } catch (PDOException $exception) {
             throw new DatabaseException($exception->getMessage() .' [ '.implode(';', $queue).']', $exception->getCode(), $exception);
         }
@@ -104,6 +104,6 @@ class Connection extends ConnectionBase
     {
         $this->ensureConnection();
 
-        return $this->connection->quote($value);
+        return $this->getConnection()->quote($value);
     }
 }

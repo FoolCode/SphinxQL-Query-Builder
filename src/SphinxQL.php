@@ -304,7 +304,7 @@ class SphinxQL
      *
      * @return SphinxQL A new SphinxQL object with the current object referenced
      */
-    public function enqueue(SphinxQL $next = null)
+    public function enqueue(?SphinxQL $next = null)
     {
         if ($next === null) {
             $next = new static($this->getConnection());

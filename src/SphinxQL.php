@@ -219,7 +219,7 @@ class SphinxQL
     /**
      * @param ConnectionInterface|null $connection
      */
-    public function __construct(ConnectionInterface $connection = null)
+    public function __construct(?ConnectionInterface $connection = null)
     {
         $this->connection = $connection;
     }
@@ -304,7 +304,7 @@ class SphinxQL
      *
      * @return SphinxQL A new SphinxQL object with the current object referenced
      */
-    public function enqueue(SphinxQL $next = null)
+    public function enqueue(?SphinxQL $next = null)
     {
         if ($next === null) {
             $next = new static($this->getConnection());
